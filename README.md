@@ -13,7 +13,7 @@ This repository has no deployment workflow. Pushing changes to GitHub does not p
 
 ## Run it locally
 
-Requires Node.js 20 or newer, with npm. Open a terminal in the `ccna guide` folder. Install the exact locked dependencies once, or after the lockfile changes:
+Requires Node.js 20 or newer, with npm. Open a terminal in the repository folder (`open-packets` for a standard clone). Install the exact locked dependencies once, or after the lockfile changes:
 
 ```bash
 npm ci
