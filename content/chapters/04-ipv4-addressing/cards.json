@@ -1,0 +1,178 @@
+[
+  {
+    "id": "ipv4-addressing-c01",
+    "front": "What are the bit values in an IPv4 octet?",
+    "back": "Left to right: 128, 64, 32, 16, 8, 4, 2, 1. Add the values whose bits are 1.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c02",
+    "front": "Which values can appear in a contiguous subnet-mask octet?",
+    "back": "0, 128, 192, 224, 240, 248, 252, 254, 255. Across the whole mask, ones must precede zeros.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c25",
+    "front": "How do you find the number of host bits from an IPv4 prefix length?",
+    "back": "Subtract the prefix length from 32. A /26 leaves six host bits; those bits determine the subnet’s size.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c03",
+    "front": "How do you find the increment in a partial mask octet?",
+    "back": "256 minus that mask octet. For 192 the increment is 64; network boundaries are multiples of 64 in that octet.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c04",
+    "front": "What dotted mask and ordinary usable capacity correspond to /26?",
+    "back": "255.255.255.192 and 62 usable addresses. Six host bits give 64 total; subtract network and broadcast.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c05",
+    "front": "What dotted mask and ordinary usable capacity correspond to /29?",
+    "back": "255.255.255.248 and six usable addresses. Three host bits give eight total; subtract network and broadcast.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c06",
+    "front": "For /21, what is the dotted mask and third-octet increment?",
+    "back": "255.255.248.0; increment 8 in the third octet because 256 − 248 = 8.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c07",
+    "front": "How many total and usable addresses do h host bits provide?",
+    "back": "2^h total; normally 2^h − 2 usable through /30. Treat /31 point-to-point and /32 separately.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c08",
+    "front": "How do network and broadcast calculations differ?",
+    "back": "Network: retain network bits and clear host bits. Subnet broadcast: retain network bits and set host bits to one.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c09",
+    "front": "How are the two addresses of a /31 point-to-point subnet used?",
+    "back": "Both identify endpoints under RFC 3021. Neither is reserved as that subnet's directed broadcast.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c10",
+    "front": "What does /32 identify?",
+    "back": "Exactly one address. It is common on loopbacks and in host routes; other loopback masks are possible.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c21",
+    "front": "When does bitwise AND produce a 1?",
+    "back": "Only when both input bits are 1. ANDing an address with its mask clears the host bits.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c22",
+    "front": "What does a basic workstation ARP for when the destination is remote?",
+    "back": "Its reachable next-hop gateway's IPv4 address, unless another route applies. The packet keeps the remote destination IP.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c23",
+    "front": "Must a gateway use the first usable address in a subnet?",
+    "back": "No. It must be a valid, unique local router address for the ordinary LAN setup; first or last usable is a convention.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c24",
+    "front": "How many usable addresses are needed for 62 PCs plus one gateway?",
+    "back": "63. A /26 has only 62 usable addresses, so it is too small; /25 supplies 126.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c15",
+    "front": "Can an IPv4 host address end in .0 or .255?",
+    "back": "Yes. In 10.4.8.0/22, 10.4.9.0 and 10.4.8.255 are usable. Calculate the full network and broadcast first.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c16",
+    "front": "Configure 192.168.44.129/26 on the current router interface.",
+    "back": "`ip address 192.168.44.129 255.255.255.192`, then `no shutdown`. Verify the link becomes up/up.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c17",
+    "front": "Which interface summary omits masks, and where can you find them?",
+    "back": "`show ip interface brief` omits them. Detailed `show ip interface` shows a prefix; `show running-config` shows the dotted mask.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c18",
+    "front": "What should you check after IOS rejects an ordinary subnet's host address?",
+    "back": "Check whether the proposed address is the network or broadcast, then inspect the retained configuration. Do not assume the command was applied.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c19",
+    "front": "What does an overlap rejection tell you to examine?",
+    "back": "Calculate the subnet ranges on both the proposed interface and the named existing interface. Check both addresses and masks.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c20",
+    "front": "Why might a host with an overly broad mask still reach a remote subnet?",
+    "back": "Proxy ARP may answer its direct ARP request with a router MAC. A successful ping does not prove that the mask is correct.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ipv4-addressing-c26",
+    "front": "Why should you check both hosts’ masks when comparing their local/remote decisions?",
+    "back": "Each host applies its own mask. Different masks can make one host consider its peer local while the other considers the return destination remote.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

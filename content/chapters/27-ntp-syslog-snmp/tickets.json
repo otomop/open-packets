@@ -1,0 +1,71 @@
+[
+  {
+    "id": "ntp-syslog-snmp-t01",
+    "title": "Local events are missing from the collector",
+    "objectives": [
+      "v2:5.6",
+      "v1:4.5"
+    ],
+    "scenario": "R1’s memory buffer includes the representative link, OSPF and configuration records below. The collector received the two level-3 LINK events but not the displayed level-5 events. Its configuration was unchanged during the interval. The team requires remote records at levels 0–6. Interpret the router’s threshold rather than assuming ping or a logging-host status guarantees delivery.",
+    "exhibits": [
+      {
+        "title": "R1# show logging",
+        "text": "Syslog logging: enabled (0 messages dropped, 0 messages rate-limited, 0 flushes, 0 overruns, xml disabled, filtering disabled)\n...\n    Console logging: level debugging, 58 messages logged, xml disabled,\n                     filtering disabled\n    Monitor logging: level debugging, 0 messages logged, xml disabled,\n                     filtering disabled\n    Buffer logging:  level debugging, 58 messages logged, xml disabled,\n                    filtering disabled\n...\n    Trap logging: level errors, 60 message lines logged\n        Logging to 10.60.0.50  (udp port 514, audit disabled,\n              link up),\n              2 message lines logged,\n              0 message lines rate-limited,\n              0 message lines dropped-by-MD,\n...\nLog Buffer (8192 bytes):\n\nSep 17 08:44:51.210: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down\nSep 17 08:44:52.212: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down\nSep 17 08:44:52.240: %OSPF-5-ADJCHG: Process 1, Nbr 10.0.0.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached\nSep 17 08:45:20.887: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up\nSep 17 08:45:21.889: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up\nSep 17 08:45:58.120: %OSPF-5-ADJCHG: Process 1, Nbr 10.0.0.2 on GigabitEthernet0/1 from LOADING to FULL, Loading Done\nSep 17 09:02:14.003: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.0.0.55)"
+      },
+      {
+        "title": "R1# show running-config | include logging",
+        "text": "logging buffered 8192\nlogging trap errors\nlogging host 10.60.0.50"
+      }
+    ],
+    "question": "Which displayed setting explains why these level-5 events are ineligible for the remote destination?",
+    "options": [
+      "The remote threshold excludes the level-5 records before forwarding.",
+      "The local buffer threshold prevents the router from generating level-5 events.",
+      "The monitor setting replaces the remote threshold for an active SSH session.",
+      "The collector destination requires replaying old buffered events before accepting new ones."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The errors threshold permits levels 0–3, excluding the displayed level-5 records before remote forwarding. Console and buffer settings are independent. The received level-3 records establish those particular deliveries, not that every datagram or future event must arrive.",
+    "fix": "Change the remote threshold to match the stated requirement.\n\n```ios\nR1# configure terminal\nR1(config)# logging trap informational\nR1(config)# end\nR1# show logging\n```\n\nGenerate a harmless new configuration event in the isolated lab and verify the corresponding record on the collector. The new threshold makes levels 0–6 eligible; it does not replay the old buffer or guarantee transport/retention. Save after verification."
+  },
+  {
+    "id": "ntp-syslog-snmp-t02",
+    "title": "A downstream router will not synchronize",
+    "objectives": [
+      "v1:4.2"
+    ],
+    "scenario": "R2 is configured to use R1 at 10.0.12.1. Both routers now report unsynchronized status. The team has an approved alternate time source at 203.0.113.20: R1’s correctly placed capture confirms successful NTP exchanges with that alternate, and it advertises synchronized stratum 2. R1 currently has only the old source 203.0.113.10 configured. These representative excerpts establish source state; they do not establish the cause of the old source’s failure.",
+    "exhibits": [
+      {
+        "title": "R2# show ntp status",
+        "text": "Clock is unsynchronized, stratum 16, no reference clock\nnominal freq is 250.0000 Hz, actual freq is 250.0000 Hz, precision is 2**10\n...\nsystem poll interval is 64, never updated."
+      },
+      {
+        "title": "R1# show ntp status",
+        "text": "Clock is unsynchronized, stratum 16, no reference clock\nnominal freq is 250.0000 Hz, actual freq is 250.0000 Hz, precision is 2**10\n...\nsystem poll interval is 64, last update was 61240 sec ago."
+      },
+      {
+        "title": "R1# show running-config | include ntp",
+        "text": "ntp server 203.0.113.10"
+      },
+      {
+        "title": "R1# ping 203.0.113.10",
+        "text": "Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to 203.0.113.10, timeout is 2 seconds:\n.....\nSuccess rate is 0 percent (0/5)"
+      }
+    ],
+    "question": "Which displayed condition prevents R1 from supplying usable synchronized time to R2?",
+    "options": [
+      "R2 must become a local master before accepting time from R1",
+      "R1 is currently unsynchronized and cannot provide a usable synchronized source to R2",
+      "R2 must use a symmetric peer association solely because R1 is a router",
+      "The failed ICMP test proves every NTP datagram is blocked by a WAN ACL"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "R1’s own stratum-16 status shows that it is not a usable synchronized source at this time. The old-source ping failure does not identify a specific route or filtering cause. Correct R1’s intended source, then separately verify R2’s association and local state.",
+    "fix": "Use the approved alternate source with the successful NTP evidence stated in the scenario.\n\n```ios\nR1# configure terminal\nR1(config)# no ntp server 203.0.113.10\nR1(config)# ntp server 203.0.113.20\nR1(config)# end\nR1# show ntp associations\nR1# show ntp status\n```\n\nWait for actual source selection. R1 should then report stratum 3; R2, if it successfully synchronizes to R1, reports stratum 4. Inspect R2’s associations/status and clock as well. Do not declare R1’s unsourced clock authoritative with ntp master merely to remove an alarm. Investigate the old source separately and save the verified approved configuration."
+  }
+]

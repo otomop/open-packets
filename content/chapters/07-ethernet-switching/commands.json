@@ -1,0 +1,99 @@
+[
+  {
+    "id": "ethernet-switching-d01",
+    "task": "Display the switch’s complete MAC address table so you can compare VLAN, entry type and learned port.",
+    "mode": "SW1#",
+    "answer": "show mac address-table",
+    "accept": [
+      "show mac-address-table"
+    ],
+    "teaching": {
+      "sectionId": "learn-forward-filter-flood",
+      "hint": "Choose the forwarding table rather than the IPv4-to-MAC cache.",
+      "takeaway": "Dynamic rows record source addresses learned on a port within a VLAN. They do not list IP routes, and a host need not be directly attached to the displayed port.",
+      "syntax": [
+        {
+          "text": "show mac address-table",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ethernet-switching-d03",
+    "task": "Find the MAC-table entry for 0050.56be.1a2b without displaying unrelated addresses.",
+    "mode": "SW1#",
+    "answer": "show mac address-table address 0050.56be.1a2b",
+    "accept": [
+      "show mac-address-table address 0050.56be.1a2b"
+    ],
+    "teaching": {
+      "sectionId": "aging-static-entries-and-the-table-commands",
+      "hint": "Filter by the full destination MAC you are tracing.",
+      "takeaway": "Read the VLAN, entry type and port together. An uplink points toward the host; it does not establish that the host is directly cabled to this switch.",
+      "syntax": [
+        {
+          "text": "show mac address-table address",
+          "kind": "keyword"
+        },
+        {
+          "text": "0050.56be.1a2b",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ethernet-switching-d04",
+    "task": "Several hosts sit behind the switch connected to SW1 Fa0/24. Display only MAC-table entries associated with that local uplink.",
+    "mode": "SW1#",
+    "answer": "show mac address-table interface fastethernet0/24",
+    "accept": [
+      "show mac address-table interface fa0/24",
+      "show mac-address-table interface fastethernet0/24"
+    ],
+    "teaching": {
+      "sectionId": "aging-static-entries-and-the-table-commands",
+      "hint": "Filter by the local interface, not by a neighbor’s address.",
+      "takeaway": "Several different source MACs on an uplink are normal. This view answers which learned paths use that port; it does not prove each host is currently reachable.",
+      "syntax": [
+        {
+          "text": "show mac address-table interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "fastethernet0/24",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ethernet-switching-d05",
+    "task": "This switch already has several VLANs. Display only the learned or configured MAC entries for VLAN 10.",
+    "mode": "SW1#",
+    "answer": "show mac address-table vlan 10",
+    "accept": [
+      "show mac-address-table vlan 10"
+    ],
+    "teaching": {
+      "sectionId": "aging-static-entries-and-the-table-commands",
+      "hint": "MAC learning is separated by VLAN.",
+      "takeaway": "A MAC lookup belongs to a VLAN’s forwarding context. This command inspects existing entries; it neither creates VLAN 10 nor assigns access ports to it.",
+      "syntax": [
+        {
+          "text": "show mac address-table vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

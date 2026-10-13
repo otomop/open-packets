@@ -1,0 +1,195 @@
+[
+  {
+    "id": "dhcp-c01",
+    "front": "What is the purpose of each message in initial DORA?",
+    "back": "Discover: client seeks service. Offer: server proposes configuration. Request: client selects an offer. ACK: server confirms allocation. This initial sequence does not describe every later renewal exchange.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "dhcp-c02",
+    "front": "What IP addresses do an initial Discover and a selecting client’s Request normally use?",
+    "back": "Source 0.0.0.0 to destination 255.255.255.255. Scope this to initial acquisition before the client has a usable lease; a renewing Request can instead use the current address and unicast to the server.",
+    "tags": [
+      "number",
+      "compare"
+    ]
+  },
+  {
+    "id": "dhcp-c03",
+    "front": "Which UDP ports belong to DHCPv4 clients and servers?",
+    "back": "Client port 68; server port 67. Initial client messages normally travel 68→67. A server replies to a relay’s giaddr on server port 67, and the relay then delivers toward client port 68.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "dhcp-c04",
+    "front": "Why is the selecting DHCPREQUEST broadcast?",
+    "back": "It identifies the chosen server and requested address while allowing other offering servers to learn that their proposals were not selected. Do not extend that broadcast rule to renewal Requests.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "dhcp-c05",
+    "front": "How do default T1 and T2 differ?",
+    "back": "T1 is normally 50% of the lease: unicast renewal with the leasing server. T2 is normally 87.5%: broadcast rebinding if renewal has not succeeded; server-supplied timers can differ.",
+    "tags": [
+      "number",
+      "concept"
+    ]
+  },
+  {
+    "id": "dhcp-c07",
+    "front": "What does a Windows 169.254/16 address tell you after an attempted DHCP setup?",
+    "back": "The client is using IPv4 link-local configuration rather than the planned DHCP assignment. It does not identify a unique cause such as a bad helper or exhausted pool. Check actual settings and trace the acquisition path.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c08",
+    "front": "How do you exclude 10.10.10.1 through 10.10.10.49 on IOS?",
+    "back": "In global configuration: ip dhcp excluded-address 10.10.10.1 10.10.10.49. Exclusions protect addresses from dynamic allocation; both endpoints are included.",
+    "tags": [
+      "command",
+      "number"
+    ]
+  },
+  {
+    "id": "dhcp-c09",
+    "front": "How do default-router and dns-server pool options differ?",
+    "back": "default-router supplies the client's local gateway; dns-server supplies resolver addresses. Neither value is automatically the DHCP server's own address.",
+    "tags": [
+      "command",
+      "compare"
+    ]
+  },
+  {
+    "id": "dhcp-c10",
+    "front": "How do you make an IOS routed Ethernet interface a DHCPv4 client?",
+    "back": "Enter interface configuration and use ip address dhcp, then no shutdown. Verify the learned interface address, lease where supported, and actual routing table. Do not assume a default route’s presence or distance without checking it.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "dhcp-c11",
+    "front": "Where is ip helper-address placed for ordinary DHCP relay?",
+    "back": "On the Layer 3 interface receiving the client subnet’s broadcasts, such as its gateway SVI or routed interface. Its value is the reachable DHCP server address. A helper only on the server-facing interface misses that initial broadcast.",
+    "tags": [
+      "command",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c12",
+    "front": "What does nonzero giaddr do in an ordinary relayed DHCP request?",
+    "back": "It identifies the relay gateway for the client subnet, allowing normal server pool selection and return delivery to the relay. The server also needs a route to that address. Specialized policies can add selection rules.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "dhcp-c15",
+    "front": "What does no service dhcp disable on the documented IOS implementation?",
+    "back": "The IOS DHCP server and relay agent. service dhcp enables them. Absence of a displayed service dhcp line does not prove disabled service because an enabled default can be omitted from running configuration.",
+    "tags": [
+      "command",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c16",
+    "front": "What does show ip dhcp binding establish?",
+    "back": "The server's recorded address-to-client bindings. Correlate the client identity and verify the client's actual settings; a binding alone does not prove that the client received the ACK.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "dhcp-c17",
+    "front": "How do you verify which interface carries a helper?",
+    "back": "Inspect the relevant interface in show running-config and show ip interface interface-name. Confirm the helper’s address, the client-facing interface, and its operational state; exact display text varies by image.",
+    "tags": [
+      "command",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c18",
+    "front": "What should happen before clearing a DHCP conflict entry?",
+    "back": "Identify and correct the underlying duplicate address or stale evidence. Clearing an entry does not evict the host that might already use the address. Preserve infrastructure exclusions and healthy active bindings.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c19",
+    "front": "Do increasing Discover counters with no successful allocation identify one exact DHCP fault?",
+    "back": "No. Check matching pools, capacity, server policy, outgoing replies, relay return routing, and delivery to the client. Counters establish stages only when correlated with the current attempt and other evidence.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c20",
+    "front": "Who sends DHCPNAK and DHCPDECLINE, and why?",
+    "back": "A server sends NAK for configuration it determines is invalid. A client sends DECLINE when an offered address appears already in use.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "dhcp-c21",
+    "front": "Are initial DHCP Offers and ACKs always broadcasts?",
+    "back": "No. Delivery depends on giaddr, ciaddr, and the BROADCAST flag. A relay receives a server reply at nonzero giaddr; an already-addressed client can receive unicast. A directly attached initial client that requests broadcast gets broadcast delivery under RFC 2131.",
+    "tags": [
+      "concept",
+      "compare"
+    ]
+  },
+  {
+    "id": "dhcp-c22",
+    "front": "How do giaddr and Option 82 differ?",
+    "back": "giaddr is the relay gateway address used in ordinary subnet selection and return delivery. Option 82 is additional relay information; it is not another name for giaddr.",
+    "tags": [
+      "concept",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c23",
+    "front": "What must a client do when its DHCP lease expires?",
+    "back": "Stop using that leased address and restart acquisition if renewal or rebinding has not succeeded.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "dhcp-c24",
+    "front": "Does an old client's working connection prove new DHCP allocation works?",
+    "back": "No. An unexpired lease can sustain traffic while the current acquisition path is broken. Test a fresh client and correlate relay/server evidence.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c25",
+    "front": "Does a DHCP exclusion assign an address to a particular device?",
+    "back": "No. It withholds the address from dynamic allocation. A static endpoint configuration or manual binding is a separate operation.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "dhcp-c26",
+    "front": "Does editing a pool option instantly change existing clients?",
+    "back": "No. Refresh configuration appropriately, then verify the affected client's actual option values before retesting service.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

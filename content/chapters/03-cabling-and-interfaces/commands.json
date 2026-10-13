@@ -1,0 +1,105 @@
+[
+  {
+    "id": "cabling-and-interfaces-d07",
+    "task": "Display the switch’s compact table of port state, VLAN, duplex and speed.",
+    "mode": "SW1#",
+    "answer": "show interfaces status",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "Start with the switch-wide port overview.",
+      "takeaway": "Compare the two ends of the affected connection. A connected state can coexist with a duplex mismatch; the speed and duplex columns supply different evidence.",
+      "syntax": [
+        {
+          "text": "show interfaces status",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-d08",
+    "task": "The compact table shows Fa0/24 connected, but traffic is unreliable. Display that port’s detailed state and error counters.",
+    "mode": "SW1#",
+    "answer": "show interfaces fastethernet0/24",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "Narrow the interface display to the named physical port.",
+      "takeaway": "Compare current counters with a baseline and inspect the far end. A growing CRC count warrants investigation; it does not uniquely identify a cable fault.",
+      "syntax": [
+        {
+          "text": "show interfaces",
+          "kind": "keyword"
+        },
+        {
+          "text": "fastethernet0/24",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-d04",
+    "task": "SW1 Fa0/24 is a 2960 copper FastEthernet port. Its speed was forced during a test; both ends should use automatic speed selection. Restore SW1’s selected port.",
+    "mode": "SW1(config-if)#",
+    "answer": "speed auto",
+    "accept": [
+      "no speed"
+    ],
+    "teaching": {
+      "sectionId": "autonegotiation-and-the-mismatch",
+      "hint": "Remove the forced speed choice; duplex is a separate setting.",
+      "takeaway": "Automatic speed selection must be checked at both ends. This command does not also remove a forced duplex setting.",
+      "syntax": [
+        {
+          "text": "speed auto",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-d05",
+    "task": "SW1 Fa0/24 is a 2960 copper FastEthernet port. Its peer uses automatic negotiation. Restore automatic duplex on the selected SW1 port.",
+    "mode": "SW1(config-if)#",
+    "answer": "duplex auto",
+    "accept": [
+      "no duplex"
+    ],
+    "teaching": {
+      "sectionId": "autonegotiation-and-the-mismatch",
+      "hint": "Change duplex independently of speed.",
+      "takeaway": "Compare both operational displays after the change. On 10/100 Ethernet, one forced-full end and one automatic end can disagree on duplex even while the link is up.",
+      "syntax": [
+        {
+          "text": "duplex auto",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-d13",
+    "task": "SW1 Fa0/24 reports administratively down. The approved plan requires this selected port to be enabled. Correct its administrative setting.",
+    "mode": "SW1(config-if)#",
+    "answer": "no shutdown",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "The output identifies a local configuration state.",
+      "takeaway": "Removing shutdown enables the port administratively. A disconnected cable or disabled peer can still leave its operational state down, so inspect and retest afterward.",
+      "syntax": [
+        {
+          "text": "no shutdown",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

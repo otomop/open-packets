@@ -1,0 +1,1021 @@
+{
+  "chapters": [
+    {
+      "chapterId": "start-here",
+      "number": 0,
+      "beforeCount": 6,
+      "goal": "Move through the basic IOS modes, name a switch, and save and check its configuration.",
+      "demand": "foundation",
+      "reviewLinks": [],
+      "decisions": [
+        {
+          "id": "start-here-d01",
+          "action": "revise",
+          "reason": "First required mode transition in the opening lab."
+        },
+        {
+          "id": "start-here-d02",
+          "action": "revise",
+          "reason": "Second required mode transition, kept as a short direct task."
+        },
+        {
+          "id": "start-here-d03",
+          "action": "revise",
+          "reason": "Naming the opening lab device is the first meaningful configuration success."
+        },
+        {
+          "id": "start-here-d07",
+          "action": "revise",
+          "reason": "Completes the opening configure-then-verify workflow."
+        },
+        {
+          "id": "start-here-d10",
+          "action": "revise",
+          "reason": "Saving is required opening-lab evidence, not optional depth."
+        },
+        {
+          "id": "start-here-d11",
+          "action": "revise",
+          "reason": "Verifies the required save instead of trusting command acceptance."
+        }
+      ]
+    },
+    {
+      "chapterId": "network-models",
+      "number": 1,
+      "beforeCount": 6,
+      "goal": "Follow the packet and distinguish ARP, MAC and routing tables using the supplied lab commands.",
+      "demand": "foundation",
+      "reviewLinks": [
+        {
+          "chapterId": "ipv4-addressing",
+          "reason": "Learn interface-address configuration and verification in Chapter 04."
+        },
+        {
+          "chapterId": "ethernet-switching",
+          "reason": "Practise selecting MAC-table commands in Chapter 07."
+        }
+      ],
+      "emptyReason": "This chapter assesses packet delivery and table interpretation. Its router and display commands are supplied observation tools, so no CLI memorization set is required here.",
+      "decisions": [
+        {
+          "id": "network-models-d01",
+          "action": "retire",
+          "reason": "ARP is interpreted here as one table in a packet walk; independent command selection is deferred to addressing/troubleshooting work.",
+          "owner": "client-os-troubleshooting"
+        },
+        {
+          "id": "network-models-d02",
+          "action": "retire",
+          "reason": "The packet-walk lab supplies the MAC display; Chapter 07 owns switching-table selection and filters.",
+          "owner": "ethernet-switching"
+        },
+        {
+          "id": "network-models-d03",
+          "action": "retire",
+          "reason": "The interface summary is supplied setup evidence before IPv4 configuration is taught.",
+          "owner": "ipv4-addressing"
+        },
+        {
+          "id": "network-models-d04",
+          "action": "retire",
+          "reason": "Connected-route interpretation remains in the lesson and lab; broad route-query recall belongs to Chapter 17.",
+          "owner": "routing-table"
+        },
+        {
+          "id": "network-models-d06",
+          "action": "retire",
+          "reason": "Host ARP-cache syntax is not a network-model outcome; the lab supplies it for observation.",
+          "owner": "client-os-troubleshooting"
+        },
+        {
+          "id": "network-models-d13",
+          "action": "retire",
+          "reason": "A changed destination adds no recall skill beyond introductory ping; this lab assesses the packet and return path.",
+          "owner": "network-models lab"
+        }
+      ]
+    },
+    {
+      "chapterId": "components-and-topologies",
+      "number": 2,
+      "beforeCount": 3,
+      "goal": "Choose device roles and topology paths, then distinguish link, ping and application evidence.",
+      "demand": "foundation",
+      "reviewLinks": [
+        {
+          "chapterId": "cabling-and-interfaces",
+          "reason": "Practise interface inspection in Chapter 03."
+        },
+        {
+          "chapterId": "vlans-and-access-ports",
+          "reason": "Configure and inspect endpoint power and VLAN settings in Chapter 09."
+        }
+      ],
+      "emptyReason": "Device roles, topology choices and PoE capacity are reasoning tasks here. The lab supplies its few commands; configuration recall starts in their owning chapters.",
+      "decisions": [
+        {
+          "id": "components-and-topologies-d11",
+          "action": "retire",
+          "reason": "Compact interface inspection is taught and assessed in Chapter 03; it is only a supplied baseline check here.",
+          "owner": "cabling-and-interfaces"
+        },
+        {
+          "id": "components-and-topologies-d16",
+          "action": "retire",
+          "reason": "An interface description is supplied documentation setup, not evidence of understanding topology or device roles.",
+          "owner": "components-and-topologies lab, Step 1"
+        },
+        {
+          "id": "components-and-topologies-d01",
+          "action": "retire",
+          "reason": "This chapter explicitly presents PoE as a recognition/budget worksheet; operational power selection belongs with endpoint configuration.",
+          "owner": "vlans-and-access-ports"
+        }
+      ]
+    },
+    {
+      "chapterId": "cabling-and-interfaces",
+      "number": 3,
+      "beforeCount": 8,
+      "goal": "Choose link-state evidence and restore intended administrative, speed and duplex settings.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "start-here",
+          "reason": "Review IOS prompts and configuration modes."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "cabling-and-interfaces-d07",
+          "action": "revise",
+          "reason": "First useful interface-inspection command, aligned with interface/cable diagnosis."
+        },
+        {
+          "id": "cabling-and-interfaces-d08",
+          "action": "revise",
+          "reason": "Adds a distinct detailed-evidence choice after the compact overview."
+        },
+        {
+          "id": "cabling-and-interfaces-d02",
+          "action": "retire",
+          "reason": "Forcing 100 Mbps is supplied fault-injection setup; automatic recovery and evidence comparison are the independent outcomes.",
+          "owner": "cabling-and-interfaces lab, Step 5"
+        },
+        {
+          "id": "cabling-and-interfaces-d03",
+          "action": "retire",
+          "reason": "Forcing full duplex recreates the supplied mismatch experiment; the retained recovery item tests the useful correction.",
+          "owner": "cabling-and-interfaces lab, Steps 5–6"
+        },
+        {
+          "id": "cabling-and-interfaces-d04",
+          "action": "revise",
+          "reason": "Repairs the chapter’s test state rather than memorizing arbitrary forced speeds."
+        },
+        {
+          "id": "cabling-and-interfaces-d05",
+          "action": "revise",
+          "reason": "Distinct duplex recovery decision, not another numeric variation."
+        },
+        {
+          "id": "cabling-and-interfaces-d12",
+          "action": "retire",
+          "reason": "Administrative fault injection stays supplied; the retained no-shutdown task tests recognizing and correcting the resulting state.",
+          "owner": "cabling-and-interfaces lab, Steps 3–4"
+        },
+        {
+          "id": "cabling-and-interfaces-d13",
+          "action": "revise",
+          "reason": "Turns a generic command request into a simple evidence-based repair."
+        }
+      ]
+    },
+    {
+      "chapterId": "ipv4-addressing",
+      "number": 4,
+      "beforeCount": 10,
+      "goal": "Translate a prefix into an interface setting and choose evidence for its address, mask and reachability.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "cabling-and-interfaces",
+          "reason": "Review administrative and physical interface state."
+        },
+        {
+          "chapterId": "subnetting-vlsm",
+          "reason": "Extend these address skills into a complete VLSM allocation."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "ipv4-addressing-d01",
+          "action": "revise",
+          "reason": "Keeps one meaningful prefix-to-command application instead of changed-address copies."
+        },
+        {
+          "id": "ipv4-addressing-d02",
+          "action": "retire",
+          "reason": "Administrative enablement is already owned by Chapter 03; no new decision was added here.",
+          "owner": "cabling-and-interfaces"
+        },
+        {
+          "id": "ipv4-addressing-d03",
+          "action": "revise",
+          "reason": "Foundational address/state verification first owned here."
+        },
+        {
+          "id": "ipv4-addressing-d04",
+          "action": "revise",
+          "reason": "Asks for the command needed to resolve a known evidence gap."
+        },
+        {
+          "id": "ipv4-addressing-d05",
+          "action": "revise",
+          "reason": "Distinct configured-versus-operational evidence, with full-output scope stated."
+        },
+        {
+          "id": "ipv4-addressing-d06",
+          "action": "retire",
+          "reason": "Connected-route interpretation remains required lab evidence; another broad route-table recall task is unnecessary before Chapter 17.",
+          "owner": "routing-table"
+        },
+        {
+          "id": "ipv4-addressing-d12",
+          "action": "retire",
+          "reason": "Exact repeat of the opening save command, without a new copy-direction decision.",
+          "owner": "start-here"
+        },
+        {
+          "id": "ipv4-addressing-d13",
+          "action": "revise",
+          "reason": "Basic reachability syntax belongs with addressing, not repeated in every conceptual chapter."
+        },
+        {
+          "id": "ipv4-addressing-d10",
+          "action": "revise",
+          "reason": "Optional bounded configuration-removal practice, distinct from disabling the link."
+        },
+        {
+          "id": "ipv4-addressing-d11",
+          "action": "retire",
+          "reason": "The chapter explains next-hop ARP but does not develop a new ARP inspection decision beyond supplied observation.",
+          "owner": "client-os-troubleshooting"
+        }
+      ]
+    },
+    {
+      "chapterId": "subnetting-vlsm",
+      "number": 5,
+      "beforeCount": 5,
+      "goal": "Calculate capacity, alignment and nonoverlap, then verify the implemented allocation against the plan.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "ipv4-addressing",
+          "reason": "Review the address and prefix-verification commands used in this lab."
+        }
+      ],
+      "emptyReason": "The new skill is building and checking a VLSM plan, not recalling another address-command variation. Use the subnetting exercises and this chapter’s allocation lab.",
+      "decisions": [
+        {
+          "id": "subnetting-vlsm-d01",
+          "action": "retire",
+          "reason": "First-usable arithmetic repeats Chapter 04’s address syntax; allocation decisions are assessed by the subnet trainer and independent lab.",
+          "owner": "subnetting-vlsm lab and subnetting trainer"
+        },
+        {
+          "id": "subnetting-vlsm-d03",
+          "action": "retire",
+          "reason": "Another changed prefix and first-usable address adds no separate command-selection outcome.",
+          "owner": "subnetting-vlsm lab and subnetting trainer"
+        },
+        {
+          "id": "subnetting-vlsm-d04",
+          "action": "retire",
+          "reason": "The reserved /30 is a paper plan in this lab; typing its supplied endpoint creates an unnecessary extra recall requirement.",
+          "owner": "subnetting-vlsm lab, reserved-link allocation"
+        },
+        {
+          "id": "subnetting-vlsm-d06",
+          "action": "retire",
+          "reason": "The VLSM lab already asks learners to predict and compare connected routes; repeating show ip route adds little syntax practice.",
+          "owner": "routing-table"
+        },
+        {
+          "id": "subnetting-vlsm-d07",
+          "action": "retire",
+          "reason": "Same address/prefix inspection as Chapter 04 with only the interface number changed.",
+          "owner": "ipv4-addressing"
+        }
+      ]
+    },
+    {
+      "chapterId": "tcp-udp-ports",
+      "number": 6,
+      "beforeCount": 5,
+      "goal": "Read transport endpoints and packet behavior, and separate ICMP reachability from an application connection.",
+      "demand": "foundation",
+      "reviewLinks": [
+        {
+          "chapterId": "dns",
+          "reason": "Practise DNS query selection when DNS diagnosis is taught."
+        },
+        {
+          "chapterId": "client-os-troubleshooting",
+          "reason": "Choose host configuration and connectivity commands in Chapter 30."
+        }
+      ],
+      "emptyReason": "This chapter teaches TCP/UDP behavior and interpretation of supplied captures and socket output. Host utilities support those observations; they are not a separate command-memorization target here.",
+      "decisions": [
+        {
+          "id": "tcp-udp-ports-d01",
+          "action": "retire",
+          "reason": "A repeat of basic ping with another address does not test TCP/UDP comparison.",
+          "owner": "ipv4-addressing"
+        },
+        {
+          "id": "tcp-udp-ports-d04",
+          "action": "retire",
+          "reason": "The socket snapshot is a required reading exercise, while netstat execution is explicitly optional; recalling its switches is not the transport objective.",
+          "owner": "tcp-udp-ports lab, Step 5"
+        },
+        {
+          "id": "tcp-udp-ports-d05",
+          "action": "retire",
+          "reason": "DNS syntax is supplied to generate a UDP exchange; resolver diagnosis and query selection belong in the DNS chapter.",
+          "owner": "dns"
+        },
+        {
+          "id": "tcp-udp-ports-d11",
+          "action": "retire",
+          "reason": "Host-parameter display is supplied setup here and independently assessed in client troubleshooting.",
+          "owner": "client-os-troubleshooting"
+        },
+        {
+          "id": "tcp-udp-ports-d12",
+          "action": "retire",
+          "reason": "Windows-only TCP-test syntax is optional observation support; the required evidence is understanding the tested transport/service.",
+          "owner": "tcp-udp-ports lesson and client-os-troubleshooting lab"
+        }
+      ]
+    },
+    {
+      "chapterId": "ethernet-switching",
+      "number": 7,
+      "beforeCount": 8,
+      "goal": "Choose a MAC-table view that answers a forwarding or endpoint-location question.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "network-models",
+          "reason": "Review why a MAC table is different from an ARP or routing table."
+        },
+        {
+          "chapterId": "vlans-and-access-ports",
+          "reason": "Apply VLAN membership and learned-location evidence in Chapter 09."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "ethernet-switching-d01",
+          "action": "revise",
+          "reason": "Essential switching-table recall tied to interpretation."
+        },
+        {
+          "id": "ethernet-switching-d03",
+          "action": "revise",
+          "reason": "Distinct host-location lookup rather than another unfiltered request."
+        },
+        {
+          "id": "ethernet-switching-d04",
+          "action": "revise",
+          "reason": "Meaningful interface-filter choice with multi-host uplink context."
+        },
+        {
+          "id": "ethernet-switching-d05",
+          "action": "revise",
+          "reason": "VLAN filter differs from address and interface filters; configuration stays deferred."
+        },
+        {
+          "id": "ethernet-switching-d07",
+          "action": "retire",
+          "reason": "The aging worksheet supplies the timer; memorizing a display command does not demonstrate source-refresh reasoning.",
+          "owner": "ethernet-switching lab, Step 6"
+        },
+        {
+          "id": "ethernet-switching-d08",
+          "action": "retire",
+          "reason": "Clearing learned state is supplied experimental setup, not an independent switching-configuration objective.",
+          "owner": "ethernet-switching lab, Steps 2 and 5"
+        },
+        {
+          "id": "ethernet-switching-d10",
+          "action": "retire",
+          "reason": "Static MAC creation is explicitly a controlled fault demonstration; ordinary forwarding relies on dynamic learning.",
+          "owner": "ethernet-switching lab, Step 9"
+        },
+        {
+          "id": "ethernet-switching-d12",
+          "action": "retire",
+          "reason": "Removing the supplied static fault remains in the lab; memorizing the long reversal overweights a supporting demonstration.",
+          "owner": "ethernet-switching lab, Step 10"
+        }
+      ]
+    },
+    {
+      "chapterId": "ios-essentials",
+      "number": 8,
+      "beforeCount": 12,
+      "goal": "Build local-user SSH access and distinguish line policy, server state and session privilege.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "start-here",
+          "reason": "Review configuration modes and saving."
+        },
+        {
+          "chapterId": "aaa-tacacs-radius",
+          "reason": "Centralized authentication follows in Chapter 33."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "ios-essentials-d01",
+          "action": "revise",
+          "reason": "Directly required local-device access configuration."
+        },
+        {
+          "id": "ios-essentials-d02",
+          "action": "revise",
+          "reason": "Combines account identity and privilege with explicit requirements."
+        },
+        {
+          "id": "ios-essentials-d04",
+          "action": "revise",
+          "reason": "Necessary stated prerequisite for the taught SSH workflow."
+        },
+        {
+          "id": "ios-essentials-d05",
+          "action": "revise",
+          "reason": "Required SSH dependency with platform and prior state bounded."
+        },
+        {
+          "id": "ios-essentials-d06",
+          "action": "revise",
+          "reason": "Keeps server-version selection separate from line admission."
+        },
+        {
+          "id": "ios-essentials-d07",
+          "action": "revise",
+          "reason": "Makes line type and account prerequisite explicit; reinforces recovery access."
+        },
+        {
+          "id": "ios-essentials-d08",
+          "action": "revise",
+          "reason": "Concrete secure-access correction rather than an unexplained template."
+        },
+        {
+          "id": "ios-essentials-d13",
+          "action": "revise",
+          "reason": "Separates successful authentication from intended privilege."
+        },
+        {
+          "id": "ios-essentials-d10",
+          "action": "revise",
+          "reason": "Distinct policy used in the line lab and independent challenge."
+        },
+        {
+          "id": "ios-essentials-d11",
+          "action": "revise",
+          "reason": "Essential server-state verification with a clear evidence limit."
+        },
+        {
+          "id": "ios-essentials-d12",
+          "action": "revise",
+          "reason": "Retained as actual access verification, not optional timer trivia."
+        },
+        {
+          "id": "ios-essentials-d14",
+          "action": "retire",
+          "reason": "The save operation is already owned by Chapter 00; the access lab still requires verifying and saving its final policy.",
+          "owner": "start-here"
+        },
+        {
+          "id": "ios-essentials-d-context-vty",
+          "action": "add",
+          "reason": "Closes a configuration gap: prior tasks started inside line mode but never asked the learner to select the remote VTY context rather than console."
+        }
+      ]
+    },
+    {
+      "chapterId": "vlans-and-access-ports",
+      "number": 9,
+      "beforeCount": 11,
+      "goal": "Create VLAN membership and verify the data, voice and power requirements of an endpoint port.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "ethernet-switching",
+          "reason": "Review learned MAC locations and VLAN context."
+        },
+        {
+          "chapterId": "trunks-dtp",
+          "reason": "Carry these VLANs between switches in Chapter 10."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "vlans-and-access-ports-d01",
+          "action": "revise",
+          "reason": "First required VLAN configuration action."
+        },
+        {
+          "id": "vlans-and-access-ports-d02",
+          "action": "revise",
+          "reason": "Meaningful VLAN-documentation step, retained as core basic configuration."
+        },
+        {
+          "id": "vlans-and-access-ports-d03",
+          "action": "revise",
+          "reason": "Applies endpoint requirements instead of a generic port template."
+        },
+        {
+          "id": "vlans-and-access-ports-d04",
+          "action": "revise",
+          "reason": "Separates mode from membership, a central VLAN misconception."
+        },
+        {
+          "id": "vlans-and-access-ports-d05",
+          "action": "revise",
+          "reason": "Distinct data/voice coexistence requirement in both tracks."
+        },
+        {
+          "id": "vlans-and-access-ports-d06",
+          "action": "revise",
+          "reason": "Core existence/membership verification."
+        },
+        {
+          "id": "vlans-and-access-ports-d07",
+          "action": "revise",
+          "reason": "A meaningful reason to select the detailed port display."
+        },
+        {
+          "id": "vlans-and-access-ports-d08",
+          "action": "retire",
+          "reason": "Disabling PoE is isolated fault injection; the retained automatic-setting repair and power inspection cover useful learner decisions.",
+          "owner": "vlans-and-access-ports lab, PoE exercise"
+        },
+        {
+          "id": "vlans-and-access-ports-d10",
+          "action": "revise",
+          "reason": "PoE evidence is owned with endpoint configuration."
+        },
+        {
+          "id": "vlans-and-access-ports-d14",
+          "action": "revise",
+          "reason": "Reuse of Chapter 07’s interface filter adds a VLAN-membership decision."
+        },
+        {
+          "id": "vlans-and-access-ports-d15",
+          "action": "revise",
+          "reason": "Provides sufficient evidence for a bounded PoE repair."
+        }
+      ]
+    },
+    {
+      "chapterId": "trunks-dtp",
+      "number": 10,
+      "beforeCount": 10,
+      "goal": "Build an 802.1Q trunk and change VLAN permissions without disrupting existing traffic.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "vlans-and-access-ports",
+          "reason": "Review VLAN existence and access membership."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "trunks-dtp-d01",
+          "action": "revise",
+          "reason": "The nonnegotiating peer justifies static trunking."
+        },
+        {
+          "id": "trunks-dtp-d02",
+          "action": "revise",
+          "reason": "Distinct tag interpretation requirement."
+        },
+        {
+          "id": "trunks-dtp-d03",
+          "action": "revise",
+          "reason": "Replacement has different consequences from add/remove."
+        },
+        {
+          "id": "trunks-dtp-d04",
+          "action": "revise",
+          "reason": "Core non-disruptive extension decision."
+        },
+        {
+          "id": "trunks-dtp-d05",
+          "action": "revise",
+          "reason": "Distinct scoped removal, not another added value."
+        },
+        {
+          "id": "trunks-dtp-d06",
+          "action": "revise",
+          "reason": "Conventional static-trunk step bounded to a nonnegotiating peer."
+        },
+        {
+          "id": "trunks-dtp-d08",
+          "action": "retire",
+          "reason": "The old encapsulation-selector command is platform-specific optional setup; the required 2960 lab explicitly does not need it.",
+          "owner": "trunks-dtp lesson, platform compatibility note"
+        },
+        {
+          "id": "trunks-dtp-d10",
+          "action": "revise",
+          "reason": "Selects evidence for a VLAN-specific trunk fault."
+        },
+        {
+          "id": "trunks-dtp-d11",
+          "action": "revise",
+          "reason": "New configured-versus-operational trunk decision using a familiar view."
+        },
+        {
+          "id": "trunks-dtp-d13",
+          "action": "revise",
+          "reason": "Retrieval from Chapter 09 adds a missing-active-VLAN diagnosis."
+        }
+      ]
+    },
+    {
+      "chapterId": "inter-vlan-routing",
+      "number": 11,
+      "beforeCount": 12,
+      "goal": "Choose the correct gateway interface and distinguish management access from inter-VLAN forwarding.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "trunks-dtp",
+          "reason": "Review tag and native-VLAN agreement."
+        },
+        {
+          "chapterId": "ipv4-addressing",
+          "reason": "Review assigning and verifying the gateway address."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "inter-vlan-routing-d01",
+          "action": "revise",
+          "reason": "Essential subinterface context and numbering misconception."
+        },
+        {
+          "id": "inter-vlan-routing-d02",
+          "action": "revise",
+          "reason": "Core router-on-a-stick encapsulation outcome."
+        },
+        {
+          "id": "inter-vlan-routing-d03",
+          "action": "revise",
+          "reason": "Distinct tagged versus untagged mapping."
+        },
+        {
+          "id": "inter-vlan-routing-d04",
+          "action": "revise",
+          "reason": "Evidence-based correction distinct from management gateway configuration."
+        },
+        {
+          "id": "inter-vlan-routing-d05",
+          "action": "revise",
+          "reason": "Core SVI context with prerequisite boundaries."
+        },
+        {
+          "id": "inter-vlan-routing-d06",
+          "action": "revise",
+          "reason": "Required physical L2/L3 choice."
+        },
+        {
+          "id": "inter-vlan-routing-d07",
+          "action": "revise",
+          "reason": "Useful management-versus-routing decision directly taught here."
+        },
+        {
+          "id": "inter-vlan-routing-d08",
+          "action": "retire",
+          "reason": "Unchanged brief-address display adds no choice beyond Chapter 04; SVI-specific and connected-route checks carry the new outcomes.",
+          "owner": "ipv4-addressing"
+        },
+        {
+          "id": "inter-vlan-routing-d09",
+          "action": "revise",
+          "reason": "SVI-autostate evidence extends prior physical-interface verification."
+        },
+        {
+          "id": "inter-vlan-routing-d10",
+          "action": "revise",
+          "reason": "Connected-route verification belongs before full route-selection theory."
+        },
+        {
+          "id": "inter-vlan-routing-d11",
+          "action": "revise",
+          "reason": "Reuse adds verification of the newly taught routed-port state."
+        },
+        {
+          "id": "inter-vlan-routing-d12",
+          "action": "retire",
+          "reason": "The same unqualified trunk-display request is already owned by Chapter 10; it remains part of the lab’s gateway checks.",
+          "owner": "trunks-dtp"
+        }
+      ]
+    },
+    {
+      "chapterId": "cdp-lldp",
+      "number": 12,
+      "beforeCount": 12,
+      "goal": "Select neighbor evidence for a link map and control the correct discovery protocol and direction.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "inter-vlan-routing",
+          "reason": "Review why an advertised management address still needs a working IP path."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "cdp-lldp-d01",
+          "action": "revise",
+          "reason": "Retained configuration objective with a bounded global fault."
+        },
+        {
+          "id": "cdp-lldp-d02",
+          "action": "revise",
+          "reason": "Scope selection rather than blindly disabling discovery everywhere."
+        },
+        {
+          "id": "cdp-lldp-d03",
+          "action": "revise",
+          "reason": "Distinct standards-based discovery process in v1 configuration scope."
+        },
+        {
+          "id": "cdp-lldp-d04",
+          "action": "revise",
+          "reason": "Direction control explains asymmetric visibility."
+        },
+        {
+          "id": "cdp-lldp-d05",
+          "action": "revise",
+          "reason": "Reception control tests a different direction, not another interface value."
+        },
+        {
+          "id": "cdp-lldp-d06",
+          "action": "revise",
+          "reason": "Core two-ended documentation evidence begins with an accessible table choice."
+        },
+        {
+          "id": "cdp-lldp-d07",
+          "action": "revise",
+          "reason": "Specific need for detail beyond the compact port map."
+        },
+        {
+          "id": "cdp-lldp-d08",
+          "action": "retire",
+          "reason": "Local timer/process display stays a supplied reference; prioritize configuration, participation and neighbor evidence over a timer-command catalog.",
+          "owner": "cdp-lldp lesson and lab, Step 5"
+        },
+        {
+          "id": "cdp-lldp-d09",
+          "action": "revise",
+          "reason": "Diagnostic command differs from a neighbor-cache lookup."
+        },
+        {
+          "id": "cdp-lldp-d10",
+          "action": "revise",
+          "reason": "Vendor-neutral topology evidence rather than assuming CDP everywhere."
+        },
+        {
+          "id": "cdp-lldp-d11",
+          "action": "revise",
+          "reason": "Identity discrimination justifies the expanded view."
+        },
+        {
+          "id": "cdp-lldp-d12",
+          "action": "retire",
+          "reason": "A second local timer display is unnecessary recall; LLDP process and cache timing remain in the lesson/lab.",
+          "owner": "cdp-lldp lesson and lab, Step 5"
+        }
+      ]
+    },
+    {
+      "chapterId": "etherchannel",
+      "number": 13,
+      "beforeCount": 9,
+      "goal": "Build a negotiated LACP bundle and verify its members, partner and routed or switched role.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "trunks-dtp",
+          "reason": "Review common VLAN settings carried by a Layer 2 bundle."
+        },
+        {
+          "chapterId": "inter-vlan-routing",
+          "reason": "Review routed interfaces before a Layer 3 port channel."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "etherchannel-d01",
+          "action": "revise",
+          "reason": "Core LACP construction with preparation state stated."
+        },
+        {
+          "id": "etherchannel-d02",
+          "action": "revise",
+          "reason": "Distinct active/passive reasoning rather than another group number."
+        },
+        {
+          "id": "etherchannel-d05",
+          "action": "revise",
+          "reason": "Verification reveals a potentially hidden degraded-capacity condition."
+        },
+        {
+          "id": "etherchannel-d06",
+          "action": "retire",
+          "reason": "This is a simulator fallback for the summary/partner views, not another independent recall target.",
+          "owner": "etherchannel lesson, Read the bundle and partner state"
+        },
+        {
+          "id": "etherchannel-d07",
+          "action": "revise",
+          "reason": "Distinct partner-validation choice."
+        },
+        {
+          "id": "etherchannel-d09",
+          "action": "retire",
+          "reason": "Hash behavior and single-flow capacity are interpretation outcomes; the platform display stays reference without compulsory recall.",
+          "owner": "etherchannel lesson, Understand traffic distribution and capacity"
+        },
+        {
+          "id": "etherchannel-d10",
+          "action": "revise",
+          "reason": "Required logical context with a practical reason."
+        },
+        {
+          "id": "etherchannel-d13",
+          "action": "revise",
+          "reason": "Reuses no-switchport for the new aggregate-role and address-placement decision."
+        },
+        {
+          "id": "etherchannel-d12",
+          "action": "revise",
+          "reason": "Bounded rebuilding step used for the lab’s passive/passive correction."
+        }
+      ]
+    },
+    {
+      "chapterId": "spanning-tree",
+      "number": 14,
+      "beforeCount": 10,
+      "goal": "Verify Rapid PVST+ state, place the root deliberately and apply a justified path preference.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "trunks-dtp",
+          "reason": "Review VLAN forwarding over trunks."
+        },
+        {
+          "chapterId": "stp-protection",
+          "reason": "Apply edge and boundary protection after understanding the normal tree."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "spanning-tree-d01",
+          "action": "revise",
+          "reason": "Core v2 configuration; optional reinforcement for v1 interpretation."
+        },
+        {
+          "id": "spanning-tree-d02",
+          "action": "revise",
+          "reason": "Root-placement decision and nonpermanent-macro misconception."
+        },
+        {
+          "id": "spanning-tree-d03",
+          "action": "revise",
+          "reason": "Backup preference differs from primary selection and an explicit arbitrary priority."
+        },
+        {
+          "id": "spanning-tree-d04",
+          "action": "revise",
+          "reason": "Calculation reinforces the actual election field rather than adding another macro copy."
+        },
+        {
+          "id": "spanning-tree-d05",
+          "action": "revise",
+          "reason": "Essential evidence for STP interpretation."
+        },
+        {
+          "id": "spanning-tree-d06",
+          "action": "retire",
+          "reason": "The extra all-VLAN root summary is a convenient alternate view; the retained per-VLAN display establishes root, cost and role.",
+          "owner": "spanning-tree lesson, Reading the output"
+        },
+        {
+          "id": "spanning-tree-d07",
+          "action": "revise",
+          "reason": "Distinct global-mode verification before interpreting topology behavior."
+        },
+        {
+          "id": "spanning-tree-d08",
+          "action": "revise",
+          "reason": "Meaningful path preference tied to the lab’s cost experiment."
+        },
+        {
+          "id": "spanning-tree-d09",
+          "action": "retire",
+          "reason": "Sender-port priority tuning is a secondary tie-break demonstration. Keep comparison reasoning in questions/lesson without another tuning command.",
+          "owner": "spanning-tree lesson, Port roles and path selection"
+        },
+        {
+          "id": "spanning-tree-d10",
+          "action": "revise",
+          "reason": "Port-level control-plane evidence later reused for protection diagnosis."
+        }
+      ]
+    },
+    {
+      "chapterId": "stp-protection",
+      "number": 15,
+      "beforeCount": 11,
+      "goal": "Match an STP protection to the port’s role and distinguish guard inconsistency from err-disable.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "spanning-tree",
+          "reason": "Review normal roles, states and root selection before applying protection."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "stp-protection-d01",
+          "action": "revise",
+          "reason": "Required edge decision with the no-transit premise stated."
+        },
+        {
+          "id": "stp-protection-d02",
+          "action": "revise",
+          "reason": "Extra lab depth for a genuine boundary exception, not another ordinary access-port copy."
+        },
+        {
+          "id": "stp-protection-d03",
+          "action": "revise",
+          "reason": "Global scope differs materially from a single protected access port."
+        },
+        {
+          "id": "stp-protection-d04",
+          "action": "revise",
+          "reason": "Contrasts independent interface guard with the global edge-only default."
+        },
+        {
+          "id": "stp-protection-d05",
+          "action": "revise",
+          "reason": "Real scope distinction used in the protection worksheet."
+        },
+        {
+          "id": "stp-protection-d06",
+          "action": "retire",
+          "reason": "Automatic errdisable recovery is explicitly an optional configuration-reading experiment, not the cause-removal or protection-selection outcome.",
+          "owner": "stp-protection lab, Step 10"
+        },
+        {
+          "id": "stp-protection-d08",
+          "action": "revise",
+          "reason": "Selects protection from the boundary role and trigger."
+        },
+        {
+          "id": "stp-protection-d10",
+          "action": "revise",
+          "reason": "Role-and-trigger selection supports the independent worksheet."
+        },
+        {
+          "id": "stp-protection-d11",
+          "action": "revise",
+          "reason": "Core operational discrimination under both tracks."
+        },
+        {
+          "id": "stp-protection-d12",
+          "action": "revise",
+          "reason": "Reuse of Chapter 14’s summary now answers global-versus-interface protection scope."
+        },
+        {
+          "id": "stp-protection-d13",
+          "action": "retire",
+          "reason": "Timer/recovery-policy inspection belongs to the optional worksheet; retained ordinary guard-state checks supply required evidence.",
+          "owner": "stp-protection lab, Steps 10–11"
+        }
+      ]
+    }
+  ]
+}

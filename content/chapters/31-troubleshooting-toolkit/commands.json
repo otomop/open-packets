@@ -1,0 +1,221 @@
+[
+  {
+    "id": "troubleshooting-toolkit-d01",
+    "task": "R1 can ping server 10.0.20.10 using its transit source, but LAN clients cannot. R1 owns 10.0.10.1 on Gi0/0. Send a ping to the server using that LAN address as the source.",
+    "mode": "R1#",
+    "answer": "ping 10.0.20.10 source 10.0.10.1",
+    "accept": [
+      "ping 10.0.20.10 source gigabitethernet0/0"
+    ],
+    "teaching": {
+      "sectionId": "ping-and-extended-ping",
+      "hint": "Change the reply destination while keeping the remote target unchanged.",
+      "takeaway": "A sourced ping tests the return path toward 10.0.10.1. It still originates on R1, so success does not establish that a particular client’s access path and policy work.",
+      "syntax": [
+        {
+          "text": "ping",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.20.10",
+          "kind": "argument"
+        },
+        {
+          "text": "source",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.10.1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-d02",
+    "task": "Small pings to 10.0.20.10 succeed, but large transfers stall. On IOS supporting this one-line form, send five 1500-byte IPv4 datagrams without permitting fragmentation.",
+    "mode": "R1#",
+    "answer": "ping 10.0.20.10 repeat 5 size 1500 df-bit",
+    "accept": [
+      "ping 10.0.20.10 size 1500 repeat 5 df-bit"
+    ],
+    "teaching": {
+      "sectionId": "ping-and-extended-ping",
+      "hint": "Control packet size and prevent routers from fragmenting this IPv4 probe.",
+      "takeaway": "A fragmentation-needed response is positive size-limit evidence; a timeout could also be loss or filtering. The IOS size is the IP datagram size, unlike a host tool’s payload-size field.",
+      "syntax": [
+        {
+          "text": "ping",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.20.10",
+          "kind": "argument"
+        },
+        {
+          "text": "repeat",
+          "kind": "keyword"
+        },
+        {
+          "text": "5",
+          "kind": "argument"
+        },
+        {
+          "text": "size",
+          "kind": "keyword"
+        },
+        {
+          "text": "1500",
+          "kind": "argument"
+        },
+        {
+          "text": "df-bit",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "supporting",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-d03",
+    "task": "R1 has an installed route to 10.0.20.10, but probes fail. Use the IOS command that reveals responding hops toward that numeric destination.",
+    "mode": "R1#",
+    "answer": "traceroute 10.0.20.10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "traceroute-on-ios-windows-and-linux",
+      "hint": "Choose a path observation, rather than another local route-table display.",
+      "takeaway": "Asterisks mean the probes received no usable reply in time. Later responding hops show why silence at one hop does not by itself prove a forwarding failure there.",
+      "syntax": [
+        {
+          "text": "traceroute",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.20.10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-d05",
+    "task": "Traffic is intermittently lost across R1 Gi0/1 even though it is up/up. Display that interface’s speed, duplex and detailed error counters before changing the route.",
+    "mode": "R1#",
+    "answer": "show interfaces gigabitethernet0/1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "interfaces-counters-mac-and-arp-tables",
+      "hint": "The brief IP table cannot show whether new receive errors are accumulating.",
+      "takeaway": "Compare counter increments over the same interval at both ends. An up/up link can still carry errors; one old CRC total cannot identify the current fault or prove a damaged cable.",
+      "syntax": [
+        {
+          "text": "show interfaces",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/1",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-d07",
+    "task": "Several outages coincide with reported link changes. On IOS supporting output filters, display buffered log lines containing the exact uppercase text LINK without changing logging configuration.",
+    "mode": "R1#",
+    "answer": "show logging | include LINK",
+    "accept": [],
+    "teaching": {
+      "sectionId": "logs-and-device-operations",
+      "hint": "Use a display filter; the matching text is case-sensitive.",
+      "takeaway": "This view omits nonmatching messages, including separate LINEPROTO events. Correlate timestamps and inspect the unfiltered context before attributing an outage to a particular cause.",
+      "syntax": [
+        {
+          "text": "show logging",
+          "kind": "keyword"
+        },
+        {
+          "text": "| include",
+          "kind": "keyword"
+        },
+        {
+          "text": "LINK",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-d10",
+    "task": "An IPv4 neighbor entry identifies client MAC 0001.9612.0a11. On SW1, look up that exact MAC to identify its learned VLAN and port before checking the endpoint’s attachment.",
+    "mode": "SW1#",
+    "answer": "show mac address-table address 0001.9612.0a11",
+    "accept": [
+      "show mac-address-table address 0001.9612.0a11"
+    ],
+    "teaching": {
+      "sectionId": "interfaces-counters-mac-and-arp-tables",
+      "hint": "Use the switch’s forwarding table, not another IP-to-MAC lookup.",
+      "takeaway": "A trunk result points toward another switch, so continue the trace there. The learned entry records where source traffic was seen; it does not verify the client’s mask or gateway.",
+      "syntax": [
+        {
+          "text": "show mac address-table address",
+          "kind": "keyword"
+        },
+        {
+          "text": "0001.9612.0a11",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-d13",
+    "task": "PC-A is 10.0.10.50. A server-side capture shows its request arrived and the reply left toward R2, yet PC-A receives nothing. On R2, inspect the installed route chosen for that exact reply destination.",
+    "mode": "R2#",
+    "answer": "show ip route 10.0.10.50",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot-a-fault-walk",
+      "hint": "Look up the affected host, because a more-specific route can override its subnet route.",
+      "takeaway": "The selected return prefix and next hop are the evidence you need. A working route to another client—or a router’s own sourced ping—can miss a host-specific discard route.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.10.50",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

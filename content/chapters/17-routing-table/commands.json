@@ -1,0 +1,44 @@
+[
+  {
+    "id": "routing-table-d01",
+    "task": "Before predicting how R1 forwards a packet, display its complete installed IPv4 routing table, including all route sources.",
+    "mode": "R1#",
+    "answer": "show ip route",
+    "accept": [],
+    "teaching": {
+      "sectionId": "why-the-table-is-the-whole-story",
+      "hint": "Begin with the complete installed table so a more-specific route is not hidden.",
+      "takeaway": "This shows selected routes, not every configured candidate. Choose a packet's longest matching prefix after reading the entries; administrative distance does not override a longer installed match.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "routing-table-d04",
+    "task": "R1 has a nondefault route covering 10.20.30.150. Request the installed entry that matches this destination so you can read its prefix and next hop.",
+    "mode": "R1#",
+    "answer": "show ip route 10.20.30.150",
+    "accept": [],
+    "teaching": {
+      "sectionId": "longest-prefix-match-the-forwarding-decision",
+      "hint": "A destination-specific lookup takes the packet's address, not a guessed network address.",
+      "takeaway": "Use the returned prefix to explain the forwarding choice. If only a default should apply, inspect the full table as well because destination-lookup display behavior varies by IOS image.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.20.30.150",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

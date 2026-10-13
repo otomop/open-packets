@@ -1,0 +1,72 @@
+[
+  {
+    "id": "trunks-dtp-t01",
+    "title": "Existing VLANs fail after VLAN 30 is added",
+    "objectives": [
+      "v1:2.2.a",
+      "v2:2.1.b"
+    ],
+    "scenario": "SW1 Gi0/1 connects to SW2 Gi0/1. Each switch has one correctly addressed PC in VLAN 10 (192.168.10.0/24), VLAN 20 (192.168.20.0/24) and VLAN 30 (192.168.30.0/24). Same-VLAN communication across the link worked for VLANs 10 and 20 before a change intended to add VLAN 30. Now only the new VLAN 30 pair communicates across it. Both switch consoles are available. The following excerpts are representative teaching evidence.",
+    "exhibits": [
+      {
+        "title": "SW1 trunk summary",
+        "text": "Port        Mode   Encapsulation   Status      Native vlan\nGi0/1       on     802.1q          trunking    99\n\nVlans allowed on trunk: 30\nVlans allowed and active: 30\nVlans forwarding and not pruned: 30"
+      },
+      {
+        "title": "Recorded configuration of SW1 Gi0/1",
+        "text": "interface GigabitEthernet0/1\n switchport mode trunk\n switchport trunk native vlan 99\n switchport trunk allowed vlan 30\n switchport nonegotiate"
+      },
+      {
+        "title": "Checks completed on both switches",
+        "text": "VLANs 10,20,30,99 exist and are active locally.\nPC access-port assignments and /24 addresses match the design.\nSW2 Gi0/1 is trunking, native 99, with 10,20,30,99 allowed and forwarding."
+      }
+    ],
+    "question": "Which diagnosis fits all the evidence?",
+    "options": [
+      "Creating VLAN 30 replaced VLAN 20 in the VLAN database.",
+      "The allowed list on SW1 was replaced by 30 instead of extended.",
+      "The link changed into an access connection in VLAN 30.",
+      "The native VLAN on SW1 changed from 99 to 30."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SW1 remains an operational trunk with native VLAN 99. Its allowed list contains only 30, even though the original VLANs still exist. That selective filter explains why the new pair works and the old same-VLAN pairs fail.",
+    "fix": "Use SW1's console to restore the required VLANs while retaining 30.\n\n```ios SW1\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# switchport trunk allowed vlan add 10,20,99\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nThe allowed list should become 10,20,30,99. Verify local activity and forwarding, then repeat each same-VLAN pair's test in both directions. Do not assume the list alone proves host connectivity. Save after verification and correct the change instructions to distinguish replacement from add."
+  },
+  {
+    "id": "trunks-dtp-t02",
+    "title": "Native VLAN agreement is missing on a replacement switch",
+    "objectives": [
+      "v1:2.2.c",
+      "v2:2.1.b"
+    ],
+    "scenario": "The intended native VLAN between SW1 Gi0/1 and SW2 Gi0/1 is 99. A test PC on each switch uses an access port in VLAN 99, with addresses 10.99.0.11/24 and 10.99.0.12/24 and no gateway. Their same-subnet test stopped working after SW2 was replaced. Separate tagged VLAN 10 tests still work in this reported incident. The displays below are representative configuration evidence, not a guarantee of identical protection behavior on every platform.",
+    "exhibits": [
+      {
+        "title": "SW1 Gi0/1 configuration",
+        "text": "switchport mode trunk\nswitchport trunk native vlan 99\nswitchport trunk allowed vlan 10,20,99\nswitchport nonegotiate"
+      },
+      {
+        "title": "Replacement SW2 Gi0/1 configuration",
+        "text": "switchport mode trunk\nswitchport trunk native vlan 1\nswitchport trunk allowed vlan 10,20,99\nswitchport nonegotiate"
+      },
+      {
+        "title": "Completed local checks",
+        "text": "Both physical uplink ports are connected and configured as trunks.\nVLAN 99 exists and is active on each switch.\nThe two test PC ports are static access VLAN 99 and linked.\nPC addresses and masks match the stated 10.99.0.0/24 design."
+      }
+    ],
+    "question": "What configuration defect must be repaired?",
+    "options": [
+      "The test PCs need default gateways for their same-subnet traffic.",
+      "The switches must negotiate DTP before native frames can pass.",
+      "The replacement switch's native VLAN is 1 instead of the agreed 99.",
+      "VLAN 99 must be removed from both allowed lists."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The native settings differ explicitly. Under default treatment, an ordinary untagged frame sent from SW1 as VLAN 99 is not classified as VLAN 99 by SW2. Native mismatches may also trigger spanning-tree protection; neither a working tagged VLAN nor the absence of a particular warning makes this configuration correct.",
+    "fix": "Restore the documented native VLAN on the replacement switch through its console.\n\n```ios SW2\nSW2# configure terminal\nSW2(config)# interface gigabitethernet0/1\nSW2(config-if)# switchport trunk native vlan 99\nSW2(config-if)# end\nSW2# show interfaces trunk\n```\n\nCompare both native and allowed settings, allow any protective state to recover, and repeat the VLAN 99 and VLAN 10 tests. If a state remains nonforwarding, inspect its evidence rather than disabling spanning tree. Update the replacement template and save the verified configuration."
+  }
+]

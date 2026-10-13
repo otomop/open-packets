@@ -1,0 +1,64 @@
+[
+  {
+    "id": "ospfv2-t01",
+    "title": "Database exchange stalls after an MTU change",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "scenario": "R1 and B2 share a direct point-to-point Ethernet link. The link supports IPv4 MTU 1500, both interfaces are up/up, and small pings work. B2 alone received an accidental ip mtu 1400 command. These excerpts are representative evidence. The compared interface on B2 is GigabitEthernet0/1.",
+    "exhibits": [
+      {
+        "title": "R1 OSPF neighbor",
+        "text": "2.2.2.2  EXSTART/ -  10.0.12.2  Gi0/1\nState repeatedly returns to EXSTART."
+      },
+      {
+        "title": "Interface comparison",
+        "text": "R1: 10.0.12.1/30, area 0, point-to-point, Hello 10, Dead 40, IP MTU 1500\nB2: 10.0.12.2/30, area 0, point-to-point, Hello 10, Dead 40, IP MTU 1400"
+      }
+    ],
+    "question": "Which fault is supported by the evidence?",
+    "options": [
+      "No DR exists on the point-to-point link.",
+      "B2 has an inconsistent IP MTU during database exchange.",
+      "The /30 subnet cannot carry OSPF LSAs.",
+      "B2 must use R1's router ID for synchronization."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The displayed MTUs differ even though the link supports 1500 and the other intended parameters agree. OSPF database exchange checks MTU; small ping success does not prove a large packet or DBD can be accepted. Restore the intended value and verify Full and the remote LAN route.",
+    "fix": "```ios B2\nB2# configure terminal\nB2(config)# interface gigabitethernet0/1\nB2(config-if)# no ip mtu\nB2(config-if)# end\nB2# show ip interface gigabitethernet0/1\nB2# show ip ospf neighbor\nB2# show ip route ospf\n```\nThis scenario explicitly states that 1500 is supported. If the underlying service requires a smaller MTU, agree a consistent supported value instead; do not bypass the check as a routine repair."
+  },
+  {
+    "id": "ospfv2-t02",
+    "title": "A copied timer template prevents shared-LAN neighbors",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "scenario": "R2 and R3 are in the same Ethernet VLAN. Both /24 interfaces are up/up and bidirectional ping succeeds. R3 received an explicit 30/120 timer template; the intended shared-LAN design is 10/40. Output below is representative.",
+    "exhibits": [
+      {
+        "title": "R2 Gi0/2 interface",
+        "text": "10.0.23.2/24, Area 0, Process 10, RID 2.2.2.2\nNetwork Type BROADCAST; Hello 10, Dead 40"
+      },
+      {
+        "title": "R3 Gi0/2 interface",
+        "text": "10.0.23.3/24, Area 0, Process 30, RID 3.3.3.3\nNetwork Type BROADCAST; Hello 30, Dead 120"
+      }
+    ],
+    "question": "What must be repaired to establish the intended relationship?",
+    "options": [
+      "Make both process IDs 10.",
+      "Change one router to a new area for the VLAN.",
+      "Restore matching effective Hello/dead intervals.",
+      "Replace the /24 with a /30 mask on R3 only."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The Hello and dead values differ. The process IDs may differ, the shared area already matches, and changing one mask would introduce another fault. Restore the intended timer defaults and verify rather than promising an exact time to Full.",
+    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/2\nR3(config-if)# no ip ospf hello-interval\nR3(config-if)# no ip ospf dead-interval\nR3(config-if)# end\nR3# show ip ospf interface gigabitethernet0/2\nR3# show ip ospf neighbor\n```\nConfirm the effective timer pair is 10/40 and the expected adjacency reaches Full before saving."
+  }
+]

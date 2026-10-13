@@ -1,0 +1,181 @@
+[
+  {
+    "id": "spanning-tree-c01",
+    "front": "Default configurable bridge priority, and its display in VLAN 10?",
+    "back": "32768; the VLAN 10 extended system ID produces displayed priority 32778.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c02",
+    "front": "How does a VLAN elect its root bridge?",
+    "back": "Lowest complete BID: priority/system-ID field first, then MAC. Priority zero still has a MAC tie-breaker.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c03",
+    "front": "What does the root-primary macro configure?",
+    "back": "24576 when that wins; for an already lower root, it attempts a value 4096 lower. It is not continuous protection; verify the result, especially near zero.",
+    "tags": [
+      "command",
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c04",
+    "front": "What does the root-secondary macro configure?",
+    "back": "Priority 28672. This is a useful preference behind 24576 and ahead of default 32768, not a reserved second-place role.",
+    "tags": [
+      "number",
+      "command"
+    ]
+  },
+  {
+    "id": "spanning-tree-c05",
+    "front": "Legal configurable bridge priorities?",
+    "back": "0 through 61440, in steps of 4096. The VLAN ID is added for the per-VLAN displayed field.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c06",
+    "front": "Short-method costs at 10 Mbps, 100 Mbps, 1 Gbps, and 10 Gbps?",
+    "back": "100, 19, 4, and 2 respectively. Verify the cost method before applying the table.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c07",
+    "front": "Root-port comparison when candidates advertise the same root?",
+    "back": "Total root path cost → sender BID → sender port ID → local receiving port ID if still tied.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c08",
+    "front": "How is a candidate root path cost calculated?",
+    "back": "Received advertised root cost plus the cost of the local receiving interface. The root advertises zero.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c09",
+    "front": "How many root and designated ports are selected?",
+    "back": "One root port per connected non-root bridge per instance; one designated port per segment. The root has no root port.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c10",
+    "front": "How do alternate and backup roles differ?",
+    "back": "Alternate: another path toward the root through another bridge. Backup: redundant local attachment to a shared segment served by this bridge's own designated port.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "spanning-tree-c11",
+    "front": "Can a healthy alternate remain discarding longer than max age?",
+    "back": "Yes. It remains discarding while valid superior information keeps the redundant path unnecessary. Max age is not a deadline forcing that port to forward.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c12",
+    "front": "How does learning differ from forwarding in RSTP?",
+    "back": "Both learn user-frame source MACs; only forwarding permits eligible user frames to leave through the port. Discarding does neither.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c13",
+    "front": "Default hello, max-age, and forward-delay timers?",
+    "back": "2 seconds, 20 seconds, and 15 seconds. These are distinct timers, not one universal convergence guarantee.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c15",
+    "front": "Rapid PVST+ command and how to verify the mode?",
+    "back": "Configure `spanning-tree mode rapid-pvst`; check `show spanning-tree summary` and `protocol rstp` in the VLAN view. Older 2960 defaults use PVST+.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "spanning-tree-c16",
+    "front": "What does Prio.Nbr 128.25 represent?",
+    "back": "Port priority 128 and STP port number 25. The STP number is platform-specific and is not necessarily the interface-name suffix.",
+    "tags": [
+      "concept",
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c17",
+    "front": "How does show output identify the local root?",
+    "back": "Root ID and local Bridge ID match, with `This bridge is the root`; there is no local root port and root cost is zero.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "spanning-tree-c18",
+    "front": "How do STP/RSTP relate to PVST+/Rapid PVST+?",
+    "back": "PVST+ is Cisco's classic per-VLAN version; Rapid PVST+ uses rapid behavior per VLAN. Historical standards are 802.1D and 802.1w.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "spanning-tree-c19",
+    "front": "Default and configurable port-priority values?",
+    "back": "Default 128; values 0–240 in steps of 16. The sending port ID participates before the receiving port ID in root-port ties.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c20",
+    "front": "How is the designated end chosen on a segment?",
+    "back": "Compare advertised root ID, root path cost, sender BID, then sender port ID. Do not add the segment's receiving cost to the advertisements.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c21",
+    "front": "Does an STP cost change increase link bandwidth?",
+    "back": "No. It changes path selection. A different selected root cost can change the information advertised to neighboring switches.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c22",
+    "front": "Can one trunk have different Rapid PVST+ roles for two VLANs?",
+    "back": "Yes. Each VLAN has its own instance, root and path comparison; read the named VLAN rather than treating the physical port as one universal role.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c23",
+    "front": "Must every switched user frame travel through the root bridge?",
+    "back": "No. STP supplies a loop-free forwarding topology. Normal destination-MAC forwarding can keep a local exchange away from the root.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

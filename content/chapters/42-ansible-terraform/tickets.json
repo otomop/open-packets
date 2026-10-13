@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ansible-terraform-t03",
+    "title": "The play fails although a manual SSH test succeeds",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "scenario": "The approved task collects show version and show ip interface brief from r1 only. A manual check works, but a new Ansible run fails. The following effective inventory was inspected without printing passwords. Both tests use the same Ubuntu account and verified target key.",
+    "exhibits": [
+      {
+        "title": "Working manual test",
+        "text": "ssh labreader@10.42.0.2 succeeds.\nBoth approved show commands work at R1>."
+      },
+      {
+        "title": "Run evidence",
+        "text": "ansible_host: 10.42.0.2\nansible_user: retired-reader\nAuthentication failed; no stdout returned.\nApproved change record: retired-reader removed; labreader remains the collection account."
+      }
+    ],
+    "question": "Which correction is supported before rerunning the collection?",
+    "options": [
+      "Increase the command timeout and leave the selected user unchanged.",
+      "Remove the interface command because any FAILED result proves login succeeded.",
+      "Use the approved labreader identity in the effective inventory.",
+      "Disable host-key checking because a password failure means the key changed."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The supposedly equivalent tests selected different usernames. Address, host identity and manual permissions were checked; the explicit authentication error occurs before command output. A timeout or command edit does not correct that account difference, and no host-key mismatch was observed.",
+    "fix": "Change the applicable inventory variable to `ansible_user: labreader`; do not recreate the retired account. Verify the effective nonsecret settings and run `ansible-playbook -i inventory.yml collect.yml --limit r1 --list-hosts`. Then execute the same approved collection with `--limit r1 --ask-pass`, supplying the labreader password. Retain the returned version/interface output and compare it with the manual result. Keep host-key checking enabled and record that this repair changed the collection identity, not router configuration."
+  },
+  {
+    "id": "ansible-terraform-t04",
+    "title": "The report stops before showing the interface table",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "scenario": "A one-router play collects operational output, then displays result.stdout_lines[1]. It uses normal error handling. Manual SSH from the same control user reaches the intended router, and the supported interface command works there.",
+    "exhibits": [
+      {
+        "title": "Collection task",
+        "text": "cisco.ios.ios_command:\n  commands:\n    - show version\n    - show ip interfaces brief\nregister: result"
+      },
+      {
+        "title": "Observed run",
+        "text": "YAML syntax check passes.\nDevice parser rejects \"show ip interfaces brief\".\nThe second debug task is not executed.\nManual \"show ip interface brief\" returns the intended interface table."
+      }
+    ],
+    "question": "Which repair addresses the evidence?",
+    "options": [
+      "Change stdout_lines[1] to stdout_lines[0] and rerun the same command list.",
+      "Correct interfaces to interface in the collection task and rerun it.",
+      "Add ignore_errors so the following debug task can count as successful collection.",
+      "Replace the SSH password because the recap includes a failed task."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The device rejected a mistyped command. The unchanged index 1 correctly refers to the second command once that command succeeds. Ignoring a failure does not supply the expected result, and the device parser response does not indicate rejected authentication.",
+    "fix": "In the fault copy, change only the line to `- show ip interface brief`. Run the syntax check, inspect `--limit r1 --list-hosts`, and execute the repaired file with the same limit and `--ask-pass`. Verify that the IOS command task succeeds and its following display contains the actual interface output from r1. Compare its address/state with the manual baseline. Preserve the failure record and note that show version may have executed before the bad second command."
+  }
+]

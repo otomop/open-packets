@@ -1,0 +1,178 @@
+[
+  {
+    "id": "routing-table-c01",
+    "front": "What is the order of the two values in [110/20]?",
+    "back": "Administrative distance first, metric second. In an OSPF entry, 20 is a cost rather than necessarily a hop count.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c02",
+    "front": "What are the default ADs for connected and static routes?",
+    "back": "Connected 0; ordinary static 1. A configured static distance can override its default.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c03",
+    "front": "What are the common internal and external EIGRP ADs?",
+    "back": "Internal EIGRP 90; external EIGRP 170. Recognize them in route exhibits; EIGRP configuration is outside this chapter.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c04",
+    "front": "What are the OSPF and RIP AD defaults?",
+    "back": "OSPF 110; RIP 120. If both offer the same eligible prefix, OSPF is preferred by distance, not by comparing cost to hops.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c06",
+    "front": "What does administrative distance 255 mean?",
+    "back": "The route is not usable for installation. Do not treat it as a usable last-resort backup distance.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c07",
+    "front": "What does L identify in an IPv4 routing table?",
+    "back": "A local router address, commonly a /32 for an ordinary IPv4 interface. It distinguishes delivery to the router from forwarding to another host on the connected subnet.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c10",
+    "front": "How is an installed route chosen for a packet destination?",
+    "back": "Find every prefix containing the address, then select the longest matching prefix. Read its action: next hop, local delivery or discard.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c11",
+    "front": "When does administrative distance compare route sources?",
+    "back": "When eligible sources offer the same destination prefix and length. It does not override longest prefix match between different installed prefixes.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c12",
+    "front": "What selects paths within a routing protocol?",
+    "back": "That protocol's route-selection rules, including its metric. In a simple single-area OSPF comparison, lower cost is preferred; do not generalize this into every protocol's complete algorithm.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c13",
+    "front": "Why not compare an OSPF cost of 20 directly with RIP’s two hops?",
+    "back": "They measure paths in different units. For the same eligible prefix, compare source preference using administrative distance; use each protocol’s rules within that protocol.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c14",
+    "front": "What happens with no matching route and no default?",
+    "back": "Ordinary routed unicast is discarded. ICMP feedback may be generated subject to configuration and limits; silence does not prove the packet was not dropped.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c15",
+    "front": "What does the asterisk mean alongside a route code?",
+    "back": "It marks a candidate default. In S*, S is still the static source; inspect the actual prefix and gateway-of-last-resort information.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c16",
+    "front": "Does 'S ... is directly connected, Null0' mean a connected route?",
+    "back": "No. S identifies a static source and Null0 a discard action. Read detailed output or configuration for the distance; omitted brackets alone do not establish it.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c17",
+    "front": "What is a floating static route?",
+    "back": "A static candidate with a higher AD than the intended primary source for the same prefix. It can be configured but inactive, and needs valid resolution before it can take over.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c20",
+    "front": "How should CEF receive, attached and drop be interpreted?",
+    "back": "Receive: local delivery. Attached: directly attached prefix/adjacency context. Drop: discard. An attached prefix does not prove that every host has a resolved adjacency.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c21",
+    "front": "Do two ECMP paths guarantee twice the throughput for one transfer?",
+    "back": "No. Flow hashing can select one path for a flow. Equal-cost paths do not guarantee per-packet alternation or equal byte counts, and maximum path counts vary by platform and configuration.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c22",
+    "front": "Does an installed route prove end-to-end delivery?",
+    "back": "No. Verify the selected action, neighbor resolution, downstream path and return path.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c23",
+    "front": "Which address is looked up for the returning reply?",
+    "back": "The reply’s destination, normally the original requester’s address. It receives an independent lookup.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c24",
+    "front": "A selected Null0 route fails delivery. Is a less-specific route retried?",
+    "back": "No. Discard is the selected action; ordinary forwarding does not retry the default.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c25",
+    "front": "What happens to C/L entries for an ordinary interface that is administratively shut?",
+    "back": "They are withdrawn as usable interface-derived routes, even though the address remains configured.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c26",
+    "front": "A more-specific route is withdrawn. What decides the next packet?",
+    "back": "The longest match in the remaining installed table. A usable less-specific prefix can now win.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c27",
+    "front": "For a remote IPv4 destination over Ethernet, whose MAC is normally resolved?",
+    "back": "The adjacent next-hop router’s MAC. The IP destination remains the remote endpoint.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

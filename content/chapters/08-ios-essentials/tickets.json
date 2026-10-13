@@ -1,0 +1,63 @@
+[
+  {
+    "id": "ios-essentials-t03",
+    "title": "SSH server enabled, but remote sessions are refused",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "scenario": "A change on an isolated lab router leaves its directly connected management PC able to ping 10.8.0.1. A new SSH session is refused. The account and key configuration are unchanged, and the console remains available. The complete VTY range is 0–4.",
+    "exhibits": [
+      {
+        "title": "R1# show ip ssh — excerpt",
+        "text": "SSH Enabled - version 2.0"
+      },
+      {
+        "title": "R1 VTY configuration",
+        "text": "line vty 0 4\n login local\n transport input none"
+      }
+    ],
+    "question": "Which configuration is responsible for refusing new terminal sessions?",
+    "options": [
+      "The unchanged host key must be regenerated for each new session.",
+      "The VTY range accepts no incoming transport despite the enabled server.",
+      "The valid local user needs a line password to supplement login local.",
+      "The active SSH configuration has to be saved before it can admit a login."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The VTY range explicitly selects transport input none; the reachable interface and enabled server do not override it. There is no evidence that the unchanged key needs replacement, and login local does not require a second shared line password. Saving the current configuration would preserve the fault rather than change active admission.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# line vty 0 4\nR1(config-line)# transport input ssh\nR1(config-line)# end\nR1# show running-config | section line vty\n```\nOpen a new SSH session from the management PC and verify its privilege. Save after the intended access works."
+  },
+  {
+    "id": "ios-essentials-t02",
+    "title": "New sessions reach authentication but no local login succeeds",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "scenario": "After a configuration cleanup, new SSH sessions reach username/password authentication but no intended local account is accepted. The working console remains open. The administrator collects the complete username check and VTY settings below; no AAA method lists exist.",
+    "exhibits": [
+      {
+        "title": "Complete username check",
+        "text": "R1# show running-config | include username\nR1#"
+      },
+      {
+        "title": "R1 VTY configuration",
+        "text": "line vty 0 4\n login local\n transport input ssh"
+      }
+    ],
+    "question": "Which change restores the intended named-user authentication?",
+    "options": [
+      "Replace SSH with Telnet while keeping the same empty local database.",
+      "Use the enable secret as an implicit local username credential.",
+      "Create the intended local username and secret through the console.",
+      "Save the current line configuration before retrying local authentication."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The selected login local method depends on the local username database, and the complete check shows no entries. Restore the intended account through the working console, then test a new session. Changing transport, using an enable secret or saving does not create the missing login identity.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# username admin privilege 15 secret AdminLabSecret8\nR1(config)# end\n```\nUse this example secret only in the isolated lab. Verify a new SSH login, check show privilege, and save the corrected configuration."
+  }
+]

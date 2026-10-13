@@ -1,0 +1,68 @@
+[
+  {
+    "id": "cabling-and-interfaces-t01",
+    "title": "Backups slow down after an endpoint replacement",
+    "objectives": [
+      "v2:1.1",
+      "v1:1.4"
+    ],
+    "scenario": "An appliance's replacement NIC is manually set to 100 Mbps full duplex. The connected switch interface supports 10/100/1000 and remains automatic. Pings work, but larger transfers are slow. You identify the exact two ends, collect a baseline and repeat a transfer. The excerpts are representative IOS-style diagnostic evidence.",
+    "exhibits": [
+      {
+        "title": "Representative: ASW2# show interfaces status",
+        "text": "Port      Name               Status       Vlan       Duplex  Speed Type\nGi1/0/12  Backup-appliance   connected    1          a-half  a-100 10/100/1000BaseTX"
+      },
+      {
+        "title": "Counter comparison on Gi1/0/12",
+        "text": "Before transfer: 10 collisions; 0 late collisions\nAfter transfer:  420 collisions; 180 late collisions\nOperational speed: 100 Mbps\nOperational duplex: half"
+      },
+      {
+        "title": "Verified endpoint settings",
+        "text": "Adapter mode: manually configured\nSpeed: 100 Mbps\nDuplex: full"
+      }
+    ],
+    "question": "Which fault has the evidence established?",
+    "options": [
+      "The rising late-collision count uniquely identifies damaged cabling.",
+      "The two ends use opposite duplex settings at the same speed.",
+      "The matching 100 Mbps rates rule out an interface-setting fault.",
+      "Successful small pings demonstrate that the larger-transfer fault is an IP route."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The switch operates at 100/half while the endpoint is set to 100/full. That direct comparison establishes a duplex mismatch, and the increasing collision counters are consistent with it. The counters do not independently prove or exclude a cable fault; the operational settings are the decisive evidence here.",
+    "fix": "Coordinate the endpoint change so its NIC returns to automatic speed and duplex. Then restore the switch side:\n```ios ASW2\nASW2# configure terminal\nASW2(config)# interface gigabitethernet1/0/12\nASW2(config-if)# speed auto\nASW2(config-if)# duplex auto\nASW2(config-if)# end\nASW2# show interfaces gigabitethernet1/0/12\n```\nVerify matching operational speed and full duplex on both ends. Record current counters, repeat the same transfer and compare new increments and completion time. Old totals do not disappear when the cause is fixed. If the endpoint must remain manually configured for a documented reason, deliberately match both ends instead; do not force only one and assume the peer follows. Save the working configuration only after verification."
+  },
+  {
+    "id": "cabling-and-interfaces-t02",
+    "title": "An optical uplink uses incompatible module types",
+    "objectives": [
+      "v2:1.1",
+      "v1:1.3.a"
+    ],
+    "scenario": "A new 180 m OM3 multimode path joins DSW1 and CORE1. Both intended interfaces are administratively enabled, but the link is down. You inspect the module labels and verify the fiber record. These are supplied inventory and measurement observations, not fabricated output from an executed switch session.",
+    "exhibits": [
+      {
+        "title": "Verified component record",
+        "text": "DSW1 optical port: 10GBASE-SR, 850 nm, supported by DSW1\nCORE1 optical port: 10GBASE-LR, 1310 nm, supported by CORE1\nInstalled path: OM3 multimode, 180 m\nBoth interfaces: administratively enabled"
+      },
+      {
+        "title": "Specification comparison",
+        "text": "10GBASE-SR over OM3: up to 300 m for the specified modules\n10GBASE-LR: specified for single-mode fiber\nConnector shape at both ends: LC\nNo completed end-to-end optical qualification test is available"
+      }
+    ],
+    "question": "Which confirmed incompatibility should be corrected before further link testing?",
+    "options": [
+      "The OM3 distance exceeds the supplied limit for SR modules.",
+      "The matching connector shape is sufficient for this module pair.",
+      "The design pairs SR over MMF with LR intended for SMF.",
+      "The enabled administrative states establish that both optical directions work."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The inventory identifies incompatible optical designs: SR over OM3 at one end and LR at the other. The 180 m path is within the supplied SR-on-OM3 distance, but distance alone does not make the module pair compatible. Connector fit does not prove that a supported optical link exists.",
+    "fix": "For the intended OM3 design, select a compatible 10GBASE-SR module supported by CORE1 so both ends use the appropriate SR design. Follow the equipment's module replacement and fiber-handling procedure. Alternatively, an LR design requires a correctly specified single-mode path and compatible modules at both ends; changing a label does not change the installed fiber.\n\nAfter the component correction, verify transmit-to-receive polarity, inspect and clean connectors using approved equipment, and measure received power against each actual module's permitted range. Never look into a live fiber. On supported hardware, use the interface and transceiver displays, then test traffic and watch for new errors. Do not predict an exact receive dBm value or declare both transmitters healthy from one reading; other faults may remain after the confirmed mismatch is corrected."
+  }
+]

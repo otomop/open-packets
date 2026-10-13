@@ -1,0 +1,423 @@
+[
+  {
+    "id": "network-management-and-sdn-q01",
+    "type": "single",
+    "objectives": [
+      "v1:6.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Which functions learned this route and forward a transit packet using it?",
+    "options": [
+      "The management plane learns the route; OSPF forwards each packet.",
+      "The data plane computes OSPF routes; SSH forwards each packet.",
+      "OSPF supplies control information; the data plane forwards the packet.",
+      "OSPF selects a new path separately for each transit packet."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "OSPF exchanges routing information and computes reachability. The forwarding function uses installed entries; whether that function runs in hardware or software depends on the platform.",
+    "whyWrong": {
+      "0": "OSPF learns the route through the control plane; the data plane forwards packets. These roles are not management-plane route learning or per-packet OSPF forwarding.",
+      "1": "OSPF is a control-plane protocol, while SSH provides management access.",
+      "3": "Forwarding uses installed information rather than a new OSPF calculation for every packet."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative R1 routing entry",
+      "text": "O 10.2.2.0/24 [110/2] via 10.0.12.2, GigabitEthernet0/0"
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q02",
+    "type": "single",
+    "objectives": [
+      "v1:6.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Which switch activity is a management-plane function?",
+    "options": [
+      "Answering an SNMP request for interface counters.",
+      "Forwarding a received frame toward its destination.",
+      "Dropping transit traffic against an installed ACL.",
+      "Calculating the STP role for a redundant link."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The SNMP exchange lets a management system inspect device state. A function is classified by its purpose, not merely by whether a CPU is involved.",
+    "whyWrong": {
+      "1": "Frame forwarding is a data-plane function.",
+      "2": "Applying an ACL to transit traffic is a data-plane function.",
+      "3": "STP role calculation is a control-plane function."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:6.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Which two are data-plane functions? Choose two.",
+    "options": [
+      "Exchanging OSPF link-state advertisements.",
+      "Retrieving interface statistics through an API.",
+      "Accepting a network administrator's SSH login.",
+      "Adding a VLAN tag while forwarding a frame.",
+      "Applying a configured ACL to a transit packet."
+    ],
+    "answer": [
+      3,
+      4
+    ],
+    "explanation": "The forwarding path processes transit frames and packets using existing forwarding and policy information. Tag insertion and ACL matching are per-traffic operations.",
+    "whyWrong": {
+      "0": "OSPF exchanges establish control information.",
+      "1": "An API statistics query performs monitoring.",
+      "2": "SSH administration terminates a management session."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q06",
+    "type": "single",
+    "objectives": [
+      "v1:6.2",
+      "v1:6.3"
+    ],
+    "difficulty": 1,
+    "prompt": "Which comparison is accurate?",
+    "options": [
+      "Traditional control requires hand typing; controllers provide software automation.",
+      "Traditional devices hold no topology state; controllers store every forwarding table.",
+      "Traditional forwarding uses CPUs; controller-based forwarding always uses ASICs.",
+      "Traditional device control can be automated; controllers coordinate network-wide functions."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A controller can centralize policy or coordination without eliminating every device protocol. Automation is possible with or without a controller.",
+    "whyWrong": {
+      "0": "Scripts can automate traditional devices through their management interfaces.",
+      "1": "Distributed routing protocols maintain topology/reachability state on devices.",
+      "2": "Implementation hardware does not define the management architecture."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q08",
+    "type": "single",
+    "objectives": [
+      "v1:6.3"
+    ],
+    "difficulty": 1,
+    "prompt": "In the SD-Access example, which technology encapsulates user traffic for overlay forwarding?",
+    "options": [
+      "NETCONF",
+      "VXLAN",
+      "LISP",
+      "SNMP"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VXLAN carries the inner traffic across the underlay. The example distinguishes the data-plane encapsulation from endpoint-location control and management protocols.",
+    "whyWrong": {
+      "0": "NETCONF is a configuration/management protocol.",
+      "2": "LISP provides endpoint/location control information in this design.",
+      "3": "SNMP supplies management observations."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q11",
+    "type": "single",
+    "objectives": [
+      "v2:5.3"
+    ],
+    "difficulty": 1,
+    "prompt": "The vendor hosts the management service in its cloud. Devices use that service for configuration, while the described user traffic is locally forwarded. Which label directly describes the hosting arrangement?",
+    "options": [
+      "An on-premises management service",
+      "Cloud-based management",
+      "Infrastructure as code by definition",
+      "Device-only management"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cloud-based identifies the management service's hosting arrangement. The service can also be controller-based or used by automation; the approaches overlap.",
+    "whyWrong": {
+      "0": "The service location is explicitly off premises in the vendor cloud.",
+      "2": "No versioned infrastructure definitions or reviewed code workflow are specified.",
+      "3": "The service is hosted centrally in the vendor cloud, not only on each device."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q12",
+    "type": "single",
+    "objectives": [
+      "v1:6.1",
+      "v2:5.3"
+    ],
+    "difficulty": 1,
+    "prompt": "Which workflow best illustrates infrastructure as code?",
+    "options": [
+      "Accept discovered device settings as approved intent automatically.",
+      "Manually paste a template without recording its intended scope.",
+      "Keep nightly device backups without defining an approved target.",
+      "Review versioned infrastructure definitions and apply them with a tool."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "IaC applies software-style practices to infrastructure definitions and changes. A plan and post-change tests are still needed; a repository does not guarantee safe behavior.",
+    "whyWrong": {
+      "0": "Discovery does not automatically approve whatever configuration it finds.",
+      "1": "Manual repetition alone does not establish a versioned code workflow.",
+      "2": "A backup records observed state but does not by itself define desired state."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q04",
+    "type": "single",
+    "objectives": [
+      "v1:6.3.b"
+    ],
+    "difficulty": 2,
+    "prompt": "An application reads inventory from a controller over HTTPS. The controller manages switches using NETCONF. Which mapping is correct?",
+    "options": [
+      "Application/controller is northbound; controller/switch is southbound.",
+      "Both are southbound because each crosses physical network links.",
+      "Application/controller is southbound; controller/switch is northbound.",
+      "Both are northbound because each retrieves structured information."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Direction is relative to the controller's role in the architecture. HTTPS can also appear in a device-facing interface; protocol name alone is insufficient.",
+    "whyWrong": {
+      "1": "Physical location and transport do not define northbound/southbound.",
+      "2": "The application-facing and infrastructure-facing roles are reversed.",
+      "3": "Data format does not determine interface direction."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q07",
+    "type": "single",
+    "objectives": [
+      "v1:6.3.b"
+    ],
+    "difficulty": 2,
+    "prompt": "What does this application response establish?",
+    "options": [
+      "The current endpoint data path is healthy because reachability says Reachable.",
+      "The controller forwarded a user packet to determine the software version.",
+      "The controller API returned a stored inventory observation in JSON.",
+      "The switch has just completed a direct NETCONF query from the application."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The application received structured inventory data from the controller. The collection timestamp limits conclusions about current device state.",
+    "whyWrong": {
+      "0": "The supplied timestamp makes freshness relevant, and management status is not an application test.",
+      "1": "An inventory representation does not imply user packets traverse the controller.",
+      "3": "The participants and endpoint are an application and controller; no direct device NETCONF exchange is shown."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative controller response",
+      "text": "GET /inventory\nHTTP/1.1 200 OK\n{\"device\":\"SW1\",\"reachability\":\"Reachable\",\"collectedAt\":\"2026-09-20T08:00:00Z\"}\nCurrent time: 2026-09-20T09:00:00Z"
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q10",
+    "type": "single",
+    "objectives": [
+      "v1:6.3"
+    ],
+    "difficulty": 2,
+    "prompt": "All overlays between A and B fail, while paths to C still work. Which is the best first shared-dependency check?",
+    "options": [
+      "Compare each endpoint's guest address before checking their common transport",
+      "Compare controller inventory timestamps before testing the failed forwarding path",
+      "Compare each affected VNI assignment before checking their common transport",
+      "Compare A–B underlay reachability and usable MTU as a shared dependency"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A shared underlay path is a reasonable first investigation because multiple overlays depend on it. The symptom does not prove the underlay is the cause; tests must establish which dependency failed.",
+    "whyWrong": {
+      "0": "Guest addressing can matter, but this broad pair-specific pattern makes their common transport an efficient first shared check.",
+      "1": "Inventory freshness is a management concern and does not establish this forwarding path's operation.",
+      "2": "Individual overlay mappings may need investigation later; first examine the shared transport dependency, without assuming it is proven faulty."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Observed reachability matrix",
+      "text": "A ↔ B: all tested virtual networks fail\nA ↔ C: tested virtual networks work\nB ↔ C: tested virtual networks work\nNo route, MTU or policy checks have yet been performed."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q13",
+    "type": "single",
+    "objectives": [
+      "v1:6.1",
+      "v2:5.3"
+    ],
+    "difficulty": 2,
+    "prompt": "Approved intent requires exactly NTP servers 10.200.0.10 and .11. What is the smallest configuration correction?",
+    "options": [
+      "Keep both servers and add 10.200.0.11 as a third.",
+      "Remove both current servers, then add 10.200.0.11.",
+      "Remove 10.200.0.19 and add 10.200.0.11.",
+      "Change the approved record to match the device."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Preserve the matching .10 entry, replace the unintended .19 with .11 and compare again. Separately verify NTP operation; configuration agreement alone does not prove synchronization.",
+    "whyWrong": {
+      "0": "The intended set is exact, so leaving .19 preserves drift.",
+      "1": "The correct .10 server need not be removed.",
+      "3": "Observed state does not automatically override approved intent."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative current configuration",
+      "text": "ntp server 10.200.0.10\nntp server 10.200.0.19"
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q16",
+    "type": "single",
+    "objectives": [
+      "v1:6.1",
+      "v2:5.3"
+    ],
+    "difficulty": 2,
+    "prompt": "A cloud-hosted controller is updated by a script using versioned, reviewed desired-state files. Which conclusion follows?",
+    "options": [
+      "Automation removes the need to verify operational results.",
+      "Cloud, controller, automation and IaC approaches can overlap.",
+      "Cloud management excludes infrastructure-as-code workflows.",
+      "Controller-based management must move to an on-premises appliance."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "These labels describe different dimensions of the workflow. Hosting, coordination, execution and change discipline can all apply to the same system.",
+    "whyWrong": {
+      "0": "Operational verification remains necessary after automation.",
+      "2": "IaC can use cloud APIs and controllers.",
+      "3": "Controller describes coordination, not a required physical location."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q17",
+    "type": "single",
+    "objectives": [
+      "v1:6.3.a"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An administrator on PC-A opens SSH to R2 through R1. At R1 the packets are ordinary transit traffic; R2 terminates the session. Which classification fits those roles?",
+    "options": [
+      "R1 data; R2 management",
+      "R1 control; R2 data",
+      "R1 management; R2 control",
+      "R1 management; R2 management"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A packet's role depends on the function at the specified device: forwarding at R1, administration at R2.",
+    "whyWrong": {
+      "1": "Transit forwarding is not a control calculation, while the addressed SSH session terminates at R2.",
+      "2": "R1 does not terminate this management session, and R2 is not exchanging a routing protocol.",
+      "3": "R1 transports the session rather than serving as its administration endpoint."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q19",
+    "type": "single",
+    "objectives": [
+      "v1:6.2",
+      "v2:5.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A controller is unavailable. The documented design keeps installed forwarding on switches, but new policy deployments require that controller. Existing client tests still pass. Which conclusion fits?",
+    "options": [
+      "The tested existing forwarding works; new controller policy deployment is unavailable",
+      "Every new network change is now safe to make without the controller",
+      "The forwarding tests prove the controller has recovered",
+      "All routing and authentication dependencies are independent of the failed service"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The supplied dependency permits a narrow conclusion about observed forwarding and blocks the controller-dependent operation. It does not prove all future activity.",
+    "whyWrong": {
+      "1": "The new deployment explicitly depends on the unavailable service.",
+      "2": "A working data path is not a controller availability test.",
+      "3": "The scenario does not establish every other dependency."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q20",
+    "type": "single",
+    "objectives": [
+      "v1:6.1",
+      "v2:5.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An unwanted network change was already deployed. A reviewer reverts its infrastructure definition in Git. What is still required to restore the network?",
+    "options": [
+      "Delete the last device backup so it cannot reintroduce the change",
+      "Wait for the repository timestamp to change every device automatically",
+      "Review and apply the resulting recovery plan, then verify configuration and service",
+      "Mark the incident resolved because the approved file now matches its older version"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Version control changes the recorded definition. A supported deployment/reconciliation step must update the actual infrastructure, followed by operational checks.",
+    "whyWrong": {
+      "0": "Removing evidence does not apply a recovery.",
+      "1": "Repository changes do not by themselves establish a deployment mechanism or result.",
+      "3": "Desired state matching an older file is not evidence that deployed state or service recovered."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q18",
+    "type": "single",
+    "objectives": [
+      "v1:6.1",
+      "v2:5.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Change acceptance record — representative",
+      "text": "Approved change: exactly NTP servers 10.200.0.10 and .11; device must synchronize\nJob: configuration operations completed without errors\nFresh device configuration: .10 and .11 only\nAfter the agreed observation interval: neither server is selected; clock remains unsynchronized\nNo reachability/source-status investigation performed yet"
+    },
+    "prompt": "A change job reports success. Which acceptance decision follows from all three observations?",
+    "options": [
+      "Accept the job because configuration now matches the intended server list",
+      "Rewrite the approved intent to use whichever server the device currently selects",
+      "Revert both approved server entries because a successful job cannot leave an operational fault",
+      "Keep the change open and investigate time service operation while preserving the verified configuration"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The configuration goal is satisfied but the operational requirement is not. Keep the task open and test reachability, source usability and current status; the job result does not establish synchronization.",
+    "whyWrong": {
+      "0": "The stated acceptance condition also requires actual synchronization.",
+      "1": "Observed failure does not authorize replacing approved intent.",
+      "2": "A blanket rollback is not justified solely by a result requiring a more specific operational investigation."
+    }
+  }
+]

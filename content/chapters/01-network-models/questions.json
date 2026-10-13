@@ -1,0 +1,322 @@
+[
+  {
+    "id": "network-models-q02",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "For TCP over IPv4 over Ethernet, which PDU names correspond to Layers 4, 3, and 2, in that order?",
+    "options": [
+      "Packet, frame, bits",
+      "Segment, frame, packet",
+      "Frame, packet, segment",
+      "Segment, packet, frame"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A TCP segment is carried in an IP packet, which is carried in an Ethernet frame. UDP uses the term datagram at the transport layer.",
+    "whyWrong": {
+      "0": "These begin at Layer 3 and continue downward.",
+      "1": "A frame carries the packet, not the reverse.",
+      "2": "This lists the requested layers in reverse order."
+    }
+  },
+  {
+    "id": "network-models-q11",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which layer of the four-layer TCP/IP model covers IP addressing and routing?",
+    "options": [
+      "Application",
+      "Transport",
+      "Internet",
+      "Link"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The TCP/IP Internet layer provides IP addressing and packet forwarding functions, corresponding broadly to OSI Layer 3.",
+    "whyWrong": {
+      "0": "Application protocols provide application-level services.",
+      "1": "Transport includes TCP and UDP services to application endpoints.",
+      "3": "Link handles communication across the local link."
+    }
+  },
+  {
+    "id": "network-models-q09",
+    "type": "multi",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements describe a normal ARP request and solicited reply on an Ethernet LAN? Choose two.",
+    "options": [
+      "The request normally uses a unicast Ethernet destination.",
+      "The request normally uses the Ethernet broadcast destination.",
+      "ARP is carried inside the IPv4 packet it helps deliver.",
+      "The solicited reply is normally unicast to the requester.",
+      "The reply maps the final remote destination to the gateway’s MAC."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "ARP uses Ethernet directly to resolve an IPv4 next-hop address on the local link. A normal request is broadcast and its solicited reply is unicast; it does not distribute a remote route.",
+    "whyWrong": {
+      "0": "A normal request without a usable mapping is broadcast on the local Ethernet LAN.",
+      "2": "ARP uses the Ethernet link directly; it is not a header inside the pending IPv4 packet.",
+      "4": "For remote delivery, the host resolves the local gateway’s own IPv4 address to its MAC."
+    }
+  },
+  {
+    "id": "network-models-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "PC-A is 192.168.10.10/24 and PC-C is 192.168.10.30/24 on the same VLAN. PC-A has no additional routes and no cached mapping for PC-C. What does it normally do before sending an IPv4 packet to PC-C?",
+    "options": [
+      "Resolve PC-C’s MAC, then address the frame to the gateway.",
+      "Resolve the gateway’s MAC, then send through that gateway.",
+      "Send a unicast IP packet using a broadcast Ethernet destination.",
+      "Resolve PC-C’s MAC, then send directly to that MAC."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The destination is on the connected /24. PC-A resolves the destination host's MAC and sends directly on the LAN. The configured gateway is not needed for this exchange.",
+    "whyWrong": {
+      "0": "A mapping for PC-C does not supply a reason to send this local exchange through the gateway.",
+      "1": "The stated local destination is directly reachable on the connected LAN.",
+      "2": "The ARP request may be broadcast, but the ordinary resolved unicast IPv4 frame is addressed to PC-C."
+    }
+  },
+  {
+    "id": "network-models-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.a"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Addressing plan",
+      "text": "PC-A: 192.168.10.10/24, gateway 192.168.10.1\nR1 LAN-A: 192.168.10.1, MAC 0001.9641.7a01\nR1 LAN-B: 192.168.20.1, MAC 0001.9641.7a02\nPC-B: 192.168.20.20/24, MAC 00d0.ba2c.5e01"
+    },
+    "prompt": "PC-A has one interface and only the connected and default routes shown. After resolving the required MAC, which destination addresses belong in its ICMP request to PC-B?",
+    "options": [
+      "MAC 00d0.ba2c.5e01; IP 192.168.20.20",
+      "MAC 0001.9641.7a01; IP 192.168.20.20",
+      "MAC 0001.9641.7a01; IP 192.168.10.1",
+      "MAC 0001.9641.7a02; IP 192.168.20.20"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "PC-B is outside PC-A's /24, so the local frame goes to the gateway interface on LAN-A. The enclosed packet still names PC-B as its destination.",
+    "whyWrong": {
+      "0": "That MAC is on the remote LAN, not the local next hop.",
+      "2": "The request would then be addressed to the router itself.",
+      "3": "This is R1's interface on the remote LAN, not PC-A's local gateway."
+    }
+  },
+  {
+    "id": "network-models-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:1.1.a"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A router forwards an ordinary IPv4 packet between two Ethernet LANs. No NAT, tunnel, or fragmentation is involved. Which two actions describe normal forwarding? Choose two.",
+    "options": [
+      "It decrements TTL by one and updates the IPv4 header checksum.",
+      "It changes the source IPv4 address to its outgoing interface address.",
+      "It creates a new Ethernet frame using its outgoing interface's MAC as source.",
+      "It replaces the destination IPv4 address with the next-hop IPv4 address.",
+      "It sends the incoming Ethernet frame unchanged onto the second LAN."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The router performs a new link-layer encapsulation for the outgoing Ethernet LAN. Normal IPv4 forwarding reduces TTL and updates the affected header checksum, while preserving the source and destination IP addresses under these assumptions.",
+    "whyWrong": {
+      "1": "Ordinary routing in this example does not translate the source address.",
+      "3": "The route identifies a forwarding action without replacing the packet's final destination address.",
+      "4": "The outgoing link needs a frame addressed for that link."
+    }
+  },
+  {
+    "id": "network-models-q10",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.a",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Capture after R1",
+      "text": "Ethernet source: R1 GigabitEthernet0/1 MAC\nEthernet destination: PC-B MAC\nIPv4 source: 192.168.10.10 (PC-A)\nIPv4 destination: 192.168.20.20 (PC-B)"
+    },
+    "prompt": "R1 routes between LAN-A and LAN-B without NAT. A capture on LAN-B shows the request below. Which explanation fits?",
+    "options": [
+      "R1 translated the packet’s source to its LAN-B address.",
+      "R1 built a new frame for the outgoing Ethernet link.",
+      "SW2 routed the packet and changed its source MAC.",
+      "PC-A addressed the original frame directly to PC-B."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "On the outgoing LAN, the link-layer sender is R1, but the packet still identifies PC-A as its original IP source. This is normal routed forwarding.",
+    "whyWrong": {
+      "0": "The exhibit still names PC-A as the source IP; no translation is shown.",
+      "2": "R1 supplied the outgoing source MAC during routing; ordinary SW2 bridging does not do this.",
+      "3": "The original LAN-A frame went to PC-A’s local gateway; PC-B’s MAC is used on the outgoing LAN."
+    }
+  },
+  {
+    "id": "network-models-q08",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A capture at the sender records an IPv4 packet with TTL 128. The same packet arrives with TTL 126. Assume ordinary forwarding, one decrement per routed hop, and no other TTL changes. How many routers forwarded it?",
+    "options": [
+      "0",
+      "1",
+      "3",
+      "2"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The observed reduction is 128 − 126 = 2. The initial TTL is explicitly known here; a received TTL by itself is insufficient for an exact hop count.",
+    "whyWrong": {
+      "0": "The captured TTL decreased, so this was not a zero-hop exchange under the stated assumptions.",
+      "1": "One decrement would leave 127.",
+      "2": "Three decrements would leave 125."
+    }
+  },
+  {
+    "id": "network-models-q04",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative R1 show arp excerpt",
+      "text": "Protocol  Address          Age (min)  Hardware Addr   Type  Interface\nInternet  192.168.10.10           2   0060.2f3e.1b22  ARPA  GigabitEthernet0/0\nInternet  192.168.20.20           1   00d0.ba2c.5e01  ARPA  GigabitEthernet0/1"
+    },
+    "prompt": "Which neighbor mapping does the displayed ARP table contain?",
+    "options": [
+      "192.168.20.20 → 00d0.ba2c.5e01 on GigabitEthernet0/1",
+      "192.168.20.20 → 0060.2f3e.1b22 on GigabitEthernet0/0",
+      "192.168.20.0/24 → a route through GigabitEthernet0/1",
+      "00d0.ba2c.5e01 → a learned switch port in VLAN 1"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Read one complete row: address 192.168.20.20 maps to MAC 00d0.ba2c.5e01 on the router’s GigabitEthernet0/1 link. This is local-neighbor information, not a route or a switch-port entry.",
+    "whyWrong": {
+      "1": "That MAC and interface belong to the other displayed neighbor.",
+      "2": "The exhibit is an ARP table; it does not display a destination-prefix route.",
+      "3": "A VLAN/MAC-to-switch-port entry belongs to the switch MAC address table."
+    }
+  },
+  {
+    "id": "network-models-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.b",
+      "v1:1.13.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1 show mac address-table excerpt",
+      "text": "Vlan  Mac Address       Type     Ports\n1     0060.2f3e.1b22    DYNAMIC  Fa0/1\n1     0001.9641.7a01    DYNAMIC  Fa0/24"
+    },
+    "prompt": "A frame in VLAN 1 arrives on Fa0/1 with destination MAC 0001.9641.7a01. All shown ports are forwarding. What is the normal Layer 2 forwarding action?",
+    "options": [
+      "Forward through Fa0/24 using the existing destination MAC.",
+      "Forward through Fa0/1 because it learned the source there.",
+      "Flood the frame because the destination IP is remote.",
+      "Forward through Fa0/24 using the switch’s own source MAC."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The destination MAC is known on Fa0/24 in VLAN 1. Ordinary Layer 2 forwarding selects that eligible port and preserves the endpoint MAC addresses; it does not perform an IP routing hop.",
+    "whyWrong": {
+      "1": "The source entry tells the switch where return traffic can go; this frame’s destination selects its egress port.",
+      "2": "The known destination MAC determines this Layer 2 action, regardless of the packet’s remote IP destination.",
+      "3": "Ordinary Layer 2 forwarding does not replace the frame’s source MAC with the switch’s address."
+    }
+  },
+  {
+    "id": "network-models-q12",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two observations from a fresh test",
+      "text": "R1 LAN-A interface: up/up\nPC-A ping to R1 LAN-A address: request timed out"
+    },
+    "prompt": "What can these two observations establish without further evidence?",
+    "options": [
+      "R1 reports a working local link, but the failed ping needs more investigation.",
+      "PC-A must have the wrong mask because R1’s interface is operational.",
+      "The timeout proves R1 cannot receive frames on this interface.",
+      "The local up/up state proves that PC-A received an Echo Reply."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Up/up describes the local interface's operational states. Host settings, routes, policy, and applications require additional evidence.",
+    "whyWrong": {
+      "1": "A mask error is one possibility, not established by this pair of observations.",
+      "2": "The interface state and timeout do not prove which stage failed.",
+      "3": "The stated ping result reports no reply; link state is a different observation."
+    }
+  },
+  {
+    "id": "network-models-q16",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "PC-A's remote ping reaches PC-B, but PC-B has an unused address configured as its default gateway. PC-B can still ping its actual local router interface. Which explanation best fits?",
+    "options": [
+      "PC-B selects an unavailable next hop for its remote reply.",
+      "PC-B cannot send any frame through its local switch port.",
+      "R1 must change PC-A’s source IP before PC-B can reply.",
+      "PC-B’s successful local test validates its default gateway."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A local router-interface ping uses direct delivery on PC-B's subnet. Replying to remote PC-A requires the selected off-subnet next hop, so a wrong gateway can prevent the return traffic even when the request arrives.",
+    "whyWrong": {
+      "1": "The successful local test demonstrates that the port can carry that exchange.",
+      "2": "Ordinary routing does not require source translation; PC-B needs a valid route back to PC-A.",
+      "3": "The local router address can be reached directly, so that test does not exercise the default gateway."
+    }
+  }
+]

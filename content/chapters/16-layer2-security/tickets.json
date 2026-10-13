@@ -1,0 +1,68 @@
+[
+  {
+    "id": "layer2-security-t01",
+    "title": "DHCP fails after snooping is enabled",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.a"
+    ],
+    "scenario": "ASW3 has one uplink, Gi0/2, to a distribution switch that relays client requests to DHCP. VLAN 10 clients cannot complete fresh leases after snooping is enabled. The upstream capture confirms a valid server reply reaches ASW3 Gi0/2. Option 82 insertion is disabled in this lab.",
+    "exhibits": [
+      {
+        "title": "ASW3 relevant configuration",
+        "text": "ip dhcp snooping\nip dhcp snooping vlan 10\nno ip dhcp snooping information option\n!\ninterface GigabitEthernet0/2\n switchport mode trunk\n switchport trunk allowed vlan 10\n!\ninterface FastEthernet0/1\n switchport mode access\n switchport access vlan 10"
+      },
+      {
+        "title": "Authored verification observations",
+        "text": "Gi0/2: up, VLAN 10 forwarding\nDHCP snooping: Gi0/2 untrusted\nValid DHCP Offer reaches Gi0/2; snooping records a server-message drop\nClient binding table: empty"
+      }
+    ],
+    "question": "Which fault is established by the combined evidence?",
+    "options": [
+      "The client-facing port lacks a sticky MAC entry",
+      "The DHCP pool must be using the wrong subnet mask",
+      "The legitimate reply arrives on an untrusted ingress",
+      "Option 82 insertion must be enabled on every client"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The evidence locates a valid Offer at Gi0/2 and a snooping drop on that untrusted ingress. The necessary repair is server trust on this verified reply path. The exhibit does not establish a pool, port-security or Option 82 requirement.",
+    "fix": "```ios ASW3\nASW3# configure terminal\nASW3(config)# interface gigabitethernet0/2\nASW3(config-if)# ip dhcp snooping trust\nASW3(config-if)# end\nASW3# show ip dhcp snooping\n```\nRequest a fresh client lease, inspect `show ip dhcp snooping binding`, and test the gateway. Keep client ports untrusted. Save only after the intended path and successful lease are verified."
+  },
+  {
+    "id": "layer2-security-t02",
+    "title": "A phone and PC exceed the permitted MAC total",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.e"
+    ],
+    "scenario": "Fa0/7 serves an approved phone and attached PC. Both lose network service when the PC starts transmitting. Inventory and a previous permitted capture establish that this particular phone/PC combination uses exactly two secure entries: the phone in voice VLAN 20 and the PC in data VLAN 10. No additional device is present.",
+    "exhibits": [
+      {
+        "title": "ASW1 port-security state (excerpt)",
+        "text": "Port Status             : Secure-shutdown\nViolation Mode          : Shutdown\nMaximum MAC Addresses   : 1\nTotal MAC Addresses     : 1\nSticky MAC Addresses    : 1\nLast Source Address:Vlan : 0050.56b1.9c22:10"
+      },
+      {
+        "title": "ASW1 Fa0/7 configuration",
+        "text": "interface FastEthernet0/7\n switchport mode access\n switchport access vlan 10\n switchport voice vlan 20\n switchport port-security\n switchport port-security mac-address sticky\n switchport port-security mac-address sticky 0011.bb27.4e10 vlan voice"
+      },
+      {
+        "title": "Verified endpoint inventory",
+        "text": "Phone: 0011.bb27.4e10, VLAN 20\nPC:    0050.56b1.9c22, VLAN 10\nNo other secure entries required on this tested combination"
+      }
+    ],
+    "question": "What explains the repeated error-disable event?",
+    "options": [
+      "The approved PC exceeds the one-entry total already occupied by the phone",
+      "The phone's tagged voice traffic requires all data traffic to be trunked",
+      "The configured shutdown response permits only voice traffic after the second source arrives.",
+      "The existing sticky entry is removed automatically when the data VLAN begins forwarding."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The one-entry maximum is already occupied by the phone. The approved PC becomes a second source and triggers shutdown mode. Correct the limit to the verified endpoint requirement before resetting the port; merely bouncing it would leave the cause intact.",
+    "fix": "```ios ASW1\nASW1# configure terminal\nASW1(config)# interface fastethernet0/7\nASW1(config-if)# switchport port-security maximum 2\nASW1(config-if)# shutdown\nASW1(config-if)# no shutdown\nASW1(config-if)# end\nASW1# show port-security interface fastethernet0/7\nASW1# show port-security address\n```\nGenerate phone and PC traffic, verify the two intended address/VLAN entries and restored service, then save. A different phone model or VLAN behavior may need a different total; derive it from the actual design."
+  }
+]

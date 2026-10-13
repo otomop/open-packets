@@ -1,0 +1,848 @@
+[
+  {
+    "id": "ospfv2-q18",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "What does OSPF use to calculate paths within this single area?",
+    "options": [
+      "A link-state database describing the area topology and costs.",
+      "The switch MAC table for every remote LAN.",
+      "The router with the highest DR priority as the next hop for every prefix.",
+      "Only a list of hop counts reported by the last neighbor."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Each router uses its synchronized topology information to calculate paths from its own position. Different originating routers can choose different outgoing paths.",
+    "whyWrong": {
+      "1": "MAC learning supports local Ethernet delivery, not area-wide OSPF path calculation.",
+      "2": "DR election organizes adjacency and flooding, not every data-plane path.",
+      "3": "OSPF is a link-state protocol and uses costs, not only distance-vector hop counts."
+    }
+  },
+  {
+    "id": "ospfv2-q34",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "How should the same up, OSPF-enabled LAN normally appear in the local and remote route tables?",
+    "options": [
+      "Static on the remote router because the LAN interface is passive.",
+      "Connected on its directly attached router; OSPF-learned on a remote router that selects that advertisement.",
+      "Local /32 only on every router, regardless of the Ethernet LAN mask.",
+      "OSPF-learned on every router, including the router directly attached to the LAN."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A routing-protocol code identifies how that particular router obtained the installed route. Passive suppresses LAN Hellos but does not change local connected status or remote OSPF advertisement.",
+    "whyWrong": {
+      "0": "Passive OSPF advertisement does not turn a learned route into a static.",
+      "2": "The remote LAN prefix is not replaced by every router own local host route.",
+      "3": "An enabled local interface still supplies a connected route."
+    }
+  },
+  {
+    "id": "ospfv2-q16",
+    "type": "single",
+    "objectives": [
+      "v1:3.4",
+      "v2:3.3"
+    ],
+    "difficulty": 1,
+    "prompt": "What does [110/26] mean in this OSPF route?",
+    "options": [
+      "OSPF metric 110 and administrative distance 26.",
+      "A /26 prefix learned from router ID 110.",
+      "Administrative distance 110 and OSPF metric 26.",
+      "A 110-second age and 26-second dead timer."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The bracket is [administrative distance/metric]. The route uses an OSPF path of cost 26; the /24 prefix and next-hop address are displayed elsewhere.",
+    "whyWrong": {
+      "0": "IOS displays administrative distance before metric.",
+      "1": "The destination prefix is /24, and neither bracket field is a RID.",
+      "3": "Route age and neighbor timers are separate fields."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "O 192.168.30.0/24 [110/26] via 10.0.13.2, 00:00:12, GigabitEthernet0/1"
+    }
+  },
+  {
+    "id": "ospfv2-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Two routers share an addressed broadcast Ethernet subnet. Which two values must match to form the intended OSPFv2 relationship? Choose two.",
+    "options": [
+      "Local process ID",
+      "Area ID on the link",
+      "Router ID",
+      "Hello and dead intervals",
+      "Interface priority"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "The area and effective Hello/dead intervals must agree. RIDs must be unique, while process IDs and election priorities may differ.",
+    "whyWrong": {
+      "0": "The process ID selects a local process and is not a neighbor matching field.",
+      "2": "Using the same RID would introduce a duplicate identity.",
+      "4": "Different priorities are normal when selecting preferred DR/BDR roles."
+    }
+  },
+  {
+    "id": "ospfv2-q17",
+    "type": "multi",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "R1's Gi0/2 is an up client LAN, activated in area 0 and configured passive. Which two results are expected? Choose two.",
+    "options": [
+      "The LAN prefix can be advertised through other OSPF links.",
+      "PCs must establish OSPF neighbors before sending traffic.",
+      "The interface sends no OSPF Hellos to discover neighbors.",
+      "The LAN connected route disappears from R1.",
+      "The interface must be shut to keep it passive."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Passive OSPF stops neighbor formation on the interface without removing its enabled connected prefix from advertisements. PCs use the router as their gateway and do not run OSPF in this design.",
+    "whyWrong": {
+      "1": "PCs do not participate in the routing protocol here.",
+      "3": "The up addressed interface retains its connected route.",
+      "4": "Passive is an OSPF setting, not an interface shutdown."
+    }
+  },
+  {
+    "id": "ospfv2-q07",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Which timers are effective on this IOS OSPF interface?",
+    "options": [
+      "Hello 5 seconds and dead 20 seconds.",
+      "Hello 10 seconds and dead 40 seconds.",
+      "Hello 5 seconds and dead 40 seconds.",
+      "Hello 40 seconds and dead 5 seconds."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Read the configured timer commands separately: Hello is 5 and dead is explicitly 40. A default relationship does not override an explicit dead timer.",
+    "whyWrong": {
+      "0": "An explicit dead interval of 40 is present; it is not forced to 4 times Hello.",
+      "1": "The explicit Hello override replaces the ordinary 10-second value.",
+      "3": "The commands identify the two intervals in the opposite order."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "interface GigabitEthernet0/0\n ip ospf hello-interval 5\n ip ospf dead-interval 40"
+    }
+  },
+  {
+    "id": "ospfv2-q14",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 uses router ospf 10 and R2 uses router ospf 20. Their shared /30 link is in area 0 with matching timers, compatible point-to-point types, and unique RIDs. What should happen?",
+    "options": [
+      "They can form an adjacency despite the different process IDs.",
+      "They must change both process IDs to area number 0.",
+      "They discover each other but stop at 2-Way because of process IDs.",
+      "They require identical RIDs to join the same routing process."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The process number is locally significant. Shared-link parameters and unique router IDs determine the intended relationship, not equality of the process labels.",
+    "whyWrong": {
+      "1": "Process numbers do not have to match area numbers, and IOS process 0 is not the intended valid process.",
+      "2": "Different local process IDs do not prevent Full synchronization.",
+      "3": "RIDs must be different."
+    }
+  },
+  {
+    "id": "ospfv2-q02",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.d",
+      "v2:3.3.d"
+    ],
+    "difficulty": 2,
+    "prompt": "When a fresh IOS OSPF process starts, no explicit RID is configured. Loopback0 at 10.1.1.1 and Loopback1 at 10.9.9.9 are both up. Physical interfaces 172.16.1.1 and 192.168.1.1 are also up/up. Which RID is selected?",
+    "options": [
+      "10.1.1.1 from the lower-addressed loopback",
+      "10.9.9.9 from the higher-addressed loopback",
+      "192.168.1.1 from the highest physical address",
+      "172.16.1.1 from the first listed physical interface"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "IOS prefers a loopback address over physical-interface addresses when no RID is explicit. With both loopbacks available, the higher loopback address 10.9.9.9 is selected.",
+    "whyWrong": {
+      "0": "Both loopbacks are available, and 10.9.9.9 is numerically higher.",
+      "2": "Loopback preference is applied before comparing physical-interface addresses.",
+      "3": "Listing order is not the selection rule."
+    }
+  },
+  {
+    "id": "ospfv2-q08",
+    "type": "single",
+    "objectives": [
+      "v1:3.4",
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "Gi0/0 is addressed 172.16.5.33/27. Which router-mode network statement activates only that exact interface address in area 0?",
+    "options": [
+      "network 172.16.5.32 0.0.0.31 area 0",
+      "network 172.16.5.33 255.255.255.224 area 0",
+      "network 172.16.5.32 0.0.0.0 area 0",
+      "network 172.16.5.33 0.0.0.0 area 0"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "An all-zero wildcard requires every address bit to match. OSPF then advertises the interface's actual prefix, 172.16.5.32/27; the selector does not turn it into a /32 destination.",
+    "whyWrong": {
+      "0": "This matches the entire /27 address range, not only the exact address.",
+      "1": "This uses a subnet mask where the command expects a wildcard.",
+      "2": "This exact match selects .32, not the configured .33 address."
+    }
+  },
+  {
+    "id": "ospfv2-q20",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which prefix is advertised for the selected ordinary Ethernet LAN?",
+    "options": [
+      "192.168.21.32/27",
+      "192.168.21.0/24",
+      "192.168.21.33/32",
+      "0.0.0.0/0"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Retain the interface subnet mask when calculating the advertised connected LAN: .33/27 belongs to .32/27.",
+    "whyWrong": {
+      "1": "The mask is /27, not the older classful /24 boundary.",
+      "2": "A host wildcard selects an interface; it does not change the ordinary Ethernet interface mask.",
+      "3": "The wildcard is a selection rule, not a default-route advertisement."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Host wildcard and Ethernet mask (exercise)",
+      "text": "Gi0/2 up/up: 192.168.21.33/27\nrouter ospf 10\n network 192.168.21.33 0.0.0.0 area 0\n passive-interface Gi0/2"
+    }
+  },
+  {
+    "id": "ospfv2-q22",
+    "type": "multi",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two statements about priority 0 are correct? Choose two.",
+    "options": [
+      "It makes every outgoing route have cost zero.",
+      "It forces the current DR to step down in favor of this router.",
+      "It makes this interface ineligible for DR and BDR election.",
+      "It disables OSPF on the interface.",
+      "The router can still become Full with the DR and BDR."
+    ],
+    "answer": [
+      2,
+      4
+    ],
+    "explanation": "A DROTHER still exchanges routing information. Priority 0 controls election eligibility, not whether the interface participates.",
+    "whyWrong": {
+      "0": "Priority is not OSPF cost.",
+      "1": "Zero excludes this router from the elected roles.",
+      "3": "Election eligibility and protocol activation are separate."
+    }
+  },
+  {
+    "id": "ospfv2-q01",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "R4 is a DROTHER on a healthy four-router broadcast segment. Which conclusion follows from its neighbor table?",
+    "options": [
+      "The 2WAY relationship with R3 is normal for two DROTHERs.",
+      "R3 must be changed to point-to-point on this shared segment.",
+      "R4 must have a Full adjacency with every router on the segment.",
+      "R3 must receive a different process number to complete synchronization."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "R4 is Full with the DR and BDR and 2-Way with the other DROTHER. That is the expected broadcast adjacency pattern, not evidence of failed database synchronization.",
+    "whyWrong": {
+      "1": "All routers should retain the intended common broadcast network type.",
+      "2": "Two DROTHERs normally stop at 2-Way while each is Full with DR/BDR.",
+      "3": "Process numbers are local and do not cause this normal state."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R4# show ip ospf neighbor\nNeighbor ID     Pri State          Address       Interface\n1.1.1.1         100 FULL/DR        10.0.123.1    Gi0/0\n2.2.2.2          50 FULL/BDR       10.0.123.2    Gi0/0\n3.3.3.3           1 2WAY/DROTHER   10.0.123.3    Gi0/0"
+    }
+  },
+  {
+    "id": "ospfv2-q04",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.c",
+      "v2:3.3.c"
+    ],
+    "difficulty": 2,
+    "prompt": "A fresh broadcast election occurs after all four candidates are known, with no existing DR or BDR. Who becomes DR and BDR?",
+    "options": [
+      "RB is DR; RD is BDR.",
+      "RA is DR; RC is BDR.",
+      "RD is DR; RC is BDR.",
+      "RD is DR; RA is BDR."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "RD wins by priority 50. Among the remaining eligible candidates, RA and RC tie at 1, so RA wins BDR by RID 4.4.4.4 over 3.3.3.3.",
+    "whyWrong": {
+      "0": "Priority 0 makes RB ineligible regardless of its high RID.",
+      "1": "RD has a higher eligible interface priority than RA and RC.",
+      "2": "RA and RC tie in priority, and RA has the higher RID."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "Candidate  Interface priority  RID\nRA         1                   4.4.4.4\nRB         0                   9.9.9.9\nRC         1                   3.3.3.3\nRD         50                  1.1.1.1"
+    }
+  },
+  {
+    "id": "ospfv2-q11",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.c",
+      "v2:3.3.c"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 is the established DR, R2 is BDR, and R3 joins later with priority 200. After R1 fails, what happens if R2 and R3 remain healthy?",
+    "options": [
+      "R3 becomes DR immediately when it joins.",
+      "R2 becomes DR, and R3 can become BDR.",
+      "R2 remains BDR while R3 and the remaining DROTHERs run a fresh DR-only comparison.",
+      "R3 becomes DR after R1 fails, bypassing R2."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The non-preemptive election preserves existing roles while healthy. On DR failure, the BDR R2 is promoted and a new BDR can be selected from eligible remaining routers.",
+    "whyWrong": {
+      "0": "A later higher priority does not preempt an existing DR.",
+      "2": "The existing BDR is promoted when the DR is lost; it does not remain reserved as BDR.",
+      "3": "The existing BDR is promoted before a replacement BDR is chosen."
+    }
+  },
+  {
+    "id": "ospfv2-q05",
+    "type": "single",
+    "objectives": [
+      "v1:3.4",
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 reaches a remote LAN through R2 then R3. The outgoing costs along that direction are R1-to-R2 = 10, R2-to-R3 = 20, and R3-to-LAN = 1. What OSPF metric should R1 calculate?",
+    "options": [
+      "31",
+      "30",
+      "21",
+      "110"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Add the outgoing costs from the router performing the calculation to the destination network: 10 + 20 + 1 = 31. The receiving interfaces are not added again.",
+    "whyWrong": {
+      "1": "This omits the final outgoing interface toward the destination LAN.",
+      "2": "This omits R1's outgoing cost.",
+      "3": "110 is IOS OSPF administrative distance, not this path metric."
+    }
+  },
+  {
+    "id": "ospfv2-q15",
+    "type": "single",
+    "objectives": [
+      "v1:3.4",
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "With no explicit interface cost overrides, which command on every OSPF router makes 100-Mbps, 1-Gbps, and 10-Gbps interfaces cost 100, 10, and 1?",
+    "options": [
+      "auto-cost reference-bandwidth 1000",
+      "auto-cost reference-bandwidth 10000",
+      "ip ospf priority 100",
+      "auto-cost reference-bandwidth 100"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The command value is in Mbps: 10000 / 100 = 100, 10000 / 1000 = 10, and 10000 / 10000 = 1. Consistent reference bandwidth prevents inconsistent automatic cost scales.",
+    "whyWrong": {
+      "0": "A 1000-Mbps reference gives costs 10, 1, and 1.",
+      "2": "Priority affects the DR/BDR election, not routing cost.",
+      "3": "The default 100-Mbps reference gives these links minimum cost 1."
+    }
+  },
+  {
+    "id": "ospfv2-q21",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "What cost does OSPF use for this outgoing interface?",
+    "options": [
+      "1000",
+      "100",
+      "10",
+      "7"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Use the explicit interface cost when it exists. The reference-bandwidth calculation applies to automatic costs.",
+    "whyWrong": {
+      "0": "That is the reference bandwidth in Mbps, not the explicit cost.",
+      "1": "That is the interface bandwidth in Mbps, not the explicit cost.",
+      "2": "1000/100 would give 10 automatically, but explicit interface cost overrides it."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Automatic and explicit cost settings (exercise)",
+      "text": "OSPF reference bandwidth: 1000 Mbps\nInterface configured bandwidth: 100 Mbps\nInterface command: ip ospf cost 7"
+    }
+  },
+  {
+    "id": "ospfv2-q28",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "When R1 sends a packet to R3 client LAN, which next hop is expected on their shared Ethernet?",
+    "options": [
+      "R3 shared-interface address, even if R2 is DR.",
+      "The destination PC MAC learned across the routed LAN.",
+      "R2 DR address for every packet, regardless of the destination router.",
+      "R2 BDR address because only the backup can forward user traffic."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "OSPF flooding roles do not force user packets through the DR. SPF can select a directly reachable router on the shared segment.",
+    "whyWrong": {
+      "1": "R1 resolves the adjacent next-hop router on this Ethernet, not the remote PC MAC.",
+      "2": "The DR is not a mandatory data-plane transit router.",
+      "3": "BDR is an OSPF control role, not an exclusive user-traffic forwarding role."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Shared Ethernet forwarding path (exercise)",
+      "text": "R1, R2 and R3 share 10.0.123.0/24. R2 is DR.\nR3 advertises its client LAN.\nThe shortest path from R1 to that LAN crosses the shared segment directly to R3; there are no filters."
+    }
+  },
+  {
+    "id": "ospfv2-q30",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "A router with a configured new RID still displays the old active RID. What should the engineer do before any disruptive action?",
+    "options": [
+      "Assign the same new RID to every router to keep the area consistent.",
+      "Verify the active RID and plan a controlled process restart if needed on this image.",
+      "Assume the new running-config value already changed every adjacency identity.",
+      "Change all neighbor process IDs to the new RID."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Check operational output rather than inferring live state from the configuration. Restarting OSPF drops local adjacencies, so it must be deliberate.",
+    "whyWrong": {
+      "0": "Router IDs must be unique within the OSPF domain.",
+      "2": "Configuration and the active process identity can differ until restart.",
+      "3": "Process IDs are local numeric labels, not dotted-decimal router identities."
+    }
+  },
+  {
+    "id": "ospfv2-q10",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "R2 has a correctly addressed, up/up transit interface but no neighbor there. Which configuration line explains the absence?",
+    "options": [
+      "passive-interface default without a Gi0/0 exception",
+      "router-id 2.2.2.2 in the routing process",
+      "network 10.0.123.2 0.0.0.0 area 0",
+      "router ospf 20 rather than process 10"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The interface is selected into OSPF, but passive-interface default suppresses its Hellos. Add no passive-interface gigabitethernet0/0 under that process after confirming it is the intended transit.",
+    "whyWrong": {
+      "1": "A unique explicit RID is appropriate.",
+      "2": "This statement correctly activates the interface at .2.",
+      "3": "Neighbors may use different process numbers."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "router ospf 20\n router-id 2.2.2.2\n passive-interface default\n network 10.0.123.2 0.0.0.0 area 0"
+    }
+  },
+  {
+    "id": "ospfv2-q13",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.d",
+      "v2:3.3.d"
+    ],
+    "difficulty": 2,
+    "prompt": "A cloned router configuration produces the log below. What is the durable identity repair?",
+    "options": [
+      "Give every router a different local process number.",
+      "Raise the new router interface election priority.",
+      "Put each shared-interface peer in a different area.",
+      "Assign unique explicit RIDs and apply any required controlled process restart."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The log identifies duplicate router ID 10.255.255.1, not a duplicate process number. Configure a unique RID on the affected router, verify the active value, and use a controlled restart only if needed to apply it.",
+    "whyWrong": {
+      "0": "Different process numbers do not repair duplicate advertised RIDs.",
+      "1": "Priority affects DR eligibility, not unique identity.",
+      "2": "Different areas on the same intended link prevent the required adjacency."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "%OSPF-4-DUP_RTRID_NBR: OSPF detected duplicate router-id 10.255.255.1 from 10.0.123.3"
+    }
+  },
+  {
+    "id": "ospfv2-q25",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which repair addresses the missing LAN without changing the working transit adjacency?",
+    "options": [
+      "Remove passive status from Gi0/2 but leave it outside OSPF.",
+      "Activate Gi0/2 in area 0 and keep it passive toward clients.",
+      "Raise the transit DR priority to advertise more LANs.",
+      "Change the transit process number to match the neighbor."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The LAN is connected but never selected by OSPF. Activate it through the intended interface or matching network statement; passive behavior is correct for the client LAN.",
+    "whyWrong": {
+      "0": "Removing passive status alone does not activate an interface.",
+      "2": "DR priority does not enroll a LAN interface in the process.",
+      "3": "The established adjacency already proves local process-number differences are acceptable."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Connected LAN outside OSPF (exercise)",
+      "text": "Gi0/2 up/up: 192.168.25.1/24; local PC can reach it.\nOnly Gi0/0 has ip ospf 10 area 0.\nOSPF process 10: passive-interface default; no passive-interface Gi0/0\nGi0/0 neighbor is Full; no network statements or redistribution.\nThe neighbor has no route to 192.168.25.0/24."
+    }
+  },
+  {
+    "id": "ospfv2-q31",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which correction targets the demonstrated OSPF activation mismatch?",
+    "options": [
+      "Widen the actual LAN mask to /24 so the mistaken selector appears to cover it.",
+      "Change the LAN selection so that it includes 192.168.31.65, retaining area 0 and the intended /27.",
+      "Set the PC default gateway to the neighboring router transit IP.",
+      "Lower the reference bandwidth to advertise the missing prefix."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The wildcard 0.0.0.31 applied at .32 selects .32 through .63. Interface .65 belongs to .64/27 and falls outside that selection.",
+    "whyWrong": {
+      "0": "The selector must match the interface address; changing the mask abandons the given subnet plan.",
+      "2": "That IP is not on the client LAN and does not enable the LAN in OSPF.",
+      "3": "Cost calculation does not cause an unmatched interface to participate."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "LAN prefix and wildcard selection (exercise)",
+      "text": "Required LAN: 192.168.31.64/27\nR1 Gi0/2: 192.168.31.65/27 up/up\nOnly LAN selector: network 192.168.31.32 0.0.0.31 area 0\nGi0/2 is passive; transit adjacency is Full; remote router lacks this LAN.\nNo interface-level OSPF activation is present."
+    }
+  },
+  {
+    "id": "ospfv2-q27",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "What is the most useful next comparison for this persistent Init state?",
+    "options": [
+      "Increase R1 DR priority so its Hello will include itself as a neighbor.",
+      "Check whether R2 receives R1 Hellos and lists R1 RID in its own Hellos.",
+      "Assume all Init states are caused by mismatched MTU.",
+      "Change both router IDs to the same value so the Hello names match."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Init means a Hello was heard but bidirectional recognition is not yet established. The supplied repeated evidence identifies the direction to inspect, not a uniquely proven physical cause.",
+    "whyWrong": {
+      "0": "Priority does not repair one-way recognition.",
+      "2": "MTU exchange trouble normally appears later; the evidence points first to missing bidirectional Hello recognition.",
+      "3": "Router IDs must be unique; duplication is not a repair."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Persistent one-way Hello recognition (exercise)",
+      "text": "R1 repeatedly sees R2 in INIT.\nR1 receives R2 Hellos, but those Hellos do not list R1 RID.\nInterfaces are up. No capture or filter inspection at R2 has yet been collected."
+    }
+  },
+  {
+    "id": "ospfv2-q23",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "Which routes result from the directed costs?",
+    "options": [
+      "R1 uses the shared path at cost 21; R3 uses the direct path at cost 31.",
+      "R1 uses the direct path at cost 6; R3 uses the shared path at cost 11.",
+      "Both use the direct path at cost 6 because the physical link is shared.",
+      "Both use the shared path because a DR is present there."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "R1 compares 5+1=6 with 20+1=21. R3 compares 30+1=31 with 10+1=11. Costs are calculated from the router originating each path.",
+    "whyWrong": {
+      "0": "Each router should select its lower total, not its higher one.",
+      "2": "Outgoing costs are independently configured in the two directions.",
+      "3": "DR role does not override path costs."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Directed OSPF costs (exercise)",
+      "text": "Area 0, all adjacencies Full, no other paths.\nR1 -> shared Ethernet: 20; R3 -> shared Ethernet: 10\nR1 -> R3 direct point-to-point: 5; R3 -> R1 direct: 30\nLAN-A on R1 cost 1; LAN-B on R3 cost 1\nCompare R1 route to LAN-B and R3 route to LAN-A."
+    }
+  },
+  {
+    "id": "ospfv2-q24",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "Which result follows when both paths are eligible and the maximum-paths setting permits at least two?",
+    "options": [
+      "The two costs add together and create one cost-32 route.",
+      "The lower-bandwidth path must be rejected even when the explicit costs tie.",
+      "Both next hops can install at cost 16; equal throughput is not guaranteed.",
+      "Only the next hop with the higher router ID is installed."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Each independent path totals 16. Equal-cost installation is distinct from traffic distribution and application throughput.",
+    "whyWrong": {
+      "0": "Each path is evaluated separately; parallel path costs are not summed.",
+      "1": "The supplied OSPF costs, not a second independent bandwidth comparison, establish the tie.",
+      "3": "RID election tiebreaking does not choose a sole equal-cost data route here."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two eligible paths to one prefix (exercise)",
+      "text": "Path A: R1 outgoing 5 + R2 outgoing 10 + remote LAN 1\nPath B: R1 outgoing 15 + remote LAN 1\nBoth advertise the same intra-area prefix; no other route source wins."
+    }
+  },
+  {
+    "id": "ospfv2-q26",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "Does the installed static route prove OSPF did not learn this prefix?",
+    "options": [
+      "Yes; a prefix cannot exist in both OSPF information and the routing table from another source.",
+      "Yes; OSPF administrative distance 110 always beats static distance 1.",
+      "No; OSPF must instead install the same prefix as a connected route.",
+      "No; the lower-distance static can win installation even when OSPF knows the same prefix."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "For the same prefix, route-source preference can select static distance 1 over OSPF distance 110. Inspect OSPF information separately before diagnosing missing advertisements.",
+    "whyWrong": {
+      "0": "OSPF topology knowledge and route installation are distinct.",
+      "1": "Lower distance wins between eligible candidates for the same prefix.",
+      "2": "Connected routes represent local connected networks, not alternative learned copies."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Installed route source (exercise)",
+      "text": "Installed: S 192.168.26.0/24 [1/0] via 10.0.12.2\nOSPF adjacency to R2 is Full.\nAn engineer claims that the S code alone proves R2 never advertised this LAN."
+    }
+  },
+  {
+    "id": "ospfv2-q06",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.b",
+      "v2:3.3.b"
+    ],
+    "difficulty": 3,
+    "prompt": "R1 and R3 are the only two routers on an Ethernet link. They report Full, but remote LAN routes are missing. Which visible inconsistency should be corrected first?",
+    "options": [
+      "Change R3 process 30 to process 10.",
+      "Configure the same intended OSPF network type at both ends.",
+      "Change both interfaces to Hello 30 and dead 120.",
+      "Replace the /30 addressing with a /24 subnet."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A Full adjacency is not proof that both routers describe the link consistently. The displayed broadcast/point-to-point mismatch should be corrected on this two-router link, then neighbors and routes rechecked.",
+    "whyWrong": {
+      "0": "Different local process IDs do not explain the displayed topology mismatch.",
+      "2": "The existing effective timer values already agree and are normal here.",
+      "3": "The two /30 addresses are valid peers; this is not a shortage of host addresses."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R1: 10.0.13.1/30, Area 0, Process 10, Network Type BROADCAST\n    Hello 10, Dead 40\nR3: 10.0.13.2/30, Area 0, Process 30, Network Type POINT_TO_POINT\n    Hello 10, Dead 40"
+    }
+  },
+  {
+    "id": "ospfv2-q12",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "This adjacency repeatedly stalls during database exchange. Which evidence best identifies the fault?",
+    "options": [
+      "Point-to-point operation omits the required DR.",
+      "The two process numbers are different.",
+      "The interface MTU values differ.",
+      "The peer uses a unique router ID."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "ExStart/Exchange involves DBD negotiation, including an MTU check. The explicit 1500/1400 mismatch is actionable evidence; fix the intended MTU rather than assuming every ExStart case has the same cause.",
+    "whyWrong": {
+      "0": "A point-to-point adjacency does not require a DR.",
+      "1": "Process IDs are local and can differ.",
+      "3": "Unique RIDs are required, not a fault."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R1 Gi0/1: up/up, MTU 1500, area 0, point-to-point, Hello 10, Dead 40\nR2 Gi0/1: up/up, MTU 1400, area 0, point-to-point, Hello 10, Dead 40\nR1 neighbor 2.2.2.2: repeatedly EXSTART/ -"
+    }
+  },
+  {
+    "id": "ospfv2-q29",
+    "type": "single",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "What does the successful ping fail to establish?",
+    "options": [
+      "It cannot establish any end-to-end reachability at all.",
+      "It does not establish that the direct backup adjacency is healthy.",
+      "It proves the direct link is carrying the ping because the routers are neighbors elsewhere.",
+      "It proves the two timer settings are compatible."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Correlate the selected route with the neighbor on each interface. An alternate working path can hide an adjacency failure.",
+    "whyWrong": {
+      "0": "The successful endpoint test does establish reachability for that source/destination at that time.",
+      "2": "The route selects the shared interface, not the direct link.",
+      "3": "Different Hello/dead values on the intended direct relationship are incompatible."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Working primary and failed backup adjacency (exercise)",
+      "text": "R1 shared Gi0/0 route to LAN-B: cost 11, neighbor Full.\nR1 direct Gi0/1: Hello/dead 5/20; no neighbor.\nR3 direct Gi0/1: Hello/dead 10/40.\nPC-A successfully pings PC-B through the shared path."
+    }
+  }
+]

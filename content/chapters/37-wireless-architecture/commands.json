@@ -1,0 +1,79 @@
+[
+  {
+    "id": "wireless-architecture-d01",
+    "task": "A centrally switched AP uses one untagged VLAN on its Ethernet link. Wireless client frames travel inside CAPWAP to the controller. Select the switchport mode; the access VLAN is configured separately.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport mode access",
+    "accept": [],
+    "teaching": {
+      "sectionId": "access-or-trunk-and-lag-cabling-the-pieces",
+      "hint": "Follow the frames on this cable, rather than the wireless clients’ eventual VLANs.",
+      "takeaway": "An access port is sufficient because only one untagged Ethernet VLAN crosses this AP link. Different client subnets at the controller do not by themselves require a trunk at the AP.",
+      "syntax": [
+        {
+          "text": "switchport mode access",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "wireless-architecture-d02",
+    "task": "This AP now switches client VLAN 20 locally with tags and sends management untagged in VLAN 10. The switch port is already a trunk with both VLANs allowed. Set its native VLAN to match the AP.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport trunk native vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "access-or-trunk-and-lag-cabling-the-pieces",
+      "hint": "The untagged management frames determine the native VLAN.",
+      "takeaway": "The native VLAN maps the untagged management traffic; VLAN 20 remains tagged. A controller-based label alone does not decide these settings—the AP’s actual forwarding and tagging contract does.",
+      "syntax": [
+        {
+          "text": "switchport trunk native vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "wireless-architecture-d07",
+    "task": "An AP on SW1 FastEthernet0/1 has an Ethernet link but reports reduced radio operation. On a PoE-capable Cisco switch, display this port’s inline-power state and allocation before changing VLANs.",
+    "mode": "SW1#",
+    "answer": "show power inline fastethernet0/1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Ethernet link state does not establish that the AP received its required power.",
+      "takeaway": "Compare allocated power with the AP’s documented requirement and the switch budget. A power display narrows the investigation; it does not independently validate wireless security, registration or client service.",
+      "syntax": [
+        {
+          "text": "show power inline",
+          "kind": "keyword"
+        },
+        {
+          "text": "fastethernet0/1",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

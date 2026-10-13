@@ -1,0 +1,146 @@
+[
+  {
+    "id": "rest-apis-json-c01",
+    "front": "Common CRUD-to-HTTP mappings?",
+    "back": "Create POST; read GET; replace/create-at-target PUT; partial modification PATCH; delete DELETE, per API contract.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c02",
+    "front": "Which HTTP methods are idempotent by semantics?",
+    "back": "GET, PUT and DELETE, among others. POST and PATCH are not guaranteed idempotent.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c03",
+    "front": "What does safe mean for a GET request?",
+    "back": "The requested operation is read-only; incidental logging or counters can still change.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c04",
+    "front": "PUT versus PATCH?",
+    "back": "PUT supplies the target representation; PATCH applies a partial modification using a defined patch format.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c05",
+    "front": "HTTP status classes 1xx through 5xx?",
+    "back": "Informational, successful, redirection, client error and server error.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c06",
+    "front": "How does 202 differ from a completed API operation?",
+    "back": "202 accepts processing. Follow the documented task outcome and verify the required result; acceptance alone is not completion.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c07",
+    "front": "401 versus 403?",
+    "back": "401 lacks valid authentication credentials; 403 refuses the request, often for insufficient permission.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c09",
+    "front": "What does 429 require the client to consider?",
+    "back": "Rate-limit guidance, bounded backoff and Retry-After when provided.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c11",
+    "front": "HTTP Basic credential representation?",
+    "back": "Authorization: Basic followed by Base64 of user:password. Encoding is reversible; use authenticated HTTPS.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c12",
+    "front": "What does Authorization: Bearer identify?",
+    "back": "A credential presented by possession; it does not prove OAuth, JWT format or a fixed lifetime.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c15",
+    "front": "What is OAuth 2.0?",
+    "back": "An authorization framework for obtaining access tokens; grants, scopes and refresh behavior depend on the flow.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c16",
+    "front": "Content-Type versus Accept?",
+    "back": "Content-Type identifies this message's representation; Accept expresses acceptable response formats.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c18",
+    "front": "Does stateless REST prohibit server databases or logs?",
+    "back": "No. It constrains interaction context, not storage of resources, credentials or operational records.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c19",
+    "front": "Six JSON value categories?",
+    "back": "Object, array, string, number, boolean and null.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c20",
+    "front": "Why is {'enabled': True} invalid JSON?",
+    "back": "Member names need double quotes, and the boolean literal must be lowercase true. These are syntax faults, not formatting preferences.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c21",
+    "front": "In {\"ports\":[3,8]}, what does ports[1] select?",
+    "back": "The second array value: number 8. Array indexes start at zero in this notation.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c22",
+    "front": "What body should a client expect after HTTP 204?",
+    "back": "No response body. Do not unconditionally parse JSON after every successful status.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c23",
+    "front": "Why can valid JSON still fail an API schema?",
+    "back": "The API can require particular fields and value types. A valid string such as \"false\" does not satisfy a boolean field.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

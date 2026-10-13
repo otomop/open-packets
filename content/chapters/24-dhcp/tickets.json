@@ -1,0 +1,68 @@
+[
+  {
+    "id": "dhcp-t01",
+    "title": "Fresh branch clients cannot obtain a lease",
+    "objectives": [
+      "v1:4.6",
+      "v2:1.7"
+    ],
+    "scenario": "R1 connects clients on Gi0/0, 10.10.10.1/24, to R2 through Gi0/1, 10.10.20.1/24. R2 is the server at 10.10.20.2/24. DHCP service is enabled on both routers. A new PC has no prior lease; an older PC still has a valid lease and can reach a server. Links and VLAN membership are verified. The following abbreviated records are representative teaching evidence.",
+    "exhibits": [
+      {
+        "title": "R1 relevant interface configuration",
+        "text": "interface GigabitEthernet0/0\n ip address 10.10.10.1 255.255.255.0\n!\ninterface GigabitEthernet0/1\n ip address 10.10.20.1 255.255.255.0\n ip helper-address 10.10.20.2"
+      },
+      {
+        "title": "R2 pool and return-path checks",
+        "text": "Pool USERS network: 10.10.10.0/24\nOrdinary host addresses: 254\nExcluded: 10.10.10.1–10.10.10.49 (49)\nActive bindings: 2\nConflicts: none\nRoute: 10.10.10.0/24 via 10.10.20.1\nPing to 10.10.10.1: successful"
+      },
+      {
+        "title": "Current attempt capture",
+        "text": "Client-side capture: DHCPDISCOVER arrives at R1 Gi0/0.\nServer-side capture: no matching forwarded Discover reaches R2."
+      }
+    ],
+    "question": "Which demonstrated configuration mistake should be corrected first?",
+    "options": [
+      "The matching DHCP pool is exhausted by its active bindings.",
+      "The server lacks a return route toward the client subnet.",
+      "The helper is configured on the server-facing interface.",
+      "The server has no pool matching the relayed client subnet."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The client broadcast arrives on Gi0/0, but only Gi0/1 has the helper. Move it to the receiving client interface. Capacity is not exhausted: 254 − 49 − 2 = 203 addresses are available under the stated conditions. The return route is supplied. An old client can keep working with a valid lease; its later unicast renewal might also work without this helper, so it does not validate initial relay acquisition.",
+    "fix": "Move the helper, then repeat the fresh client request.\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# no ip helper-address 10.10.20.2\nR1(config-if)# interface gigabitethernet0/0\nR1(config-if)# ip helper-address 10.10.20.2\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/0\n```\n\nVerify a new R2 binding and the client’s actual address, mask, gateway, and DNS setting. Test the gateway and intended remote service. Save the corrected configuration after verification."
+  },
+  {
+    "id": "dhcp-t02",
+    "title": "The fourth training-room client receives no lease",
+    "objectives": [
+      "v1:4.3",
+      "v2:1.7"
+    ],
+    "scenario": "An isolated training room uses R1 as a verified relay and R2 as an IOS DHCP server. The first three clients still have valid leases and are powered on. A fourth fresh client receives no allocation. Its Discover reaches R2. The reserved infrastructure range is .1–.49; the upper exclusion was temporary for this exercise. These are representative records, not simulator captures.",
+    "exhibits": [
+      {
+        "title": "R2 pool configuration",
+        "text": "ip dhcp excluded-address 10.10.10.1 10.10.10.49\nip dhcp excluded-address 10.10.10.53 10.10.10.254\nip dhcp pool USERS\n network 10.10.10.0 255.255.255.0\n default-router 10.10.10.1\n dns-server 10.10.20.53\n lease 0 8 0"
+      },
+      {
+        "title": "Current allocation and conflict checks",
+        "text": "Active leases: 10.10.10.50, 10.10.10.51, 10.10.10.52\nConflict entries: none\nFourth client's Discover received; no new binding recorded."
+      }
+    ],
+    "question": "Which repair restores capacity while preserving the intended static-address range and healthy leases?",
+    "options": [
+      "Clear all three active bindings and retry the fourth client.",
+      "Remove the temporary .53–.254 exclusion and retry the fourth client.",
+      "Reconfigure the verified helper to point to the local gateway.",
+      "Remove only the .1–.49 exclusion and retry the fourth client."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The two exclusions leave only .50–.52, all of which are occupied. Removing the temporary upper exclusion expands the candidate range to .50–.254, 205 addresses, while preserving static infrastructure. Broadly deleting bindings risks allocating an address still in use. Changing a working helper does not add capacity; removing gateway protection is unsafe. Existing eight-hour leases can expire or be released; they are not permanent.",
+    "fix": "Remove only the temporary exclusion.\n\n```ios\nR2# configure terminal\nR2(config)# no ip dhcp excluded-address 10.10.10.53 10.10.10.254\nR2(config)# end\nR2# show ip dhcp pool\nR2# show ip dhcp binding\n```\n\nRetry DHCP on the fourth client, confirm its new address is outside .1–.49 and distinct from active clients, and test the gateway. Verify all original clients retain service. Save after the check."
+  }
+]

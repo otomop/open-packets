@@ -1,0 +1,5 @@
+{
+  "result": "passed",
+  "checks": 100,
+  "note": "Selected numerical keys and named topology/selection examples only; no simulator or device execution."
+}

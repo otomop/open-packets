@@ -1,0 +1,1024 @@
+[
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q01",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q02",
+    "action": "keep",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q03",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q04",
+    "action": "keep",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q05",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q06",
+    "action": "keep",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q07",
+    "action": "revise",
+    "reason": "Treat source eligibility plus independent return-route evidence as analysis."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q08",
+    "action": "keep",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q09",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q10",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q11",
+    "action": "revise",
+    "reason": "Keep server-key prerequisite recognition at level 1 and replace unrelated alternatives with other SSH settings."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q12",
+    "action": "keep",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q13",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q14",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q15",
+    "action": "revise",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q16",
+    "action": "keep",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q17",
+    "action": "keep",
+    "reason": "Retain the distinct integrated-network decision; calibrate difficulty to recognition or application rather than the length of the exhibit."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q19",
+    "action": "add",
+    "reason": "Add a distinct integrated acceptance decision: Two 100 Mb/s members carry Po1. After one is shut, Po1 remains in use and a new guest HTTP request completes. Which handover statement is supported?"
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q23",
+    "action": "add",
+    "reason": "Add a distinct integrated acceptance decision: Two guests in VLAN 20 communicate directly through SW2. GUEST-IN is attached only to R1 Gi0/0.20 inbound. What should the acceptance record say about guest-to-guest isolation?"
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q18",
+    "action": "add",
+    "reason": "Add a distinct integrated acceptance decision: Which next step best separates the cause of the guest failure without changing a working path?"
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q20",
+    "action": "add",
+    "reason": "Add a distinct integrated acceptance decision: Which action addresses the missing return path while preserving passive client-facing OSPF interfaces?"
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q21",
+    "action": "add",
+    "reason": "Add a distinct integrated acceptance decision: A change permits guest HTTPS to HQ host 10.255.20.10, while all other guest-to-HQ traffic remains denied. GUEST-IN is inbound on R1 Gi0/0.20 and currently has sequence 60 denying guest traffic to 10.255.0.0/16. Which change and test pair meets the request?"
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "questions",
+    "id": "capstone-branch-network-q22",
+    "action": "add",
+    "reason": "Add a distinct integrated acceptance decision: After staff is renumbered from 10.10.10.0/24 to 10.20.10.0/24, a client reaches all management addresses and external HTTP. A console check shows local accounts, keys and SSHv2 are healthy; every device still permits only 10.10.10.0/24 in MGMT-SOURCES. Which repair and verification meet the design?"
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c17",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c02",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c03",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c04",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c05",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c06",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c07",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c08",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c09",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c10",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c11",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c12",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c13",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c15",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c16",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c18",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c19",
+    "action": "retire",
+    "reason": "Retire repeated single-feature recall from the integrated capstone; the prerequisite chapter and guided lab retain the underlying teaching."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c20",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c21",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c22",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c23",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c24",
+    "action": "keep",
+    "reason": "Keep this cross-feature dependency or evidence limitation; it supports integrated verification rather than a repeated number catalog."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "cards",
+    "id": "capstone-branch-network-c25",
+    "action": "add",
+    "reason": "Add reusable acceptance-test design that transfers across the capstone."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d01",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d02",
+    "action": "retire",
+    "reason": "Retire duplicate setup syntax from this mixed drill bank; the complete guided lab still supplies it."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d03",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d04",
+    "action": "retire",
+    "reason": "Retire duplicate setup syntax from this mixed drill bank; the complete guided lab still supplies it."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d05",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d06",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d07",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d08",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d09",
+    "action": "retire",
+    "reason": "Retire duplicate setup syntax from this mixed drill bank; the complete guided lab still supplies it."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d10",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d11",
+    "action": "keep",
+    "reason": "Keep a command that establishes or verifies a key integrated path; the lab supplies the surrounding dependencies."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "commands",
+    "id": "capstone-branch-network-d12",
+    "action": "retire",
+    "reason": "Retire duplicate setup syntax from this mixed drill bank; the complete guided lab still supplies it."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "tickets",
+    "id": "capstone-branch-network-t01",
+    "action": "revise",
+    "reason": "Use a symptom-led title and evidence-based diagnosis; retain a complete narrow repair with original-service and policy verification."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "tickets",
+    "id": "capstone-branch-network-t02",
+    "action": "revise",
+    "reason": "Use a symptom-led title and evidence-based diagnosis; retain a complete narrow repair with original-service and policy verification."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "tickets",
+    "id": "capstone-branch-network-t03",
+    "action": "revise",
+    "reason": "Use a symptom-led title and evidence-based diagnosis; retain a complete narrow repair with original-service and policy verification."
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "bank": "tickets",
+    "id": "capstone-branch-network-t04",
+    "action": "revise",
+    "reason": "Use a symptom-led title and evidence-based diagnosis; retain a complete narrow repair with original-service and policy verification."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q01",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q02",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q03",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q04",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q05",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q06",
+    "action": "keep",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q07",
+    "action": "keep",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q08",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q09",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q10",
+    "action": "keep",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q11",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q12",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q13",
+    "action": "keep",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q14",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q15",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q16",
+    "action": "revise",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q17",
+    "action": "keep",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q18",
+    "action": "revise",
+    "reason": "Replace unsafe caricatures with plausible prompts that differ in task, output format and premature diagnosis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q19",
+    "action": "keep",
+    "reason": "Keep this mixed retrieval/application target; use the actual reasoning demand rather than labeling ordinary output reading as analysis."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q20",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: A lab host runs two VMs with different guest operating systems and several containers on one Linux VM. Which description correctly locates their kernels?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q21",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: Two site gateways protect traffic between private LANs across an untrusted transit. The outer packet identifies the gateways while the original host-to-host IP packet is protected inside ESP. Which description fits?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q24",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: You will copy a lab router configuration with SCP to an approved server for the first time. Its SSH host-key fingerprint differs from the value supplied through your trusted inventory. Which action is appropriate?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q25",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: R1 and R2 have an OSPFv3 adjacency over a link using FE80::1 and FE80::2, and R1 learns the intended IPv6 /64 through that link. Both router IDs are distinct dotted-decimal values. Which observation is normal?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q28",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: DHCP clients pass DAI, but an authorized statically addressed printer is rejected. Its IP/MAC are confirmed in the approved inventory, and no DHCP snooping binding exists for it. Which design best preserves inspection?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q29",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: An application asks a controller for inventory through a documented API. The controller separately programs switches, which continue forwarding frames in hardware. Which mapping is correct?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q22",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: Which action best addresses the demonstrated link fault before retesting throughput?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q23",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: Which dependency should be investigated next for the affected WLAN?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q26",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: A user still reaches the retired server. Which explanation and next check best fit the records?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q27",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: What can you report from this automation run?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "questions",
+    "id": "exam-readiness-q30",
+    "action": "add",
+    "reason": "Add a mixed transfer task missing from the original final checkpoint: Which narrowly scoped edit restores the approved policy?"
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c26",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c27",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c28",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c29",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c30",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c06",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c07",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c08",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c09",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c10",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c11",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c12",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c13",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c14",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c15",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c16",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c17",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c18",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c19",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c20",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c21",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c22",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c23",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c24",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c25",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c31",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c32",
+    "action": "keep",
+    "reason": "Retain the essential distinction between course evidence and official scoring."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c33",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c34",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c35",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c36",
+    "action": "retire",
+    "reason": "Retire the repeated protocol/port/default catalog from readiness review; the topic chapters remain the place for that recall. Reserve this bank for evidence-based study habits."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c37",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c38",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c39",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c40",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c41",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c42",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c43",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c44",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "cards",
+    "id": "exam-readiness-c45",
+    "action": "add",
+    "reason": "Add a single transferable study or verification habit; remove the duplicated final-chapter number catalog without repurposing its IDs."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d01",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d02",
+    "action": "retire",
+    "reason": "Retire narrower interface/HSRP command recall from the short final drill set; retain it in the relevant troubleshooting/FHRP chapter."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d03",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d04",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d05",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d06",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d07",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d08",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d09",
+    "action": "retire",
+    "reason": "Retire narrower interface/HSRP command recall from the short final drill set; retain it in the relevant troubleshooting/FHRP chapter."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d10",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d11",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "commands",
+    "id": "exam-readiness-d12",
+    "action": "keep",
+    "reason": "Retain a short mixed diagnostic-command recall task that supports the final independent build."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "tickets",
+    "id": "exam-readiness-t01",
+    "action": "revise",
+    "reason": "Remove diagnosis leakage from the title and verify restored USERS HTTP while retaining the chapter’s intended STAFF HTTP denial."
+  },
+  {
+    "chapterId": "exam-readiness",
+    "bank": "tickets",
+    "id": "exam-readiness-t02",
+    "action": "revise",
+    "reason": "Remove the diagnosis from the title and extend the complete repair through the original client-service test."
+  }
+]

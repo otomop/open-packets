@@ -1,0 +1,102 @@
+[
+  {
+    "id": "troubleshooting-toolkit-t01",
+    "title": "The transit link is down at both ends",
+    "objectives": [
+      "v1:1.4",
+      "v2:2.4"
+    ],
+    "scenario": "R1 Gi0/1 at 10.0.99.1/30 connects directly to R2 Gi0/1 at .2/30. Users behind R1 cannot reach R2’s server LAN. Both routers are available through independent console access. These are representative current records.",
+    "exhibits": [
+      {
+        "title": "R1 state",
+        "text": "Gi0/1 down/down"
+      },
+      {
+        "title": "R2 current configuration/state",
+        "text": "interface GigabitEthernet0/1\n ip address 10.0.99.2 255.255.255.252\n shutdown\nState: administratively down/down"
+      },
+      {
+        "title": "R2 relevant event",
+        "text": "%LINK-5-CHANGED: Gi0/1 changed state to administratively down"
+      }
+    ],
+    "question": "Which correction addresses the demonstrated configuration fault?",
+    "options": [
+      "Apply no shutdown to R1 without checking the already enabled local interface.",
+      "Replace the transit cable before addressing the displayed far-end shutdown.",
+      "Restore the intended no-shutdown state on R2 Gi0/1.",
+      "Change both transit masks to /24 while leaving R2 shut."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "R2's current shutdown configuration and administrative state identify the disabling of the transit. Enabling only R1 or changing masks cannot override R2's shutdown; the evidence does not yet justify replacing the cable. Restore the approved far-end state, then verify both ends, routes and the original client service.",
+    "fix": "```ios\nR2# configure terminal\nR2(config)# interface gigabitethernet0/1\nR2(config-if)# no shutdown\nR2(config-if)# end\nR2# show ip interface brief\n```\n\nCheck R1’s state and routes separately, test from the affected PC, and save after verification."
+  },
+  {
+    "id": "troubleshooting-toolkit-t02",
+    "title": "The transit-source test works while client traffic fails",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "scenario": "PC-A is 10.0.10.50/24, gateway R1 10.0.10.1. R1/R2 transit is 10.0.99.1/.2 on /30. SRV is 10.0.20.10/24 with gateway R2 .20.1. R1 has the intended route to the server; no policy routing is configured.",
+    "exhibits": [
+      {
+        "title": "R1 paired tests",
+        "text": "Source 10.0.99.1 to SRV succeeds\nSource 10.0.10.1 to SRV fails"
+      },
+      {
+        "title": "R2 complete installed forwarding prefixes",
+        "text": "10.0.99.0/30 connected Gi0/1\n10.0.20.0/24 connected Gi0/0\nLocal /32 interface routes only; no other route or default"
+      }
+    ],
+    "question": "Which demonstrated missing dependency explains the source difference?",
+    "options": [
+      "R1 has no route toward the server network.",
+      "R2 has no route to the client-source subnet.",
+      "SRV has no local gateway configured.",
+      "PC-A’s access cable is disconnected."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "R2 can return toward the transit-source .99.1 over a connected route, but no listed prefix matches .10.1 or .10.50. Unlike the source-test result alone, the complete route evidence establishes this missing return route.",
+    "fix": "```ios\nR2# configure terminal\nR2(config)# ip route 10.0.10.0 255.255.255.0 10.0.99.1\nR2(config)# end\nR2# show ip route 10.0.10.50\n```\n\nOn R1 separately:\n```ios\nR1# ping 10.0.20.10 source 10.0.10.1\n```\nThen verify PC-A by address, name, and actual service before saving."
+  },
+  {
+    "id": "troubleshooting-toolkit-t03",
+    "title": "Transfers slow on a 100-Mb/s link",
+    "objectives": [
+      "v1:1.4",
+      "v2:2.4"
+    ],
+    "scenario": "SW1 Fa0/24 connects to R1 Gi0/0. The approved lab design pins both endpoints to 100 Mb/s full duplex. Transfer performance declined after a change. Counters below cover the same current observation interval.",
+    "exhibits": [
+      {
+        "title": "SW1",
+        "text": "Fa0/24: 100 Mb/s, half duplex\nLate collisions: 100→135"
+      },
+      {
+        "title": "R1",
+        "text": "Gi0/0: speed 100; duplex full"
+      },
+      {
+        "title": "Neighbor evidence",
+        "text": "CDP reports local not-full duplex and peer full duplex"
+      }
+    ],
+    "question": "Which correction follows the stated design and evidence?",
+    "options": [
+      "Set SW1 Fa0/24 to the intended matching 100/full settings.",
+      "Change R1 to 1000/full while retaining SW1 at 100/half.",
+      "Clear counters without changing either operational duplex.",
+      "Restart both devices before saving the mismatch evidence."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The displayed settings directly establish a duplex mismatch. Correct the one deviating endpoint in this explicitly fixed-speed design, then compare fresh increments under a controlled transfer. This does not establish that every other aspect of the link is fault-free.",
+    "fix": "```ios\nSW1# configure terminal\nSW1(config)# interface fastethernet0/24\nSW1(config-if)# speed 100\nSW1(config-if)# duplex full\nSW1(config-if)# end\nSW1# show interfaces fastethernet0/24\n```\nPreserve previous counters, verify both endpoints, repeat a bounded transfer, and compare new errors before saving."
+  }
+]

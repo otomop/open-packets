@@ -1,0 +1,658 @@
+[
+  {
+    "id": "wireless-principles-q22",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does CSMA/CA contribute to ordinary Wi-Fi operation?",
+    "options": [
+      "Listening, waiting and backoff to reduce contention collisions",
+      "Full-duplex transmission and reception on the same ordinary radio",
+      "A dedicated collision-free channel for each associated station",
+      "Guaranteed retransmission-free delivery once a client associates"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Carrier sensing and contention/backoff rules help stations share airtime. They do not eliminate collisions, retries or interference. Modern scheduling enhancements do not remove those basic RF limits.",
+    "whyWrong": {
+      "1": "The ordinary same-channel radio model here is half duplex.",
+      "2": "Association does not allocate an independent radio channel per station.",
+      "3": "Association is not a guarantee of error-free delivery."
+    }
+  },
+  {
+    "id": "wireless-principles-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:1.11.a",
+      "v2:1.5.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "For neighboring APs using the ordinary North American 2.4 GHz 20 MHz plan, which two statements are correct? Choose two.",
+    "options": [
+      "A 40 MHz channel creates more independent frequency choices",
+      "Adjacent channel numbers have centers only 5 MHz apart",
+      "Channels 1, 2 and 3 provide three separate occupied ranges",
+      "Channels 1, 6 and 11 are the usual nonoverlapping reuse set",
+      "A different SSID lets nearby APs ignore shared airtime"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Channel spacing is narrower than the occupied width. The usual 1/6/11 plan separates neighboring cells; increasing width consumes more spectrum.",
+    "whyWrong": {
+      "0": "Wider operation consumes spectrum rather than creating additional independent channels.",
+      "2": "These closely spaced channels overlap.",
+      "4": "Different network names do not separate RF frequencies."
+    }
+  },
+  {
+    "id": "wireless-principles-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.a",
+      "v2:1.5.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Why can an AP using a DFS-required 5 GHz channel leave that channel even when its clients have strong signals?",
+    "options": [
+      "SSID uniqueness requires each AP to change its channel periodically",
+      "Radar protection requires it to vacate after a radar detection",
+      "A strong client signal causes a mandatory radio power shutdown",
+      "A WPA2 key renewal requires a different center frequency"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DFS protects radar users of shared spectrum. Signal strength does not override the regulatory requirement; exact channels and timing depend on the deployment.",
+    "whyWrong": {
+      "0": "SSID uniqueness is not a DFS mechanism.",
+      "2": "Strong signal alone does not cause the stated radar-driven behavior.",
+      "3": "Security key renewal is separate from channel selection."
+    }
+  },
+  {
+    "id": "wireless-principles-q08",
+    "type": "single",
+    "objectives": [
+      "v1:1.11",
+      "v2:1.5.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Wi-Fi 6E extends which radio technology into compatible 6 GHz equipment?",
+    "options": [
+      "802.11ax",
+      "802.11n",
+      "802.11a",
+      "802.11ac"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Wi-Fi 6E identifies the 6 GHz extension of 802.11ax. Both AP and client need compatible hardware and local regulatory support.",
+    "whyWrong": {
+      "1": "802.11n operates in 2.4 and 5 GHz.",
+      "2": "802.11a is an older 5 GHz technology.",
+      "3": "802.11ac is a 5 GHz technology."
+    }
+  },
+  {
+    "id": "wireless-principles-q11",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.d",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which pairing is appropriate for the WPA2-PSK configuration taught in the CCNA GUI objective?",
+    "options": [
+      "WPA2-Personal using AES-CCMP and a shared passphrase",
+      "WPA2-Enterprise using AES-CCMP and individual EAP credentials",
+      "WPA3-Personal using SAE and protected management frames",
+      "Original WPA-Personal using TKIP and a shared passphrase"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The required WPA2-PSK exercise uses WPA2-Personal and AES-CCMP. WEP and TKIP are legacy choices, while WPA3 has its own authentication/security requirements.",
+    "whyWrong": {
+      "1": "That is an Enterprise authentication design, not the requested WPA2-PSK exercise.",
+      "2": "That is WPA3-Personal rather than the stated WPA2-PSK setting.",
+      "3": "Original WPA/TKIP is a legacy alternative, not this WPA2/AES exercise."
+    }
+  },
+  {
+    "id": "wireless-principles-q09",
+    "type": "multi",
+    "objectives": [
+      "v1:1.11.d",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements describe a WPA3-Personal-only WLAN? Choose two.",
+    "options": [
+      "It uses SAE for password-based authentication",
+      "It requires TKIP for compatibility with original WPA",
+      "It requires protected management frame support",
+      "It requires individual RADIUS accounts for every client",
+      "It removes the need to protect endpoints and credentials"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "WPA3-Personal uses SAE and requires PMF. These improve wireless protection but do not eliminate endpoint risks or all forms of radio disruption.",
+    "whyWrong": {
+      "1": "TKIP is obsolete and is not the WPA3-Personal cipher requirement.",
+      "3": "Per-user 802.1X/RADIUS is an Enterprise design, not a Personal requirement.",
+      "4": "Wireless security does not replace endpoint and credential protection."
+    }
+  },
+  {
+    "id": "wireless-principles-q10",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.d",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "netsh wlan show interfaces — representative",
+      "text": "State: connected\nSSID: STAFF\nAuthentication: WPA2-Personal\nCipher: CCMP\nChannel: 44\nReceive rate (Mbps): 866.7"
+    },
+    "prompt": "Which security interpretation is supported by the representative report?",
+    "options": [
+      "The client is using an Enterprise EAP method against RADIUS",
+      "The client has completed a successful application throughput test",
+      "The connection uses TKIP because Personal mode requires RC4",
+      "The connection uses WPA2-Personal with the reported CCMP cipher"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The Authentication and Cipher fields establish the reported WLAN security combination. They do not show an application performance test or prove end-to-end service access.",
+    "whyWrong": {
+      "0": "The report says Personal, not Enterprise.",
+      "1": "A link-rate field is not a throughput measurement.",
+      "2": "The reported cipher is CCMP, not TKIP."
+    }
+  },
+  {
+    "id": "wireless-principles-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.b",
+      "v2:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Windows-style scan — representative",
+      "text": "SSID: STAFF\nBSSID: 02:11:22:33:44:50   Band: 2.4 GHz   Channel: 6\nBSSID: 02:11:22:33:44:51   Band: 5 GHz     Channel: 44"
+    },
+    "prompt": "What can be concluded from this representative scan without consulting an AP inventory?",
+    "options": [
+      "Two BSSIDs advertise STAFF; the scan does not establish physical ownership",
+      "The different bands require the clients to use two different network names",
+      "The two identifiers establish that both radios belong to one physical AP",
+      "The similar addresses establish that the second entry is a spoofed radio"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "One SSID can appear on multiple radios and APs. BSSID identifies the service set; similar MAC-style values do not establish which physical chassis owns them.",
+    "whyWrong": {
+      "1": "Different bands can advertise the same SSID.",
+      "2": "Address similarity is not a verified physical inventory mapping.",
+      "3": "A different or similar BSSID alone does not prove impersonation."
+    }
+  },
+  {
+    "id": "wireless-principles-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An AP changes from 20 dBm transmit power to 23 dBm. What is its approximate new power?",
+    "options": [
+      "50 mW",
+      "400 mW",
+      "200 mW",
+      "1,000 mW"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "20 dBm represents 100 mW. A 3 dB increase is approximately a doubling, giving about 200 mW; the exact value is about 199.5 mW.",
+    "whyWrong": {
+      "0": "About 50 mW corresponds to 17 dBm, a decrease.",
+      "1": "About 400 mW corresponds to 26 dBm.",
+      "3": "1,000 mW corresponds to 30 dBm."
+    }
+  },
+  {
+    "id": "wireless-principles-q03",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "At one receiver, signal is −65 dBm and noise is −92 dBm over the same observation period. What is SNR?",
+    "options": [
+      "27 dBm",
+      "−157 dBm",
+      "27 dB",
+      "−27 dB"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Subtract noise from signal: −65 − (−92) = 27. SNR is a power ratio expressed in dB, not an absolute dBm level.",
+    "whyWrong": {
+      "0": "The numeric result is correct but the unit is not.",
+      "1": "Adding the levels does not calculate SNR.",
+      "3": "This reverses the subtraction."
+    }
+  },
+  {
+    "id": "wireless-principles-q05",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.a",
+      "v2:1.5.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Survey worksheet",
+      "text": "AP-A: channel 1\nAP-B: channel 6\nAP-C: channel 6\nAP-B and AP-C: strong mutual reception; high shared airtime utilization"
+    },
+    "prompt": "All APs use 20 MHz in the North American 1/6/11 plan. The survey shows no other relevant channel-11 source. Which candidate change addresses the displayed reuse and should then be verified?",
+    "options": [
+      "Move AP-C to channel 11 and verify the resulting RF behavior",
+      "Move AP-A to channel 6 so all APs can coordinate one channel",
+      "Move AP-B to channel 3 to separate it from AP-C numerically",
+      "Move AP-C to channel 8 to create a separate center frequency"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The demonstrated problem is AP-B/AP-C sharing channel 6. Channel 11 is a suitable candidate in this stated plan; measurements after the change verify the result.",
+    "whyWrong": {
+      "1": "Adding another co-channel AP does not remove the existing contention.",
+      "2": "Channel 3 introduces overlap rather than using the planned nonoverlapping set.",
+      "3": "Channel 8 overlaps the neighboring channel-6 occupied spectrum."
+    }
+  },
+  {
+    "id": "wireless-principles-q12",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.b",
+      "v2:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Verified deployment",
+      "text": "AP1: SSID STAFF, BSSID 02:00:00:00:01:10\nAP2: SSID STAFF, BSSID 02:00:00:00:02:10\nBoth bridge to VLAN 20 through the wired LAN.\nThe roaming client's address remains 10.20.0.57/24."
+    },
+    "prompt": "The managed deployment uses the same SSID and security on both APs with a common distribution system. What describes the combined service?",
+    "options": [
+      "An independent basic service set",
+      "A single basic service set",
+      "An extended service set",
+      "A wireless mesh backhaul"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The cooperating infrastructure BSSs form an ESS. The given shared VLAN supports this example's unchanged IP addressing, but identical SSIDs alone would not prove the same result.",
+    "whyWrong": {
+      "0": "An IBSS is an ad hoc arrangement without these infrastructure APs.",
+      "1": "Each shown BSSID identifies a separate BSS.",
+      "3": "The exhibit specifies wired distribution, not wireless mesh backhaul."
+    }
+  },
+  {
+    "id": "wireless-principles-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authorized diagnostic observations — authored worksheet",
+      "text": "2.4 GHz client: strong received level, heavy retries while nearby microwave runs\nSpectrum observation: non-Wi-Fi energy increases during operation\nControlled appliance off/on trials: impairment repeatedly disappears/returns\n5 GHz comparison client: unaffected"
+    },
+    "prompt": "Which conclusion is best supported by the controlled observations?",
+    "options": [
+      "The noon timing proves a neighboring AP changes channel",
+      "A DFS event on 2.4 GHz causes the recorded loss",
+      "The operating appliance is a demonstrated interference source",
+      "The laptop's strong signal rules out RF interference"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The controlled repeated correlation and non-Wi-Fi energy measurement support the appliance as the source in this scenario. A lunchtime symptom alone would only suggest investigation.",
+    "whyWrong": {
+      "0": "No neighboring-AP channel change is shown.",
+      "1": "The ordinary 2.4 GHz WLAN in this scenario does not use 5 GHz DFS.",
+      "3": "Strong desired signal can coexist with interfering energy."
+    }
+  },
+  {
+    "id": "wireless-principles-q14",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.d",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A WLAN design must support revoking one employee's individual credential. Which design directly meets that requirement?",
+    "options": [
+      "Personal mode with one shared passphrase and MAC filtering",
+      "Personal mode with one periodically rotated staff passphrase",
+      "Personal mode with one shared passphrase and hidden SSID",
+      "Enterprise EAP with an individually managed account per employee"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Individually managed Enterprise credentials allow targeted revocation. Enforcement can also require terminating existing sessions according to policy; disabling an account is not a promise that every active session ends instantly.",
+    "whyWrong": {
+      "0": "MAC filtering is not an individually authenticated credential and addresses can be copied.",
+      "1": "Rotating a common secret affects the group rather than one employee's credential.",
+      "2": "Hiding the SSID does not create individual authentication."
+    }
+  },
+  {
+    "id": "wireless-principles-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A surveyed point-to-point link needs a narrow beam aimed at a second building. Which listed pattern best matches that requirement?",
+    "options": [
+      "An omnidirectional antenna covering the room horizontally",
+      "A directional dish with an 8-degree specified beamwidth",
+      "A broad wall-panel pattern covering a 120-degree sector",
+      "An omnidirectional ceiling pattern covering nearby desks"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The stated narrow-beam dish fits the specified point-to-point coverage pattern. Actual suitability still depends on link budget, alignment, clearance and permitted power; antenna names or distance alone are insufficient.",
+    "whyWrong": {
+      "0": "Room-wide horizontal coverage does not match the requested narrow beam.",
+      "2": "The supplied 120-degree sector is much broader than the stated link needs.",
+      "3": "The supplied pattern is for local area coverage rather than the specified beam."
+    }
+  },
+  {
+    "id": "wireless-principles-q16",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Client status",
+      "text": "Receive PHY rate: 600 Mb/s\nClient count on shared channel: 24\nApplication file-transfer rate: not measured"
+    },
+    "prompt": "Why does the reported PHY rate not establish a 600 Mb/s file-transfer rate?",
+    "options": [
+      "Each associated client is reserved the displayed 600 Mb/s concurrently",
+      "The application rate is fixed at exactly half the displayed PHY rate",
+      "Changing the SSID isolates this client from the channel's other users",
+      "Overhead and shared airtime prevent that link rate from proving throughput"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The link rate describes radio transmission capability for that connection. Useful application throughput depends on airtime, overhead, retries and the rest of the path; no fixed percentage applies universally.",
+    "whyWrong": {
+      "0": "The shared radio medium does not reserve the full link rate for every client.",
+      "1": "There is no universal fixed PHY-to-application throughput ratio.",
+      "2": "A network name does not create independent radio spectrum."
+    }
+  },
+  {
+    "id": "wireless-principles-q17",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two RF measurements (exercise)",
+      "text": "Comparable readings at each client during the stated interval:\nClient A: signal −54 dBm, noise −66 dBm\nClient B: signal −66 dBm, noise −96 dBm\nApplication throughput has not been measured."
+    },
+    "prompt": "Which comparison is supported by the two measurements?",
+    "options": [
+      "A has stronger signal and therefore must deliver higher throughput",
+      "A has 12 dBm SNR, while B has a weaker 30 dBm signal",
+      "B has 30 dB SNR, compared with A's 12 dB; throughput still needs testing",
+      "B must use a higher-power AP because its noise floor is lower"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A: −54 − (−66) = 12 dB. B: −66 − (−96) = 30 dB. B has the better signal-to-noise ratio despite its weaker signal, but neither measurement alone guarantees application capacity.",
+    "whyWrong": {
+      "0": "Stronger desired signal can coexist with a much higher noise floor.",
+      "1": "SNR is a ratio in dB; −66 dBm is B's received signal.",
+      "3": "A lower noise floor does not establish the AP's transmit power."
+    }
+  },
+  {
+    "id": "wireless-principles-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.a",
+      "v2:1.5.a"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Bonded channel comparison (exercise)",
+      "text": "AP-A: 5 GHz, 80 MHz width; occupied component channels 36, 40, 44 and 48.\nAP-B: 5 GHz, 20 MHz width on channel 44.\nThe cells have strong mutual reception."
+    },
+    "prompt": "Which channel-width conclusion is correct?",
+    "options": [
+      "Different primary channels prove the occupied spectrum is independent",
+      "The 80 MHz radio overlaps the narrower radio's channel spectrum",
+      "Renaming one SSID separates these transmissions in frequency",
+      "Both must have the same PHY rate because some spectrum overlaps"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The supplied 80 MHz channel includes the component containing channel 44. Different primary-channel labels do not make their occupied spectrum disjoint. Channel width and the actual occupied range matter.",
+    "whyWrong": {
+      "0": "The primary-channel number does not describe the entire bonded range.",
+      "2": "SSID naming does not change occupied frequencies.",
+      "3": "Overlap does not determine equal rates; capabilities and conditions also matter."
+    }
+  },
+  {
+    "id": "wireless-principles-q21",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Measurement location and time (exercise)",
+      "text": "Laptop receive level from AP-A: −60 dBm at 10:00.\nAP-A noise floor: −95 dBm at 10:20 in a different location.\nNo laptop noise measurement is available."
+    },
+    "prompt": "Can these two readings establish the laptop's SNR?",
+    "options": [
+      "No: obtain comparable signal and noise readings at the same receiver",
+      "Yes: subtract the distant AP's noise reading to obtain 35 dB",
+      "Yes: the shared SSID makes noise identical throughout the WLAN",
+      "No: negative dBm levels cannot be used in a subtraction"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "SNR compares desired signal with noise at the relevant receiver over a comparable interval and band. Combining a laptop's measurement with an AP's measurement elsewhere does not establish either receiver's SNR.",
+    "whyWrong": {
+      "1": "The arithmetic mixes different receivers and observation conditions.",
+      "2": "The SSID does not make RF conditions uniform.",
+      "3": "Negative dBm values are valid power levels; the issue is measurement comparability."
+    }
+  },
+  {
+    "id": "wireless-principles-q23",
+    "type": "single",
+    "objectives": [
+      "v1:1.11",
+      "v2:1.5.a",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Band compatibility requirements (exercise)",
+      "text": "Approved new WLAN: 6 GHz, WPA3-Personal.\nClient vendor specification and driver report: 2.4/5 GHz only.\nThe business requires this client to retain authorized access; its current hardware has no 6 GHz upgrade path."
+    },
+    "prompt": "Which deployment change can meet the stated requirement without pretending a setting adds unsupported hardware?",
+    "options": [
+      "Rename the 6 GHz SSID to match the client's saved 5 GHz profile",
+      "Provide an approved compatible band or replace/update to documented capable equipment",
+      "Select WPA2-only security on the 6 GHz radio for this client",
+      "Increase 6 GHz transmit power until the 5 GHz-only adapter can detect it"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The verified client lacks a 6 GHz radio capability. Use a supported, approved band for it or obtain equipment with documented 6 GHz support. A name, power change or security downgrade cannot add the missing radio band.",
+    "whyWrong": {
+      "0": "SSID equality does not add a radio capability.",
+      "2": "WPA2-only is not the appropriate 6 GHz security design and would not add band support.",
+      "3": "Increasing power does not change the adapter's supported frequency band."
+    }
+  },
+  {
+    "id": "wireless-principles-q19",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b",
+      "v2:1.5.d"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "A direction-specific RF change (exercise)",
+      "text": "Same stationary client before/after an approved AP power increase:\nClient receives AP: −72 -> −61 dBm.\nAP receives client: −81 -> −81 dBm; uplink retries remain high.\nSecurity completes; client address/gateway are correct.\nDownloads improve, uploads still fail the application acceptance test."
+    },
+    "prompt": "Which next action best addresses the evidence without assuming more AP power fixes both directions?",
+    "options": [
+      "Raise the AP power again because the client hears it well",
+      "Inspect client-to-AP coverage and placement using repeated two-direction tests",
+      "Replace the DHCP pool because association implies good radio delivery",
+      "Widen the channel before checking the weak client-to-AP path"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The AP's higher transmit power improved only what the client receives. The AP still hears a weak client transmission and uplink retries remain high. Investigate placement, obstructions and client capability in that direction, then compare the same tests before claiming recovery.",
+    "whyWrong": {
+      "0": "Further AP transmit power does not increase the client's transmit capability.",
+      "2": "The supplied valid addressing and directional RF evidence do not identify a DHCP fault.",
+      "3": "More width does not establish a repair for the weak return radio path."
+    }
+  },
+  {
+    "id": "wireless-principles-q20",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.b",
+      "v2:1.5"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Roaming and retained addressing (exercise)",
+      "text": "AP-A and AP-B advertise STAFF with the same approved security.\nClient was on AP-A/VLAN 20 with 10.20.0.57/24, gateway 10.20.0.1.\nAfter moving: BSSID maps to AP-B; security succeeds; signal is strong.\nThe old IP settings remain, but the gateway and application no longer respond.\nAP-B's wired VLAN/mobility mapping has not been verified."
+    },
+    "prompt": "Which next check best separates the wireless identity from the broken IP path?",
+    "options": [
+      "Treat the shared SSID as proof that both BSSIDs lead to VLAN 20",
+      "Raise the client signal threshold because strong RSSI proves DHCP succeeded",
+      "Change the server's address because a changed BSSID proves a server fault",
+      "Check AP-B's forwarding/VLAN design and the client's valid subnet after the move"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The client changed cells and completed compatible security, but the retained address is not automatically correct behind AP-B. Verify the authorized mapping/mobility design and obtain valid addressing for that path. Same SSID and good signal do not establish the same VLAN or uninterrupted sessions.",
+    "whyWrong": {
+      "0": "SSID equality is not proof of an identical wired forwarding domain.",
+      "1": "Signal strength does not prove a fresh DHCP exchange or correct subnet.",
+      "2": "No supplied evidence identifies a server addressing change."
+    }
+  },
+  {
+    "id": "wireless-principles-q24",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.d"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two plausible interference explanations (exercise)",
+      "text": "Lunchtime calls deteriorate on 2.4 GHz; signal stays strong.\nScan shows nearby APs; retries increase, but utilization and spectrum were not recorded.\nA microwave is nearby, and client load also rises at lunchtime.\nSecurity and IP settings remain valid."
+    },
+    "prompt": "Which next test would best distinguish the proposed RF causes?",
+    "options": [
+      "Declare the nearby microwave responsible because loss happens at lunch",
+      "Replace the shared passphrase because channel scans cannot show passwords",
+      "Change every AP to the strongest scanned channel and compare afterward",
+      "Record band, retries/utilization and spectrum during controlled authorized comparisons"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The symptoms suggest investigation but do not identify one source. Correlate comparable RF and service evidence, and use an authorized controlled change that separates the suspected non-Wi-Fi source from competing Wi-Fi load. Change one factor at a time.",
+    "whyWrong": {
+      "0": "Timing and proximity alone do not establish the cause.",
+      "1": "No supplied security failure is shown, and password changes do not diagnose RF load.",
+      "2": "The strongest scanned signal does not identify the least congested channel; changing every AP loses experimental control."
+    }
+  }
+]

@@ -1,0 +1,552 @@
+[
+  {
+    "id": "fhrp-hsrp-vrrp-q18",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 1,
+    "prompt": "What problem does a first-hop redundancy group solve for a host using its virtual gateway?",
+    "options": [
+      "It makes two physical routers use the same real interface IP address.",
+      "It guarantees that every remote application stays reachable during any network failure.",
+      "It supplies every remote route without a routing protocol or static routes.",
+      "It allows another router to assume the shared gateway identity when the current forwarding router fails."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The shared gateway identity reduces dependence on one physical first-hop router. Routing, link availability and application operation remain separate requirements.",
+    "whyWrong": {
+      "0": "The peers normally retain distinct real addresses and share a separate virtual identity.",
+      "1": "Failures beyond the gateway or during convergence can still interrupt service.",
+      "2": "Gateway redundancy does not create all downstream and return routes."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q01",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 1,
+    "prompt": "Which interpretation of R2's HSRP status is correct?",
+    "options": [
+      "R2 is Standby, preemption is configured, and hosts should use 192.168.10.1.",
+      "R2 is Active because the Standby column says local.",
+      "R2 is Standby, so hosts should use the active real address 192.168.10.2.",
+      "R2 is Active because the P flag means preemption has completed."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "State describes the local role and local identifies the device issuing the command. The Virtual IP is the host gateway; the P flag indicates configured preemption.",
+    "whyWrong": {
+      "1": "Local in the Standby column confirms R2 is the standby.",
+      "2": "Hosts should use the virtual address to preserve gateway redundancy.",
+      "3": "P means preemption is configured, not that it just occurred."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R2# show standby brief\nInterface Grp Pri P State   Active        Standby Virtual IP\nGi0/0     1   100 P Standby 192.168.10.2  local   192.168.10.1"
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q05",
+    "type": "multi",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 1,
+    "prompt": "For an ordinary VRRP group with non-owner routers and default settings, which two statements are true? Choose two.",
+    "options": [
+      "VRRP is carried in UDP port 1985.",
+      "A higher-priority returning router can preempt the current lower-priority router.",
+      "The default non-owner priority is 100.",
+      "The lower numeric priority is preferred.",
+      "VRRPv2 supports IPv6 as well as IPv4."
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "Default non-owner priority is 100 and preemption is normally enabled. VRRP uses protocol number 112; VRRPv3, not v2, provides IPv6 support.",
+    "whyWrong": {
+      "0": "UDP 1985 is IPv4 HSRP transport, not VRRP.",
+      "3": "Higher priority is preferred.",
+      "4": "VRRPv2 is IPv4; v3 supports IPv4 and IPv6."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q15",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 1,
+    "prompt": "A VRRP router owns real IPv4 address 192.168.10.1, which is also the group virtual address. Which priority identifies this owner case?",
+    "options": [
+      "100",
+      "255",
+      "254",
+      "0"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VRRP reserves priority 255 for the address owner. Identify ownership before applying ordinary non-owner priority and preemption assumptions.",
+    "whyWrong": {
+      "0": "100 is the normal non-owner default.",
+      "2": "254 is the highest ordinary non-owner configurable priority.",
+      "3": "Priority 0 signals relinquishing the role in protocol advertisements."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q16",
+    "type": "single",
+    "objectives": [
+      "v2:3.4"
+    ],
+    "difficulty": 1,
+    "prompt": "Which conclusion follows from these VRRPv3 summaries on R1?",
+    "options": [
+      "R1 forwards for both because both use group number 1.",
+      "The IPv6 summary is invalid because VRRP supports only IPv4.",
+      "R1 forwards for IPv4 but is Backup for the separate IPv6 instance.",
+      "The IPv6 virtual MAC should be changed to the IPv4 virtual MAC."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Address family is essential context. R1 is IPv4 Master and IPv6 Backup, while the IPv6 instance uses a virtual link-local address and IPv6 virtual MAC.",
+    "whyWrong": {
+      "0": "The IPv4 and IPv6 instances are independent.",
+      "1": "VRRPv3 supports IPv6 as well as IPv4.",
+      "3": "The IPv6 MAC block differs intentionally from the IPv4 block."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R1 Group 1, Address-Family IPv4: State Master, VIP 192.168.10.1\nR1 Group 1, Address-Family IPv6: State Backup, VIP FE80::1\nIPv6 virtual MAC: 0000.5e00.0201"
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q02",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "R1's real address is 192.168.10.2, R2 is .3, and HSRP VIP is .1. A PC incorrectly uses .2 as its gateway. R1 fails and R2 becomes Active. What is expected?",
+    "options": [
+      "R2 automatically adopts R1's real address .2 as well as the VIP.",
+      "The PC still targets the failed real gateway and may lose off-subnet access.",
+      "The PC automatically rewrites its static gateway to the advertised virtual address.",
+      "The PC keeps .2, but its ARP entry must change to R2 physical MAC for .2."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The PC must use the VIP .1 for the intended redundancy. R2 taking over that virtual identity does not repair a host still configured to send to R1's real address.",
+    "whyWrong": {
+      "0": "Ordinary HSRP takeover moves the virtual identity, not all peer real addresses.",
+      "2": "HSRP failover does not rewrite the PC static gateway field.",
+      "3": "R2 takes responsibility for the virtual address, not the failed peer real address .2."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q04",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "An IOS interface is currently using HSRPv1. Group 300 is rejected. Which required version change supports that IPv4 group number?",
+    "options": [
+      "Change the virtual IP to another address in the same subnet.",
+      "Set standby 300 priority 255 before creating the virtual address.",
+      "Change the LAN VLAN number to 300 on the access switch.",
+      "Configure standby version 2 on each participating interface."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "HSRPv1 supports groups 0–255; HSRPv2 supports 0–4095. Both peers need compatible version configuration, and a version change also changes the ordinary IPv4 virtual MAC format.",
+    "whyWrong": {
+      "0": "The error concerns the version group-number range, not the virtual IP.",
+      "1": "Priority does not expand the HSRPv1 group range.",
+      "2": "HSRP group support is independent of the chosen VLAN number."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q07",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 rebooted and R2 took over. R1 has recovered with effective priority 110, but preemption is disabled. R2 remains healthy at 100. Which role result is expected?",
+    "options": [
+      "R1 must become Active immediately because 110 exceeds 100.",
+      "Both routers must become Active because priorities differ.",
+      "R2 can remain Active while recovered R1 is Standby.",
+      "R2 must disable its LAN interface to release the virtual IP."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "HSRP preemption is disabled by default. A higher-priority recovered router does not necessarily displace a healthy active router unless preemption is enabled.",
+    "whyWrong": {
+      "0": "Taking over from a healthy active router requires preemption in this scenario.",
+      "1": "Different priorities are normal and do not cause isolation.",
+      "3": "A physical shutdown is not required for ordinary protocol role selection."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative R1 show standby excerpt",
+      "text": "State is Standby\nPreemption disabled\nActive router is 192.168.10.3, priority 100\nPriority 110 (configured 110)"
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q11",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "VRRP R2 is currently Master at priority 100. R1 returns at 110, both are non-owners, and R1's preemption is at its default. What is expected?",
+    "options": [
+      "R1 must remain Backup because VRRP preemption defaults off.",
+      "R2 becomes the address owner because it was Master first.",
+      "R1 can preempt R2 and take the forwarding role.",
+      "R1 must first change its virtual address to a new subnet."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "For ordinary non-owner VRRP routers, preemption is enabled by default and higher priority is preferred. R1 can reclaim the forwarding role after protocol processing and any configured delay.",
+    "whyWrong": {
+      "0": "VRRP normally enables preemption by default.",
+      "1": "Ownership depends on real/virtual address identity, not startup order.",
+      "3": "Peers should retain the intended virtual gateway identity."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q23",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which peer is expected to hold the forwarding role in this VRRP owner case?",
+    "options": [
+      "R1, the address owner at priority 255.",
+      "R2, because 254 is the highest ordinary non-owner priority.",
+      "Whichever non-owner most recently sent an advertisement.",
+      "Both peers, because preemption is enabled."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Identify ownership before applying ordinary non-owner rules. The owner uses priority 255 and has special ownership preference.",
+    "whyWrong": {
+      "1": "The owner priority 255 is above the ordinary non-owner range.",
+      "2": "An arbitrary most-recent sender is not the owner-priority rule.",
+      "3": "Ordinary VRRP selects one forwarding router per virtual instance."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "VRRP address-owner priorities (exercise)",
+      "text": "Both peers on the same working LAN, no faults.\nR1 real address equals the virtual IPv4 address; priority 255.\nR2 real address differs; priority 254; preemption enabled.\nAllow protocol processing to settle."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q17",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 is healthy HSRP Active at priority 100 and real address .2. R2 joins at priority 100 with real address .3 and preempt enabled. Does the higher real address require R2 to preempt R1?",
+    "options": [
+      "Yes; the IP tiebreaker always preempts an existing Active router.",
+      "Yes; preempt forces takeover regardless of priority.",
+      "No; R2 must use the same real interface IP as R1.",
+      "No; an equal-priority router does not preempt solely because its IP is higher."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Cisco distinguishes election tiebreaking from equal-priority preemption. A higher interface IP can break an election tie, but an equal-priority arriving router does not preempt a healthy Active router merely for that reason.",
+    "whyWrong": {
+      "0": "The initial-election tiebreaker is not an equal-priority preemption guarantee.",
+      "1": "Preemption still depends on the required priority relationship.",
+      "2": "Duplicate real interface addresses would be a fault."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q06",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 loses its tracked uplink. R2 is priority 100 with preempt enabled. Why does the shown tracking configuration fail to make R2 preferred?",
+    "options": [
+      "R1's effective priority becomes 5, so R2 needs a lower priority.",
+      "R1's effective priority falls only to 105, which still exceeds 100.",
+      "R2 preempt is irrelevant because it is configured on the standby router.",
+      "R1 must reduce its configured priority permanently before tracking can affect it."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The configured 110 minus decrement 5 equals 105. A decrement must give R2 the intended strict priority advantage; in this pair, decrement 20 gives R1 90.",
+    "whyWrong": {
+      "0": "The decrement is subtracted from the configured priority; it does not replace it.",
+      "2": "The standby needs preemption to take over from a live lower-priority active router.",
+      "3": "Tracking changes effective priority while preserving the configured baseline."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R1 Gi0/0:\n standby 1 priority 110\n standby 1 preempt\n standby 1 track GigabitEthernet0/1 5\nR1 Gi0/1: down/down"
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q09",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "An HSRP standby uses a 10-second active hold timer. It accepted its last active Hello 3 seconds ago, and no further Hello or Resign arrives. How much hold time remains before expiry?",
+    "options": [
+      "Approximately 7 seconds.",
+      "Approximately 3 seconds.",
+      "Approximately 10 seconds from now.",
+      "Exactly three additional Hello transmissions."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The remaining interval is 10 − 3 = 7 seconds before timer expiry. Actual forwarding recovery also includes state processing and the rest of the network, so this is not an exact application-recovery promise.",
+    "whyWrong": {
+      "1": "Three seconds is elapsed time in the question, not the remaining hold time.",
+      "2": "The timer was already started by the last accepted Hello.",
+      "3": "The receiver uses a timer; it does not require counting a fixed number of future sends."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q08",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "During ordinary same-version HSRP failover, what helps the switch send frames for the virtual MAC toward the new Active router?",
+    "options": [
+      "Changing every PC gateway to the new router real IP.",
+      "Updating the PC ARP cache alone while leaving the switch MAC location unchanged.",
+      "Keeping the old switch port because the virtual gateway IP did not change.",
+      "Frames sourced from the virtual MAC, including gratuitous ARP announcements."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Switches learn source MAC addresses on incoming ports. The new active router announcements and traffic using the virtual MAC update that location while the host can retain the same IP-to-MAC mapping.",
+    "whyWrong": {
+      "0": "The virtual gateway lets hosts retain their configured gateway.",
+      "1": "The switch must learn which local port leads to the virtual MAC; a host-only cache update does not supply that location.",
+      "2": "The identity remains but its physical location changes."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q22",
+    "type": "multi",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two entries should remain unchanged during ordinary same-version failover of this group? Choose two.",
+    "options": [
+      "The switch port learned for the virtual MAC.",
+      "The PC configured virtual gateway IP.",
+      "The group virtual IP-to-virtual-MAC mapping.",
+      "The physical router performing the Active role.",
+      "The exact number of application packets lost."
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "The virtual identity lets the host keep its gateway. The switch learns the location of that identity toward the replacement router.",
+    "whyWrong": {
+      "0": "That location should move toward the new forwarding router.",
+      "3": "That router changes during the failover.",
+      "4": "Loss depends on detection, convergence and the rest of the network; it is not a stable identity field."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q14",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Both routers have preemption enabled. R1 uses priority 110 for VLAN 10 and 90 for VLAN 20; R2 uses 90 for VLAN 10 and 110 for VLAN 20. Each VLAN has its own agreed group/VIP. What is the intended steady-state arrangement?",
+    "options": [
+      "R1 forwards for VLAN 10 while R2 forwards for VLAN 20.",
+      "R1 and R2 both forward concurrently for each single HSRP group.",
+      "R1 becomes Active for both VLANs because it has a 110 somewhere.",
+      "R2 becomes Standby for both VLANs because its VLAN 10 priority is lower."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Different groups can prefer different routers, distributing gateway duties across VLANs. This is per-group sharing, not two routers simultaneously Active for the same group.",
+    "whyWrong": {
+      "1": "Ordinary HSRP has one Active per group in steady state.",
+      "2": "Priority is evaluated within each group rather than router-wide.",
+      "3": "Its higher VLAN 20 priority makes it preferred in that separate group."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative per-group priority plan",
+      "text": "VLAN 10 / HSRP group 10: R1 priority 110, R2 priority 90\nVLAN 20 / HSRP group 20: R1 priority 90, R2 priority 110\nBoth routers have preempt enabled in both groups."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Two intended IPv4 HSRP peers share a VLAN and VIP but each remains Active with unknown Standby. Which two configuration mismatches can create separate groups that do not recognize each other? Choose two.",
+    "options": [
+      "Different HSRP versions on the interfaces",
+      "Different configured HSRP priorities",
+      "Different real interface IPs in the same subnet",
+      "Different HSRP group numbers",
+      "Preemption enabled on both peers"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Version and group identity must agree for the intended HSRP relationship. Different real addresses and priorities are normal in a redundant gateway pair.",
+    "whyWrong": {
+      "1": "Different priorities intentionally establish preference and do not isolate peers.",
+      "2": "The routers need different real interface addresses.",
+      "4": "Preemption on both peers does not by itself create two active routers."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q19",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Why can the virtual gateway still answer while the server test fails?",
+    "options": [
+      "R1 remains a reachable first hop but has no usable route to the server prefix.",
+      "The PC must change its gateway to R2 real IP whenever a server stops replying.",
+      "R2 Standby proves that its physical LAN interface is shut.",
+      "An Active HSRP state guarantees that the complete forward and return path works."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Read FHRP and routing evidence separately. The active router can answer for the VIP while lacking onward reachability; inspect the remote and reverse paths before claiming application availability.",
+    "whyWrong": {
+      "1": "Changing the host gateway bypasses the redundancy design without diagnosing the routed path.",
+      "2": "Standby is a protocol role; the peer may be fully operational.",
+      "3": "Active describes the gateway role, not end-to-end path health."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Reachable VIP and missing remote route (exercise)",
+      "text": "PC gateway is the correct VIP 192.168.19.1.\nR1 Active, R2 Standby; both LAN interfaces up.\nPC ping to VIP succeeds; ping to server 203.0.113.10 fails.\nR1 has no covering server route or default after its uplink failure.\nNo uplink tracking is configured."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q20",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "After the shown tracked failure, what role change is expected, and what must still be verified?",
+    "options": [
+      "R2 can preempt R1; remote service still needs separate verification.",
+      "R1 stays preferred because its configured priority is still 135.",
+      "R1 changes the VIP to its real address because its effective priority fell.",
+      "R2 takes over and this alone proves every server is reachable."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "135-40=95, below R2 at 110. R2 has preempt, so it can take over from the still-live LAN peer; then verify actual service delivery.",
+    "whyWrong": {
+      "1": "Tracking changes effective priority to 95; configured priority is not the current comparison value.",
+      "2": "Tracking changes priority, not the intended virtual gateway identity.",
+      "3": "FHRP role transition does not establish all routed or application paths."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Tracking state and effective priority (exercise)",
+      "text": "R1 configured HSRP priority 135; tracked uplink Down; decrement 40.\nR1 LAN remains up; R1 is the incumbent Active.\nR2 effective priority 110; preemption enabled; uplink healthy.\nBoth agree on group, version, VIP and VLAN."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q21",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 3,
+    "prompt": "Which next action is supported by the two Active states?",
+    "options": [
+      "Immediately set both real interface addresses to the VIP.",
+      "Conclude that preempt must be disabled on both routers.",
+      "Compare VLAN reachability, group and version on both peers before naming a specific cause.",
+      "Conclude that differing priorities alone caused the split."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Two Active states are a symptom requiring correlated evidence. Unlike the version-mismatch ticket, this excerpt does not yet identify a single cause.",
+    "whyWrong": {
+      "0": "Duplicate real addressing does not repair an unknown peer relationship.",
+      "1": "Preemption alone does not explain peers failing to recognize each other.",
+      "3": "Different priorities are normal and do not prevent recognition."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two Active peers with incomplete evidence (exercise)",
+      "text": "Intended HSRP pair:\nR1 State Active, Standby unknown\nR2 State Active, Standby unknown\nNo peer configuration comparison or VLAN/control-traffic test has been collected."
+    }
+  }
+]

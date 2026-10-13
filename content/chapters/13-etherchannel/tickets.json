@@ -1,0 +1,76 @@
+[
+  {
+    "id": "etherchannel-t01",
+    "title": "One bundle member is suspended after a VLAN change",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "scenario": "DSW1 and ASW1 use an LACP trunk. The approved design now requires VLANs 10,20,30,40 with native VLAN 99. A partial local change was made on only DSW1 Gi1/0/2. The collected records below show a local compatibility failure. Assume these supporting IOS switches allow logical port-channel trunk changes; command and log formatting varies by image.",
+    "exhibits": [
+      {
+        "title": "Representative DSW1 summary",
+        "text": "Group  Port-channel  Protocol  Ports\n1      Po1(SU)       LACP      Gi1/0/1(P) Gi1/0/2(s)"
+      },
+      {
+        "title": "Recorded local configuration comparison",
+        "text": "DSW1 Po1: allowed VLANs 10,20,30; native 99\nDSW1 Gi1/0/1: allowed VLANs 10,20,30; native 99\nDSW1 Gi1/0/2: allowed VLANs 10,20,30,40; native 99\nBoth physical members: switchport mode trunk; channel-group 1 mode active"
+      },
+      {
+        "title": "Recorded failure reason",
+        "text": "Gi1/0/2 is incompatible with its local bundle: VLAN mask differs."
+      },
+      {
+        "title": "Far-end record",
+        "text": "ASW1 Po1 and both members Gi0/1, Gi0/2 allow 10,20,30; native 99. VLAN 40 has not yet been created on either switch."
+      }
+    ],
+    "question": "What is the root cause identified by this evidence?",
+    "options": [
+      "VLAN 40 is absent from the databases, which alone explains the cited local VLAN-mask mismatch.",
+      "The remote trunk's omitted VLAN 40 alone explains the cited local member inconsistency.",
+      "One DSW1 member's allowed list differs from its local logical interface and other member.",
+      "Both active LACP endpoints are initiating, which prevents one member from joining."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The selected physical member has a different local VLAN mask and is suspended. Its partner protocol is not the stated failure. The only active member also lacks VLAN 40, and the new VLAN is absent from the databases. Correct both formation consistency and the intended VLAN service; merely seeing SU is insufficient. The missing VLAN and far-end allowance are additional service problems, but neither replaces the explicitly recorded local compatibility cause. Active/active is a valid LACP pairing.",
+    "fix": "In this lab’s approved change, create VLAN 40 on both switches and apply the intended allowed list through each logical port channel. The complete intended list is used here so that the result is explicit.\n\n```ios DSW1\nDSW1# configure terminal\nDSW1(config)# vlan 40\nDSW1(config-vlan)# name NEW_USERS\nDSW1(config-vlan)# exit\nDSW1(config)# interface port-channel 1\nDSW1(config-if)# switchport trunk allowed vlan 10,20,30,40\nDSW1(config-if)# end\nDSW1# show etherchannel summary\nDSW1# show interfaces trunk\nDSW1# show running-config\n```\n\n```ios ASW1\nASW1# configure terminal\nASW1(config)# vlan 40\nASW1(config-vlan)# name NEW_USERS\nASW1(config-vlan)# exit\nASW1(config)# interface port-channel 1\nASW1(config-if)# switchport trunk allowed vlan 10,20,30,40\nASW1(config-if)# end\nASW1# show etherchannel summary\nASW1# show interfaces trunk\nASW1# show running-config\n```\n\nVerify that the intended logical-interface setting appears consistently on both members and that each member returns to P. If the image retains a discrepant physical setting, shut the affected member, set its allowed list to the approved list, restore it, and recheck; do not assume propagation occurred. Confirm native VLAN 99 is unchanged, VLAN 40 exists, and the required VLAN is allowed and forwarding on both ends. Test the intended VLAN 40 endpoints after their access-port configuration is complete. No exact recovery log or delay is promised."
+  },
+  {
+    "id": "etherchannel-t02",
+    "title": "A replacement switch cannot form its LACP bundle",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "scenario": "ASW3 Gi0/1 and Gi0/2 connect to DSW1 Gi1/0/23 and Gi1/0/24. All four physical interfaces are configured as compatible trunks with native VLAN 99 and allowed VLANs 10,99. The local channel numbers intentionally differ. Both member pairs are passive after a template replacement. Monitoring reports no formed bundle; do not assume that individual links preserve user traffic.",
+    "exhibits": [
+      {
+        "title": "ASW3 configuration record",
+        "text": "interface range GigabitEthernet0/1 - 2\n switchport mode trunk\n switchport trunk native vlan 99\n switchport trunk allowed vlan 10,99\n channel-group 1 mode passive"
+      },
+      {
+        "title": "DSW1 configuration record",
+        "text": "interface range GigabitEthernet1/0/23 - 24\n switchport mode trunk\n switchport trunk native vlan 99\n switchport trunk allowed vlan 10,99\n channel-group 3 mode passive"
+      },
+      {
+        "title": "Observation",
+        "text": "Physical link state: up at both ends.\nNo active members have joined the intended LACP port channels."
+      }
+    ],
+    "question": "Which diagnosis fits the records?",
+    "options": [
+      "The different local group numbers prevent partner recognition.",
+      "Both ends are responding-only; neither initiates LACP.",
+      "The two sides must use different native VLANs for negotiation.",
+      "The member settings need a change from passive to static on at only one end."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Passive/passive has no initiating LACP endpoint. The group numbers are local identifiers; the stated native VLAN is valid and consistent. Layer 2 members do not need individual IPv4 addresses. The failure establishes lack of bundle formation, not a guaranteed standalone forwarding behavior. Different native VLANs would introduce a separate inconsistency, and replacing only one end with static aggregation would create a protocol mismatch rather than repair negotiation.",
+    "fix": "Use the isolated lab checkpoint or an approved maintenance window. Change the ASW3 member pair to active, retaining its trunk settings. Shut the members before removing/reapplying group membership, then restore them. DSW1 can remain passive.\n\n```ios ASW3\nASW3# configure terminal\nASW3(config)# interface range gigabitethernet0/1 - 2\nASW3(config-if-range)# shutdown\nASW3(config-if-range)# no channel-group\nASW3(config-if-range)# channel-group 1 mode active\nASW3(config-if-range)# no shutdown\nASW3(config-if-range)# end\nASW3# show etherchannel summary\nASW3# show interfaces trunk\nASW3# show lacp neighbor\n```\n\n```ios DSW1\nDSW1# show etherchannel summary\nDSW1# show interfaces trunk\nDSW1# show lacp neighbor\n```\n\nOn supporting images, verify the intended partner identity and that both members join: Po1 on ASW3 and Po3 on DSW1 should be in use with both members P. If the simulator omits partner detail, use available summary/configuration checks and record that limit. Recheck VLAN forwarding and endpoint traffic, then save the working configurations. Do not impose a fixed formation time or fixed packet-loss count."
+  }
+]

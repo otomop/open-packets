@@ -1,0 +1,114 @@
+[
+  {
+    "id": "network-models-c01",
+    "front": "Name the seven OSI layers from Layer 7 to Layer 1.",
+    "back": "Application, Presentation, Session, Transport, Network, Data link, Physical.",
+    "tags": [
+      "models"
+    ]
+  },
+  {
+    "id": "network-models-c02",
+    "front": "What PDU names are commonly used for TCP, UDP, IP, and Ethernet?",
+    "back": "TCP segment; UDP datagram; IP packet; Ethernet frame.",
+    "tags": [
+      "encapsulation"
+    ]
+  },
+  {
+    "id": "network-models-c03",
+    "front": "How does the four-layer TCP/IP model relate to OSI?",
+    "back": "Application groups OSI 5–7; Transport matches 4; Internet matches 3; Link groups 1–2.",
+    "tags": [
+      "models"
+    ]
+  },
+  {
+    "id": "network-models-c04",
+    "front": "How do a MAC address, an IP address, and a transport port differ?",
+    "back": "MAC: the Ethernet link endpoint. IP: the logical network endpoint. TCP/UDP port: the transport endpoint for an application exchange.",
+    "tags": [
+      "addressing"
+    ]
+  },
+  {
+    "id": "network-models-c09",
+    "front": "What changes during ordinary IPv4 routing between Ethernet LANs without NAT or tunneling?",
+    "back": "The outgoing Ethernet frame is new; TTL decreases and its IPv4 checksum changes. Source and destination IP stay the same under these assumptions.",
+    "tags": [
+      "routing"
+    ]
+  },
+  {
+    "id": "network-models-c10",
+    "front": "Can a received TTL alone establish the exact routed hop count?",
+    "back": "No. You also need the packet’s initial TTL and the assumptions about how it changed.",
+    "tags": [
+      "diagnostics"
+    ]
+  },
+  {
+    "id": "network-models-c11",
+    "front": "How does a simple host with a connected route and default gateway choose a next hop?",
+    "back": "With only a connected route and default gateway: send directly to local destinations; send other destinations to the gateway.",
+    "tags": [
+      "routing"
+    ]
+  },
+  {
+    "id": "network-models-c13",
+    "front": "Does ordinary Layer 2 switching rewrite endpoint MAC addresses or decrement IP TTL?",
+    "back": "No. Ordinary bridging preserves the source/destination MAC addresses and does not decrement IP TTL.",
+    "tags": [
+      "switching"
+    ]
+  },
+  {
+    "id": "network-models-c14",
+    "front": "Which commands display ARP mappings on IOS and a Windows or Packet Tracer PC?",
+    "back": "IOS: show arp. Windows or Packet Tracer PC: arp -a. They display present IP-to-MAC mappings; entries can age out.",
+    "tags": [
+      "diagnostics"
+    ]
+  },
+  {
+    "id": "network-models-c19",
+    "front": "What does a dynamic switch MAC-table entry associate?",
+    "back": "A VLAN and source MAC with the port where a frame arrived. The switch then looks up destination MACs to select egress ports.",
+    "tags": [
+      "switching"
+    ]
+  },
+  {
+    "id": "network-models-c22",
+    "front": "Does IPv4 ping use TCP or UDP ports?",
+    "back": "Neither. ICMP Echo is carried directly in IPv4. Its success does not establish that a TCP or UDP service works.",
+    "tags": [
+      "icmp"
+    ]
+  },
+  {
+    "id": "network-models-c23",
+    "front": "Which address does ARP resolve before a correctly configured host sends to a remote subnet through its default gateway?",
+    "back": "The local gateway’s IPv4 address. The frame uses that gateway’s MAC; the IP packet keeps the remote destination.",
+    "tags": [
+      "arp"
+    ]
+  },
+  {
+    "id": "network-models-c24",
+    "front": "What limits the scope of a normal Ethernet ARP request?",
+    "back": "It stays in the local Layer 2 broadcast domain. Routers can originate separate ARP exchanges on their other links.",
+    "tags": [
+      "arp"
+    ]
+  },
+  {
+    "id": "network-models-c25",
+    "front": "Why must you consider the return path when troubleshooting a ping?",
+    "back": "The source needs an Echo Reply. A remote host can receive the request but fail to return its reply through an incorrect gateway.",
+    "tags": [
+      "diagnostics"
+    ]
+  }
+]

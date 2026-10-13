@@ -1,0 +1,616 @@
+[
+  {
+    "id": "stp-protection-q02",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.c",
+      "v2:2.5.c"
+    ],
+    "difficulty": 1,
+    "prompt": "What does PortFast change on a correctly designed end-device access port?",
+    "options": [
+      "It makes the port a root port so user traffic avoids the normal tree.",
+      "It filters all BPDUs so the host can never influence the bridge election.",
+      "It permits immediate forwarding while spanning tree remains active.",
+      "It waits for a PC's agreement BPDU before skipping the learning state."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "PortFast permits a genuine edge port to enter forwarding immediately. It does not disable STP; a received BPDU changes operational edge behavior or triggers an enabled guard.",
+    "whyWrong": {
+      "0": "PortFast does not elect the port as a root port.",
+      "1": "BPDU suppression is filtering, not PortFast itself.",
+      "3": "End hosts do not have to participate in a bridge proposal/agreement handshake."
+    }
+  },
+  {
+    "id": "stp-protection-q03",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.c",
+      "v2:2.5.c"
+    ],
+    "difficulty": 1,
+    "prompt": "On a 2960-style IOS switch, which global command enables PortFast for operationally nontrunking ports?",
+    "options": [
+      "spanning-tree bpduguard enable",
+      "spanning-tree portfast default",
+      "spanning-tree guard root",
+      "spanning-tree portfast trunk"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The global default applies PortFast to nontrunking interfaces. A trunk to a legitimate end device needs the appropriate interface trunk form instead.",
+    "whyWrong": {
+      "0": "This enables interface BPDU guard and does not enable global PortFast.",
+      "2": "Root guard protects a designated boundary and does not create an edge port.",
+      "3": "This is an interface command for a PortFast trunk, not the global nontrunking default."
+    }
+  },
+  {
+    "id": "stp-protection-q06",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 1,
+    "prompt": "Which event is the intended trigger for loop guard on a point-to-point root port that has been receiving BPDUs?",
+    "options": [
+      "Expected BPDU information expires while the physical link remains up.",
+      "The port receives its first BPDU while operational PortFast is enabled.",
+      "The local switch learns a host MAC address on the root interface.",
+      "The peer advertises a lower root BID while continuing normal BPDU exchange."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Loop guard handles the loss of expected spanning-tree information on an applicable root or alternate port. It prevents expiry from making that port designated and forwarding on an unsafe assumption.",
+    "whyWrong": {
+      "1": "Unexpected BPDU reception on a protected edge is the BPDU-guard case.",
+      "2": "MAC learning from user frames is not the loop-guard trigger.",
+      "3": "Superior received information is associated with root-guard policy, not loop guard's silence condition."
+    }
+  },
+  {
+    "id": "stp-protection-q08",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d"
+    ],
+    "difficulty": 1,
+    "prompt": "How do the two Cisco IOS BPDU-filter forms differ?",
+    "options": [
+      "The global PortFast form withdraws filtering after a BPDU; the interface form suppresses BPDUs independently.",
+      "The global form filters user broadcasts; the interface form filters user multicast without affecting STP.",
+      "The global form applies only to trunks; the interface form applies only to nontrunking access ports.",
+      "The global form err-disables after a BPDU; the interface form waits for a superior root advertisement."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The global PortFast default has conditional behavior: received BPDUs remove operational edge/filter status. Interface filtering independently suppresses BPDU participation and does not provide that same fallback.",
+    "whyWrong": {
+      "1": "The feature concerns BPDUs, not general user broadcast or multicast filtering.",
+      "2": "The global form follows operational PortFast status, and the interface form is not limited as stated.",
+      "3": "These describe guard-like actions, not the two BPDU-filter behaviors."
+    }
+  },
+  {
+    "id": "stp-protection-q11",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 1,
+    "prompt": "Which comparison correctly distinguishes root guard from BPDU guard?",
+    "options": [
+      "Root guard rejects every BPDU; BPDU guard rejects only a lower-priority root.",
+      "Root guard rejects superior information; BPDU guard reacts to any received BPDU.",
+      "Root guard detects BPDU silence; BPDU guard detects changes in interface speed.",
+      "Root guard uses errdisable; BPDU guard uses a per-VLAN root-inconsistent state."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Root guard enforces a designated boundary against superior spanning-tree information. BPDU guard enforces an expectation that no BPDU should arrive, so it does not need to compare the advertised root first.",
+    "whyWrong": {
+      "0": "The trigger comparison is reversed.",
+      "2": "Missing BPDUs are the loop-guard case, and speed changes do not define BPDU guard.",
+      "3": "The normal state distinction is root inconsistency versus BPDU-guard errdisable, not the reverse."
+    }
+  },
+  {
+    "id": "stp-protection-q12",
+    "type": "multi",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 1,
+    "prompt": "With no configured errdisable recovery timer, which two states can clear automatically when their own triggering conditions end? (Choose two.)",
+    "options": [
+      "Administrative shutdown after the peer link becomes healthy.",
+      "Loop inconsistency after expected BPDUs resume.",
+      "An administratively disabled SVI after the correct VLAN is created.",
+      "Root inconsistency after superior information ceases.",
+      "BPDU-guard errdisable after the switch stops sending BPDUs."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Root and loop inconsistency include automatic return to normal STP processing after their conditions clear. BPDU-guard errdisable needs manual recovery or an enabled recovery policy; administrative shutdown also requires configuration action.",
+    "whyWrong": {
+      "0": "A configured shutdown is not cleared by peer health.",
+      "2": "Creating a VLAN does not remove a configured SVI shutdown.",
+      "4": "Without enabled automatic recovery, removing the source alone does not reset errdisable."
+    }
+  },
+  {
+    "id": "stp-protection-q16",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 1,
+    "prompt": "A root-facing point-to-point uplink should use loop guard, while a downstream boundary should use root guard. Which implementation principle is correct?",
+    "options": [
+      "Choose the guard by the intended role; root and loop guard cannot coexist on one interface.",
+      "Use root guard on every root port because its name identifies where it belongs.",
+      "Install both guards on each uplink so either a received or missing BPDU is covered.",
+      "Use loop guard on PC access ports because their lack of BPDUs needs protection."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Root guard preserves a designated boundary, whereas loop guard protects appropriate root/alternate paths from BPDU loss. Their role expectations differ, and IOS does not allow both to operate on the same interface.",
+    "whyWrong": {
+      "1": "A root port needs the legitimate superior information that root guard would reject.",
+      "2": "The two guards are mutually exclusive on a single interface.",
+      "3": "A genuine edge normally sends no BPDUs and is not the loop-guard monitoring case."
+    }
+  },
+  {
+    "id": "stp-protection-q01",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "What caused the outage on Fa0/5, and which recovery sequence fits the evidence?",
+    "options": [
+      "The port is a normal alternate; remove the redundant uplink to make it designated.",
+      "A BPDU arrived on the guarded port; remove its source, then shut/no-shut the port.",
+      "Expected BPDUs stopped arriving; lower the recovery interval to force learning.",
+      "A better root was received; raise SW1's bridge priority to clear the state."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The log names BPDU guard, and interface status confirms errdisable. Remove the unexpected BPDU source, then perform manual recovery or use an explicitly enabled recovery policy.",
+    "whyWrong": {
+      "0": "Err-disabled is not the normal alternate/discarding state.",
+      "2": "Missing expected BPDUs describe loop guard, not the received-BPDU log.",
+      "3": "Root guard produces root inconsistency rather than this BPDU-guard error."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1 representative evidence",
+      "text": "Fa0/5   err-disabled   10\n%PM-4-ERR_DISABLE: bpduguard error detected on Fa0/5, putting Fa0/5 in err-disable state"
+    }
+  },
+  {
+    "id": "stp-protection-q04",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "VLAN 20 is blocked on Gi1/0/10 while another VLAN on the trunk still works. Which diagnosis best fits the representative evidence?",
+    "options": [
+      "Loop guard detected missing expected BPDUs from the intended root neighbor.",
+      "BPDU guard disabled the entire physical interface after receiving a BPDU.",
+      "Root guard received superior information for VLAN 20 and blocked that instance.",
+      "PortFast suppressed the interface's BPDUs until a recovery timer expires."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The inconsistency explicitly names root guard's condition. In Rapid PVST+, root inconsistency can affect one VLAN while another instance on the physical trunk remains operational.",
+    "whyWrong": {
+      "0": "Loop inconsistency is a different indication with a missing-BPDU trigger.",
+      "1": "Conventional BPDU-guard errdisable affects the interface and is identified by a different state/cause.",
+      "3": "PortFast does not suppress BPDUs or create this recovery state."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "DSW1# show spanning-tree inconsistentports — excerpt",
+      "text": "VLAN0020             GigabitEthernet1/0/10       Root Inconsistent"
+    }
+  },
+  {
+    "id": "stp-protection-q05",
+    "type": "multi",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two statements about recovery from a BPDU-guard violation are correct? (Choose two.)",
+    "options": [
+      "The source should be corrected before the interface is re-enabled.",
+      "Changing the recovery interval alone enables recovery for BPDU guard.",
+      "An enabled recovery timer can retry the port but cannot remove the BPDU source.",
+      "Root-inconsistent recovery must be enabled before errdisable can clear.",
+      "A single received inferior BPDU cannot cause another violation after recovery."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Recovery restores the interface's ability to operate; it does not correct a wrong connection. Automatic retries must be explicitly enabled for the cause and can fail again if BPDUs continue arriving.",
+    "whyWrong": {
+      "1": "The cause must be enabled separately from the interval setting.",
+      "3": "Root inconsistency and BPDU-guard errdisable are different states with separate recovery behavior.",
+      "4": "BPDU guard reacts to any received BPDU, including an inferior one."
+    }
+  },
+  {
+    "id": "stp-protection-q07",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "CORE must remain the allowed root. A training switch will attach only to ASW1 Gi0/2, currently a designated boundary port. Where should root guard enforce that boundary?",
+    "options": [
+      "On ASW1 Gi0/2, where superior information could enter from the training switch.",
+      "On the training switch's own uplink, where its lower-priority BID originates.",
+      "On every designated CORE port, including unrelated campus boundaries.",
+      "On ASW1's uplink toward CORE, where the best root information is received."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The controlled side of the boundary is ASW1 Gi0/2. Root guard there prevents the downstream attachment from supplying superior root information into the rest of the topology.",
+    "whyWrong": {
+      "1": "Placing policy only on the outside device does not enforce the managed boundary described.",
+      "2": "Enforce the specified attachment on ASW1 Gi0/2; a blanket CORE policy does not express that local boundary and can affect unrelated paths.",
+      "3": "That would reject the legitimate root path needed by ASW1."
+    }
+  },
+  {
+    "id": "stp-protection-q09",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "Fa0/7 is operationally an access port with no interface overrides. What should happen when a BPDU-sending switch is attached under the shown global configuration?",
+    "options": [
+      "The port remains unprotected because no interface-specific guard line exists.",
+      "The port enters root inconsistency only if the attached bridge has a lower BID.",
+      "The operational PortFast port is covered by BPDU guard and becomes err-disabled.",
+      "The port silently filters the received BPDU and remains an operational edge."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The PortFast default covers this nontrunking port, and the BPDU-guard default covers its operational edge state. A received BPDU therefore triggers the guard even without an interface-specific enable line.",
+    "whyWrong": {
+      "0": "Applicable global defaults do not require duplicate per-interface commands.",
+      "1": "Any received BPDU triggers BPDU guard, regardless of root superiority.",
+      "3": "No BPDU-filter command is configured in this exhibit."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1 running-config excerpt",
+      "text": "spanning-tree portfast default\nspanning-tree portfast bpduguard default\ninterface FastEthernet0/7\n switchport mode access\n switchport access vlan 10"
+    }
+  },
+  {
+    "id": "stp-protection-q10",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "A non-PortFast trunk to a server must be err-disabled if it receives any BPDU. Which interface command directly configures that behavior?",
+    "options": [
+      "spanning-tree portfast trunk",
+      "spanning-tree guard root",
+      "spanning-tree loopguard default",
+      "spanning-tree bpduguard enable"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Interface BPDU guard operates independently of PortFast state. Its trigger is any received BPDU, which matches the requirement without relying on a global edge default.",
+    "whyWrong": {
+      "0": "PortFast controls initial forwarding and does not itself configure errdisable on BPDU reception.",
+      "1": "Root guard permits ordinary BPDUs and reacts to superior information instead.",
+      "2": "This is a global loop-guard command for missing expected BPDUs, not interface BPDU guard."
+    }
+  },
+  {
+    "id": "stp-protection-q13",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "SW3 Gi0/2 was a root port and had received BPDUs before this event. Which conclusion is supported by these observations?",
+    "options": [
+      "The interface was disabled by BPDU guard, so every VLAN must be physically down.",
+      "Expected BPDUs stopped arriving; the output does not by itself prove the physical cause.",
+      "The fiber receive strand is conclusively broken because the port is still connected.",
+      "A newly received priority-zero BPDU forced SW3 to reject a superior root bridge."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Loop inconsistency indicates the loss of expected STP information on the applicable port. A one-way fault is one possibility, but filtering or a neighbor control-plane problem can produce the same symptom.",
+    "whyWrong": {
+      "0": "The state is loop inconsistency while the physical link remains connected, not BPDU-guard errdisable.",
+      "2": "The observations identify the symptom but do not distinguish all possible underlying causes.",
+      "3": "Superior information would fit a root-guard event, which is not the displayed reason."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW3 representative observations",
+      "text": "Gi0/2 physical status: connected\nVLAN0010  GigabitEthernet0/2  Loop Inconsistent\nVLAN0020  GigabitEthernet0/2  Loop Inconsistent\nReceived BPDU counter stopped increasing before the event."
+    }
+  },
+  {
+    "id": "stp-protection-q14",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "This host-port template is supposed to detect unexpected BPDUs. What is the design problem that should be corrected?",
+    "options": [
+      "Replace BPDU guard with root guard so every BPDU still produces the required errdisable.",
+      "Keep the template because interface filtering restores guard visibility after the first BPDU.",
+      "Remove PortFast but retain filtering so BPDU guard can inspect normal transit BPDUs.",
+      "Remove interface filtering so the intended policy can process received BPDUs."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Unconditional interface filtering suppresses BPDU participation and conflicts with the goal of using received BPDUs to expose a wrong connection. Remove the unwanted filter and verify a supported PortFast/BPDU-guard policy, rather than relying on mixed-feature precedence assumptions.",
+    "whyWrong": {
+      "0": "Root guard reacts to superior information and uses inconsistency, not the required any-BPDU errdisable.",
+      "1": "The conditional fallback belongs to the global PortFast filter, not unconditional interface filtering.",
+      "2": "Removing PortFast does not remove unconditional BPDU filtering."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1 host-port configuration",
+      "text": "interface FastEthernet0/5\n switchport mode access\n switchport access vlan 10\n spanning-tree portfast\n spanning-tree bpduguard enable\n spanning-tree bpdufilter enable"
+    }
+  },
+  {
+    "id": "stp-protection-q15",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "A port is already err-disabled because of BPDU guard. The BPDU source has been removed. What does the shown recovery configuration establish?",
+    "options": [
+      "The port will be retried after 60 seconds because every cause inherits the interval.",
+      "The port must stay disabled until the interval is restored to the default 300 seconds.",
+      "The interval is 60 seconds, but BPDU-guard automatic recovery remains disabled.",
+      "The port is now root-inconsistent and will recover when a superior BPDU expires."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The timer interval and the enabled recovery causes are separate settings. The displayed cause remains disabled, so manual recovery or explicitly enabling BPDU-guard recovery is still required.",
+    "whyWrong": {
+      "0": "The interval does not enable all causes automatically.",
+      "1": "The default interval is not a prerequisite for manual or enabled timed recovery.",
+      "3": "Changing a timer does not convert the port into a different protection state."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1# show errdisable recovery — abbreviated",
+      "text": "ErrDisable Reason             Timer Status\nbpduguard                     Disabled\nTimer interval: 60 seconds"
+    }
+  },
+  {
+    "id": "stp-protection-q17",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied protection evidence",
+      "text": "Fa0/8 is an access port.\nConfigured: spanning-tree portfast\nNo BPDU guard or BPDU filter at interface or global scope.\nAfter a BPDU arrives: operational edge false; interface remains connected."
+    },
+    "prompt": "A received BPDU changes an RSTP port from operational edge to non-edge. Which explanation matches the shown configuration and state?",
+    "options": [
+      "The received BPDU is discarded because PortFast disables spanning-tree processing.",
+      "The port must be err-disabled because every configured PortFast port has BPDU guard.",
+      "The switch must have erased the PortFast command when the first BPDU arrived.",
+      "PortFast can remain configured even though the port no longer operates as an edge."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Configured intent and operational edge status are separate. With PortFast alone, a BPDU removes operational edge status and normal STP participates; BPDU guard is not configured here.",
+    "whyWrong": {
+      "0": "PortFast does not disable BPDU processing.",
+      "1": "PortFast does not imply BPDU guard unless the relevant policy enables it.",
+      "2": "The operational change does not require removal of the configured command."
+    }
+  },
+  {
+    "id": "stp-protection-q18",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied protection evidence",
+      "text": "Global: spanning-tree portfast default\nGlobal: spanning-tree portfast bpduguard default\nGi0/1: operational trunk; operational PortFast false\nNo interface BPDU-guard enable or other overrides."
+    },
+    "prompt": "A server trunk must reject every received BPDU. Why does the existing global policy not establish that protection for this port?",
+    "options": [
+      "Global BPDU guard suppresses sent BPDUs but never processes received BPDUs.",
+      "The root priority must first be lower than the server’s priority before the guard applies.",
+      "The trunk is not operationally PortFast, so it is outside this global guard scope.",
+      "Global defaults apply only when every VLAN elects this switch as root."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The global guard follows operational PortFast status. On the stated non-edge trunk, configure the interface guard if the required policy is any-BPDU errdisable, then verify the actual port and design.",
+    "whyWrong": {
+      "0": "Suppression is filtering, not the function of BPDU guard.",
+      "1": "BPDU guard does not require a superior advertised BID.",
+      "3": "Root identity is not the condition for the global PortFast guard."
+    }
+  },
+  {
+    "id": "stp-protection-q19",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied protection evidence",
+      "text": "Gi1/0/7: err-disabled\nNo log cause has yet been collected.\nThe switch has several different interface security features configured."
+    },
+    "prompt": "Which additional evidence should be collected before selecting a recovery procedure?",
+    "options": [
+      "The configured VLAN root priority, which identifies every errdisable cause.",
+      "The log reason for the affected interface and its relevant configuration.",
+      "The lowest MAC address in the switch’s forwarding table.",
+      "The STP alternate-port count, which proves BPDU guard caused the outage."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Errdisable is a resulting interface state shared by several features. A cause-specific log and configuration distinguish a received-BPDU event from other violations before repair.",
+    "whyWrong": {
+      "0": "Bridge priority does not identify all interface protection events.",
+      "2": "A learned host MAC does not identify why the interface was err-disabled.",
+      "3": "A normal alternate state is separate from errdisable and its cause."
+    }
+  },
+  {
+    "id": "stp-protection-q20",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied protection evidence",
+      "text": "Only links: CORE—ACCESS—LAB. All carry VLAN 10.\nRequired root: CORE priority 24576. ACCESS priority 32768. LAB priority 32768.\nACCESS Gi0/1 faces CORE; Gi0/2 faces LAB.\nGi0/1 config: spanning-tree guard root; state Root Inconsistent.\nGi0/2 config: no guard; intended designated boundary.\nNo other root source or physical failure is present."
+    },
+    "prompt": "Which correction preserves the intended root boundary and restores the legitimate upstream path?",
+    "options": [
+      "Move both root guard and loop guard to the lab-facing port as one combined policy.",
+      "Lower ACCESS’s priority below CORE so its root-facing uplink no longer receives superior information.",
+      "Remove root guard from the CORE-facing uplink and place it on the designated LAB-facing boundary.",
+      "Disable spanning tree on the uplink and leave both guards in their current places."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The topology requires ACCESS to learn CORE’s superior information upstream. Root guard was placed on that legitimate path. Put the boundary policy toward LAB and, where supported and intended, use loop guard on the root/alternate uplink instead.",
+    "whyWrong": {
+      "0": "The guards cannot coexist on one interface and express different role expectations.",
+      "1": "Making ACCESS the root violates the stated design instead of correcting guard placement.",
+      "3": "Disabling the control protocol is not a valid repair of the policy boundary."
+    }
+  },
+  {
+    "id": "stp-protection-q21",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied protection evidence",
+      "text": "Port policy: access host edge, interface BPDU guard enabled.\nRecovery: bpduguard Enabled; interval 60 seconds.\nObserved sequence repeated twice: recovery attempts re-enable Fa0/5; a new received-BPDU log appears; Fa0/5 becomes err-disabled again.\nCable audit: a BPDU-sending switch remains attached."
+    },
+    "prompt": "Which interpretation explains the repeated outage without removing the intended host-port protection?",
+    "options": [
+      "Timed recovery is disabled because the interval is shorter than the default 300 seconds.",
+      "Timed recovery is working, but the continuing BPDU source immediately violates the policy again.",
+      "Root guard is moving the root bridge at each retry, causing the host’s periodic loss.",
+      "The first successful retry proves the BPDU source is gone and later events are stale."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The cause is enabled and the observed re-enable followed by a fresh BPDU-guard event matches repeated retries. Correct the attached BPDU source before another recovery; a timer does not repair the connection.",
+    "whyWrong": {
+      "0": "The cause is explicitly enabled; a supported 60-second interval is valid.",
+      "2": "The event names BPDU guard, not root guard or a root election.",
+      "3": "Each new event is fresh evidence that the source persists after the retry."
+    }
+  },
+  {
+    "id": "stp-protection-q22",
+    "type": "multi",
+    "objectives": [
+      "v1:2.5.d",
+      "v2:2.5.d"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied protection evidence",
+      "text": "Gi0/1: root-facing point-to-point port; BPDUs received before the incident; physical connected; VLAN 10 Loop Inconsistent.\nFa0/8: host port; physical status err-disabled; log names bpduguard.\nNo automatic errdisable recovery configured."
+    },
+    "prompt": "Which pair of next actions is justified by these two independent incidents? Choose two.",
+    "options": [
+      "Remove Fa0/8’s BPDU source, then recover that err-disabled interface.",
+      "Lower the root priority to resolve both incidents without changing either connection.",
+      "Bounce Gi0/1 repeatedly so it forwards without receiving new BPDUs.",
+      "Treat both ports as physically disconnected and replace both cables immediately.",
+      "Inspect BPDU delivery/filtering toward Gi0/1 while retaining its loop guard."
+    ],
+    "answer": [
+      0,
+      4
+    ],
+    "explanation": "Gi0/1’s prior reception and loop inconsistency point to missing expected control information, whose source must be investigated. Fa0/8’s named guard cause requires correction of an unexpected BPDU source and errdisable recovery. The states need different responses.",
+    "whyWrong": {
+      "1": "Changing root priority addresses neither the unexpected host BPDU nor missing expected delivery.",
+      "2": "A reset does not restore missing BPDU delivery and can conceal the protective symptom.",
+      "3": "One interface stays connected and the other is deliberately disabled; the evidence does not prove two cable failures."
+    }
+  }
+]

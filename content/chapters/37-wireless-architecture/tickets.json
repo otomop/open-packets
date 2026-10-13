@@ -1,0 +1,63 @@
+[
+  {
+    "id": "wireless-architecture-t01",
+    "title": "New APs fail to join after a controller replacement",
+    "objectives": [
+      "v1:2.6"
+    ],
+    "scenario": "A site replaced controller 10.10.0.5 with 10.10.50.5. Existing APs were manually pointed to the replacement, but newly installed, unprimed APs fail to join. Routing, AP/controller software compatibility and permitted CAPWAP connectivity to 10.10.50.5 have been independently verified. The following records are representative.",
+    "exhibits": [
+      {
+        "title": "R1 DHCP pool excerpt",
+        "text": "ip dhcp pool AP-MGMT\n network 10.10.60.0 255.255.255.0\n default-router 10.10.60.1\n option 43 hex f104.0a0a.0005"
+      },
+      {
+        "title": "New AP discovery observation",
+        "text": "Lease: 10.10.60.101/24; gateway 10.10.60.1\nReceived option 43 controller candidate: 10.10.0.5\nNo stored controller and no controller DNS record\nRequests sent to 10.10.0.5; no response\nRetired controller 10.10.0.5 is powered off"
+      }
+    ],
+    "question": "Which fault is directly supported by the records?",
+    "options": [
+      "The new APs received a valid address but obsolete controller-discovery information",
+      "The replacement controller has no return route to the new AP subnet",
+      "The new AP image is incompatible with the replacement controller",
+      "A CAPWAP control filter blocks the replacement controller's responses"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The option-43 address decodes to the retired 10.10.0.5, and the AP observation confirms that it used that candidate. CAPWAP can cross routed subnets; the independently verified new-controller path should be used after discovery is corrected.",
+    "fix": "In the isolated lab, change only this pool's option, then have one test AP reacquire its DHCP discovery information using that platform's supported renewal/restart procedure. Do not clear every network lease.\n\n```ios\nR1# configure terminal\nR1(config)# ip dhcp pool AP-MGMT\nR1(dhcp-config)# no option 43\nR1(dhcp-config)# option 43 hex f104.0a0a.3205\nR1(dhcp-config)# end\n```\n\nConfirm the next DHCP information names 10.10.50.5, then confirm discovery responses and actual AP registration. A successful ping alone does not prove the join."
+  },
+  {
+    "id": "wireless-architecture-t02",
+    "title": "The branch AP is joined, but local guests cannot get a lease",
+    "objectives": [
+      "v1:2.7",
+      "v2:2.2.b"
+    ],
+    "scenario": "A FlexConnect AP sends management untagged in VLAN 10. CORP is centrally switched and works. GUEST is explicitly configured for local switching with tagged VLAN 30. VLAN 30, its gateway, DHCP pool and upstream trunk have been verified using a wired test client. Records below are representative.",
+    "exhibits": [
+      {
+        "title": "SW1 AP-facing port",
+        "text": "interface GigabitEthernet1/0/7\n switchport mode access\n switchport access vlan 10\n spanning-tree portfast"
+      },
+      {
+        "title": "AP/WLAN and wired test",
+        "text": "AP management: 10.10.0.51/24; controller state joined\nGUEST: local switching, VLAN 30, security completed\nWireless GUEST client: no lease\nWired test in VLAN 30: 10.30.0.101/24, gateway 10.30.0.1; reachable"
+      }
+    ],
+    "question": "Which mismatch explains the guest failure?",
+    "options": [
+      "The AP's local client VLAN is missing from its Ethernet port contract",
+      "The guest gateway rejects every DHCP request from a wired client",
+      "The controller's central CORP mapping prevents AP registration",
+      "The GUEST security exchange fails before the client may request addressing"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The access port carries untagged VLAN 10 but does not match the AP's required tagged local guest VLAN. Management and the centrally switched CORP WLAN can work while this separate local forwarding path fails.",
+    "fix": "In the authorized lab, change the AP port to the documented trunk contract:\n\n```ios\nSW1# configure terminal\nSW1(config)# interface gigabitethernet1/0/7\nSW1(config-if)# switchport mode trunk\nSW1(config-if)# switchport trunk native vlan 10\nSW1(config-if)# switchport trunk allowed vlan 10,30\nSW1(config-if)# spanning-tree portfast trunk\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nAllow any link/control reconvergence, confirm AP registration, and request a fresh guest lease. Verify a 10.30.0.x/24 address, gateway 10.30.0.1 and actual guest access; then retest CORP."
+  }
+]

@@ -1,0 +1,149 @@
+[
+  {
+    "id": "trunks-dtp-c18",
+    "front": "802.1Q versus DTP?",
+    "back": "802.1Q identifies VLANs in frames. DTP negotiates trunk formation on supporting Cisco switch ports.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c01",
+    "front": "Size and position of an ordinary 802.1Q tag?",
+    "back": "4 bytes, after the source MAC and before the original EtherType field.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c02",
+    "front": "What identifies an ordinary 802.1Q tag in the Ethernet frame?",
+    "back": "The 16-bit TPID value 0x8100.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c04",
+    "front": "Usable VLAN identifiers in the 12-bit VID field?",
+    "back": "1–4094. VID 0 supports priority tagging without a VLAN ID; 4095 is reserved. Platforms can impose additional restrictions.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c07",
+    "front": "Under default native treatment, how is ordinary untagged trunk data classified?",
+    "back": "Into the receiving port's native VLAN. Ordinary data from that native VLAN is sent untagged.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c06",
+    "front": "Which command selects native VLAN 99 on a trunk?",
+    "back": "Use `switchport trunk native vlan 99` in interface configuration mode, and agree with the peer.",
+    "tags": [
+      "number",
+      "command"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c08",
+    "front": "What is the most direct evidence of a native VLAN mismatch?",
+    "back": "The two trunk ports show different native VLAN IDs. Warnings or protective states may also appear; exact behavior depends on the platform.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c10",
+    "front": "Default allowed VLAN selection in the cited Catalyst guides?",
+    "back": "All supported VLANs are initially allowed. Verify the actual list; permission alone does not mean each VLAN exists or forwards.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c11",
+    "front": "allowed vlan 30 versus allowed vlan add 30?",
+    "back": "The first replaces the list with 30. The second preserves the current list and adds 30.",
+    "tags": [
+      "command",
+      "compare"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c12",
+    "front": "What do the three VLAN lists in show interfaces trunk distinguish?",
+    "back": "Configured allowed VLANs; VLANs allowed and active locally; VLANs forwarding in spanning tree and not pruned.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c24",
+    "front": "Does one switch's forwarding list prove the peer permits the same VLAN?",
+    "back": "No. Compare allowed, active and forwarding state at both ends, then test the intended endpoint path.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c20",
+    "front": "Where do you inspect a configured port absent from show interfaces trunk?",
+    "back": "Use `show interfaces <port> switchport` to compare administrative and operational settings, then check link and shutdown state.",
+    "tags": [
+      "command",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c14",
+    "front": "DTP outcomes: auto with auto, and desirable with auto?",
+    "back": "With compatible operational DTP peers: auto/auto stays nontrunking; desirable/auto can form a trunk.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c16",
+    "front": "Purpose of switchport nonegotiate on a static trunk?",
+    "back": "Suppress DTP messages while retaining the static trunk and its configured 802.1Q traffic.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c19",
+    "front": "Does removing VLAN 1 from a trunk disable every link-control protocol?",
+    "back": "No. Cisco documents continued operation of several control protocols; configure each feature explicitly.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c21",
+    "front": "When does an AP's wired connection need multiple VLANs?",
+    "back": "When its actual forwarding design carries multiple local VLANs over that link, such as locally switched client VLANs. Multiple SSIDs alone do not prove it.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c22",
+    "front": "An AP sends management untagged in VLAN 100. What must its trunk peer match?",
+    "back": "The peer must classify that untagged traffic into VLAN 100 and allow the required management/client VLANs.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "trunks-dtp-c23",
+    "front": "A host expects all required VLANs tagged. Should one of them be native by default?",
+    "back": "No. With default untagged-native treatment, use an agreed unused native VLAN so required VLANs retain their tags.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

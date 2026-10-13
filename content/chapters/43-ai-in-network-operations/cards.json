@@ -1,0 +1,130 @@
+[
+  {
+    "id": "ai-in-network-operations-c03",
+    "front": "What is the practical difference between predictive and generative AI?",
+    "back": "Predictive uses estimate values, classes, scores, or patterns. Generative uses produce new content such as summaries, text, code, or proposed configurations. A system can combine both.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c04",
+    "front": "What is training versus inference?",
+    "back": "Training adjusts a model from examples. Inference applies an existing model to input. Accepting a response does not necessarily retrain the model.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c05",
+    "front": "What is the difference between a baseline and an anomaly?",
+    "back": "A baseline represents expected behavior under relevant conditions. An anomaly departs from that expectation; it is not automatically a service-impacting incident.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c06",
+    "front": "What is a hallucination or confabulation?",
+    "back": "Generated content that is false or unsupported, such as a plausible invented command or a causal claim the supplied evidence cannot establish.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c07",
+    "front": "Why can a previously useful model become less useful?",
+    "back": "Traffic, users, applications, or other conditions can change so learned relationships become less representative. Monitor outcomes and review baselines or models deliberately.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c10",
+    "front": "What makes a network workflow agentic?",
+    "back": "It can choose successive actions and use tool results to pursue a bounded goal. It may be read-only; unrestricted write access and permanent memory are not mandatory.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c11",
+    "front": "Which prompt components does the v2.0 objective explicitly name?",
+    "back": "Data classification, output format, persona and instructions.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c12",
+    "front": "What must review of a proposed action connect?",
+    "back": "The supporting evidence, exact target/action, expected impact, recovery method and service verification.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c13",
+    "front": "How do an agent’s prompt and tool permissions differ?",
+    "back": "The prompt guides behavior. Credentials and external tool/target restrictions enforce what actions are possible.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c14",
+    "front": "What is prompt injection through device output?",
+    "back": "A description, banner, log, or other returned text tries to redirect the assistant. The string is untrusted data, not permission to expand the task.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c19",
+    "front": "When is an anomaly alert a false positive?",
+    "back": "When it does not meet the detector's defined target condition. A real traffic deviation can still be a false positive for a service-impacting-incident detector.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c20",
+    "front": "Why ask for evidence and missing evidence as separate output fields?",
+    "back": "It makes unsupported assumptions visible and identifies the next test that can distinguish competing hypotheses.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c22",
+    "front": "Why are synchronized timestamps useful but insufficient for causal claims?",
+    "back": "They help compare events across devices. Events occurring together may still have different causes; test the proposed mechanism.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c23",
+    "front": "Does redacting a password make all remaining network data public?",
+    "back": "No. Apply the organization's classification policy to the remaining topology, addresses, identities, and operational details, and use an approved destination.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c24",
+    "front": "Context versus instructions in a troubleshooting prompt?",
+    "back": "Context supplies relevant facts such as platform and symptom. Instructions state the task the assistant should perform.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ai-in-network-operations-c25",
+    "front": "What is the limit of a worked example in a prompt?",
+    "back": "It can illustrate format or reasoning. Its device values and diagnosis are not observations of the current incident.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

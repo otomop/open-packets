@@ -1,0 +1,64 @@
+[
+  {
+    "id": "vlans-and-access-ports-t03",
+    "title": "Voice VLAN missing after a switch configuration change",
+    "objectives": [
+      "v1:2.1.a",
+      "v2:2.2.c"
+    ],
+    "scenario": "A switchport is intended to provide data VLAN 10 and voice VLAN 30. The attached PC can still reach its same-VLAN peer. Phone power has been verified. You have the following switch evidence; no assumption about the phone’s fallback addressing is required.",
+    "exhibits": [
+      {
+        "title": "SW1 switchport excerpt",
+        "text": "Name: Fa0/7\nOperational Mode: static access\nAccess Mode VLAN: 10 (USERS)\nVoice VLAN: 30 (Inactive)"
+      },
+      {
+        "title": "Completed VLAN-presence check",
+        "text": "The complete VLAN database contains active user VLANs 10 and 20. VLAN 30 is absent; this is not merely an omitted line from an excerpt."
+      }
+    ],
+    "question": "Which switch-side correction follows directly from this evidence?",
+    "options": [
+      "Change the port's voice VLAN to the working data VLAN",
+      "Clear the MAC table without changing the VLAN database",
+      "Change the phone's address before restoring its intended VLAN",
+      "Restore the intended VLAN 30 in the VLAN database"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The port references voice VLAN 30, but the VLAN is inactive and missing from the relevant database entries. Restore it, then verify port state and the phone’s separate provisioning and IP services. Data connectivity in VLAN 10 does not establish that voice works.",
+    "fix": "```ios SW1\nSW1# configure terminal\nSW1(config)# vlan 30\nSW1(config-vlan)# name VOICE\nSW1(config-vlan)# end\nSW1# show vlan brief\nSW1# show interfaces fastethernet0/7 switchport\n```\nConfirm that voice VLAN 30 is active. Then check the phone’s actual VLAN settings and required IP/call services; the VLAN correction alone does not prove registration."
+  },
+  {
+    "id": "vlans-and-access-ports-t02",
+    "title": "A workstation joins the wrong VLAN after a desk move",
+    "objectives": [
+      "v1:2.1",
+      "v2:2.2"
+    ],
+    "scenario": "A workstation at 192.168.10.55/24 moves to a jack patched to SW1 Fa0/18. Its intended peers, including 192.168.10.60/24, remain in VLAN 10. The workstation cannot reach those peers. Its address and cable have been verified; no VLAN translation or alternate link connects the VLANs.",
+    "exhibits": [
+      {
+        "title": "SW1# show interfaces fa0/18 switchport — excerpt",
+        "text": "Administrative Mode: static access\nOperational Mode: static access\nAccess Mode VLAN: 20 (PRINTERS)"
+      },
+      {
+        "title": "Fresh source traffic learned on Fa0/18",
+        "text": "Vlan  Mac Address     Type     Ports\n20    0050.0f77.4a19   DYNAMIC  Fa0/18"
+      }
+    ],
+    "question": "What is the cause of the failed same-subnet communication?",
+    "options": [
+      "The port is assigned to VLAN 20 instead of the required VLAN 10",
+      "The workstation's gateway must carry its same-subnet ARP requests",
+      "VLAN 20 is absent despite its reported active membership",
+      "The learned MAC entry is stale and still describes the old jack"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The host addresses place the peers in the same IPv4 subnet, but the actual Layer 2 assignments separate them. The MAC-table entry confirms where fresh source traffic is learned. Restore the documented VLAN assignment and verify the local path. The entry was learned from fresh traffic on the new port, so clearing a supposedly stale record would not change its actual VLAN assignment.",
+    "fix": "```ios SW1\nSW1# configure terminal\nSW1(config)# interface fastethernet0/18\nSW1(config-if)# description User workstation\nSW1(config-if)# switchport mode access\nSW1(config-if)# switchport access vlan 10\nSW1(config-if)# end\nSW1# show interfaces fastethernet0/18 switchport\n```\nGenerate fresh traffic, verify the MAC entry in VLAN 10, and retest the peer. Save the corrected configuration after verification."
+  }
+]

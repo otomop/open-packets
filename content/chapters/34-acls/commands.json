@@ -1,0 +1,374 @@
+[
+  {
+    "id": "acls-d01",
+    "task": "Numbered standard ACL 10 must permit sources in 10.100.10.0/24. Add that source permit; use a wildcard, not a subnet mask.",
+    "mode": "R1(config)#",
+    "answer": "access-list 10 permit 10.100.10.0 0.0.0.255",
+    "accept": [],
+    "teaching": {
+      "sectionId": "standard-acls",
+      "hint": "A standard ACL tests only the packet’s source address.",
+      "takeaway": "The /24 wildcard compares the first three octets and ignores the last. This entry cannot restrict the destination or service; those requirements need an extended ACL.",
+      "syntax": [
+        {
+          "text": "access-list",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        },
+        {
+          "text": "permit",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.10.0",
+          "kind": "argument"
+        },
+        {
+          "text": "0.0.0.255",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-cmd-named-standard",
+    "task": "Create or enter VTY-ADMINS as a named IPv4 ACL for a policy that only compares administrator source addresses. Choose the narrowest ACL type that fits.",
+    "mode": "R1(config)#",
+    "answer": "ip access-list standard VTY-ADMINS",
+    "accept": [],
+    "teaching": {
+      "sectionId": "standard-acls",
+      "hint": "The policy needs no destination, protocol or port match.",
+      "takeaway": "A named standard list provides source-only matching. Defining the list and adding permits still leaves a separate VTY attachment step; naming it VTY-ADMINS does not apply it.",
+      "syntax": [
+        {
+          "text": "ip access-list standard",
+          "kind": "keyword"
+        },
+        {
+          "text": "VTY-ADMINS",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d02",
+    "task": "Numbered extended ACL 101 must allow clients in 10.100.10.0/24 to initiate HTTPS to 10.100.20.20, with any client source port. Add the permit using numeric destination port 443.",
+    "mode": "R1(config)#",
+    "answer": "access-list 101 permit tcp 10.100.10.0 0.0.0.255 host 10.100.20.20 eq 443",
+    "accept": [],
+    "teaching": {
+      "sectionId": "extended-acls",
+      "hint": "Place the service-port test after the server destination.",
+      "takeaway": "A client normally chooses an ephemeral source port. Putting the 443 test after the source address would match the wrong side of the connection and miss ordinary HTTPS requests.",
+      "syntax": [
+        {
+          "text": "access-list",
+          "kind": "keyword"
+        },
+        {
+          "text": "101",
+          "kind": "argument"
+        },
+        {
+          "text": "permit tcp",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.10.0 0.0.0.255",
+          "kind": "argument"
+        },
+        {
+          "text": "host",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.20.20",
+          "kind": "argument"
+        },
+        {
+          "text": "eq",
+          "kind": "keyword"
+        },
+        {
+          "text": "443",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d03",
+    "task": "You are configuring R1’s client-facing Gi0/0. Client requests enter here and leave Gi0/1 toward the server. Attach the complete IPv4 ACL 101 so requests are checked before routing.",
+    "mode": "R1(config-if)#",
+    "answer": "ip access-group 101 in",
+    "accept": [],
+    "teaching": {
+      "sectionId": "applying-an-acl-interfaces-direction-and-the-vty-lines",
+      "hint": "Direction is relative to the selected router interface.",
+      "takeaway": "Inbound on Gi0/0 evaluates the entering request. A server reply leaving Gi0/0 does not traverse that attachment, so the same list is not automatically a return-traffic filter.",
+      "syntax": [
+        {
+          "text": "ip access-group",
+          "kind": "keyword"
+        },
+        {
+          "text": "101",
+          "kind": "argument"
+        },
+        {
+          "text": "in",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d04",
+    "task": "Create or enter named ACL CLIENTS-IN. Its policy must distinguish client destinations and TCP service ports, so select the appropriate IPv4 ACL type.",
+    "mode": "R1(config)#",
+    "answer": "ip access-list extended CLIENTS-IN",
+    "accept": [],
+    "teaching": {
+      "sectionId": "named-acls-sequence-numbers-and-editing",
+      "hint": "A name does not determine whether the list can match destinations and ports.",
+      "takeaway": "Extended matching is required for this service-specific policy. A named standard list would still match only source addresses, regardless of how descriptive its name is.",
+      "syntax": [
+        {
+          "text": "ip access-list extended",
+          "kind": "keyword"
+        },
+        {
+          "text": "CLIENTS-IN",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-cmd-ordered-deny",
+    "task": "CLIENTS-IN already has sequence 10 permitting the approved HTTP service to 10.100.20.20 and sequence 30 permitting other destinations. Add sequence 20 denying all other IPv4 traffic from 10.100.10.0/24 to that server.",
+    "mode": "R1(config-ext-nacl)#",
+    "answer": "20 deny ip 10.100.10.0 0.0.0.255 host 10.100.20.20",
+    "accept": [],
+    "teaching": {
+      "sectionId": "how-an-acl-is-evaluated",
+      "hint": "Choose a protocol match broad enough to include TCP, UDP and ICMP.",
+      "takeaway": "This deny sits after the intended service exception and before the broad permit. Moving it above 10 would also block HTTP; omitting it would let the final permit admit unwanted server traffic.",
+      "syntax": [
+        {
+          "text": "20",
+          "kind": "argument"
+        },
+        {
+          "text": "deny ip",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.10.0",
+          "kind": "argument"
+        },
+        {
+          "text": "0.0.0.255",
+          "kind": "argument"
+        },
+        {
+          "text": "host",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.20.20",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d05",
+    "task": "In CLIENTS-IN, sequence 10 permits HTTP and sequence 20 denies other client traffic to 10.100.20.20. Add sequence 15 allowing only ICMP echo requests from 10.100.10.10 to that server.",
+    "mode": "R1(config-ext-nacl)#",
+    "answer": "15 permit icmp host 10.100.10.10 host 10.100.20.20 echo",
+    "accept": [],
+    "teaching": {
+      "sectionId": "named-acls-sequence-numbers-and-editing",
+      "hint": "The narrow exception must be evaluated before the broader deny.",
+      "takeaway": "The exception works because first-match processing reaches sequence 15 before 20. It permits echo requests from one host; it does not grant other clients access or automatically admit echo replies through another filter.",
+      "syntax": [
+        {
+          "text": "15",
+          "kind": "argument"
+        },
+        {
+          "text": "permit icmp host",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.10.10",
+          "kind": "argument"
+        },
+        {
+          "text": "host",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.20.20",
+          "kind": "argument"
+        },
+        {
+          "text": "echo",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d06",
+    "task": "Inside a named extended ACL on IOS supporting sequence editing, sequence 20 is confirmed to be an obsolete broad permit. Remove only that entry while preserving all other rules and the attachment.",
+    "mode": "R1(config-ext-nacl)#",
+    "answer": "no 20",
+    "accept": [],
+    "teaching": {
+      "sectionId": "named-acls-sequence-numbers-and-editing",
+      "hint": "Use the entry’s sequence in the current ACL submode.",
+      "takeaway": "Deleting one sequence preserves the rest of the list. Inspect the resulting first-match order; deleting the entire referenced ACL would change far more than the requested exception.",
+      "syntax": [
+        {
+          "text": "no",
+          "kind": "keyword"
+        },
+        {
+          "text": "20",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d08",
+    "task": "In a new server-side named extended ACL, permit TCP from WEB 10.100.20.20 source port 80 to clients in 10.100.10.0/24 only when ACK or RST is set. Use numeric port 80 and no sequence number.",
+    "mode": "R1(config-ext-nacl)#",
+    "answer": "permit tcp host 10.100.20.20 eq 80 10.100.10.0 0.0.0.255 established",
+    "accept": [],
+    "teaching": {
+      "sectionId": "extended-acls",
+      "hint": "For replies, the server’s service port is the source port.",
+      "takeaway": "The source-port test follows WEB’s address, and established checks ACK or RST. This is not session tracking: a matching forged ACK can pass even without a prior client connection.",
+      "syntax": [
+        {
+          "text": "permit tcp host",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.100.20.20",
+          "kind": "argument"
+        },
+        {
+          "text": "eq",
+          "kind": "keyword"
+        },
+        {
+          "text": "80",
+          "kind": "argument"
+        },
+        {
+          "text": "10.100.10.0",
+          "kind": "argument"
+        },
+        {
+          "text": "0.0.0.255",
+          "kind": "argument"
+        },
+        {
+          "text": "established",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "supporting",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "acls-d09",
+    "task": "SSH and local login already work. You are on the intended VTY range, and standard ACL VTY-ADMINS already lists allowed management sources. Apply it to new incoming management sessions, leaving transit traffic unchanged.",
+    "mode": "R1(config-line)#",
+    "answer": "access-class VTY-ADMINS in",
+    "accept": [],
+    "teaching": {
+      "sectionId": "applying-an-acl-interfaces-direction-and-the-vty-lines",
+      "hint": "VTY session restrictions use a line command rather than an interface packet filter.",
+      "takeaway": "The access class limits sources opening sessions to these lines. Authentication and SSH transport remain separate controls, and every available VTY range needs the intended restriction.",
+      "syntax": [
+        {
+          "text": "access-class",
+          "kind": "keyword"
+        },
+        {
+          "text": "VTY-ADMINS",
+          "kind": "argument"
+        },
+        {
+          "text": "in",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d10",
+    "task": "After controlled allowed and denied tests, display the configured ACL entries and supported match counters so you can compare their increments with the recorded baseline.",
+    "mode": "R1#",
+    "answer": "show access-lists",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Inspect effective entry order as well as counter changes.",
+      "takeaway": "A matching counter shows that an entry saw matching traffic, not that the application completed. A zero delta can reflect an earlier match, the wrong attachment or traffic that never reached the list.",
+      "syntax": [
+        {
+          "text": "show access-lists",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "acls-d11",
+    "task": "ACL 101 exists, but its counters do not change during client tests. On R1, inspect Gi0/0’s actual inbound and outbound IPv4 ACL attachments.",
+    "mode": "R1#",
+    "answer": "show ip interface gigabitethernet0/0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Check the interface’s IPv4 details; list existence alone proves no attachment.",
+      "takeaway": "Read the Inbound and Outgoing access list fields against the packet path. Correct entries in an unattached list, or a list in the opposite direction, do not enforce the intended request policy.",
+      "syntax": [
+        {
+          "text": "show ip interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

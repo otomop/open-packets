@@ -1,0 +1,96 @@
+{
+  "checkedAt": "2026-09-24T15:46:21.049Z",
+  "scope": "37-40",
+  "fragments": 1022,
+  "closedSolutionDisclosures": 10,
+  "decisions": 221,
+  "actions": {
+    "keep": 60,
+    "revise": 73,
+    "retire": 58,
+    "add": 30
+  },
+  "chapters": [
+    {
+      "number": 37,
+      "id": "wireless-architecture",
+      "questions": 17,
+      "cards": 15,
+      "commands": 7,
+      "tickets": 2,
+      "steps": 12,
+      "difficulty": [
+        7,
+        10,
+        0
+      ],
+      "singleAnswerPositions": [
+        4,
+        3,
+        4,
+        4
+      ]
+    },
+    {
+      "number": 38,
+      "id": "wireless-security-config",
+      "questions": 22,
+      "cards": 20,
+      "commands": 4,
+      "tickets": 2,
+      "steps": 14,
+      "difficulty": [
+        8,
+        14,
+        0
+      ],
+      "singleAnswerPositions": [
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    {
+      "number": 39,
+      "id": "virtualization",
+      "questions": 15,
+      "cards": 15,
+      "commands": 5,
+      "tickets": 2,
+      "steps": 9,
+      "difficulty": [
+        6,
+        9,
+        0
+      ],
+      "singleAnswerPositions": [
+        4,
+        3,
+        4,
+        3
+      ]
+    },
+    {
+      "number": 40,
+      "id": "network-management-and-sdn",
+      "questions": 16,
+      "cards": 16,
+      "commands": 3,
+      "tickets": 2,
+      "steps": 10,
+      "difficulty": [
+        7,
+        9,
+        0
+      ],
+      "singleAnswerPositions": [
+        4,
+        3,
+        4,
+        4
+      ]
+    }
+  ],
+  "limits": "Static content, React SSR and arithmetic checks only; no Packet Tracer/CML/device execution, browser layout measurement, or psychometric calibration."
+}

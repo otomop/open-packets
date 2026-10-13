@@ -1,0 +1,135 @@
+[
+  {
+    "id": "start-here-d01",
+    "task": "Enter privileged EXEC on this fresh lab switch.",
+    "mode": "Switch>",
+    "answer": "enable",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-command-line-modes-help-and-the-pager",
+      "hint": "Read the final character of the prompt.",
+      "takeaway": "The prompt changes from > to #. A device with an enable secret may ask for it; entering privileged EXEC does not itself enter configuration mode.",
+      "syntax": [
+        {
+          "text": "enable",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "start-here-d02",
+    "task": "Enter global configuration mode to change this switch’s settings.",
+    "mode": "Switch#",
+    "answer": "configure terminal",
+    "accept": [
+      "conf t"
+    ],
+    "teaching": {
+      "sectionId": "the-command-line-modes-help-and-the-pager",
+      "hint": "Choose the terminal as the configuration source.",
+      "takeaway": "The prompt becomes Switch(config)#. Changes made here affect the running configuration; entering or leaving this mode does not save them.",
+      "syntax": [
+        {
+          "text": "configure terminal",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "start-here-d03",
+    "task": "Set the IOS hostname to S1.",
+    "mode": "Switch(config)#",
+    "answer": "hostname S1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-command-line-modes-help-and-the-pager",
+      "hint": "The name is a device setting, not an interface address.",
+      "takeaway": "The prompt changes to S1(config)# immediately. Naming the switch helps identify the device you are editing; it does not assign a management IP address.",
+      "syntax": [
+        {
+          "text": "hostname",
+          "kind": "keyword"
+        },
+        {
+          "text": "S1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "start-here-d07",
+    "task": "Leave configuration mode using a command that returns directly to privileged EXEC from any configuration level.",
+    "mode": "S1(config)#",
+    "answer": "end",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-command-line-modes-help-and-the-pager",
+      "hint": "Use the command that returns from any configuration level.",
+      "takeaway": "The prompt becomes S1#. The accepted changes remain active, but they are not saved merely because you left configuration mode.",
+      "syntax": [
+        {
+          "text": "end",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "start-here-d10",
+    "task": "Save the active configuration as the configuration used for a normal startup.",
+    "mode": "S1#",
+    "answer": "copy running-config startup-config",
+    "accept": [
+      "write memory",
+      "write"
+    ],
+    "teaching": {
+      "sectionId": "saving-reloading-and-the-domain-lookup-trap",
+      "hint": "In a copy operation, put the source before the destination.",
+      "takeaway": "Copy running configuration to startup configuration, then accept the intended destination prompt. Saving the Packet Tracer project is a separate action.",
+      "syntax": [
+        {
+          "text": "copy",
+          "kind": "keyword"
+        },
+        {
+          "text": "running-config",
+          "kind": "keyword"
+        },
+        {
+          "text": "startup-config",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "start-here-d11",
+    "task": "Display the saved configuration used for a normal startup.",
+    "mode": "S1#",
+    "answer": "show startup-config",
+    "accept": [
+      "show start"
+    ],
+    "teaching": {
+      "sectionId": "saving-reloading-and-the-domain-lookup-trap",
+      "hint": "Choose the saved copy, rather than the active copy.",
+      "takeaway": "Find the intended hostname in the saved output. Seeing it in the running configuration alone would not establish that it was saved.",
+      "syntax": [
+        {
+          "text": "show startup-config",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

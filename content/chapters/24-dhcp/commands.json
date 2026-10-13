@@ -1,0 +1,260 @@
+[
+  {
+    "id": "dhcp-d01",
+    "task": "On IOS DHCP server R2, reserve 10.10.10.1 through 10.10.10.49 from all dynamic allocation so the gateway and static devices are not offered to clients.",
+    "mode": "R2(config)#",
+    "answer": "ip dhcp excluded-address 10.10.10.1 10.10.10.49",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ios-dhcp-server",
+      "hint": "Exclusions are global server settings rather than pool options.",
+      "takeaway": "The range is inclusive. An exclusion prevents dynamic allocation; it does not reserve that address for a particular client or create a security binding.",
+      "syntax": [
+        {
+          "text": "ip dhcp excluded-address",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.10.10.1",
+          "kind": "argument"
+        },
+        {
+          "text": "10.10.10.49",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dhcp-d02",
+    "task": "On DHCP server R2, create or enter the pool named USERS before setting its client subnet and options.",
+    "mode": "R2(config)#",
+    "answer": "ip dhcp pool USERS",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ios-dhcp-server",
+      "hint": "A pool groups a client network and the settings offered with its leases.",
+      "takeaway": "The pool name is a local configuration label, not a VLAN or an address range by itself. Entering it does not yet identify eligible client addresses.",
+      "syntax": [
+        {
+          "text": "ip dhcp pool",
+          "kind": "keyword"
+        },
+        {
+          "text": "USERS",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dhcp-d03",
+    "task": "You are configuring pool USERS on R2. Select client subnet 10.10.10.0/24 using a dotted-decimal subnet mask; the relay serves that remote LAN.",
+    "mode": "R2(dhcp-config)#",
+    "answer": "network 10.10.10.0 255.255.255.0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ios-dhcp-server",
+      "hint": "Describe the client subnet, not the server's own link to the relay.",
+      "takeaway": "For relayed clients, the server uses relay subnet information to choose a suitable pool. The network mask defines the client subnet; exclusions and existing allocations further limit available addresses.",
+      "syntax": [
+        {
+          "text": "network",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.10.10.0",
+          "kind": "argument"
+        },
+        {
+          "text": "255.255.255.0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dhcp-d04",
+    "task": "In pool USERS, supply 10.10.10.1 as the default gateway clients must use. R2's own address is on a different subnet.",
+    "mode": "R2(dhcp-config)#",
+    "answer": "default-router 10.10.10.1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ios-dhcp-server",
+      "hint": "The client gateway option names the router on the client's LAN.",
+      "takeaway": "This advertises a gateway to clients; it does not create a route on R2. A correct lease address can coexist with an incorrect gateway, so inspect the actual received options.",
+      "syntax": [
+        {
+          "text": "default-router",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.10.10.1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dhcp-d05",
+    "task": "In pool USERS, advertise the working resolver at 10.10.20.53 to DHCP clients.",
+    "mode": "R2(dhcp-config)#",
+    "answer": "dns-server 10.10.20.53",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ios-dhcp-server",
+      "hint": "The resolver address is a separate option from the client's gateway.",
+      "takeaway": "Advertising a resolver does not start a DNS service or prove its reachability. Existing clients may need updated lease information before they use a changed option.",
+      "syntax": [
+        {
+          "text": "dns-server",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.10.20.53",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dhcp-d07",
+    "task": "You are configuring R1 Gi0/0, the Layer 3 interface receiving client DHCP broadcasts. The reachable remote server is 10.10.20.2. Configure relay to that server here.",
+    "mode": "R1(config-if)#",
+    "answer": "ip helper-address 10.10.20.2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "relay-crossing-the-router-with-ip-helper-address",
+      "hint": "Place the helper where the client broadcasts arrive, not merely on the server-facing interface.",
+      "takeaway": "The relay identifies the client subnet to the server. The server also needs a return route to the relay's client-side address; a correct helper cannot replace that route.",
+      "syntax": [
+        {
+          "text": "ip helper-address",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.10.20.2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "dhcp-d08",
+    "task": "You are configuring R3's new routed Ethernet interface. Make it obtain its IPv4 address and mask as a DHCP client instead of assigning them manually.",
+    "mode": "R3(config-if)#",
+    "answer": "ip address dhcp",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ios-dhcp-client",
+      "hint": "This router is requesting a lease on the interface, not creating a server pool.",
+      "takeaway": "Verify the learned parameters and corresponding allocation afterward. An address alone does not prove a useful default route, DNS service or off-subnet return path.",
+      "syntax": [
+        {
+          "text": "ip address",
+          "kind": "keyword"
+        },
+        {
+          "text": "dhcp",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "dhcp-d09",
+    "task": "On IOS DHCP server R2, inspect current allocations and client identifiers after a fresh client request.",
+    "mode": "R2#",
+    "answer": "show ip dhcp binding",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Use the server's lease table, not the switch's snooping table.",
+      "takeaway": "A binding records an allocation and its client identity. It does not prove that the client is currently connected or that the offered gateway and resolver work.",
+      "syntax": [
+        {
+          "text": "show ip dhcp binding",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dhcp-d10",
+    "task": "Fresh DHCP clients fail while existing leases still work. On server R2, display the configured pools and their address usage to investigate available capacity.",
+    "mode": "R2#",
+    "answer": "show ip dhcp pool",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Count eligible addresses and existing allocations before clearing client state.",
+      "takeaway": "Pool use helps distinguish exhaustion from a relay failure. A failed client alone does not prove exhaustion; compare exclusions, allocations and any withheld conflict addresses.",
+      "syntax": [
+        {
+          "text": "show ip dhcp pool",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dhcp-d11",
+    "task": "R2's pool should have spare addresses, but suspected duplicate-address detection may have withheld some. Display the DHCP conflict records before changing allocation state.",
+    "mode": "R2#",
+    "answer": "show ip dhcp conflict",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "A withheld address is different from a normal active lease.",
+      "takeaway": "Investigate the actual address owner before clearing a conflict. Deleting a record does not remove an address configured on another device and can reintroduce duplicate use.",
+      "syntax": [
+        {
+          "text": "show ip dhcp conflict",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

@@ -1,0 +1,249 @@
+[
+  {
+    "id": "ospfv3-d02",
+    "task": "R1 has IPv6 forwarding and addressed interfaces. On the classic IPv6-specific IOS syntax used in this lab, create or enter OSPFv3 process 10.",
+    "mode": "R1(config)#",
+    "answer": "ipv6 router ospf 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ospfv3",
+      "hint": "Use the IPv6-specific process context named by this platform.",
+      "takeaway": "Classic IPv6 OSPF and newer OSPFv3 address-family syntax use different command contexts. Follow the selected platform consistently; creating a process does not activate an interface.",
+      "syntax": [
+        {
+          "text": "ipv6 router ospf",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d03",
+    "task": "This new classic OSPFv3 process runs on an IPv6-only router with no IPv4 interfaces. Set its router ID explicitly to 1.1.1.1 before activation.",
+    "mode": "R1(config-rtr)#",
+    "answer": "router-id 1.1.1.1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "router-id-and-neighbour-requirements",
+      "hint": "OSPFv3 still needs a 32-bit router identifier.",
+      "takeaway": "The dotted-decimal router ID is an identifier, not an IPv4 next hop. Configuring it explicitly avoids relying on IPv4 addresses that this router does not have.",
+      "syntax": [
+        {
+          "text": "router-id",
+          "kind": "keyword"
+        },
+        {
+          "text": "1.1.1.1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d04",
+    "task": "You are configuring an operational IPv6 interface. Activate classic OSPFv3 process 10 in area 0 on this interface.",
+    "mode": "R1(config-if)#",
+    "answer": "ipv6 ospf 10 area 0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ospfv3",
+      "hint": "Classic OSPFv3 enables interfaces directly rather than using IPv4 wildcard network statements.",
+      "takeaway": "The process configuration alone does not advertise every LAN. Even a passive client LAN needs interface activation before its prefix can be advertised through other adjacencies.",
+      "syntax": [
+        {
+          "text": "ipv6 ospf",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        },
+        {
+          "text": "area",
+          "kind": "keyword"
+        },
+        {
+          "text": "0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d05",
+    "task": "This IPv6 Ethernet link has exactly two routers. Use classic OSPFv3 point-to-point treatment on R1's interface; the peer is configured the same way.",
+    "mode": "R1(config-if)#",
+    "answer": "ipv6 ospf network point-to-point",
+    "accept": [],
+    "teaching": {
+      "sectionId": "network-types-point-to-point-and-broadcast",
+      "hint": "The OSPF network type controls whether this link needs a DR/BDR.",
+      "takeaway": "Point-to-point operation removes the DR/BDR election without changing Ethernet itself. Check for the expected Full adjacency and consistent interface settings on both ends.",
+      "syntax": [
+        {
+          "text": "ipv6 ospf network",
+          "kind": "keyword"
+        },
+        {
+          "text": "point-to-point",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d06",
+    "task": "On a shared broadcast LAN, make this R1 interface ineligible for OSPFv3 DR/BDR using classic IPv6 syntax.",
+    "mode": "R1(config-if)#",
+    "answer": "ipv6 ospf priority 0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "network-types-point-to-point-and-broadcast",
+      "hint": "The eligibility rule transfers from OSPFv2, but this interface command is IPv6-specific.",
+      "takeaway": "Priority 0 prevents election on this interface. OSPFv3 compares router IDs for eligible ties, not the numerically largest global IPv6 address.",
+      "syntax": [
+        {
+          "text": "ipv6 ospf priority",
+          "kind": "keyword"
+        },
+        {
+          "text": "0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d07",
+    "task": "Gi0/2 already participates in this classic OSPFv3 process but connects only client PCs. Suppress Hellos and neighbor formation there while retaining its advertised prefix.",
+    "mode": "R1(config-rtr)#",
+    "answer": "passive-interface gigabitethernet0/2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ospfv3",
+      "hint": "Stop neighbor formation without removing the interface's process activation.",
+      "takeaway": "Passive treatment is appropriate for a client-only LAN. Removing OSPF activation instead would withdraw its advertised prefix, even while transit neighbors stayed Full.",
+      "syntax": [
+        {
+          "text": "passive-interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/2",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d10",
+    "task": "On R1 using classic IPv6 OSPF syntax, display the OSPFv3 neighbor IDs, adjacency states and local interfaces.",
+    "mode": "R1#",
+    "answer": "show ipv6 ospf neighbor",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Select the IPv6 OSPF neighbor display, not the generic IPv6 neighbor cache.",
+      "takeaway": "The OSPF router ID differs from the neighbor's link-local forwarding address. A repeated ID on two rows can describe the same router across two different local links.",
+      "syntax": [
+        {
+          "text": "show ipv6 ospf neighbor",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d11",
+    "task": "Using classic IPv6 OSPF syntax, inspect GigabitEthernet0/0 for its process, area, network type, effective timers and link-local neighbor context.",
+    "mode": "R1#",
+    "answer": "show ipv6 ospf interface gigabitethernet0/0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Detailed OSPF interface evidence narrows a missing adjacency beyond basic IP address state.",
+      "takeaway": "Compare area, instance, timers, passive status and usable link-local communication with the peer. Matching global prefixes alone does not establish a working OSPFv3 adjacency.",
+      "syntax": [
+        {
+          "text": "show ipv6 ospf interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ospfv3-d12",
+    "task": "R1's OSPFv3 neighbors are established. Display the IPv6 prefixes currently installed from OSPF, including their scoped next hops.",
+    "mode": "R1#",
+    "answer": "show ipv6 route ospf",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "A synchronized neighbor does not prove that the remote client LAN participates.",
+      "takeaway": "Read the global destination prefix separately from the link-local next hop and exit interface. Verify the reverse client prefix too before treating a working adjacency as end-to-end connectivity.",
+      "syntax": [
+        {
+          "text": "show ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "ospf",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

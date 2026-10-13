@@ -1,0 +1,458 @@
+[
+  {
+    "id": "wireless-architecture-q22",
+    "type": "single",
+    "objectives": [
+      "v1:2.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "AP-A is configured individually and handles its own WLAN policy. AP-B obtains that policy from a WLC. Which architecture comparison fits?",
+    "options": [
+      "AP-A controller-based; AP-B autonomous",
+      "AP-A autonomous; AP-B controller-based",
+      "Both are autonomous because both perform radio acknowledgements",
+      "Both are cloud-managed because each has an IP address"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Individual AP configuration identifies the autonomous arrangement; obtaining coordinated WLAN policy from a WLC identifies the controller-based arrangement. Local radio work and IP addressing occur in more than one architecture.",
+    "whyWrong": {
+      "0": "This reverses the supplied configuration relationships.",
+      "2": "Radio acknowledgement timing does not decide where WLAN policy is managed.",
+      "3": "An IP address does not establish cloud management."
+    }
+  },
+  {
+    "id": "wireless-architecture-q01",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which work remains in a Cisco lightweight AP in the split-MAC architecture?",
+    "options": [
+      "Defining the corporate RADIUS policy",
+      "Selecting all campus client VLAN mappings",
+      "Sending time-sensitive radio acknowledgements",
+      "Keeping the complete controller configuration"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Radio acknowledgements must meet local timing requirements, so the AP handles them. The controller coordinates functions such as WLAN policy and client state.",
+    "whyWrong": {
+      "0": "RADIUS policy belongs to the authentication design and controller/server configuration.",
+      "1": "Client VLAN mapping is a WLAN policy function, although local switching applies it at the AP.",
+      "3": "A lightweight AP obtains configuration from its controller; this is not the defining local function."
+    }
+  },
+  {
+    "id": "wireless-architecture-q02",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which controller UDP ports does CAPWAP use for control and data respectively?",
+    "options": [
+      "5246 and 5247",
+      "1812 and 1813",
+      "5247 and 5246",
+      "67 and 68"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "CAPWAP control uses UDP 5246 and data uses UDP 5247. Discovery occurs before the established protected control session.",
+    "whyWrong": {
+      "1": "1812/1813 are common RADIUS authentication/accounting ports.",
+      "2": "This reverses the CAPWAP functions.",
+      "3": "67/68 are DHCP server/client ports."
+    }
+  },
+  {
+    "id": "wireless-architecture-q03",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative AireOS interface summary",
+      "text": "Interface    VLAN  IP Address       Type     Ap Mgr\nmanagement   10    192.168.10.5     Static   Yes\nusers        20    192.168.20.5     Dynamic  No\nvirtual      N/A   192.0.2.1        Static   No"
+    },
+    "prompt": "Which interface is shown providing the AP-manager function on this AireOS controller?",
+    "options": [
+      "The users interface in VLAN 20",
+      "The virtual interface at 192.0.2.1",
+      "The service port outside this table",
+      "The management interface in VLAN 10"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The `Ap Mgr Yes` field identifies management as the AP-manager interface in this exhibit. Do not infer the role from an interface's IP address alone.",
+    "whyWrong": {
+      "0": "The users interface is a dynamic client VLAN interface and its Ap Mgr field is No.",
+      "1": "The virtual interface is not the AP CAPWAP endpoint.",
+      "2": "The table provides no service-port AP-manager function."
+    }
+  },
+  {
+    "id": "wireless-architecture-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two AP modes dedicate the device/radio to observation rather than ordinary client service? (Choose two.)",
+    "options": [
+      "Local serving a central WLAN",
+      "Monitor performing RF observation",
+      "FlexConnect serving a branch WLAN",
+      "Sniffer forwarding selected-channel captures",
+      "Bridge with client access enabled"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Monitor mode dedicates resources to monitoring; a sniffer radio forwards frames it can receive on the selected channel to a capture system. Actual mode availability depends on model and release.",
+    "whyWrong": {
+      "0": "Local mode serves ordinary clients.",
+      "2": "FlexConnect can serve ordinary clients.",
+      "4": "A bridge/mesh design can include client access, as explicitly stated here."
+    }
+  },
+  {
+    "id": "wireless-architecture-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements correctly distinguish CAPWAP protection from wireless-link protection? (Choose two.)",
+    "options": [
+      "CAPWAP discovery occurs before the protected control session",
+      "WPA2 encrypts client payloads across every wired CAPWAP path",
+      "Established Cisco AP control traffic normally uses DTLS",
+      "Data and control always share one mandatory DTLS policy",
+      "A controller needs TCP 5247 for centrally switched data"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Discovery precedes the established DTLS-protected control session. Wireless encryption terminates at the AP; protection of the CAPWAP data path is a separate capability/configuration.",
+    "whyWrong": {
+      "1": "WPA2 protects the radio link, not automatically the wired tunnel.",
+      "3": "Data DTLS is separate from control protection.",
+      "4": "CAPWAP uses UDP, not TCP, for this data path."
+    }
+  },
+  {
+    "id": "wireless-architecture-q11",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An AireOS model has a dedicated service port. What is its intended purpose?",
+    "options": [
+      "Carry every client VLAN through an 802.1Q trunk",
+      "Provide separate out-of-band management access",
+      "Negotiate a dynamic LACP bundle with every AP",
+      "Provide the virtual address used by a guest portal"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The service port provides a separate management path on platforms that include it. Its routing and addressing restrictions must be checked in that model's guide.",
+    "whyWrong": {
+      "0": "Client VLAN distribution normally uses distribution-system interfaces/ports.",
+      "2": "The service port is not an AP link-aggregation mechanism.",
+      "3": "The virtual interface is a separate logical construct."
+    }
+  },
+  {
+    "id": "wireless-architecture-q05",
+    "type": "single",
+    "objectives": [
+      "v1:2.7",
+      "v2:2.2.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "AP1 sends management untagged in VLAN 10 and locally switched clients tagged in VLANs 20 and 30. What port configuration matches?",
+    "options": [
+      "Access VLAN 10 with all client traffic untagged",
+      "Access VLAN 20 with a voice VLAN of 30",
+      "Trunk with native 20 and allowed 20,30",
+      "Trunk with native 10 and allowed 10,20,30"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The untagged management traffic belongs to native VLAN 10, while client VLANs 20 and 30 must remain tagged. The allowed list must carry all three required VLANs.",
+    "whyWrong": {
+      "0": "An access port cannot carry the specified tagged client VLANs.",
+      "1": "A phone-style access/voice arrangement does not match the AP's required trunk.",
+      "2": "This misclassifies untagged management and omits VLAN 10."
+    }
+  },
+  {
+    "id": "wireless-architecture-q12",
+    "type": "single",
+    "objectives": [
+      "v1:2.7",
+      "v2:2.2.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A centrally switched AP sends only untagged management traffic into VLAN 10. Which is the simplest matching switchport configuration?",
+    "options": [
+      "Access VLAN 10, carrying the AP's outer traffic",
+      "Access VLAN 20, matching the users' subnet",
+      "Trunk native VLAN 20 with VLAN 10 excluded",
+      "Routed port addressed from the client subnet"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "An access port in VLAN 10 carries the AP's untagged IP/CAPWAP traffic. Client VLANs emerge at the controller in this central-switching design.",
+    "whyWrong": {
+      "1": "The AP's management traffic is assigned to VLAN 10, not its clients' VLAN.",
+      "2": "This fails to carry the specified AP management network.",
+      "3": "The AP expects a Layer 2 attachment to VLAN 10, not this unrelated routed-port design."
+    }
+  },
+  {
+    "id": "wireless-architecture-q14",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A Meraki SSID is explicitly configured in bridge mode. A client prints to a server in the same local client VLAN. Where does that user traffic normally go?",
+    "options": [
+      "Through the AP and the cloud manager before entering the printer VLAN",
+      "Through a CAPWAP tunnel to a central WLC before entering the printer VLAN",
+      "Through the AP directly into the local wired printer VLAN",
+      "Through the branch router to an Internet gateway and back to the local VLAN"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Bridge mode forwards this client traffic into the local wired VLAN. Cloud management does not make the dashboard a mandatory transit point; other Meraki SSID modes must be considered separately.",
+    "whyWrong": {
+      "0": "A cloud management relationship does not make the manager a transit hop in the specified bridge mode.",
+      "1": "The specified bridge-mode SSID does not use this central-controller forwarding path.",
+      "3": "Same-VLAN printer traffic does not require the proposed routed Internet detour."
+    }
+  },
+  {
+    "id": "wireless-architecture-q16",
+    "type": "single",
+    "objectives": [
+      "v2:2.2.b",
+      "v1:2.7"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Power worksheet — representative, model requirements supplied",
+      "text": "AP model guide: full radio operation requires 802.3at power\nSwitch: AP powered, 802.3af allocation only\nController: AP joined; radio capability restricted by low power"
+    },
+    "prompt": "A powered AP has reduced radio capability. What is the best next check from this evidence?",
+    "options": [
+      "Add a second uplink before checking whether the AP supports aggregation",
+      "Keep the present allocation because the AP has already registered",
+      "Move management to a tagged VLAN before checking the power source",
+      "Compare required PoE with negotiated allocation and remaining switch budget"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The controller specifically reports a low-power restriction and the allocation is below the documented requirement for full operation. Check supported power sources, negotiation and the switch's total available budget before changing wireless security.",
+    "whyWrong": {
+      "0": "A second Ethernet link is not a documented substitute for adequate power; supported power/aggregation arrangements must be checked.",
+      "1": "Registration does not prove adequate power for the documented full radio operation.",
+      "2": "Tagging changes do not correct the explicitly identified power shortfall."
+    }
+  },
+  {
+    "id": "wireless-architecture-q17",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "AP1 centrally switches a WLAN into VLAN 40 at WLC1. AP management is untagged in VLAN 10, and AP1's port is access VLAN 10. Where must tagged client VLAN 40 be carried?",
+    "options": [
+      "On the AP access link, replacing its management VLAN",
+      "On the controller's separate out-of-band service port",
+      "On the WLC's distribution trunk toward the VLAN 40 service path",
+      "On every routed link between AP1 and WLC1"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The client VLAN emerges at the WLC in this central-switching design. The AP's outer CAPWAP transport remains in its management network.",
+    "whyWrong": {
+      "0": "The client VLAN is encapsulated across the AP transport; changing the access VLAN would disturb management.",
+      "1": "The out-of-band service port is not the client distribution path.",
+      "3": "Routed CAPWAP transport does not require extending the client VLAN over each transit link."
+    }
+  },
+  {
+    "id": "wireless-architecture-q18",
+    "type": "single",
+    "objectives": [
+      "v1:2.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A documented FlexConnect WLAN locally switches existing clients. Its supported standalone mode retains their forwarding state, and local DHCP/gateway services remain available. New Enterprise authentication still requires RADIUS across the failed WAN. Which result follows?",
+    "options": [
+      "Both existing forwarding and new Enterprise authentication must stop together",
+      "Existing local forwarding may continue while new Enterprise authentication fails",
+      "New Enterprise authentication succeeds because local switching replaces RADIUS",
+      "All clients move to central switching while the WAN remains unavailable"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The supplied design separates local forwarding from new authentication's unavailable dependency. It does not promise every mode or failure behaves this way.",
+    "whyWrong": {
+      "0": "The scenario explicitly provides retained local forwarding and local services.",
+      "2": "Local switching does not evaluate credentials on behalf of an unavailable required RADIUS service.",
+      "3": "The failed WAN does not create a usable centrally switched transport."
+    }
+  },
+  {
+    "id": "wireless-architecture-q19",
+    "type": "single",
+    "objectives": [
+      "v1:2.7",
+      "v2:2.2.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "AP1 emits management frames untagged and staff frames tagged VLAN 20. Its documented management VLAN is 10. SW1's AP trunk allows 10,20 but has native VLAN 20. Which narrow correction matches the contract?",
+    "options": [
+      "Change the native VLAN to 10 and preserve allowed VLANs 10,20",
+      "Remove VLAN 10 and make staff traffic untagged",
+      "Change the AP-facing port to access VLAN 20",
+      "Change the native VLAN to 10 and allow only VLAN 10"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Untagged management frames must enter VLAN 10; tagged staff frames still need VLAN 20 allowed.",
+    "whyWrong": {
+      "1": "This drops the intended management network.",
+      "2": "An access port does not preserve the required tagged staff path.",
+      "3": "Correcting management while excluding VLAN 20 breaks the staff path."
+    }
+  },
+  {
+    "id": "wireless-architecture-q20",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A controller lists AP1 operational with a current management address. No wireless client has been tested. What additional evidence establishes the intended client service?",
+    "options": [
+      "Fresh client security, intended IP settings and successful service test",
+      "A saved controller configuration and unchanged AP count",
+      "A second management ping to the same AP address",
+      "A DHCP binding naming the AP's wired MAC address"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "AP registration and management addressing establish infrastructure stages. A fresh client and application test establish the separate client path.",
+    "whyWrong": {
+      "1": "Saved intent and AP count do not show client authentication, addressing or service.",
+      "2": "That repeats management-plane evidence.",
+      "3": "The AP management lease is not the wireless client's lease or application result."
+    }
+  },
+  {
+    "id": "wireless-architecture-q21",
+    "type": "single",
+    "objectives": [
+      "v2:2.2.b",
+      "v1:2.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "The approved AP guide explicitly supports a two-port LACP bundle and says the AP negotiates passively. Both switch members have matching VLAN settings. Which switch aggregation mode initiates the requested bundle?",
+    "options": [
+      "LACP passive on both switch members",
+      "PAgP desirable on both switch members",
+      "LACP active on both switch members",
+      "Static mode on with negotiation disabled"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "At least one LACP peer must initiate negotiation. Active matches the documented passive AP; generic two-port APs must not be assumed to support aggregation.",
+    "whyWrong": {
+      "0": "Passive on both ends does not initiate LACP.",
+      "1": "PAgP is a different protocol.",
+      "3": "A static bundle does not match the requested negotiated LACP contract."
+    }
+  },
+  {
+    "id": "wireless-architecture-q13",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Controlled diagnostic record — representative",
+      "text": "AP management lease/gateway: valid\nAP has no remembered or configured WLC address\nDHCP option 43: absent; controller DNS lookup: no record\nRouter does not relay local CAPWAP discovery broadcasts\nAuthorized probe to WLC UDP 5246: controller responds\nAP capture: local discovery only; no remote WLC destination"
+    },
+    "prompt": "A new, unprimed AP is on a different subnet from its WLC. Which missing item is directly supported by this diagnostic record?",
+    "options": [
+      "A change from central switching to local switching",
+      "A lease pool for the wireless staff clients",
+      "A trunk carrying the remote client VLAN to the AP",
+      "A method for discovering a controller address"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The AP has working management IP connectivity but no discovery candidate: local broadcast does not cross this router, and neither stored addresses, option 43 nor the DNS record supplies one. Configure a supported discovery method and then verify registration.",
+    "whyWrong": {
+      "0": "Local switching is not needed to discover a reachable controller.",
+      "1": "The failure is AP discovery before staff client service is relevant.",
+      "2": "Central switching does not require that client VLAN at the AP."
+    }
+  }
+]

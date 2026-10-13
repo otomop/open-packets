@@ -1,0 +1,162 @@
+[
+  {
+    "id": "acls-c01",
+    "front": "Which numbered ranges identify standard IPv4 ACLs?",
+    "back": "1–99 and 1300–1999. These lists match source IPv4 addresses.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "acls-c02",
+    "front": "Which numbered ranges identify extended IPv4 ACLs?",
+    "back": "100–199 and 2000–2699. Extended lists can match protocol, source, destination and relevant transport fields.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "acls-c03",
+    "front": "How does an ordinary nonempty IPv4 interface ACL decide a packet?",
+    "back": "Use the first matching entry. If none matches, the nonempty list implicitly denies the packet; later entries do not override an earlier match.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c04",
+    "front": "How do you calculate the wildcard for a CIDR subnet?",
+    "back": "Subtract each mask octet from 255. For /20, 255.255.240.0 becomes 0.0.15.255.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c05",
+    "front": "What do wildcard bits 0 and 1 mean?",
+    "back": "0: compare the corresponding address bit. 1: ignore it. This is independent of whether the base address is a usable host.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c06",
+    "front": "What wildcard represents a /27 subnet?",
+    "back": "0.0.0.31: compare the first 27 bits and ignore the final five. Use the network address as a clear base.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "acls-c08",
+    "front": "What do host and any replace in an IPv4 ACL?",
+    "back": "host A replaces A 0.0.0.0. any replaces 0.0.0.0 255.255.255.255.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "acls-c09",
+    "front": "Which packet address does a standard IPv4 ACL match?",
+    "back": "The source. It cannot distinguish destination hosts, TCP from UDP, or one destination service from another.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c10",
+    "front": "What additional fields can an extended IPv4 ACL use?",
+    "back": "Destination address and IP protocol, plus applicable fields such as TCP/UDP ports, ICMP type or TCP ACK/RST flag tests. All specified conditions must match.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c11",
+    "front": "What are the usual placement guidelines for standard and extended ACLs?",
+    "back": "Standard: near the destination, to limit a source-only rule’s effect. Extended: near the source, when it can precisely identify unwanted traffic. Trace the actual path before choosing a direction.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "acls-c12",
+    "front": "How is named ACL CLIENTS-IN attached inbound on an interface?",
+    "back": "Enter the interface configuration mode and use ip access-group CLIENTS-IN in. Verify the attachment with show ip interface for that interface.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "acls-c13",
+    "front": "How does a standard ACL restrict incoming VTY management access?",
+    "back": "Apply access-class NAME in under every VTY range present. This restricts permitted source addresses; SSH transport and authentication are separate settings.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "acls-c14",
+    "front": "How many ordinary IPv4 interface ACL references are available per interface?",
+    "back": "One inbound and one outbound. Applying another IPv4 ip access-group in the same direction replaces that reference. Other platform-specific ACL features are separate.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "acls-c15",
+    "front": "What does TCP established actually check?",
+    "back": "ACK or RST set on the current segment. It does not validate a remembered connection and can match a forged ACK without a preceding client session.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c17",
+    "front": "How do you remove only sequence 20 from a named ACL on supported IOS?",
+    "back": "Enter ip access-list extended NAME (or standard as appropriate), then no 20. Verify the resulting list rather than deleting the whole ACL.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "acls-c20",
+    "front": "Which two checks establish ACL contents and interface attachment?",
+    "back": "show access-lists NAME for entries and supported counters; show ip interface INTERFACE for inbound and outbound references. An ACL can exist without filtering that interface.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "acls-c21",
+    "front": "Why is a successful router-originated ping insufficient to validate a transit ACL?",
+    "back": "Its source and processing path can differ from the host’s packet. Classic IOS outbound ACL behavior commonly bypasses locally generated traffic. Test the affected host’s actual path.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "acls-c22",
+    "front": "What is the classic IOS behavior for an absent or empty referenced interface ACL?",
+    "back": "It provides no restriction in the documented classic behavior. Build and review the complete list before attachment; do not assume a misspelled or empty list supplies implicit deny.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "acls-c23",
+    "front": "How do TCP/UDP port roles change in a reply?",
+    "back": "The server's service port becomes the source port; the client's chosen port becomes the destination. Reverse the addresses too.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c24",
+    "front": "What does an increasing ACL permit counter prove?",
+    "back": "More packets matched that entry during the interval. It does not by itself prove routing, reply delivery or application success.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

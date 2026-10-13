@@ -1,0 +1,72 @@
+[
+  {
+    "id": "vpns-ipsec-t01",
+    "title": "Public reachability remains but protected host tests fail",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "scenario": "R-BR 198.51.100.1 and R-HQ 203.0.113.1 protect LANs 10.1.1.0/24 and 10.2.2.0/24. ISP G0/0 faces R-BR and G0/1 faces R-HQ. The VPN previously worked. There is no NAT and a capture confirms native ESP, not UDP-encapsulated ESP. After a filter change on ISP G0/1 outbound, fresh branch-to-HQ pings fail although public-address ping and IKEv2 negotiation still work.",
+    "exhibits": [
+      {
+        "title": "Representative current IKE and controlled-test evidence",
+        "text": "R-BR: IKEv2 peer 203.0.113.1 READY\nFresh host test counter deltas:\nR-BR encaps +4, decaps +0\nR-HQ decaps +0\nISP general deny +4; other traffic quiet during the test."
+      },
+      {
+        "title": "ISP attachment and effective OUTSIDE-OUT list",
+        "text": "GigabitEthernet0/1: Outgoing access list is OUTSIDE-OUT\n10 permit udp host 198.51.100.1 host 203.0.113.1 eq 500\n20 permit udp host 198.51.100.1 host 203.0.113.1 eq 4500\n30 permit icmp any any\n40 deny ip any any"
+      },
+      {
+        "title": "Representative capture immediately before ISP filtering",
+        "text": "Source 198.51.100.1, destination 203.0.113.1\nIPv4 Protocol: 50 (ESP)\nNo UDP encapsulation"
+      }
+    ],
+    "question": "Which policy omission explains this controlled test?",
+    "options": [
+      "Missing UDP source-port 50 permission before the deny",
+      "Missing native ESP permission before the final deny",
+      "Missing UDP destination-port 4500 permission before the deny",
+      "Missing private HQ-subnet route on the transit router"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The capture explicitly identifies native ESP, IP protocol 50. It matches neither UDP permit nor ICMP and therefore reaches deny 40, while IKE can remain healthy. A UDP source-port 50 rule would not match this native-ESP packet, and the existing UDP-4500 permit is for a different encapsulation. ISP forwards the outer gateway addresses and does not need a route to the encrypted private destination.",
+    "fix": "On the isolated ISP device, add a specific native-ESP permit before deny 40.\n\n```ios\nISP# configure terminal\nISP(config)# ip access-list extended OUTSIDE-OUT\nISP(config-ext-nacl)# 25 permit esp host 198.51.100.1 host 203.0.113.1\nISP(config-ext-nacl)# end\nISP# show access-lists OUTSIDE-OUT\n```\nGenerate fresh host traffic and compare both peers’ counter deltas and application results. The filter is only on ISP G0/1 outbound in this scenario; it does not filter the reverse direction. A different deployment using UDP NAT-T needs permission for its actual UDP transport rather than assuming native ESP is always required."
+  },
+  {
+    "id": "vpns-ipsec-t02",
+    "title": "The new gateway pair does not establish an IKE relationship",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "scenario": "A new IKEv2 VPN uses R-BR 198.51.100.1 and R-HQ 203.0.113.1. Public routing is working and a capture confirms IKE request and response traffic. A support log reports NO_PROPOSAL_CHOSEN. The listed policies are the only matching IKEv2 policies; there are no other proposals offered. Peer identities and configured authentication are correct. No data SA is installed.",
+    "exhibits": [
+      {
+        "title": "R-BR active proposal and policy",
+        "text": "crypto ikev2 proposal BR-PROP\n encryption aes-cbc-256\n integrity sha256\n prf sha256\n group 14\ncrypto ikev2 policy BR-POLICY\n proposal BR-PROP"
+      },
+      {
+        "title": "R-HQ active proposal and policy",
+        "text": "crypto ikev2 proposal HQ-PROP\n encryption aes-cbc-128\n integrity sha256\n prf sha256\n group 14\ncrypto ikev2 policy HQ-POLICY\n proposal HQ-PROP"
+      },
+      {
+        "title": "Deployment requirement",
+        "text": "Both peers are approved to use IKE AES-CBC-256, SHA-256 integrity/PRF and DH group 14.\nThe HQ configuration should match that requirement."
+      }
+    ],
+    "question": "Which mismatch is established by the shown configuration?",
+    "options": [
+      "The local proposal names differ across the two routers",
+      "The only offered encryption choices have no common value",
+      "The data selectors contain different local source networks",
+      "The IKE source and destination addresses are reversed at HQ"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The only matching proposal at one peer offers AES-CBC-256 and the other only AES-CBC-128, so the encryption choices do not intersect. Local names need not match. Reversed endpoint perspectives are normal, and no supplied evidence identifies a data-selector problem as this IKE proposal failure. Correct the approved mismatch, then verify later stages separately.",
+    "fix": "Correct the HQ proposal to the agreed deployment requirement on supported IOS XE. Clear the old encryption choice before setting the single agreed choice.\n\n```ios\nR-HQ# configure terminal\nR-HQ(config)# crypto ikev2 proposal HQ-PROP\nR-HQ(config-ikev2-proposal)# no encryption\nR-HQ(config-ikev2-proposal)# encryption aes-cbc-256\nR-HQ(config-ikev2-proposal)# end\nR-HQ# show crypto ikev2 proposal HQ-PROP\n```\nAllow the failed negotiation to retry and generate fresh matching host traffic. Verify the negotiated IKEv2 relationship, IPsec SAs and actual host result. Proposal compatibility is necessary but does not by itself prove correct selectors, return routes or application permissions."
+  }
+]

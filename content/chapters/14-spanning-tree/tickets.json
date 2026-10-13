@@ -1,0 +1,64 @@
+[
+  {
+    "id": "spanning-tree-t01",
+    "title": "The faster root uplink is not forwarding",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "scenario": "DSW1 has a direct 10 Gbps link Te1/1 to CORE, the verified root for VLAN 100. DSW1 also has Gi1/1 to DSW2, whose root path cost is 2 through its own 10 Gbps CORE link. The network uses short costs. The following are representative abbreviated teaching exhibits from the stated configuration.",
+    "exhibits": [
+      {
+        "title": "DSW1# show spanning-tree vlan 100 — excerpt",
+        "text": "Root path cost: 6 through GigabitEthernet1/1\nTe1/1               Altn BLK 19        128.49   P2p\nGi1/1               Root FWD 4         128.25   P2p"
+      },
+      {
+        "title": "DSW1 running configuration excerpt",
+        "text": "interface TenGigabitEthernet1/1\n switchport mode trunk\n spanning-tree vlan 100 cost 19"
+      }
+    ],
+    "question": "Which cause explains the current path selection?",
+    "options": [
+      "The local port number on Gi1/1 is lower, so it overrides the cost comparison.",
+      "The manual direct-link cost 19 loses to the indirect path cost 4 + 2 = 6.",
+      "The root is selected by physical interface speed rather than the configured bridge ID.",
+      "The root’s sending port ID outweighs any local cost configured on Te1/1."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "CORE is explicitly established as root, and the worksheet gives DSW2's cost as 2. DSW1 adds its Gi1/1 cost 4 for a total of 6, which beats the manually assigned 19 on Te1/1. The cost comparison is decided before port IDs matter; the port's speed is not increased by changing its STP cost.",
+    "fix": "Remove the unintended per-VLAN override, then verify the displayed automatic cost and root path. With the stated short-cost method, Te1/1 should use cost 2 and become root port.\n```ios DSW1\nDSW1# configure terminal\nDSW1(config)# interface tengigabitethernet1/1\nDSW1(config-if)# no spanning-tree vlan 100 cost\nDSW1(config-if)# end\nDSW1# show spanning-tree vlan 100\n```\nRetest traffic and save only after confirming the intended root and path. Interface names in this worksheet belong to its example platform; do not paste them into an unrelated 2960 lab."
+  },
+  {
+    "id": "spanning-tree-t02",
+    "title": "A replacement restores classic behavior on an interswitch link",
+    "objectives": [
+      "v1:2.5.b",
+      "v2:2.5.b"
+    ],
+    "scenario": "The intended topology runs Rapid PVST+. After ASW3 is replaced, the transit link from ASW1 toward ASW3 uses legacy behavior during link changes. Host-edge configuration is unchanged. The following representative excerpts show the peer compatibility state and replacement mode.",
+    "exhibits": [
+      {
+        "title": "ASW1# show spanning-tree vlan 10 — excerpt",
+        "text": "  Spanning tree enabled protocol rstp\nGi0/1               Desg FWD 4         128.25   P2p Peer(STP)"
+      },
+      {
+        "title": "ASW3# show spanning-tree summary — excerpt",
+        "text": "Switch is in pvst mode"
+      }
+    ],
+    "question": "What does the evidence identify as the mismatch?",
+    "options": [
+      "ASW3 uses classic PVST+, causing classic interoperability on the link facing it.",
+      "The ASW1 transit port lacks PortFast, so it can never form a rapid handshake.",
+      "The replacement’s lower bridge priority requires classic rather than rapid transitions.",
+      "The P2p label establishes half-duplex operation and a shared physical segment."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "ASW3's mode and ASW1's Peer(STP) indication identify the classic neighbor. The effect is on compatibility behavior of the connecting link; this does not prove that every host port in the network now waits 30 seconds. P2p is the point-to-point link type, not shared.",
+    "fix": "Configure the intended mode on ASW3, then verify the local mode and ASW1 peer behavior after negotiation.\n```ios ASW3\nASW3# configure terminal\nASW3(config)# spanning-tree mode rapid-pvst\nASW3(config)# end\nASW3# show spanning-tree summary\nASW3# show spanning-tree vlan 10\n```\nIf a peer remains in legacy compatibility, confirm that no legacy bridge remains and consult that platform's protocol-migration procedure. Do not enable PortFast on the transit link as a workaround or promise a fixed number of seconds for the Peer(STP) indication to disappear."
+  }
+]

@@ -1,0 +1,109 @@
+/* Network figures: the look of content/FIGURES.md. Every rule is scoped to .nf. */
+.nf {
+  --nf-box: var(--line-3);
+  --nf-focus: color-mix(in srgb, var(--accent) 72%, var(--ink));
+  --nf-request: var(--accent);
+  --nf-request-hi: color-mix(in srgb, var(--accent) 36%, var(--ink));
+  --nf-request-ring: color-mix(in srgb, var(--accent) 70%, var(--ink));
+  --nf-reply: var(--ok);
+  --nf-reply-hi: color-mix(in srgb, var(--ok) 36%, var(--ink));
+  --nf-reply-ring: var(--ok);
+  --nf-alt: var(--d-infra);
+  --nf-alt-hi: color-mix(in srgb, var(--d-infra) 36%, var(--ink));
+  --nf-alt-ring: var(--d-infra);
+  --nf-warn: var(--warn);
+  --nf-warn-hi: color-mix(in srgb, var(--warn) 40%, var(--ink));
+  --nf-warn-ring: var(--warn);
+  --nf-bad: var(--bad);
+  --nf-bad-hi: color-mix(in srgb, var(--bad) 40%, var(--ink));
+  --nf-bad-ring: var(--bad);
+  position: relative;
+}
+.nf .tone-request { --c: var(--nf-request); --c-hi: var(--nf-request-hi); --c-ring: var(--nf-request-ring); }
+.nf .tone-reply { --c: var(--nf-reply); --c-hi: var(--nf-reply-hi); --c-ring: var(--nf-reply-ring); }
+.nf .tone-alt { --c: var(--nf-alt); --c-hi: var(--nf-alt-hi); --c-ring: var(--nf-alt-ring); }
+.nf .tone-warn { --c: var(--nf-warn); --c-hi: var(--nf-warn-hi); --c-ring: var(--nf-warn-ring); }
+.nf .tone-bad { --c: var(--nf-bad); --c-hi: var(--nf-bad-hi); --c-ring: var(--nf-bad-ring); }
+.nf .tone-ok { --c: var(--ok); --c-hi: var(--ok); --c-ring: var(--ok); }
+.nf .tone-accent { --c: var(--nf-request-ring); --c-hi: var(--nf-request-ring); --c-ring: var(--nf-request-ring); }
+.nf .tone-dim { --c: var(--line-3); --c-hi: var(--ink-3); --c-ring: var(--ink-3); }
+.nf .tone-neutral { --c: var(--ink-3); --c-hi: var(--ink); --c-ring: var(--ink-2); }
+
+.nf .nf-svg { display: block; width: 100%; height: auto; margin: 0 auto; overflow: visible; }
+
+/* structure */
+.nf .nf-zone { fill: none; stroke: var(--line-2); stroke-dasharray: 4 4; }
+.nf .nf-cable { fill: none; stroke: var(--line-3); stroke-width: 1.4; stroke-linejoin: round; }
+.nf .nf-cable.is-accent { stroke: var(--nf-focus); stroke-width: 2; }
+.nf .nf-cable.is-dashed { stroke-dasharray: 6 4; }
+.nf .nf-cable.is-wireless { stroke-dasharray: 1.5 5; stroke-linecap: round; stroke-width: 1.8; }
+.nf .nf-cable.is-blocked { stroke-dasharray: 3 4; }
+.nf .nf-cable.is-down { stroke: var(--line-2); stroke-dasharray: 3 4; stroke-width: 1.2; }
+.nf .nf-cable.is-off { stroke: var(--line-2); stroke-dasharray: 2 6; stroke-width: 1.2; }
+.nf .nf-box { fill: var(--bg); stroke: var(--nf-box); stroke-width: 1; }
+.nf .nf-node.is-focus .nf-box { stroke: var(--nf-focus); }
+.nf .nf-node.is-absent { opacity: .5; }
+.nf .nf-node.is-absent .nf-box { stroke-dasharray: 4 3; }
+.nf .nf-glyph { fill: none; stroke: var(--ink-4); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.nf .nf-label { font-family: var(--font-display); font-weight: 900; font-size: 14px; letter-spacing: .02em; fill: var(--ink); }
+.nf .nf-sub { font-family: var(--font-mono); font-size: 9.5px; fill: var(--ink-3); }
+.nf .nf-port { fill: var(--bg-2); stroke: var(--line-3); stroke-width: 1; }
+.nf .nf-port.is-down { fill: var(--bad); stroke: var(--bad); }
+.nf .nf-port.is-waking { animation: nf-wake 4.8s linear infinite; }
+.nf.is-still .nf-port.is-waking { animation: none; fill: var(--ok); stroke: var(--ok); }
+@keyframes nf-wake {
+  0%, 16%, 32% { fill: var(--warn); stroke: var(--warn); }
+  8%, 24% { fill: var(--bg-2); stroke: var(--warn); }
+  44%, 100% { fill: var(--ok); stroke: var(--ok); }
+}
+.nf .nf-bar { stroke: var(--warn); stroke-width: 2.2; stroke-linecap: round; }
+.nf .nf-text { font-family: var(--font-mono); font-size: 10px; fill: var(--ink-3); }
+.nf .nf-text.is-zone { font-size: 9px; letter-spacing: .08em; fill: var(--ink-4); }
+.nf .nf-text tspan[class] { fill: var(--c); font-weight: 500; }
+.nf .nf-role { font-family: var(--font-mono); font-size: 10px; font-weight: 500; fill: var(--c); }
+
+/* traffic */
+.nf .nf-comet path { fill: none; stroke-linecap: round; opacity: 0; }
+.nf .nf-tail { stroke: var(--c); stroke-width: 1.8; }
+.nf .nf-head { stroke: var(--c-hi); stroke-width: 2.6; filter: drop-shadow(0 0 3px var(--c)); }
+.nf .nf-ring { fill: none; stroke: var(--c-ring); stroke-width: 1.2; transform-box: fill-box; transform-origin: center; opacity: 0; }
+.nf .nf-inside { fill: none; stroke: var(--c-ring); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.nf .nf-halo { fill: none; stroke: var(--c-ring); transform-box: fill-box; transform-origin: center; opacity: 0; }
+.nf .nf-drop { fill: none; stroke: var(--nf-bad); stroke-width: 1.9; stroke-linecap: round; }
+.nf:not(.is-still) .nf-drop { opacity: 0; }
+.nf .nf-trail { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+.nf .nf-trail.is-inside { stroke-width: 1.4; opacity: .7; }
+.nf .nf-tag rect { fill: var(--bg); stroke: var(--c-ring); }
+.nf .nf-tag text { font-family: var(--font-mono); font-size: 10px; letter-spacing: .02em; fill: var(--ink); }
+.nf .nf-tag.is-chip.tone-dim rect { stroke: var(--line-3); }
+.nf .nf-tag.is-chip.tone-dim text { fill: var(--ink-2); }
+.nf .nf-tag.is-chip:not(.tone-dim) text { fill: var(--c); }
+.nf .nf-tag.tone-bad text { fill: var(--nf-bad); }
+
+.nf.is-paused * { animation-play-state: paused !important; }
+
+/* a figure too wide for its column scrolls sideways at a readable size */
+.nf .nf-frame { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+.nf.is-wide .nf-frame { padding-bottom: 6px; }
+
+/* controls and the still narrative */
+.nf .nf-controls { display: flex; justify-content: flex-end; gap: 4px; margin-top: 6px; }
+.nf .nf-ctl { width: 26px; height: 26px; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); background: var(--bg-2); color: var(--ink-3); cursor: pointer; opacity: .6; transition: opacity var(--t-fast), color var(--t-fast), border-color var(--t-fast); }
+.nf:hover .nf-ctl, .nf .nf-ctl:focus-visible, .nf .nf-ctl[aria-pressed="true"], .nf-dialog .nf-ctl { opacity: 1; }
+.nf .nf-ctl:hover, .nf-dialog .nf-ctl:hover { color: var(--ink); border-color: var(--line-3); }
+.nf .nf-ctl:focus-visible, .nf-dialog .nf-ctl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.nf .nf-ctl svg, .nf-dialog .nf-ctl svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nf .nf-ctl svg .fill { fill: currentColor; }
+.nf .nf-story { margin: 10px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.5; color: var(--ink-2); display: grid; gap: 4px; }
+
+/* the enlarged view */
+.nf-dialog { width: min(1400px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); overflow: auto; }
+.nf-dialog::backdrop { background: rgba(6, 6, 7, .78); }
+.nf-dialog-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 18px; border-bottom: 1px solid var(--line); background: var(--bg); font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.nf-dialog .nf { padding: 24px; }
+.nf-dialog .nf .nf-svg { margin: 0 auto; }
+
+/* sequence diagrams in the same motion: the head rides each message, the entrance stagger is not needed */
+.nf-seq:not(.is-still) .seq .msg { animation: none; }
+.nf-seq .nf-seq-fx .nf-head { fill: none; stroke: var(--c-hi); stroke-width: 2.6; stroke-linecap: round; filter: drop-shadow(0 0 3px var(--c)); opacity: 0; }
+.nf-seq .nf-seq-fx .nf-ring { opacity: 0; }

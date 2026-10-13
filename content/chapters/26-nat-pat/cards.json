@@ -1,0 +1,172 @@
+[
+  {
+    "id": "nat-pat-c01",
+    "front": "Inside local address?",
+    "back": "The address representing an inside host within the inside network; for the example, 10.20.30.10.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "nat-pat-c02",
+    "front": "Inside global address?",
+    "back": "The address representing the inside host to the outside network; for the example, 198.51.100.17. It need not be public space.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "nat-pat-c03",
+    "front": "Outside global vs outside local?",
+    "back": "Outside global identifies the outside host on its own network; outside local is its inside-side representation. They match when no outside-address translation applies.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "nat-pat-c05",
+    "front": "Command for static NAT (and the order of the addresses)?",
+    "back": "`ip nat inside source static INSIDE-LOCAL INSIDE-GLOBAL`: local first, global second. Substitute the actual addresses.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c06",
+    "front": "Command to define a NAT pool?",
+    "back": "`ip nat pool NAME FIRST LAST netmask MASK`, or the supported prefix-length form. The pool does not install an upstream return route.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c07",
+    "front": "Command that ties an ACL to a pool for dynamic NAT?",
+    "back": "`ip nat inside source list ACL pool NAME`. Without overload, active inside address mappings receive distinct pool addresses.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c08",
+    "front": "Command for PAT using the outside interface's address?",
+    "back": "`ip nat inside source list ACL interface OUTSIDE-INTERFACE overload`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c09",
+    "front": "Command for PAT sharing a pool's addresses?",
+    "back": "`ip nat inside source list ACL pool NAME overload`. Read actual translations; do not require a particular address allocation order.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c10",
+    "front": "Which interface roles does classic inside/outside NAT use?",
+    "back": "For classic inside/outside NAT, configure `ip nat inside` and `ip nat outside` on the intended paths. Static mapping state may still appear despite incorrect roles.",
+    "tags": [
+      "command",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c13",
+    "front": "What does `clear ip nat translation *` remove?",
+    "back": "Dynamic translation state. Configured NAT rules and static mappings remain. Active sessions can be interrupted; inspect image-specific dependencies before changing in-use rules.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c14",
+    "front": "Which two show commands verify NAT state and allocation?",
+    "back": "show ip nat translations lists mappings. show ip nat statistics reports roles, counters and pool allocation; correlate both with fresh client traffic.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c15",
+    "front": "Does an address-only NAT row prove the mapping is static?",
+    "back": "No. Correlate the row with configuration or supported detailed output; ordinary dynamic NAT can also show address-only state.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c16",
+    "front": "What does a `deny` in a NAT selection ACL do to a packet?",
+    "back": "It does not select the packet for that NAT rule. Forwarding still depends on routes and other features; a NAT selector is not itself an interface filter.",
+    "tags": [
+      "concept",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c17",
+    "front": "Hits vs Misses in `show ip nat statistics`?",
+    "back": "Hits reflect matching translation lookups; a top-level miss need not be a dropped packet. Correlate allocation/failure counters and fresh traffic when testing pool exhaustion.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c18",
+    "front": "NAT order of operations, inside→outside and outside→inside?",
+    "back": "For the classic path here: inside-to-outside routes before source translation; outside-to-inside translates the destination before routing toward the inside host.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "nat-pat-c19",
+    "front": "How does PAT separate two hosts' ICMP echo flows?",
+    "back": "It can translate the ICMP query identifier and reverse the mapping on the reply. This is different from IPv4 Identification.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "nat-pat-c20",
+    "front": "Command to forward only TCP port 80 on 198.51.100.17 to inside server 10.20.30.50?",
+    "back": "`ip nat inside source static tcp 10.20.30.50 80 198.51.100.17 80`. This adds a service mapping; it is not a complete firewall policy.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c21",
+    "front": "What limits an ordinary dynamic pool without overload?",
+    "back": "Each active inside-address mapping needs its own available global address. Count allocated addresses rather than treating every flow as a separate host.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "nat-pat-c22",
+    "front": "Does configuring a NAT pool install its upstream return route?",
+    "back": "No. Verify a route toward the translated block on the return path; the pool mask does not create that route.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c23",
+    "front": "Does a translation row prove the application succeeded?",
+    "back": "No. It establishes mapping state. Correlate the request, reply and actual application response.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c24",
+    "front": "Does PAT identify every connection using the port number alone?",
+    "back": "No. Protocol and address/port flow information matter. Read the complete displayed mapping rather than treating a port as globally unique.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

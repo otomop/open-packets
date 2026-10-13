@@ -1,0 +1,298 @@
+[
+  {
+    "id": "nat-pat-d01",
+    "task": "You are configuring EDGE's LAN interface, where packets from 10.20.30.0/24 enter before inside-source translation. Assign its classic NAT role.",
+    "mode": "EDGE(config-if)#",
+    "answer": "ip nat inside",
+    "accept": [],
+    "teaching": {
+      "sectionId": "static-nat",
+      "hint": "Choose the interface role from the inside host's side of the translation boundary.",
+      "takeaway": "Inside/outside are NAT interface roles, not automatic labels for private and public addresses. The mapping and the packet's routed path must agree with these roles.",
+      "syntax": [
+        {
+          "text": "ip nat",
+          "kind": "keyword"
+        },
+        {
+          "text": "inside",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d02",
+    "task": "You are configuring EDGE's WAN interface toward the upstream router. Assign its classic NAT role for traffic leaving the inside network and for returning replies.",
+    "mode": "EDGE(config-if)#",
+    "answer": "ip nat outside",
+    "accept": [],
+    "teaching": {
+      "sectionId": "static-nat",
+      "hint": "This is the opposite side of the same translation boundary.",
+      "takeaway": "The outside role complements the inside interface; it does not create an upstream route. Check both roles when a configured translation never sees the intended client traffic.",
+      "syntax": [
+        {
+          "text": "ip nat",
+          "kind": "keyword"
+        },
+        {
+          "text": "outside",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d03",
+    "task": "Map inside host 10.20.30.10 one-to-one to its fixed outside representation 198.51.100.17 using static inside-source NAT.",
+    "mode": "EDGE(config)#",
+    "answer": "ip nat inside source static 10.20.30.10 198.51.100.17",
+    "accept": [],
+    "teaching": {
+      "sectionId": "static-nat",
+      "hint": "Place the host's original address before its translated representation.",
+      "takeaway": "The address order is inside local, then inside global. A static mapping may appear before any traffic, so its presence does not prove the upstream return route or application works.",
+      "syntax": [
+        {
+          "text": "ip nat inside source static",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.20.30.10",
+          "kind": "argument"
+        },
+        {
+          "text": "198.51.100.17",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d04",
+    "task": "For NAT source selection only, create standard ACL 1 permitting every source in 10.20.30.0/24. Do not apply it as an interface traffic filter.",
+    "mode": "EDGE(config)#",
+    "answer": "access-list 1 permit 10.20.30.0 0.0.0.255",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dynamic-nat-with-a-pool",
+      "hint": "The selector uses a wildcard: zero bits match and one bits may vary.",
+      "takeaway": "Here permit means eligible for this NAT rule. An implicit nonmatch is not selected for translation; it does not by itself mean the packet is denied forwarding.",
+      "syntax": [
+        {
+          "text": "access-list",
+          "kind": "keyword"
+        },
+        {
+          "text": "1",
+          "kind": "argument"
+        },
+        {
+          "text": "permit",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.20.30.0",
+          "kind": "argument"
+        },
+        {
+          "text": "0.0.0.255",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d05",
+    "task": "Create NAT pool PUBPOOL with the two approved translated addresses 198.51.100.20 through 198.51.100.21, both in a /28 block.",
+    "mode": "EDGE(config)#",
+    "answer": "ip nat pool PUBPOOL 198.51.100.20 198.51.100.21 netmask 255.255.255.240",
+    "accept": [
+      "ip nat pool PUBPOOL 198.51.100.20 198.51.100.21 prefix-length 28"
+    ],
+    "teaching": {
+      "sectionId": "dynamic-nat-with-a-pool",
+      "hint": "The pool mask describes the translated-address subnet, not the inside LAN.",
+      "takeaway": "The inclusive range contains two addresses. Defining the pool does not install the upstream route to its /28 or make more addresses available without a sharing policy.",
+      "syntax": [
+        {
+          "text": "ip nat pool",
+          "kind": "keyword"
+        },
+        {
+          "text": "PUBPOOL",
+          "kind": "argument"
+        },
+        {
+          "text": "198.51.100.20",
+          "kind": "argument"
+        },
+        {
+          "text": "198.51.100.21",
+          "kind": "argument"
+        },
+        {
+          "text": "netmask",
+          "kind": "keyword"
+        },
+        {
+          "text": "255.255.255.240",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d06",
+    "task": "ACL 1 and pool PUBPOOL already exist. Bind them for dynamic one-to-one inside-source NAT, with no address sharing through overload.",
+    "mode": "EDGE(config)#",
+    "answer": "ip nat inside source list 1 pool PUBPOOL",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dynamic-nat-with-a-pool",
+      "hint": "Select the existing source list and pool, and preserve one-address-per-allocation behavior.",
+      "takeaway": "Without overload, concurrent inside-address allocations consume separate pool addresses. If the pool is full, a new eligible host cannot obtain a mapping simply because its route is correct.",
+      "syntax": [
+        {
+          "text": "ip nat inside source list",
+          "kind": "keyword"
+        },
+        {
+          "text": "1",
+          "kind": "argument"
+        },
+        {
+          "text": "pool",
+          "kind": "keyword"
+        },
+        {
+          "text": "PUBPOOL",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d07",
+    "task": "ACL 1 already selects the inside hosts, and GigabitEthernet0/0/1 is EDGE's addressed outside interface. Configure PAT so those hosts share that interface address.",
+    "mode": "EDGE(config)#",
+    "answer": "ip nat inside source list 1 interface gigabitethernet0/0/1 overload",
+    "accept": [],
+    "teaching": {
+      "sectionId": "pat-overload-on-an-interface-or-a-pool",
+      "hint": "Use the outside interface as the address source and enable flow-based sharing.",
+      "takeaway": "Overload permits multiple translated flows to share the interface address. It is not a firewall policy, and successful return traffic still depends on the rest of the path.",
+      "syntax": [
+        {
+          "text": "ip nat inside source list",
+          "kind": "keyword"
+        },
+        {
+          "text": "1",
+          "kind": "argument"
+        },
+        {
+          "text": "interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/0/1",
+          "kind": "interface"
+        },
+        {
+          "text": "overload",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "nat-pat-d09",
+    "task": "After a fresh client request crosses EDGE, display its NAT translation entries so you can compare original and translated addresses or ports.",
+    "mode": "EDGE#",
+    "answer": "show ip nat translations",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Inspect the mapping table; a hit count alone cannot show the actual translated tuple.",
+      "takeaway": "Read inside global and inside local carefully; the displayed column order differs from static configuration order. A translation entry does not prove the application completed or received a reply.",
+      "syntax": [
+        {
+          "text": "show ip nat translations",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d10",
+    "task": "A new client cannot obtain dynamic translation. Inspect EDGE's NAT interface roles and pool allocation along with hit/miss counters.",
+    "mode": "EDGE#",
+    "answer": "show ip nat statistics",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "The statistics display adds capacity and interface-role evidence beyond individual mappings.",
+      "takeaway": "Compare used pool addresses with capacity and test a fresh eligible host. A growing miss count alone is not proof of dropped packets; new flows can initially miss an existing entry.",
+      "syntax": [
+        {
+          "text": "show ip nat statistics",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "nat-pat-d12",
+    "task": "Keep the existing client PAT. Publish inside web server 10.20.30.50 TCP port 80 as 198.51.100.17 TCP port 80 using a static inside-source port mapping.",
+    "mode": "EDGE(config)#",
+    "answer": "ip nat inside source static tcp 10.20.30.50 80 198.51.100.17 80",
+    "accept": [],
+    "teaching": {
+      "sectionId": "static-nat",
+      "hint": "Specify the protocol and both address/port pairs; do not translate the entire host address.",
+      "takeaway": "Static PAT publishes the specified service tuple while preserving other mappings. It does not prove service availability or constitute a complete access-control policy.",
+      "syntax": [
+        {
+          "text": "ip nat inside source static tcp",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.20.30.50",
+          "kind": "argument"
+        },
+        {
+          "text": "80",
+          "kind": "argument"
+        },
+        {
+          "text": "198.51.100.17",
+          "kind": "argument"
+        },
+        {
+          "text": "80",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

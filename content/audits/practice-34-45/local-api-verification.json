@@ -1,0 +1,18 @@
+{
+  "reviewed": "2026-09-24",
+  "result": "passed",
+  "executedBy": "41–43 author during this batch",
+  "runtime": "Python 3.14.7",
+  "verifier": "verify-rest-stub.py",
+  "cases": 13,
+  "httpRequests": 8,
+  "jsonValidationCases": 5,
+  "output": "PASS: 13 local HTTP/JSON cases; listener closed; temporary data removed.",
+  "scope": [
+    "Extract actual embedded teaching HTTP handler and JSON validator",
+    "Loopback ephemeral port only",
+    "HTTP 200/401/403/404, content types, roles, matched and empty filtering",
+    "Valid JSON, invalid syntax, boolean schema mismatch, repaired input, NaN rejection"
+  ],
+  "limitations": "No Cisco API/device, remote Ansible, Terraform apply or external AI execution."
+}

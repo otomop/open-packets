@@ -1,0 +1,2279 @@
+[
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q01",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same lowest bridge ID decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q02",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same root path cost decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q03",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same designated-port selection decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q04",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same received port-ID tie decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q05",
+    "action": "revise",
+    "reason": "Refines the same-topic RSTP states item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q06",
+    "action": "retire",
+    "reason": "Retired fixed classic-STP convergence timer arithmetic; the conditional timing reference remains in the lesson instead of consuming a core route/role decision."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q07",
+    "action": "revise",
+    "reason": "Refines the same-topic reading Root/Altn fields item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q08",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same PortFast on an endpoint decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q09",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same per-VLAN root selection decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q10",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same configured path cost decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q11",
+    "action": "revise",
+    "reason": "Refines the same-topic port roles and state item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q12",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same bridge priority increments decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q13",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same port-priority tie handling decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q14",
+    "action": "revise",
+    "reason": "Refines the same-topic per-VLAN operation item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q15",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same failure path selection decision and feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q16",
+    "action": "revise",
+    "reason": "Refines the same-topic sender-BID tie item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q17",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Ethernet loops without an IP hop limit."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q18",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: separate Rapid PVST instances."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q19",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: equal priority and lower MAC."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q20",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: total cost then sender bridge ID."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q24",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: different roots in two VLANs."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q27",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: root identity before path cost."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q21",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: complete triangle roles."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: root-priority change across a triangle."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: receiving cost change across both ends."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q25",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: STP health versus access-VLAN error."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "questions",
+    "id": "spanning-tree-q26",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: split components after root isolation."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Default configurable bridge priority, and its display in VLAN 10?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How does a VLAN elect its root bridge?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does the root-primary macro configure?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does the root-secondary macro configure?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Legal configurable bridge priorities?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Short-method costs at 10 Mbps, 100 Mbps, 1 Gbps, and 10 Gbps?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Root-port comparison when candidates advertise the same root?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How is a candidate root path cost calculated?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c09",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How many root and designated ports are selected?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How do alternate and backup roles differ?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c11",
+    "action": "revise",
+    "reason": "Refines the same-topic Can a healthy alternate remain discarding longer than max age? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c12",
+    "action": "revise",
+    "reason": "Refines the same-topic How does learning differ from forwarding in RSTP? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c13",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Default hello, max-age, and forward-delay timers?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c14",
+    "action": "retire",
+    "reason": "Retired a three-missed-hello timer detail; core RSTP roles and edge/path behavior receive retrieval practice instead."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c15",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Rapid PVST+ command and how to verify the mode?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c16",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does Prio.Nbr 128.25 represent?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c17",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How does show output identify the local root?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c18",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How do STP/RSTP relate to PVST+/Rapid PVST+?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c19",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Default and configurable port-priority values?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c20",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How is the designated end chosen on a segment?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c21",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Does an STP cost change increase link bandwidth?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Can one trunk have different Rapid PVST+ roles for two VLANs?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "cards",
+    "id": "spanning-tree-c23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Must every switched user frame travel through the root bridge?."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Configure this switch to run Rapid PVST+.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Apply the root-primary macro for VLAN 10.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Apply the root-secondary macro for VLAN 10.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Set VLAN 20 priority to the lowest nonzero legal configurable value.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display VLAN 10 root ID, local BID, and interface roles/states.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display the root ID, cost, and root port in a table across VLANs.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display spanning-tree mode and global feature defaults.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Set the current interface's VLAN 10 path cost to 8.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d09",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Set this sending port's VLAN 10 priority to 64 for an equal-cost neighbor comparison.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "commands",
+    "id": "spanning-tree-d10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Inspect detailed STP information for GigabitEthernet0/1.."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "tickets",
+    "id": "spanning-tree-t01",
+    "action": "revise",
+    "reason": "Refines the same-topic The faster root uplink is not forwarding item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "spanning-tree",
+    "bank": "tickets",
+    "id": "spanning-tree-t02",
+    "action": "revise",
+    "reason": "Refines the same-topic A replacement restores classic behavior on an interswitch link item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q01",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same PortFast with BPDU Guard decision and feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q02",
+    "action": "revise",
+    "reason": "Refines the same-topic BPDU Guard trigger item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q03",
+    "action": "revise",
+    "reason": "Refines the same-topic Root Guard state item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q04",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same manual recovery after cause correction decision and feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q05",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same guard behavior distinctions decision and feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q06",
+    "action": "revise",
+    "reason": "Refines the same-topic Loop Guard placement item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q07",
+    "action": "revise",
+    "reason": "Refines the same-topic global guard scope item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q08",
+    "action": "revise",
+    "reason": "Refines the same-topic interface BPDU filtering item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q09",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same Root Guard recovery decision and feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q10",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same loss of expected BPDUs decision and feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q11",
+    "action": "revise",
+    "reason": "Refines the same-topic default filter behavior item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q12",
+    "action": "revise",
+    "reason": "Refines the same-topic protection comparisons item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q13",
+    "action": "revise",
+    "reason": "Refines the same-topic loop-inconsistent evidence limits item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q14",
+    "action": "revise",
+    "reason": "Refines the same-topic removing unsafe BPDU filtering item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q15",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same enabling recovery cause and interval decision and feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q16",
+    "action": "revise",
+    "reason": "Refines the same-topic PortFast versus host authentication item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q17",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: configured versus operational edge."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q18",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: global BPDU Guard on non-edge trunk."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q19",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: unknown error-disable cause."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q20",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: misplaced Root Guard."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q21",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: timed recovery with a persistent cause."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "questions",
+    "id": "stp-protection-q22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: two independent protection faults."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does PortFast change on a genuine edge port?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: 2960-style interface command for PortFast on an access port?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: PortFast command for a trunk to a genuine end device?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Global PortFast command and its scope on 2960-style IOS?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Does PortFast disable STP or permanently guarantee edge status?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: BPDU guard: trigger and conventional Catalyst result?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Interface versus global BPDU-guard scope?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Safe recovery after BPDU-guard errdisable?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c09",
+    "action": "revise",
+    "reason": "Refines the same-topic Does the default 300-second errdisable interval enable recovery? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Which log evidence distinguishes BPDU guard from other errdisable causes?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c11",
+    "action": "revise",
+    "reason": "Refines the same-topic Root guard: what triggers it and what state results? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Where should root guard be placed?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c13",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How does root inconsistency recover?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c14",
+    "action": "revise",
+    "reason": "Refines the same-topic Loop guard: what triggers it and what state results? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c15",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What is the operational scope of loop guard?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c16",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Root guard versus BPDU guard?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c17",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Can root guard and loop guard operate on one interface together?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c18",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does *ROOT_Inc in a Rapid PVST+ port row mean?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c19",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: BPDU filter: interface form versus global PortFast form?."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "cards",
+    "id": "stp-protection-c20",
+    "action": "revise",
+    "reason": "Refines the same-topic Which command lists STP inconsistent interfaces and affected VLANs? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: On 2960-style IOS, make this genuine end-device access port a PortFast edge.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Enable PortFast on this trunk to a verified end device with no Layer 2 transit path.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Enable the global PortFast default for nontrunking ports.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Configure this interface to err-disable when any BPDU is received, independently of PortFast.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Enable BPDU guard by default on operational PortFast ports.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Enable automatic errdisable recovery attempts for the BPDU-guard cause.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d07",
+    "action": "retire",
+    "reason": "Retired a separate timed-recovery interval syntax drill; the lab still distinguishes enabling the cause from setting the interval."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Protect this designated boundary against superior root information from downstream.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d09",
+    "action": "retire",
+    "reason": "Retired global Loop Guard syntax duplication; interface-level placement and protection verification remain assessed."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Enable loop guard on this point-to-point uplink expected to receive BPDUs.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d11",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display STP inconsistent interfaces and their affected instances.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display the STP mode and global PortFast and guard/filter defaults.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "commands",
+    "id": "stp-protection-d13",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Inspect enabled errdisable recovery causes and their interval before assuming automatic recovery.."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "tickets",
+    "id": "stp-protection-t01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: A conference-room port fails again after every reset."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "tickets",
+    "id": "stp-protection-t02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Only one VLAN fails behind the new lab switch."
+  },
+  {
+    "chapterId": "stp-protection",
+    "bank": "tickets",
+    "id": "stp-protection-t03",
+    "action": "revise",
+    "reason": "Refines the same-topic The uplink stays connected but STP reports loop inconsistency item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q01",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same port-security maximum decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q02",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same violation mode decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q03",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same mode behavior comparison decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q04",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same DHCP server ingress trust decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q05",
+    "action": "revise",
+    "reason": "Refines the same-topic unsaved sticky learning item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q06",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same Option 82 server policy decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q07",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same static-host DAI exception decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q08",
+    "action": "revise",
+    "reason": "Refines the same-topic snooping/inspection VLAN mismatch item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q09",
+    "action": "revise",
+    "reason": "Refines the same-topic DAI validation facts item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q10",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same ARP sender MAC comparison decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q11",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same host-role RA guard decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q12",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same storm hysteresis decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q13",
+    "action": "revise",
+    "reason": "Refines the same-topic default storm-control action item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q14",
+    "action": "revise",
+    "reason": "Refines the same-topic RA policy attachment item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q15",
+    "action": "revise",
+    "reason": "Refines the same-topic MAC-table flooding consequence item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q16",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same separate security controls decision and feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q17",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: source MAC versus identity."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q18",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: restrict-mode observation."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q20",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: explicit DAI sender-MAC mismatch."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: explicit ARP ACL denial."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q25",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: storm percentage and port speed."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q27",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: cached IPv6 state versus fresh evidence."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q29",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: fresh DHCP learning after enablement."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q30",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: secure MAC moved to another access port."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q19",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: saved sticky address after replacement."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q21",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: separate DHCP and DAI trust."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: ARP ACL static implicit denial."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q24",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: ARP versus DHCP rate-limit evidence."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q26",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: wrong role on legitimate RA ingress."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "questions",
+    "id": "layer2-security-q28",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: RA positive-control comparison."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: On the documented Catalyst platform, what are the initial port-security settings after enablement?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What switchport mode should precede port security for one untagged PC?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does protect mode do?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does restrict mode add to protect mode?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does shutdown mode do to a violating port?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How does a newly learned sticky MAC survive restart?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How do static, dynamic and sticky secure addresses differ?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How should a shutdown-mode violation be recovered?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c09",
+    "action": "retire",
+    "reason": "Retired secure-address aging detail from core retrieval; sticky persistence and actual violation/recovery evidence are more useful here."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Which two settings enable snooping for VLAN 10?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c11",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Which interfaces should receive DHCP snooping trust?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does a DHCP snooping binding associate?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c13",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Does DHCP failure after enabling snooping prove an Option 82 problem?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c14",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does `ip dhcp snooping limit rate 15` configure?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c15",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How does DAI validate ARP on an untrusted interface?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c16",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What DAI rate defaults apply on the cited Catalyst configuration?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c17",
+    "action": "revise",
+    "reason": "Refines the same-topic What does optional DAI src-mac validation compare? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c18",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does `static` mean when applying a DAI ARP ACL?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c19",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How should rising and falling storm thresholds be read?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c20",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What is required beyond defining an RA guard host policy?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c21",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Does excluding a static address from DHCP authorize its ARP claims?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Does ip dhcp snooping trust also enable DAI trust?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Where do RA guard host and router roles belong in the documented design?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c24",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Does retained IPv6 addressing prove new RAs are passing a guard?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "cards",
+    "id": "layer2-security-c25",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Why is a secure MAC match not proof of user identity?."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Enable port security on the interface, which is already a static access port.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: The approved design requires exactly two observed secure entries on this port. Set its total maximum.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Enable learning of secure MAC addresses into running configuration.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Drop and report violating frames while preserving forwarding for permitted addresses.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d05",
+    "action": "retire",
+    "reason": "Retired automatic port-security recovery syntax from the core drills; the lab practices correcting the violating cause and controlled manual recovery."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Inspect Fa0/1 port-security state, configured maximum and violations.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Snooping is globally enabled. Add VLAN 10 to its inspection list.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Legitimate DHCP server replies enter on this interface. Configure snooping trust here.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d09",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: This lab does not use Option 82 for server policy. Disable the switch's insertion of it.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Bindings and the separate ARP trust policy are verified. Enable DAI for VLAN 10.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d11",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Set broadcast storm thresholds to 1% rising and 0.5% falling.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Attach the existing RA guard policy HOSTS to this endpoint interface.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d13",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display learned DHCP snooping client bindings.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d14",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display the RA guard policy named HOSTS on a supporting Catalyst.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d15",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Apply the separately approved DAI trust to this controlled router-facing interface.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "commands",
+    "id": "layer2-security-d16",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Apply existing ARP ACL STATIC-HOSTS to VLAN 10 while retaining DHCP-binding fallback for implicit nonmatches.."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "tickets",
+    "id": "layer2-security-t01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: DHCP fails after snooping is enabled."
+  },
+  {
+    "chapterId": "layer2-security",
+    "bank": "tickets",
+    "id": "layer2-security-t02",
+    "action": "revise",
+    "reason": "Refines the same-topic A phone and PC exceed the permitted MAC total item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q01",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same longest prefix despite metric decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q02",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same AD/metric bracket fields decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q03",
+    "action": "retire",
+    "reason": "Retired external EIGRP source-code trivia; common installed-entry fields and forwarding decisions remain central."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q04",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same same-prefix source comparison decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q05",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same configured versus preferred source decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q06",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same no-match discard decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q07",
+    "action": "revise",
+    "reason": "Refines the same-topic nested subnet boundary item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q08",
+    "action": "retire",
+    "reason": "Retired a rare platform-specific destination-query/default display quirk; full-table evidence remains a qualified lesson/lab note."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q09",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same connected and local entries decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q10",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same common AD defaults decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q11",
+    "action": "revise",
+    "reason": "Refines the same-topic equal-cost route evidence item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: static Null0 source and action."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q13",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same static versus OSPF same-prefix candidate decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q14",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same matching /16 versus nonmatching /24 decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q15",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same destination route display decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q16",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same forward/return limitations decision and feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q17",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: local packet delivery."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q18",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: IP next-hop meaning."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q19",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: local /32 versus connected /24."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q20",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Null0 without default retry."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q21",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: default with no specific match."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: shut interface C/L withdrawal."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q28",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Ethernet next-hop resolution."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q27",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: independent request/reply lookups."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: source withdrawal with independent discard."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q24",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: more-specific withdrawal."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q25",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: correct route with incomplete ARP."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "questions",
+    "id": "routing-table-q26",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: ECMP and unequal byte counts."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What is the order of the two values in [110/20]?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What are the default ADs for connected and static routes?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What are the common internal and external EIGRP ADs?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What are the OSPF and RIP AD defaults?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c05",
+    "action": "retire",
+    "reason": "Retired the standalone eBGP/iBGP distance pair; this chapter does not teach BGP selection or configuration."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does administrative distance 255 mean?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does L identify in an IPv4 routing table?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c08",
+    "action": "retire",
+    "reason": "Retired the multi-area/external OSPF code table from core recall; introductory installed-entry interpretation remains."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c09",
+    "action": "retire",
+    "reason": "Retired duplicate external EIGRP code/distance recall; the lesson retains source-reference context."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How is an installed route chosen for a packet destination?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c11",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: When does administrative distance compare route sources?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What selects paths within a routing protocol?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c13",
+    "action": "revise",
+    "reason": "Refines the same-topic Why not compare an OSPF cost of 20 directly with RIP’s two hops? item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c14",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What happens with no matching route and no default?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c15",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does the asterisk mean alongside a route code?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c16",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Does 'S ... is directly connected, Null0' mean a connected route?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c17",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What is a floating static route?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c18",
+    "action": "retire",
+    "reason": "Retired duplicate recall of a rare default-query output quirk; inspect full-table/default evidence in the lab."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c20",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How should CEF receive, attached and drop be interpreted?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c21",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Do two ECMP paths guarantee twice the throughput for one transfer?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Does an installed route prove end-to-end delivery?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Which address is looked up for the returning reply?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c24",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: A selected Null0 route fails delivery. Is a less-specific route retried?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c25",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: What happens to C/L entries for an ordinary interface that is administratively shut?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c26",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: A more-specific route is withdrawn. What decides the next packet?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "cards",
+    "id": "routing-table-c27",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: For a remote IPv4 destination over Ethernet, whose MAC is normally resolved?."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display all currently installed IPv4 routes.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d02",
+    "action": "retire",
+    "reason": "Retired default-route construction from this interpretation checkpoint; Chapter 18 explicitly practices constructing a default.",
+    "destination": "static-routing-ipv4-d04"
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d03",
+    "action": "retire",
+    "reason": "Retired floating-static construction from this interpretation checkpoint; Chapter 18 teaches and practices that configuration.",
+    "destination": "static-routing-ipv4-d05"
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Request the matching route details for 10.20.30.150, which has a nondefault match.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: On this CEF-capable image, inspect the forwarding lookup for 8.8.8.8.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Show currently installed OSPF routes.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Show currently installed static routes.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display global static-route configuration lines using an include filter anchored to ip route.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d09",
+    "action": "retire",
+    "reason": "Retired memorization of the supplied Null0 fault command; the lab supplies it to assess the resulting forwarding action."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Request the installed default-route entry's details.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d11",
+    "action": "retire",
+    "reason": "Retired duplicate full-CEF display syntax; the destination-specific CEF drill retains the meaningful forwarding lookup."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "commands",
+    "id": "routing-table-d12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display interface addresses and operational state before investigating missing connected routes.."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "tickets",
+    "id": "routing-table-t01",
+    "action": "revise",
+    "reason": "Refines the same-topic Only part of the branch subnet is reachable item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "routing-table",
+    "bank": "tickets",
+    "id": "routing-table-t02",
+    "action": "revise",
+    "reason": "Refines the same-topic The intended backup link is preferred item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q01",
+    "action": "revise",
+    "reason": "Refines the same-topic default-route construction item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q02",
+    "action": "revise",
+    "reason": "Refines the same-topic host-route scope item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q03",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same Ethernet interface-only ARP decision and feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q04",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same floating-static requirements decision and feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q05",
+    "action": "revise",
+    "reason": "Refines the same-topic missing return path across two routers item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q06",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same configured backup display decision and feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q07",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same unresolved next hop decision and feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q08",
+    "action": "revise",
+    "reason": "Refines the same-topic fully specified route fields item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q09",
+    "action": "revise",
+    "reason": "Refines the same-topic mutual default loop item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q10",
+    "action": "retire",
+    "reason": "Retired the duplicate Ethernet interface-only ARP question; q03 already assesses that consequence."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q11",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same prefix length versus distance decision and feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q12",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same traceroute evidence limits decision and feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q13",
+    "action": "revise",
+    "reason": "Varies answer placement while preserving the same return-route construction decision and feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q14",
+    "action": "revise",
+    "reason": "Refines the same-topic LAN-sourced ping item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q15",
+    "action": "retire",
+    "reason": "Retired another distance-only floating-static comparison; q04 and the installation/failure cases cover the necessary preference rule."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q16",
+    "action": "revise",
+    "reason": "Refines the same-topic local link up during remote failure item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q17",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: static route versus application health."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q19",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: aligned /26 destination."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q21",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: remove the exact backup."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: adjacent next-hop choice."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q20",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: both candidates ineligible."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q25",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: missing reverse route during failover."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q26",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: omitted standby distance."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q28",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: same-prefix primary/standby construction."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: shared remote LAN failure."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q24",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: alternate recursive resolution."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "questions",
+    "id": "static-routing-ipv4-q27",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: incomplete source-dependent ping evidence."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: IPv4 static-route core syntax?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Ordinary IOS static and connected distances?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Can distance 255 be a working floating static?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Mask for an IPv4 host route?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How do you write an IPv4 default route?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c06",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What does S* identify in an IPv4 route table?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Read: S 192.168.20.0/24 [1/0] via 10.0.12.2."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Does 'S ... is directly connected' mean a C route?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c09",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What makes a static route fully specified?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How is a recursive next hop resolved?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c11",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Why avoid an Ethernet interface-only route to a remote LAN?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: What makes a route a floating static?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c13",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Example backup distances behind static 1 and OSPF 110?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c15",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Where can you see an unselected floating static?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c16",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Does a /32 at distance 200 lose to a /24 at distance 1?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c17",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Why select a source address in extended ping?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c18",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Router ping works but a LAN PC ping fails: what next?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c19",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Risk of two routers defaulting to one another?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c20",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: How do you verify forwarding when only a default matches?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c21",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Can a configured static disappear from the routing table?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c22",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Can an installed static still fail to deliver traffic?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c23",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Why can a backup through the same far router fail to restore a LAN?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "cards",
+    "id": "static-routing-ipv4-c24",
+    "action": "add",
+    "reason": "Adds a distinct practice decision: Why name the exit interface as well as the next hop in the two-link lab?."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d01",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Add a next-hop-only route for 192.168.20.0/24 through 10.0.12.2.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Route 192.168.30.0/24 through GigabitEthernet0/0 and peer 10.0.12.2.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d03",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Route only host 192.168.20.99 through 10.0.13.2.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d04",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Add an IPv4 default using only next hop 10.0.12.2.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d05",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Add a next-hop-only backup to 192.168.20.0/24 through 10.0.13.2 at distance 5.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d06",
+    "action": "retire",
+    "reason": "Retired repeated backup syntax with a second numeric distance; the distinction from OSPF is assessed in q04 and the lesson."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d07",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Remove the exact next-hop-only backup for 192.168.20.0/24 through 10.0.13.2 at distance 5.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d08",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Display installed IPv4 static routes.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d09",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Filter running configuration to lines containing ip route.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d10",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Ask IOS for the route entry covering 192.168.20.12.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d11",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: On an IOS image supporting inline source selection, ping 192.168.20.12 from R1's own 192.168.10.1 address.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "commands",
+    "id": "static-routing-ipv4-d12",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Trace the path toward 192.168.20.12 from R1.."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "tickets",
+    "id": "static-routing-ipv4-t01",
+    "action": "revise",
+    "reason": "Refines the same-topic A backup takes half the LAN traffic item for clearer scope, justified demand or more plausible feedback."
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "bank": "tickets",
+    "id": "static-routing-ipv4-t02",
+    "action": "keep",
+    "reason": "Retains accurate, appropriately bounded practice: Router ping works; PC ping fails."
+  }
+]

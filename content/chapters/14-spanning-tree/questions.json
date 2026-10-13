@@ -1,0 +1,735 @@
+[
+  {
+    "id": "spanning-tree-q05",
+    "type": "multi",
+    "objectives": [
+      "v1:2.5.b",
+      "v2:2.5.b"
+    ],
+    "difficulty": 1,
+    "prompt": "Which two statements accurately describe RSTP port states? (Choose two.)",
+    "options": [
+      "A designated role proves that a port has already reached forwarding.",
+      "A discarding port learns user-frame source MACs but sends no BPDUs.",
+      "A discarding port forwards broadcasts while holding unicast frames.",
+      "A forwarding port learns source MACs and forwards eligible user frames.",
+      "A learning port can learn source MACs without forwarding user frames."
+    ],
+    "answer": [
+      3,
+      4
+    ],
+    "explanation": "Learning allows MAC learning but does not yet permit user-frame forwarding. Forwarding supports both; role and state must still be considered separately.",
+    "whyWrong": {
+      "0": "A designated port can be discarding while a safe transition is established.",
+      "1": "Discarding does not learn source MACs from user traffic; it can still process control information.",
+      "2": "Discarding does not permit ordinary broadcast forwarding."
+    }
+  },
+  {
+    "id": "spanning-tree-q11",
+    "type": "multi",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Which two statements about designated ports are correct? (Choose two.)",
+    "options": [
+      "A segment selects the port advertising the best spanning-tree information.",
+      "On ordinary point-to-point links, the root bridge's active ports are designated.",
+      "The designated port is selected by the lowest local interface name on each switch.",
+      "Every non-root switch must have exactly one designated port per VLAN.",
+      "Two links to the same neighbor always make one local port a backup port."
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "A designated port wins the comparison for its segment. On ordinary point-to-point links, the root advertises cost zero and supplies the designated end; shared/self-connected arrangements require the more precise segment rule.",
+    "whyWrong": {
+      "2": "Advertised root information, cost, BID, and port ID decide the comparison.",
+      "3": "A switch can have several designated ports or none; one designated port is selected per segment.",
+      "4": "Separate parallel links commonly produce root/alternate roles downstream, not a backup role."
+    }
+  },
+  {
+    "id": "spanning-tree-q14",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Which command provides a table of root bridge IDs, total root costs, and local root ports across VLANs?",
+    "options": [
+      "show spanning-tree summary",
+      "show spanning-tree root",
+      "show mac address-table",
+      "show interfaces trunk"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "`show spanning-tree root` summarizes root information per VLAN. It is useful for comparing instances before inspecting a detailed single-VLAN view.",
+    "whyWrong": {
+      "0": "Summary emphasizes mode and defaults rather than the requested root-path table.",
+      "2": "The MAC table describes learned forwarding entries, not spanning-tree root selection.",
+      "3": "The trunk display describes VLAN carriage and trunk state, not elected root paths."
+    }
+  },
+  {
+    "id": "spanning-tree-q17",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Why can an Ethernet loop keep circulating broadcasts through ordinary Layer 2 switches?",
+    "options": [
+      "An STP root port forwards user traffic independently of its state.",
+      "Ethernet frames have no hop limit that ordinary bridging decrements.",
+      "Learning a source MAC requires a switch to retransmit every frame.",
+      "The enclosed IP TTL is decremented by each switch to limit the frame’s lifetime."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ordinary bridging does not decrement the enclosed IP TTL, and Ethernet has no equivalent hop counter. STP removes the loop from the forwarding topology.",
+    "whyWrong": {
+      "0": "Both the role and current state matter; a discarding port does not forward ordinary user traffic.",
+      "2": "Source learning records the ingress location; it does not require universal flooding.",
+      "3": "Ordinary Layer 2 bridging does not decrement the enclosed IP TTL, so it does not provide that loop limit."
+    }
+  },
+  {
+    "id": "spanning-tree-q18",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does Rapid PVST+ maintain for a network carrying several VLANs?",
+    "options": [
+      "One permanent root elected only when the first switch starts.",
+      "A root for each IP subnet, selected from the default gateways.",
+      "One root for each physical switch, shared by all its VLANs.",
+      "A separate spanning-tree instance and elected root for each VLAN."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Rapid PVST+ applies rapid spanning-tree behavior per VLAN. Two VLANs can therefore have different roots and forwarding topologies.",
+    "whyWrong": {
+      "0": "Election can change when better information or topology changes arrive.",
+      "1": "Bridge information determines this Layer 2 election; IP gateways do not vote.",
+      "2": "The instance belongs to a VLAN, not to each switch independently."
+    }
+  },
+  {
+    "id": "spanning-tree-q07",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.b",
+      "v2:2.5.b"
+    ],
+    "difficulty": 1,
+    "prompt": "What does this representative VLAN 10 interface excerpt establish about SW3?",
+    "options": [
+      "Gi0/1 is administratively shut, so its cost is ignored by the switch.",
+      "Both Gigabit ports forward because both are operational point-to-point links.",
+      "Gi0/2 is a backup port because another port uses the alternate role.",
+      "Gi0/2 is the current root port, while Gi0/1 is a standby path."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "`Root FWD` identifies the current root port and its forwarding state. `Altn BLK` identifies a healthy alternate that discards user frames for this VLAN.",
+    "whyWrong": {
+      "0": "An alternate blocked port participates in STP and is not the same as administrative shutdown.",
+      "1": "Point-to-point link type does not override the blocked state.",
+      "2": "Backup and alternate are distinct roles; neither changes the Root label on Gi0/2."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW3# show spanning-tree vlan 10 — interface excerpt",
+      "text": "Interface           Role Sts Cost      Prio.Nbr Type\nGi0/1               Altn BLK 4         128.25   P2p\nGi0/2               Root FWD 4         128.26   P2p"
+    }
+  },
+  {
+    "id": "spanning-tree-q01",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which conclusion about SW1 is supported by this representative excerpt?",
+    "options": [
+      "SW1 reaches the root through Gi0/1 with total path cost 8.",
+      "SW1 is the root because the output identifies protocol rstp.",
+      "SW1 reaches the root through Gi0/1 with total path cost 4.",
+      "SW1 is the root because its Gi0/1 interface is forwarding."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The Root ID differs from the local Bridge ID, and the root block identifies cost 8 through Gi0/1. The interface cost 4 is only SW1's contribution to that total.",
+    "whyWrong": {
+      "1": "The protocol identifies the STP variant, not which bridge won.",
+      "2": "The interface row reports the local port cost; the root block reports the total path cost.",
+      "3": "A forwarding root port belongs to a non-root switch, not the root itself."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1# show spanning-tree vlan 10 — abbreviated",
+      "text": "VLAN0010\n  Spanning tree enabled protocol rstp\n  Root ID    Priority    24586\n             Address     0002.0002.0002\n             Cost        8\n             Port        25 (GigabitEthernet0/1)\n  Bridge ID  Priority    32778\n             Address     0001.0001.0001\nGi0/1               Root FWD 4         128.25   P2p"
+    }
+  },
+  {
+    "id": "spanning-tree-q02",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "For VLAN 20, SW-A has BID 32788.0011.2233.aaaa, SW-B has 28692.0011.2233.ffff, and SW-C has 32788.0011.2233.0001. Which bridge is elected root?",
+    "options": [
+      "SW-B, because its priority field is lower than the others.",
+      "SW-A, because its MAC is lower than SW-B's MAC address.",
+      "SW-C, because its MAC address is the lowest of the three.",
+      "SW-C, because its BID is the last one received by peers."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "SW-B wins because 28692 is lower than 32788. The MAC portion is compared only after the priority/system-ID field ties.",
+    "whyWrong": {
+      "1": "SW-A has a higher priority field, so its MAC is not the deciding comparison.",
+      "2": "The lower MAC cannot override a worse priority field.",
+      "3": "BPDU arrival order does not replace the best-BID comparison."
+    }
+  },
+  {
+    "id": "spanning-tree-q03",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "All VLAN 10 switches use default configurable priority 32768. After `spanning-tree vlan 10 root primary` is entered on SW2, which displayed priority should be expected?",
+    "options": [
+      "32778, because the macro changes only a role label.",
+      "24576, because the VLAN ID is omitted from Root ID.",
+      "28682, from configurable priority 28672 plus VLAN 10.",
+      "24586, from configurable priority 24576 plus VLAN 10."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "With the stated default-priority peers, the macro sets 24576. The per-VLAN displayed field includes the extended system ID, producing 24586 for VLAN 10.",
+    "whyWrong": {
+      "0": "The macro changes a numeric priority setting rather than granting a special role.",
+      "1": "24576 is the configurable component; the displayed field includes VLAN 10.",
+      "2": "28672 is the secondary macro value, not the primary value in this scenario."
+    }
+  },
+  {
+    "id": "spanning-tree-q04",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Both candidates advertise the same root. Using the given costs, which interface should SW4 select as its root port?",
+    "options": [
+      "Fa0/24, because the route uses fewer switch links.",
+      "Gi0/1, because received cost 4 plus local cost 4 is 8.",
+      "Gi0/1, because its local interface number is lower.",
+      "Fa0/24, because its neighbor is the root itself."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The candidate via Gi0/1 costs 4 + 4 = 8; the direct Fa0/24 candidate costs 0 + 19 = 19. Root-port selection prefers the lower total cost, before any port-ID tie-breaker.",
+    "whyWrong": {
+      "0": "STP uses path cost rather than a simple hop count.",
+      "2": "The choice is established by cost before interface IDs are compared.",
+      "3": "Direct attachment does not beat a lower-cost indirect path."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW4 worksheet — VLAN 10",
+      "text": "Candidate   Received root cost   Local port cost\nFa0/24      0                    19\nGi0/1       4                    4"
+    }
+  },
+  {
+    "id": "spanning-tree-q08",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "SW1 has equal-cost direct links to the same root bridge. Gi0/1 receives sender port ID 128.26; Gi0/2 receives 128.25. Which interface wins?",
+    "options": [
+      "Gi0/2, because its received sending-port identifier is lower.",
+      "Neither port, because parallel links require an EtherChannel.",
+      "Gi0/1, because SW1's lower local interface number decides first.",
+      "Both ports, because equal-cost links share the root-port role."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Root ID, total cost, and sender BID tie, so the sending port ID decides. Gi0/2 hears 128.25, which is better than 128.26 even though its local interface name is higher.",
+    "whyWrong": {
+      "1": "Parallel links can operate under STP without an EtherChannel; one can be alternate.",
+      "2": "The sender port ID is compared before the local receiving port ID.",
+      "3": "A non-root bridge selects one root port per instance."
+    }
+  },
+  {
+    "id": "spanning-tree-q09",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.b",
+      "v2:2.5.b"
+    ],
+    "difficulty": 2,
+    "prompt": "An interswitch link is using classic interoperability behavior after a replacement switch was installed. Which change aligns the replacement with the intended rapid design?",
+    "options": [
+      "Lower the replacement's VLAN priority to reserve the root role.",
+      "Force the replacement's uplink to shared link type for safety.",
+      "Configure `spanning-tree mode rapid-pvst` on the replacement.",
+      "Enable PortFast on both ends of the interswitch transit link."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The replacement reports PVST mode, which uses classic behavior. Configuring the intended rapid mode addresses that mismatch; verify the operational peer behavior after protocol negotiation rather than assuming a fixed recovery time.",
+    "whyWrong": {
+      "0": "Priority controls root election, not rapid versus classic protocol operation.",
+      "1": "Shared link type prevents the point-to-point rapid handshake rather than enabling it.",
+      "3": "PortFast is not the remedy for a transit-link protocol mismatch."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Replacement SW2# show spanning-tree summary — excerpt",
+      "text": "Switch is in pvst mode"
+    }
+  },
+  {
+    "id": "spanning-tree-q10",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "An engineer changes SW1 Fa0/24 to `spanning-tree vlan 30 cost 2`. What is the direct effect, and how can it affect other switches?",
+    "options": [
+      "The root bridge changes its BID to include 2; every switch repeats that new BID.",
+      "The peer changes its receiving port cost to 2; SW1 keeps its own automatic cost.",
+      "SW1 raises the physical link speed; neighboring switches learn the new bandwidth.",
+      "SW1 uses cost 2 for that candidate; a changed advertised root cost can affect neighbors."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The interface command changes SW1's VLAN 30 path-cost contribution on that port. If this changes its selected root cost, updated advertisements can influence downstream root or designated-port decisions.",
+    "whyWrong": {
+      "0": "Cost and BID are different fields; this command does not change bridge priority or MAC.",
+      "1": "The command is local to SW1; it does not configure the peer's interface cost.",
+      "2": "STP cost is a selection parameter and does not change physical bandwidth."
+    }
+  },
+  {
+    "id": "spanning-tree-q12",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.b",
+      "v2:2.5.b"
+    ],
+    "difficulty": 2,
+    "prompt": "The physical link stays up, but an RSTP port misses three consecutive BPDUs with a two-second hello interval. Which interpretation is correct?",
+    "options": [
+      "The bridge must wait exactly 50 seconds before detecting the missing neighbor.",
+      "The bridge has proved the fiber transmit strand is physically broken.",
+      "The bridge can age the neighbor information after about six seconds.",
+      "The bridge guarantees that all application traffic recovers in six seconds."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Three missed two-second hellos correspond to about six seconds and allow rapid aging of neighbor information. Detection does not identify the physical cause or guarantee a specific end-to-end recovery duration.",
+    "whyWrong": {
+      "0": "Classic worst-case timer examples are not the required rapid neighbor-detection behavior.",
+      "1": "Several faults can stop BPDUs while link status remains up.",
+      "3": "Neighbor detection and complete traffic recovery are separate events."
+    }
+  },
+  {
+    "id": "spanning-tree-q13",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "A new switch has VLAN 10 priority 4096. Existing root SW1 was selected using the primary macro and has the shown configured setting. With no guards, what happens?",
+    "options": [
+      "The new switch wins because its configured priority is lower than 24576.",
+      "SW1 retains the role because the macro permanently marks it as primary.",
+      "SW1 automatically subtracts 4096 from the newcomer's advertised priority.",
+      "The new switch waits for SW1 to fail before it may participate in elections."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The macro left an ordinary priority setting of 24576. The new switch's lower priority gives it the better BID for the same VLAN; the macro does not keep monitoring and reducing SW1's priority.",
+    "whyWrong": {
+      "1": "Primary is a configuration convenience, not a permanent protocol privilege.",
+      "2": "There is no ongoing adjustment process attached to the earlier macro invocation.",
+      "3": "All participating bridges compare BIDs; no reservation forces the newcomer to wait."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1 running-config excerpt",
+      "text": "spanning-tree mode rapid-pvst\nspanning-tree vlan 10 priority 24576"
+    }
+  },
+  {
+    "id": "spanning-tree-q15",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.b",
+      "v2:2.5.b"
+    ],
+    "difficulty": 2,
+    "prompt": "Two ports of the same switch attach to one shared hub segment. One receives the switch's own superior BPDU and provides a redundant attachment to its designated port. Which role describes that port?",
+    "options": [
+      "Backup, because it backs up this bridge's attachment to the same segment.",
+      "Designated, because each local interface must advertise onto the hub.",
+      "Alternate, because every redundant cable provides a path through another bridge.",
+      "Root, because a received BPDU always selects the path toward the root."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A backup port is associated with a redundant connection to the same segment served by the bridge's own designated port. An alternate instead provides another path toward the root through a different bridge.",
+    "whyWrong": {
+      "1": "The segment selects one designated port; redundant local attachments need not both be designated.",
+      "2": "The stated BPDU comes from the same bridge, not a different bridge on another path.",
+      "3": "Receiving a BPDU alone does not establish the root-port role."
+    }
+  },
+  {
+    "id": "spanning-tree-q16",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "prompt": "SW-A and SW-B advertise the same root with root path cost 8 on their connecting segment. Which end becomes designated based on the worksheet?",
+    "options": [
+      "SW-B, because its sending bridge ID is lower at the tied advertised cost.",
+      "SW-A, because its port number is lower than SW-B's port number.",
+      "SW-A, because its local interface cost of 4 is lower.",
+      "SW-B, because designated-port selection prefers the higher link cost."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "For the designated-port comparison, both advertise cost 8, so the sending BID decides. SW-B has the lower BID; the segment's local receiving cost is not added to the already advertised cost for this comparison.",
+    "whyWrong": {
+      "1": "Sender BID is compared before sender port ID.",
+      "2": "The local cost would matter when evaluating a received root-port candidate, not as a new designated-port tie-breaker here.",
+      "3": "There is no rule preferring a higher port cost; SW-B wins on BID."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "VLAN 10 segment worksheet",
+      "text": "                 SW-A                  SW-B\nRoot ID          same                  same\nAdvertised cost  8                     8\nSender BID       32778.0001.0001.0001   28682.00ff.00ff.00ff\nLocal port cost  4                     19\nSender port ID   128.1                 128.24"
+    }
+  },
+  {
+    "id": "spanning-tree-q19",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "SW-A BID: 30.00aa.0000.0001\nSW-B BID: 30.0010.ffff.ffff\nBoth belong to the same connected VLAN 30 instance."
+    },
+    "prompt": "Both VLAN 30 candidates use configurable priority zero. Which result follows from the complete BIDs?",
+    "options": [
+      "SW-A wins because priority zero prevents any other root claim.",
+      "They retain separate roots because both configurable priorities are zero.",
+      "SW-A wins because the MAC comparison prefers the higher value.",
+      "SW-B wins because its MAC is lower after the priority fields tie."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Both displayed priority fields are 30. SW-B has the lower MAC, so it has the lower complete BID. Zero does not guarantee permanent root status.",
+    "whyWrong": {
+      "0": "The MAC still breaks a priority tie.",
+      "1": "Connected participants compare complete BIDs and converge on one root for the instance.",
+      "2": "The lower MAC wins the tied-priority comparison."
+    }
+  },
+  {
+    "id": "spanning-tree-q20",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "Same root ID received on both ports.\nGi0/1: advertised cost 4; local cost 4; sender BID 32778.0001.0000.0001; sender port 128.1\nGi0/2: advertised cost 4; local cost 4; sender BID 28682.00ff.0000.0001; sender port 128.48"
+    },
+    "prompt": "The candidates advertise the same root and produce equal total cost. Which SW-C port becomes the root port?",
+    "options": [
+      "Gi0/1, because the sender port number is lower.",
+      "Gi0/2, because the sending bridge ID is lower.",
+      "Both, because equal-cost spanning-tree paths are load shared.",
+      "Gi0/1, because the local receiving port number is lower."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Both totals are 8. Sender BID is compared before either sender port ID or local receiving port ID, so the lower-priority sender on Gi0/2 wins.",
+    "whyWrong": {
+      "0": "Sender BID already resolves the tie before sender port ID.",
+      "2": "A non-root switch chooses one root port per instance; these are not an EtherChannel.",
+      "3": "The local port is a later tie-breaker and is not reached."
+    }
+  },
+  {
+    "id": "spanning-tree-q24",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "Rapid PVST+; VLANs 10 and 20 present and allowed on all triangle links A-B, A-C, B-C.\nAll receiving costs are 4 for both VLANs.\nVLAN 10 priorities: A 24576, B 28672, C 32768.\nVLAN 20 priorities: A 28672, B 24576, C 32768."
+    },
+    "prompt": "C has direct links to A and B and no other links. What should C use as its root port in each VLAN?",
+    "options": [
+      "C-A for both VLANs because the lower VLAN number wins the election.",
+      "C-B for both VLANs because B is a root in one instance.",
+      "Both physical links in both VLANs because each VLAN needs two root ports.",
+      "C-A in VLAN 10 and C-B in VLAN 20, based on the separate instances."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Each VLAN compares its own root information. The direct path to its intended root costs 4; crossing the other switch would cost 8. One physical interface can have different roles in different VLANs.",
+    "whyWrong": {
+      "0": "VLAN numbers do not compete against each other in a single election.",
+      "1": "B’s VLAN 20 root role does not make it the VLAN 10 root.",
+      "2": "C selects one root port in each instance, not both."
+    }
+  },
+  {
+    "id": "spanning-tree-q27",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "Same VLAN 10; both local port costs 4; no guards.\nGi0/1 advertises root BID 32778.0001.0000.0001, advertised cost 0.\nGi0/2 advertises root BID 24586.00ff.0000.0001, advertised cost 100."
+    },
+    "prompt": "A switch receives these two advertisements. Which root identity is preferred before comparing paths to the same root?",
+    "options": [
+      "Both identities remain roots because their advertised costs differ.",
+      "The advertisement on Gi0/1, because advertised cost zero beats cost 100.",
+      "The advertisement on Gi0/1, because the receiving port number is lower.",
+      "The advertisement on Gi0/2, because it identifies the lower root BID."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Root identity is compared before cost. A high-cost path to the better root is preferred to information naming a worse root; later comparisons choose the best path to that selected root.",
+    "whyWrong": {
+      "0": "Different costs do not authorize two roots in the same connected instance.",
+      "1": "Cost does not override a better root identity.",
+      "2": "Port-number comparison is much later in the decision."
+    }
+  },
+  {
+    "id": "spanning-tree-q21",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "One VLAN 10; all links bidirectional point-to-point.\nConfigurable priorities: A 24576; B 28672; C 32768.\nA-B cost: 4 at each end.\nB-C cost: 4 at each end.\nA-C cost: 19 at each end.\nNo guards, bundles, manual overrides beyond these costs, or other links."
+    },
+    "prompt": "After this complete triangle converges, which combined description is correct?",
+    "options": [
+      "B uses B-C at cost 23; C uses C-A at cost 19; B-A is alternate at B.",
+      "B and C both use direct root links; A blocks its higher-cost A-C port.",
+      "B uses B-A at cost 4; C uses C-B at cost 8; C-A is alternate at C.",
+      "B uses B-A at cost 4; C uses C-A at cost 19; C-B is alternate at C."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A has the lowest BID. B reaches A at cost 4. C compares 19 directly with 4 + 4 through B and chooses 8. A advertises zero on A-C, so A remains designated there and C discards on its alternate.",
+    "whyWrong": {
+      "0": "B has a direct cost-4 path and does not select cost 23.",
+      "1": "The root advertises cost zero and is designated on both ordinary point-to-point links; the non-root end supplies the alternate.",
+      "3": "C chooses the cheaper 8 path, not the fewer-hop path costing 19."
+    }
+  },
+  {
+    "id": "spanning-tree-q22",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "One VLAN 10 triangle; no guards or other links.\nOriginal priorities: A 24576; B 28672; C 32768.\nA-B: cost 4 at each end; B-C: cost 4 at each end; A-C: cost 19 at each end.\nChange: B priority becomes 4096. A and C priorities remain unchanged."
+    },
+    "prompt": "B changes only its VLAN 10 priority to 4096. Which new stable result follows?",
+    "options": [
+      "A and C each reach B at cost 4; A is designated on the A-C segment.",
+      "A reaches B through C at cost 23; C becomes designated on A-C.",
+      "A stays root because its previous configured priority was lower than C.",
+      "C reaches B through A at cost 23, and A-C is forwarding at both ends."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "B now has the lowest BID. A and C each have a direct cost-4 root path. Their advertised costs tie on A-C, so A’s lower BID wins designated and C’s end becomes alternate.",
+    "whyWrong": {
+      "1": "A also has a direct cost-4 link; A’s lower BID wins the separate designated comparison.",
+      "2": "B’s new configurable 4096 is lower than A’s 24576.",
+      "3": "C has a direct cost-4 link to the new root and does not choose 23."
+    }
+  },
+  {
+    "id": "spanning-tree-q23",
+    "type": "multi",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "One VLAN 10, no guards or other links.\nPriorities: A 24576; B 28672; C 32768.\nInitial symmetric costs: A-B 4; B-C 4; A-C 19.\nOnly C’s receiving cost on C-A changes to 2; A’s cost on A-C stays 19."
+    },
+    "prompt": "A remains the root. C changes only its receiving cost on C-A from 19 to 2. Which pair of changes is expected after convergence? Choose two.",
+    "options": [
+      "A loses the root role because C now advertises a smaller cost.",
+      "C selects C-A as its root port with total cost 2.",
+      "The physical C-A bandwidth increases to match the lower cost.",
+      "B becomes alternate on B-C, while C is designated there.",
+      "B changes its root path to B-C-A with total cost 6."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "C’s direct cost 2 beats its previous 8 path. B retains direct cost 4 because its route through C costs 4 + 2 = 6. On B-C, C advertises 2 against B’s 4, so the designated end changes to C.",
+    "whyWrong": {
+      "0": "A remains the best BID and advertises root cost zero.",
+      "2": "An STP cost override changes preference, not link bandwidth.",
+      "4": "B’s direct 4 remains cheaper than 6."
+    }
+  },
+  {
+    "id": "spanning-tree-q25",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "Plan: PC-A and PC-B in VLAN 10, 10.0.10.11/24 and 10.0.10.12/24.\nActual PC addresses/masks match. PC-A connects to SW1 Fa0/5.\nSW1 VLAN 10: Gi0/1 Root FWD; Fa0/24 Altn BLK.\nAll links on the Gi0/1 forwarding path carry VLAN 10 to PC-B.\nSW1 show vlan brief: VLAN 20 includes Fa0/5; PC-B port is in VLAN 10."
+    },
+    "prompt": "PC-A cannot reach PC-B. Which correction is supported while preserving the intended spanning tree?",
+    "options": [
+      "Lower SW1’s priority until both interswitch ports have a designated role.",
+      "Change PC-B’s mask so frames avoid the blocked SW1 interface.",
+      "Reassign PC-A’s port to VLAN 10, then retest through the existing forwarding path.",
+      "Disable spanning tree on Fa0/24 so both interswitch paths forward VLAN 10."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The tree provides an active VLAN 10 path, but PC-A’s actual access membership is VLAN 20 despite the plan. Correct that specific mismatch and retest. A normal alternate is not evidence that STP caused the outage.",
+    "whyWrong": {
+      "0": "Changing the root cannot put PC-A into the intended VLAN.",
+      "1": "The host masks already match the addressing plan; the demonstrated error is access membership.",
+      "3": "Forcing redundant paths to forward can reintroduce a loop and does not correct host membership."
+    }
+  },
+  {
+    "id": "spanning-tree-q26",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied spanning-tree worksheet",
+      "text": "One VLAN 10 triangle before failure: A 24576, B 28672, C 32768.\nPC-A is attached only to A; PC-C only to C.\nBoth PCs are in the same VLAN and subnet. No other devices or links exist.\nFailed links: A-B and A-C. Healthy link: B-C."
+    },
+    "prompt": "Root A loses both of its interswitch links, but remains powered with PC-A attached. B-C stays up. Which outcome follows for VLAN 10?",
+    "options": [
+      "C becomes root of B-C because its priority is numerically greater.",
+      "B becomes root of the B-C component, but PC-A is isolated from PC-C.",
+      "B becomes root of all three switches, and PC-A uses its default gateway.",
+      "A remains the common root and PC-A reaches PC-C through B-C."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The disconnected network now has separate components. B has the better BID among B and C, so C reaches B. No remaining cable joins PC-A’s component to PC-C’s, regardless of the successful B-C election.",
+    "whyWrong": {
+      "0": "The lower priority wins: B 28672 beats C 32768.",
+      "2": "B cannot provide a common tree across disconnected components, and a gateway does not create a missing physical path.",
+      "3": "No control or data path remains between A and the other switches."
+    }
+  }
+]

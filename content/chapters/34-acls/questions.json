@@ -1,0 +1,800 @@
+[
+  {
+    "id": "acls-q18",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What happens to a packet that matches no entry in a nonempty ordinary IPv4 interface ACL?",
+    "options": [
+      "It is denied by the implicit final rule",
+      "It uses the action of the preceding matching flow",
+      "It is permitted when the route is directly connected",
+      "It is evaluated only against the opposite direction"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A nonempty interface ACL implicitly denies unmatched packets. A connected route or a previous permitted flow does not create an exception.",
+    "whyWrong": {
+      "1": "An ordinary ACL makes a per-packet decision rather than inheriting a flow's action.",
+      "2": "Routing does not override an ACL deny.",
+      "3": "The packet is evaluated in the direction it actually traverses."
+    }
+  },
+  {
+    "id": "acls-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two numbers identify standard IPv4 ACLs on IOS? Choose two.",
+    "options": [
+      "99",
+      "150",
+      "1400",
+      "2300",
+      "199"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Standard IPv4 ranges are 1–99 and 1300–1999. Thus 99 and 1400 are standard; the other values belong to extended ranges.",
+    "whyWrong": {
+      "1": "150 belongs to 100–199, an extended range.",
+      "3": "2300 belongs to 2000–2699, an extended range.",
+      "4": "199 is an extended ACL number."
+    }
+  },
+  {
+    "id": "acls-q06",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On the classic IOS interface ACL behavior used in this chapter, CLIENTS-IN has not been created. What filtering is provided by referencing that absent list with ip access-group CLIENTS-IN in?",
+    "options": [
+      "Implicit deny applies before any entry is created",
+      "The last previously attached list remains selected",
+      "An absent reference leaves this IPv4 path unfiltered",
+      "The empty list inherits the opposite direction's rules"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The documented classic IOS behavior permits traffic through an absent or empty referenced list. A misspelled name can therefore leave the intended filtering absent. Create and review the complete ACL before applying it.",
+    "whyWrong": {
+      "0": "The stated classic IOS behavior does not apply implicit deny to the absent list.",
+      "1": "The reference selects the supplied name; it does not retain a previous list as a fallback.",
+      "3": "Inbound and outbound attachments do not inherit one another's entries."
+    }
+  },
+  {
+    "id": "acls-q09",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative interface and ACL excerpts",
+      "text": "R1# show ip interface gigabitethernet0/0\n  Outgoing access list is not set\n  Inbound access list is not set\nR1# show access-lists CLIENTS-IN\n  10 permit tcp 10.100.10.0 0.0.0.255 host 10.100.20.20 eq 80\n  20 deny ip 10.100.10.0 0.0.0.255 host 10.100.20.20\n  30 permit ip any any"
+    },
+    "prompt": "The list was intended to filter traffic arriving from clients on G0/0. Which fault is directly established by this output?",
+    "options": [
+      "No IPv4 interface ACL is attached to G0/0",
+      "A broad permit is ahead of the specific deny",
+      "The ACL is attached outbound on G0/0",
+      "Counters must be cleared before the list can filter"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The interface reports no list in either direction. Defining the list does not attach it to this interface. Its use elsewhere is not established by this excerpt.",
+    "whyWrong": {
+      "1": "The displayed list places specific entries before the broad permit.",
+      "2": "Outgoing also says not set.",
+      "3": "Clearing counters is optional measurement housekeeping; it does not activate filtering."
+    }
+  },
+  {
+    "id": "acls-q14",
+    "type": "multi",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements are correct for ordinary routed IPv4 interface ACLs? Choose two.",
+    "options": [
+      "One IPv4 list can be attached in each interface direction",
+      "Two inbound list names form a combined ordered filter",
+      "An inbound attachment also checks replies leaving that interface",
+      "A host transit test avoids assuming a router ping follows that path",
+      "An outbound permit overrides an inbound deny on the same router"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "The ordinary IPv4 attachment provides one list per interface direction. Router-originated traffic can follow different processing and source-address choices, so test from the affected host when checking a transit policy.",
+    "whyWrong": {
+      "1": "A second ordinary inbound reference replaces the first; it does not append another list.",
+      "2": "Inbound and outbound are separate packet directions.",
+      "4": "A packet denied on ingress does not reach an outbound permit."
+    }
+  },
+  {
+    "id": "acls-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements describe the TCP established keyword accurately? Choose two.",
+    "options": [
+      "It checks that the segment belongs to a stored connection",
+      "It accepts a TCP segment carrying ACK or RST",
+      "It requires the initial client SYN to have been observed",
+      "It can match a forged ACK without a previous connection",
+      "It applies the same return-session test to UDP replies"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Established is a per-packet TCP flag test. It allows typical SYN-ACK and later reply segments, but does not remember or validate that an inside host opened the connection.",
+    "whyWrong": {
+      "0": "Ordinary ACLs do not retain a TCP connection table.",
+      "2": "The decision uses the current flags rather than prior packets.",
+      "4": "UDP has no TCP ACK/RST flags and requires separate rules."
+    }
+  },
+  {
+    "id": "acls-q13",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "R1 has only VTY lines 0–4. Which command, entered under those lines, restricts incoming management connections to sources permitted by standard ACL 10?",
+    "options": [
+      "ip access-group 10 in",
+      "transport input 10",
+      "access-class 10 out",
+      "access-class 10 in"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Access-class 10 in restricts incoming VTY connections by the list. Configure SSH and authentication as well; the access class neither enables SSH nor verifies a password.",
+    "whyWrong": {
+      "0": "Ip access-group is an interface attachment command, not a VTY line command.",
+      "1": "Transport input selects protocols such as ssh, not an ACL number.",
+      "2": "Out applies to outgoing connections from the line, not the incoming sessions in the requirement."
+    }
+  },
+  {
+    "id": "acls-q01",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative ACL",
+      "text": "10 permit tcp 10.100.10.0 0.0.0.255 host 10.100.20.20 eq 80\n15 permit icmp host 10.100.10.10 host 10.100.20.20 echo\n20 deny ip 10.100.10.0 0.0.0.255 host 10.100.20.20\n30 permit ip any any"
+    },
+    "prompt": "CLIENTS-IN is applied inbound on R1 G0/0, facing 10.100.10.0/24. Which entry first matches an ICMP echo request from 10.100.10.11 to 10.100.20.20?",
+    "options": [
+      "10: the destination is the web server",
+      "15: this entry matches the ICMP protocol",
+      "20: neither earlier entry matches every field",
+      "30: the final permit overrides earlier denies"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Entry 10 requires TCP. Entry 15 requires source .10, not .11. The request therefore first matches deny 20; evaluation ends there.",
+    "whyWrong": {
+      "0": "A destination match is insufficient when the protocol differs.",
+      "1": "All conditions must match, including the source address.",
+      "3": "Later permits cannot override an earlier match."
+    }
+  },
+  {
+    "id": "acls-q02",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "With base address 172.16.32.0, which wildcard matches exactly the /20 subnet?",
+    "options": [
+      "0.0.31.255",
+      "0.0.16.255",
+      "0.0.15.255",
+      "0.0.255.255"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The /20 subnet mask is 255.255.240.0. Subtracting each octet from 255 produces 0.0.15.255, covering third octets 32 through 47.",
+    "whyWrong": {
+      "0": "This ignores five third-octet bits and matches a /19, twice the intended set.",
+      "1": "16 is the block size, not its wildcard. Binary 00010000 ignores only one third-octet bit.",
+      "3": "This ignores all of the last two octets and matches the whole /16."
+    }
+  },
+  {
+    "id": "acls-q03",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Numbered standard ACL",
+      "text": "access-list 20 permit 192.168.16.0 0.0.7.255"
+    },
+    "prompt": "Which source range matches the displayed entry?",
+    "options": [
+      "192.168.16.0 through 192.168.16.255",
+      "192.168.16.0 through 192.168.23.255",
+      "192.168.0.0 through 192.168.23.255",
+      "192.168.16.0 through 192.168.31.255"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Wildcard 7 is binary 00000111. It permits the third octet to vary from 16 to 23 while wildcard 255 ignores the last octet. ACL matching includes every address in that set.",
+    "whyWrong": {
+      "0": "That would use wildcard 0.0.0.255.",
+      "2": "The compared high bits require the third octet to remain in the 16–23 block.",
+      "3": "That /20-sized set would use wildcard 0.0.15.255."
+    }
+  },
+  {
+    "id": "acls-q05",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative effective ACL order",
+      "text": "access-list 101 permit ip any any\naccess-list 101 deny tcp any host 10.100.20.30 eq 22"
+    },
+    "prompt": "ACL 101 is applied inbound where client requests arrive. The goal is to block SSH to 10.100.20.30 and permit other IPv4 traffic. Why does SSH remain permitted?",
+    "options": [
+      "The final deny overrides the permit only after counters are cleared",
+      "Adding established to the deny will catch the initial SYN",
+      "The more specific deny should win regardless of sequence",
+      "The broad permit accepts SSH before the deny is evaluated"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The first entry matches all IPv4 packets, including TCP destination port 22. Place the specific deny above the general permit.",
+    "whyWrong": {
+      "0": "Counter clearing changes measurements, not evaluation order.",
+      "1": "A normal initial SYN has neither ACK nor RST and would miss established.",
+      "2": "ACL evaluation uses the first match, not the most specific match."
+    }
+  },
+  {
+    "id": "acls-q07",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Topology and port roles",
+      "text": "PC1 10.1.1.10/24 -> R1 G0/0\nR1 G0/1 -> R2 -> R3 G0/0\nR3 G0/1 -> LAN C 10.3.3.0/24\nR3 G0/2 -> LAN D 10.4.4.0/24\nAll routes and baseline connectivity are working."
+    },
+    "prompt": "A standard ACL denies source 10.1.1.10 and permits other sources. It must restrict PC1 only when reaching LAN C, leaving its traffic to R3 itself and LAN D available. Where should it be applied?",
+    "options": [
+      "R1 G0/0 inbound",
+      "R1 G0/1 outbound",
+      "R3 G0/1 outbound",
+      "R3 G0/0 inbound"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "G0/1 outbound on R3 is the path specifically into LAN C. A standard ACL cannot select a destination, so its attachment supplies the destination boundary.",
+    "whyWrong": {
+      "0": "This would reject PC1 traffic to every routed destination reached through R1.",
+      "1": "This would also reject PC1 traffic continuing toward R3 and LAN D.",
+      "3": "This would reject PC1 traffic arriving for R3 itself and for LAN D."
+    }
+  },
+  {
+    "id": "acls-q08",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Packet path",
+      "text": "PC1 -> R1 G0/0 (in) -> R1 G0/1 (out) -> R2 -> R3 G0/0 (in) -> R3 G0/1 (out) -> SRV"
+    },
+    "prompt": "An extended ACL must block only TCP destination port 23 from PC1 to SRV. Following the usual placement guideline, where should it first filter those requests?",
+    "options": [
+      "R2 inbound on the transit link",
+      "R3 G0/1 outbound",
+      "R1 G0/0 inbound",
+      "R1 G0/1 inbound"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "An extended list can identify this exact source, destination and service. R1 G0/0 inbound rejects the unwanted requests nearest their source, before they cross the transit network.",
+    "whyWrong": {
+      "0": "This is farther from the source and does not automatically filter the reverse direction.",
+      "1": "This could filter the requests, but carries them across the network before rejection and is not the requested placement guideline.",
+      "3": "Requests leave R1 G0/1; they do not enter it."
+    }
+  },
+  {
+    "id": "acls-q11",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative named ACL",
+      "text": "10 permit tcp any host 10.100.20.20 eq 80\n20 deny ip any host 10.100.20.20\n30 permit ip any any"
+    },
+    "prompt": "On IOS supporting sequence editing, which action removes only sequence 20 from named extended ACL CLIENTS-IN?",
+    "options": [
+      "Use no access-list CLIENTS-IN 20 in global mode",
+      "Enter CLIENTS-IN configuration mode and use no 20",
+      "Enter CLIENTS-IN configuration mode and use delete 20",
+      "Use ip access-list resequence CLIENTS-IN 20 10"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Enter ip access-list extended CLIENTS-IN, then no 20. Verify the resulting entries; the operation removes the selected ACE rather than deleting the whole list.",
+    "whyWrong": {
+      "0": "That is not the named-ACL sequence deletion syntax.",
+      "2": "Sequence deletion uses no, not delete.",
+      "3": "Resequencing renumbers remaining entries; it does not delete an entry."
+    }
+  },
+  {
+    "id": "acls-q15",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative WEB-ONLY ACL",
+      "text": "10 permit tcp 10.100.10.0 0.0.0.255 eq www host 10.100.20.20\n20 deny ip any any"
+    },
+    "prompt": "The displayed ACL is inbound on the client-facing interface. A client uses source TCP port 51000 to request WEB port 80. Why is the request denied?",
+    "options": [
+      "The permit tests source port 80 rather than destination port 80",
+      "The server's reply requires source port 51000 instead of 80",
+      "The final deny overrides a permit even when all fields match",
+      "The www alias matches a different service than numeric port 80"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Eq www follows the source address pair. The packet has source port 51000, so it misses the permit and reaches deny 20. Place eq 80 after host 10.100.20.20. The shown rule does not automatically match replies either: the source and destination address conditions would still need to match.",
+    "whyWrong": {
+      "1": "The question is about the request; its source is 51000 and destination is 80.",
+      "2": "A matching earlier permit ends evaluation; the deny does not override it.",
+      "3": "www is the TCP port 80 alias on the stated IOS syntax."
+    }
+  },
+  {
+    "id": "acls-q16",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "What sources match access-list 1 permit 10.100.10.0 255.255.255.0?",
+    "options": [
+      "Any IPv4 source whose fourth octet is zero",
+      "Only source address 10.100.10.0",
+      "Exactly the addresses in 10.100.10.0/24",
+      "No sources because noncontiguous wildcards are invalid"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The wildcard ignores the first three octets and compares the fourth to zero. For example, 192.0.2.0 matches, whereas 10.100.10.25 does not.",
+    "whyWrong": {
+      "1": "Matching a single host requires wildcard 0.0.0.0 or host.",
+      "2": "IOS interprets the supplied value as a wildcard; it does not infer the intended subnet mask.",
+      "3": "The wildcard bit pattern need not be contiguous."
+    }
+  },
+  {
+    "id": "acls-q17",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which single ACE matches a UDP DNS query from a client using source port 51000 to server 10.1.1.53 on destination port 53?",
+    "options": [
+      "permit tcp any host 10.1.1.53 eq 53",
+      "permit udp any host 10.1.1.53 eq 67",
+      "permit udp any host 10.1.1.53 eq 53",
+      "permit udp any eq 53 host 10.1.1.53"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "This packet is UDP and its service port is the destination port. The correct ACE puts eq 53 after the destination host. A complete DNS policy may also need TCP 53 and separate reverse-path permissions.",
+    "whyWrong": {
+      "0": "DNS can use TCP, but a TCP entry does not match the UDP packet specified.",
+      "1": "UDP 67 is a DHCP server port, not this DNS destination.",
+      "3": "This tests source port 53; the query source port is 51000."
+    }
+  },
+  {
+    "id": "acls-q19",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Policy and packet evidence (exercise)",
+      "text": "10 permit tcp 10.34.0.0 0.0.0.63 host 10.34.8.20 eq 443\n20 deny ip 10.34.0.0 0.0.0.63 host 10.34.8.20\n30 permit tcp 10.34.0.0 0.0.0.255 host 10.34.8.20 eq 80\n40 deny ip any any\nA: 10.34.0.62:51000 -> 10.34.8.20:80, TCP\nB: 10.34.0.64:51001 -> 10.34.8.20:80, TCP"
+    },
+    "prompt": "Which pair correctly predicts the first match for both packets?",
+    "options": [
+      "A matches 10; B matches 30",
+      "A matches 20; B matches 30",
+      "A matches 20; B matches 40",
+      "A matches 10; B matches 20"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Packet A misses the HTTPS permit and matches the deny for the first /26. Packet B is outside that /26 but inside the /24 HTTP permit. The /26 boundary is .0 through .63.",
+    "whyWrong": {
+      "0": "Destination port 80 does not match entry 10's port 443.",
+      "2": "Packet B matches entry 30, so it never reaches 40.",
+      "3": "A misses HTTPS and B is outside the deny's /26."
+    }
+  },
+  {
+    "id": "acls-q20",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "DNS request and reply endpoints (exercise)",
+      "text": "Query: 10.34.0.10 UDP/51000 -> 10.34.8.53 UDP/53\nReply: 10.34.8.53 UDP/53 -> 10.34.0.10 UDP/51000\nFilter: R1 server-facing interface inbound"
+    },
+    "prompt": "Which ACE narrowly permits the displayed UDP reply?",
+    "options": [
+      "permit udp host 10.34.8.53 host 10.34.0.10 eq 53",
+      "permit udp host 10.34.8.53 eq 53 host 10.34.0.10 eq 51000",
+      "permit udp host 10.34.0.10 eq 51000 host 10.34.8.53 eq 53",
+      "permit tcp host 10.34.8.53 eq 53 host 10.34.0.10 eq 51000"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The reply reverses the query's endpoint roles. Its source service port is 53 and its destination is the client's port 51000. This matches one described packet; it is not a stateful DNS policy.",
+    "whyWrong": {
+      "0": "This incorrectly requires destination port 53 on the client.",
+      "2": "This describes the query direction.",
+      "3": "The described reply is UDP, not TCP."
+    }
+  },
+  {
+    "id": "acls-q22",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An inbound ACL permit counter rises for a new HTTP request, but R1 has no usable route to its destination. What does that permit establish?",
+    "options": [
+      "The permit creates a temporary route to the destination",
+      "The request passed this filter; forwarding still needs a route",
+      "The HTTP session completed because the entry matched",
+      "The permit bypasses subsequent forwarding and filtering checks"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A permit means that this ACL did not discard the matched packet. Routing, other filters and the application must still work. An ACL does not supply a missing route.",
+    "whyWrong": {
+      "0": "ACL permission does not install a forwarding route.",
+      "2": "A matching request does not prove receipt of an HTTP response.",
+      "3": "Other processing stages still apply."
+    }
+  },
+  {
+    "id": "acls-q24",
+    "type": "multi",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which addresses match the source pair 10.34.0.77 0.0.0.31? Choose two.",
+    "options": [
+      "10.34.0.63",
+      "10.34.0.64",
+      "10.34.0.95",
+      "10.34.0.96",
+      "10.34.1.77"
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "The low five bits of the fourth octet are ignored. The compared high bits of 77 select the .64–.95 block. Ignored bits in an unaligned base do not create a new .77–.108 range.",
+    "whyWrong": {
+      "0": "63 belongs to the preceding block.",
+      "3": "96 begins the next block.",
+      "4": "The third octet is compared exactly and must be zero."
+    }
+  },
+  {
+    "id": "acls-q26",
+    "type": "multi",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A policy must permit client DNS queries to 10.34.8.53 over both supported transports and deny other traffic. Which two request entries are required? Choose two.",
+    "options": [
+      "permit udp 10.34.0.0 0.0.0.255 host 10.34.8.53 eq 53",
+      "permit tcp 10.34.0.0 0.0.0.255 host 10.34.8.53 eq 53",
+      "permit udp 10.34.0.0 0.0.0.255 eq 53 host 10.34.8.53",
+      "permit tcp 10.34.0.0 0.0.0.255 host 10.34.8.53 established",
+      "permit ip 10.34.0.0 0.0.0.255 host 10.34.8.53"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "TCP and UDP are separate protocol matches, and a query uses the server's destination port 53. The broad IP permit would exceed the DNS-only policy. Evaluate return filters separately.",
+    "whyWrong": {
+      "2": "This incorrectly matches the query's source port.",
+      "3": "A new TCP DNS connection begins with a SYN that lacks ACK/RST.",
+      "4": "This admits other protocols and services to the DNS host."
+    }
+  },
+  {
+    "id": "acls-q27",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Two hosts with correct /24 masks share VLAN 10 and communicate directly through a Layer 2 switch. An ACL is inbound on the router's VLAN 10 gateway interface. Why does it not block their direct host-to-host packets?",
+    "options": [
+      "A standard ACL automatically permits all same-subnet addresses",
+      "ARP removes the ACL attachment after resolving a local neighbor",
+      "Inbound lists inspect only packets destined for the router itself",
+      "The hosts exchange those frames without traversing the router interface"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "With the stated local addressing, each host resolves the other host directly and the switch forwards within the VLAN. The ordinary routed interface ACL only evaluates traffic that crosses its attachment. A different enforcement point is required for that local path.",
+    "whyWrong": {
+      "0": "The path bypasses this attachment; standard ACLs do not have a universal same-subnet permit.",
+      "1": "ARP supplies a neighbor mapping and does not change ACL configuration.",
+      "2": "An inbound interface list can inspect transit traffic as well as router-destined traffic."
+    }
+  },
+  {
+    "id": "acls-q28",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "ACL counter comparison (exercise)",
+      "text": "Same ACL, same attachment, no counter reset or reload:\nHTTP permit: before 70, after 80\nExplicit deny: before 12, after 12\nOnly the controlled client generated matching test traffic."
+    },
+    "prompt": "Which conclusion follows from this controlled before/after comparison?",
+    "options": [
+      "The permit increase establishes receipt of the server response",
+      "Exactly ten HTTP transactions completed during the test",
+      "The unchanged deny proves the whole path permits traffic",
+      "Ten new packets matched; application success remains unverified"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The permit increased by ten and the deny did not change during the stated interval. Those are match observations, not a count of web transactions or proof of delivery. Confirm the requested page separately.",
+    "whyWrong": {
+      "0": "A request-side match does not establish receipt of a response.",
+      "1": "One application transaction can produce several matching packets.",
+      "2": "These counters do not describe other interfaces or filters."
+    }
+  },
+  {
+    "id": "acls-q21",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Forward and return evidence (exercise)",
+      "text": "Clients: 10.34.0.0/24; DNS: 10.34.8.53\nClient-facing inbound ACL permits UDP and TCP queries to DNS port 53.\nServer-facing inbound ACL:\n 10 permit tcp 10.34.8.0 0.0.0.255 10.34.0.0 0.0.0.255 established\n 20 deny ip any any\nCapture: fresh UDP query reaches DNS; DNS sends reply to client port 51000.\nR1 sees that reply on its server interface; deny 20 increases.\nPolicy: allow those DNS replies; retain the denial of other server-initiated traffic."
+    },
+    "prompt": "Which narrow change restores the required service while preserving the stated limits?",
+    "options": [
+      "Permit UDP replies from DNS source port 53 before the server-side deny",
+      "Replace the client-side deny with permit ip any any",
+      "Permit TCP destination port 53 on the server-side inbound list",
+      "Remove the server-side list because the client list is restrictive"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The allowed UDP query reaches DNS, and the response is observed entering the router. That response misses the TCP-only return permit and reaches the deny. Add the required reverse UDP match while retaining the restrictions; then test a fresh query and the denied server-initiated traffic.",
+    "whyWrong": {
+      "1": "The request already passes; this would broaden the wrong side of the policy.",
+      "2": "The missing packet is a UDP reply with source port 53, not a TCP request to destination 53.",
+      "3": "Removing that filter would abandon the stated server-to-client restriction."
+    }
+  },
+  {
+    "id": "acls-q23",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "A constrained policy change (exercise)",
+      "text": "Active CLIENTS-IN:\n10 permit tcp 10.34.0.0 0.0.0.255 host 10.34.8.20 eq 80\n20 deny ip 10.34.0.0 0.0.0.255 host 10.34.8.20\n30 permit ip any any\nChange requirements: retain HTTP for all clients; add HTTPS only for admin 10.34.0.10; continue denying other client traffic to WEB."
+    },
+    "prompt": "Which proposed insertion meets all three access requirements?",
+    "options": [
+      "Insert permit ip host 10.34.0.10 any at sequence 5",
+      "Insert permit tcp host 10.34.0.10 host 10.34.8.20 eq 443 at sequence 15",
+      "Append permit tcp host 10.34.0.10 host 10.34.8.20 eq 443 at sequence 40",
+      "Replace deny 20 with permit ip 10.34.0.0 0.0.0.255 host 10.34.8.20"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The admin-specific HTTPS permit belongs before the deny and after, or before, the unrelated HTTP permit. It adds the approved exception without granting other clients HTTPS or granting the admin other services to WEB.",
+    "whyWrong": {
+      "0": "This permits the admin's other protocols to WEB, contrary to the requirement.",
+      "2": "The packet would reach deny 20 before the appended exception.",
+      "3": "This grants all client traffic to WEB rather than the single exception."
+    }
+  },
+  {
+    "id": "acls-q25",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Safe replacement requirements (exercise)",
+      "text": "Change constraints:\n- Classic IOS interface behavior from this chapter\n- Working console session retained\n- Existing LIVE ACL ends with deny ip any any\n- Add one approved management source while preserving other restrictions\n- No deliberate unfiltered interval; fresh-session acceptance required"
+    },
+    "prompt": "Which change procedure preserves the filtering policy and the console recovery path?",
+    "options": [
+      "Delete LIVE first, then recreate it while its interface reference remains",
+      "Detach LIVE, verify management from the console, then construct NEXT",
+      "Append the new exception after LIVE's final deny and test only an existing session",
+      "Build and inspect NEXT in full, replace the reference, then test approved and denied flows"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The requirement rules out an unfiltered interval and demands fresh policy evidence. Build the complete replacement before attachment, keep the console open, replace the reference, and test both desired access and required denials. Retain the old definition for rollback until the change is accepted.",
+    "whyWrong": {
+      "0": "The absent or partly built live list would not preserve the intended policy.",
+      "1": "Removing the attachment creates the prohibited unfiltered interval.",
+      "2": "The final deny prevents the appended exception from matching; an existing session is also insufficient evidence."
+    }
+  },
+  {
+    "id": "acls-q29",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two interface filters on one request path (exercise)",
+      "text": "PC 10.34.0.10 -> WEB 10.34.8.20 TCP/80.\nApproved policy permits this HTTP service and blocks other client traffic to WEB.\nR1 G0/0 inbound CLIENTS-IN: HTTP permit increases during a fresh test.\nR1 G0/1 outbound OLD-SERVERS: deny ip host 10.34.0.10 any increases during that test.\nWEB HTTP was verified locally; connected routes and both links remain working."
+    },
+    "prompt": "Which next action is supported without broadening a policy that is already correct?",
+    "options": [
+      "Inspect and reconcile the remaining outbound ACL with the approved HTTP policy",
+      "Change only the inbound permit to permit ip any any",
+      "Remove both ACLs because ping works from R1",
+      "Reset the HTTP server because an inbound permit proves end-to-end delivery"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The request passes the correct inbound filter but also encounters the outbound list, where an explicit deny matches it. Reconcile that second attachment with the approved policy, then retest the original client and retained restrictions. A permit in one filter cannot override a later deny.",
+    "whyWrong": {
+      "1": "The request already matches the inbound permit; widening it does not repair the outbound deny.",
+      "2": "Router-originated ping does not validate this host TCP path, and removing both lists discards required policy.",
+      "3": "The egress evidence identifies a filter rejection before application delivery."
+    }
+  }
+]

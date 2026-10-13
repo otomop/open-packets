@@ -1,0 +1,127 @@
+[
+  {
+    "id": "ntp-syslog-snmp-d01",
+    "task": "R2 should synchronize its clock to the reachable lab time server at 10.60.0.1. Configure that NTP association.",
+    "mode": "R2(config)#",
+    "answer": "ntp server 10.60.0.1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-and-verifying-ntp-on-ios",
+      "hint": "Naming a time source makes this router its client; it does not prove synchronization.",
+      "takeaway": "Verify both selected synchronization and the actual association afterward. A successful ping to the server does not establish that NTP traffic or time-source selection works.",
+      "syntax": [
+        {
+          "text": "ntp server",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.60.0.1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "ntp-syslog-snmp-d02",
+    "task": "Isolated R1 has no external time source and its lab clock has been set. Make that local clock available as a stratum 8 NTP source.",
+    "mode": "R1(config)#",
+    "answer": "ntp master 8",
+    "accept": [
+      "ntp master"
+    ],
+    "teaching": {
+      "sectionId": "configuring-and-verifying-ntp-on-ios",
+      "hint": "This is the deliberately isolated local-clock case, not a repair for losing a trusted source.",
+      "takeaway": "A client that synchronizes to this stratum-8 source reports stratum 9. The command does not make the clock independently accurate; an already synchronized router can serve time without it.",
+      "syntax": [
+        {
+          "text": "ntp master",
+          "kind": "keyword"
+        },
+        {
+          "text": "8",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "ntp-syslog-snmp-d03",
+    "task": "R2 has an NTP association configured. Display whether its own clock is synchronized and identify its local stratum and reference.",
+    "mode": "R2#",
+    "answer": "show ntp status",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-and-verifying-ntp-on-ios",
+      "hint": "The client's synchronization state differs from the remote peer's stratum.",
+      "takeaway": "Configured association and plausible clock time are not proof of synchronization. Read the local state and reference, then correlate with the selected peer if the result is unexpected.",
+      "syntax": [
+        {
+          "text": "show ntp status",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "ntp-syslog-snmp-d04",
+    "task": "R2 is not selecting the expected time source. Display its NTP peers with reach history and selection markers.",
+    "mode": "R2#",
+    "answer": "show ntp associations",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-and-verifying-ntp-on-ios",
+      "hint": "Look at the association evidence before changing the server configuration.",
+      "takeaway": "A nonzero reach value shows recent successful polls, not necessarily selected synchronization. Read the output legend; the peer's stratum differs from the synchronized client's stratum.",
+      "syntax": [
+        {
+          "text": "show ntp associations",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "ntp-syslog-snmp-d10",
+    "task": "An interface incident occurred while you were disconnected. Display R2's current logging destinations, thresholds and retained buffered messages.",
+    "mode": "R2#",
+    "answer": "show logging",
+    "accept": [],
+    "teaching": {
+      "sectionId": "where-messages-go-the-four-logging-destinations",
+      "hint": "Request recorded logging evidence rather than subscribing only to future terminal messages.",
+      "takeaway": "Compare event time, interface and description with the reported failure. Buffer limits and thresholds can omit records; an event message alone does not prove its underlying cause.",
+      "syntax": [
+        {
+          "text": "show logging",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

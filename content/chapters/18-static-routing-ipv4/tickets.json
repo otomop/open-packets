@@ -1,0 +1,64 @@
+[
+  {
+    "id": "static-routing-ipv4-t01",
+    "title": "A backup takes half the LAN traffic",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "scenario": "R1 should use 10.0.12.2 for branch 192.168.20.0/24 and reserve 10.0.13.2 as standby. Both transit links work. Traffic to .50 uses standby while .150 uses primary. Excerpts are representative.",
+    "exhibits": [
+      {
+        "title": "Installed routes",
+        "text": "S 192.168.20.0/24 [1/0] via 10.0.12.2\nS 192.168.20.0/25 [5/0] via 10.0.13.2"
+      },
+      {
+        "title": "Configured routes",
+        "text": "ip route 192.168.20.0 255.255.255.0 10.0.12.2\nip route 192.168.20.0 255.255.255.128 10.0.13.2 5"
+      }
+    ],
+    "question": "Which error explains this?",
+    "options": [
+      "The higher backup AD makes it preferred for every destination.",
+      "The backup is a separate /25 prefix and wins for .0 through .127.",
+      "The two overlapping prefixes form equal-cost paths for all hosts.",
+      "The primary must be removed for the backup to float."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The /25 covers .50 and wins longest match. .150 does not match it. AD is not compared between different installed prefix lengths; overlapping prefixes are not equal-cost paths, and removing the primary defeats standby operation.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ip route 192.168.20.0 255.255.255.128 10.0.13.2 5\nR1(config)# ip route 192.168.20.0 255.255.255.0 10.0.13.2 5\nR1(config)# end\nR1# show ip route static\n```\nOnly the distance-1 /24 should remain selected while the primary works. Verify both destination decisions, then test primary-link failure and recovery in the isolated lab before saving."
+  },
+  {
+    "id": "static-routing-ipv4-t02",
+    "title": "Router ping works; PC ping fails",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "scenario": "PC-A is 192.168.10.11/24, gateway 192.168.10.1 on R1. PC-B is 192.168.20.12/24, gateway 192.168.20.1 on R2. Local/transit pings work, with no filtering. R1's ping uses source 10.0.12.1 and succeeds; PC-A's fails.",
+    "exhibits": [
+      {
+        "title": "Complete relevant R1 routes",
+        "text": "C 192.168.10.0/24, Gi0/2\nC 10.0.12.0/30, Gi0/0\nS 192.168.20.0/24 [1/0] via 10.0.12.2"
+      },
+      {
+        "title": "Complete relevant R2 routes; no default",
+        "text": "C 10.0.12.0/30, Gi0/0\nC 192.168.20.0/24, Gi0/2\nR2 transit: 10.0.12.2; R1 transit: 10.0.12.1"
+      }
+    ],
+    "question": "Which repair addresses the evidence?",
+    "options": [
+      "Add another outbound route to PC-B on R1.",
+      "Change PC-A to /16.",
+      "Add R2's route to 192.168.10.0/24 through 10.0.12.1.",
+      "Use R2's own 10.0.12.2 as the return next hop."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "R2's connected /30 covers the router's ping source, but no route covers PC-A. The outbound route exists, /16 violates the plan, and R2's own address is not its next router.",
+    "fix": "```ios R2\nR2# configure terminal\nR2(config)# ip route 192.168.10.0 255.255.255.0 gigabitethernet0/0 10.0.12.1\nR2(config)# end\nR2# show ip route static\n```\nRepeat PC-A-to-PC-B and reverse pings. Both should succeed under the stated conditions. Verify before saving."
+  }
+]

@@ -1,0 +1,876 @@
+[
+  {
+    "id": "exam-readiness-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Two routers use OSPFv2 on the same broadcast subnet. Among these choices, which two interface parameters must agree for normal neighbor formation? (Choose two.)",
+    "options": [
+      "Local OSPF process ID",
+      "Hello and dead intervals",
+      "OSPF router ID",
+      "OSPF area ID",
+      "Configured interface bandwidth"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "The hello/dead intervals and area must match in this scenario. This is not a complete checklist: subnet, enabled protocol, authentication where used and other compatibility settings also matter.",
+    "whyWrong": {
+      "0": "Process ID is locally significant.",
+      "2": "Router IDs should be unique rather than identical.",
+      "4": "Different bandwidth values can affect costs without preventing hello compatibility."
+    }
+  },
+  {
+    "id": "exam-readiness-q08",
+    "type": "single",
+    "objectives": [
+      "v1:4.5",
+      "v2:5.6"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative Cisco syslog content",
+      "text": "%LINK-3-UPDOWN: Interface Gi0/1, changed state to down\n%LINEPROTO-5-UPDOWN: Line protocol on Gi0/1, changed state to down"
+    },
+    "prompt": "What do the 3 and 5 identify in these Cisco message headers?",
+    "options": [
+      "Transport facility numbers assigned to the two receivers",
+      "Severity codes for critical and warning messages respectively",
+      "Severity codes for error and notification messages respectively",
+      "Sequence numbers used to reorder the messages at the server"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The numeric field between the Cisco component and mnemonic is severity: 3 is error and 5 is notification. LINK and LINEPROTO are Cisco message components, often called facilities in IOS documentation; they are not the numeric transport PRI facility.",
+    "whyWrong": {
+      "0": "The transport facility is encoded separately in PRI when that transport format is used.",
+      "1": "Critical is 2 and warning is 4.",
+      "3": "These numeric fields are severity, not optional message sequence numbers."
+    }
+  },
+  {
+    "id": "exam-readiness-q11",
+    "type": "multi",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.e"
+    ],
+    "difficulty": 1,
+    "prompt": "On the documented Catalyst IOS static access-port implementation, port security is newly enabled and no optional values are changed. Which two defaults apply? (Choose two.)",
+    "options": [
+      "Sticky learning is automatically enabled",
+      "Maximum secure MAC addresses is one",
+      "The switchport remains dynamic auto",
+      "Violation mode is restrict without shutdown",
+      "Violation mode is shutdown"
+    ],
+    "answer": [
+      1,
+      4
+    ],
+    "explanation": "For this scoped implementation, the default maximum is one and the default violation action is shutdown. Verify the actual port state and configuration rather than treating every switching platform as identical.",
+    "whyWrong": {
+      "0": "Sticky learning requires its own command.",
+      "2": "Port security requires a supported static switchport mode.",
+      "3": "Restrict is an explicitly selected alternative."
+    }
+  },
+  {
+    "id": "exam-readiness-q12",
+    "type": "single",
+    "objectives": [
+      "v1:6.7"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative HTTP response body",
+      "text": "{\"hostname\":\"SW1\",\"uptime\":86400,\"managed\":true,\"interfaces\":[{\"name\":\"Gi0/1\",\"status\":\"up\"},{\"name\":\"Gi0/2\",\"status\":\"down\"}]}"
+    },
+    "prompt": "Which description correctly identifies the interfaces value in the displayed JSON?",
+    "options": [
+      "An object containing two unquoted member names",
+      "A string containing two comma-separated interface values",
+      "A Boolean value because each status is either up or down",
+      "An array whose elements are two interface objects"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The outer square brackets identify an array, and each pair of braces encloses an object. The strings up/down are not JSON Booleans; the unquoted true value is Boolean.",
+    "whyWrong": {
+      "0": "The interfaces value starts with brackets rather than an object brace.",
+      "1": "It is structured JSON, not a quoted string.",
+      "2": "The status members are strings, and the interfaces value is an array."
+    }
+  },
+  {
+    "id": "exam-readiness-q14",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "prompt": "For Cisco IOS management AAA, which conventional protocol/transport supports the standard per-command authorization design?",
+    "options": [
+      "Classic RADIUS over UDP 1812",
+      "TACACS+ over TCP 49",
+      "Classic RADIUS accounting over UDP 1813",
+      "TACACS+ over UDP 49"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "TACACS+ over TCP 49 supports separate authentication, authorization and accounting exchanges, including IOS command authorization. Classic TACACS+ body protection is shared-secret obfuscation and is not equivalent to modern TLS channel security.",
+    "whyWrong": {
+      "0": "This RADIUS authentication service is not the standard IOS TACACS+ per-command authorization mechanism.",
+      "2": "The accounting port records events rather than authorizing each command in this design.",
+      "3": "TACACS+ uses TCP for the conventional service."
+    }
+  },
+  {
+    "id": "exam-readiness-q15",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "prompt": "SW1 uses LACP passive on otherwise compatible member ports. Which SW2 mode initiates the protocol needed to form that bundle?",
+    "options": [
+      "passive",
+      "desirable",
+      "active",
+      "auto"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "LACP active initiates and passive responds. Desirable and auto belong to PAgP, not an automatic choice between channel protocols.",
+    "whyWrong": {
+      "0": "Two passive ends lack an initiator.",
+      "1": "Desirable initiates PAgP rather than LACP.",
+      "3": "Auto is a PAgP mode and does not answer LACP."
+    }
+  },
+  {
+    "id": "exam-readiness-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v1:1.10",
+      "v2:1.3",
+      "v2:1.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative host IPv4 configuration",
+      "text": "Address: 172.16.47.250\nMask: 255.255.252.0\nDefault gateway: 172.16.48.1"
+    },
+    "prompt": "This ordinary Ethernet host uses no special on-link route or proxy arrangement. Its intended gateway is on its local subnet. Which displayed setting is inconsistent?",
+    "options": [
+      "The host address is the subnet broadcast address",
+      "The configured gateway lies outside the host’s /22",
+      "The subnet mask must be /16 because the address begins 172.16",
+      "The host and gateway have the same IPv4 address"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "172.16.47.250/22 belongs to 172.16.44.0–172.16.47.255; usable hosts end at .47.254. The configured gateway is outside that range, so it is unsuitable for the stated ordinary local-gateway design.",
+    "whyWrong": {
+      "0": "The broadcast address is 172.16.47.255, not .250.",
+      "2": "Classful assumptions do not override the configured CIDR mask.",
+      "3": "The displayed host and gateway addresses differ."
+    }
+  },
+  {
+    "id": "exam-readiness-q02",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "diagram",
+      "title": "VLAN 10 · Rapid PVST+",
+      "spec": {
+        "type": "topology",
+        "title": "VLAN 10 · Rapid PVST+",
+        "caption": "SW1 is root; the labeled short-method costs are authoritative for this calculation.",
+        "nodes": [
+          {
+            "id": "SW1",
+            "kind": "switch",
+            "label": "SW1 · root",
+            "sub": "4106 · 0c11.aaaa.aaaa",
+            "x": 2,
+            "y": 1,
+            "highlight": true
+          },
+          {
+            "id": "SW2",
+            "kind": "switch",
+            "label": "SW2",
+            "sub": "32778 · 0c22.bbbb.bbbb",
+            "x": 10,
+            "y": 1
+          },
+          {
+            "id": "SW3",
+            "kind": "switch",
+            "label": "SW3",
+            "sub": "32778 · 0c33.cccc.cccc",
+            "x": 6,
+            "y": 5
+          }
+        ],
+        "links": [
+          {
+            "from": "SW1",
+            "to": "SW2",
+            "label": "Gi · cost 4",
+            "fromLabel": "Gi0/1",
+            "toLabel": "Gi0/1"
+          },
+          {
+            "from": "SW2",
+            "to": "SW3",
+            "label": "Gi · cost 4",
+            "fromLabel": "Gi0/2",
+            "toLabel": "Gi0/1"
+          },
+          {
+            "from": "SW1",
+            "to": "SW3",
+            "label": "Fa · cost 19",
+            "fromLabel": "Fa0/24",
+            "toLabel": "Fa0/24"
+          }
+        ]
+      }
+    },
+    "prompt": "SW1 is the root. Using the explicitly shown path costs, which SW3 interface becomes the root port?",
+    "options": [
+      "Fa0/24, because one hop always beats two",
+      "Gi0/1, because SW2’s MAC overrides root cost",
+      "Gi0/1, because the path through SW2 costs 8",
+      "Fa0/24, because its displayed number is lower"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "SW3 adds its receiving-interface cost 4 to SW2’s advertised root cost 4, for a total of 8. The direct link costs 19, so no equal-cost tie-breaker is needed.",
+    "whyWrong": {
+      "0": "Hop count is not the STP path metric.",
+      "1": "Sender bridge ID matters only after the earlier cost comparison.",
+      "3": "The unequal costs decide before port-ID tie-breakers."
+    }
+  },
+  {
+    "id": "exam-readiness-q04",
+    "type": "single",
+    "objectives": [
+      "v1:3.1",
+      "v1:3.2.a",
+      "v2:3.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative installed route excerpt",
+      "text": "S* 0.0.0.0/0 [1/0] via 203.0.113.1\nO  10.1.0.0/16 [110/20] via 10.9.9.1\nS  10.1.3.0/24 [1/0] via 10.9.9.2\nO  10.1.3.64/26 [110/30] via 10.9.9.3\nC  10.9.9.0/24 is directly connected, Gi0/0/0"
+    },
+    "prompt": "Under ordinary destination-based forwarding, which next hop is selected for 10.1.3.77 from these installed routes?",
+    "options": [
+      "10.9.9.2 because the static route has lower AD",
+      "10.9.9.1 because its OSPF metric is lower",
+      "203.0.113.1 because it is the default gateway",
+      "10.9.9.3 because the matching /26 is longest"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "10.1.3.77 is in 10.1.3.64/26, the most-specific matching installed route. AD does not let the less-specific /24 override it.",
+    "whyWrong": {
+      "0": "AD compares competing route sources for the same prefix.",
+      "1": "The /16 is less specific despite its lower metric.",
+      "2": "The default is used when no more-specific installed route matches."
+    }
+  },
+  {
+    "id": "exam-readiness-q05",
+    "type": "single",
+    "objectives": [
+      "v2:4.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative R1 NAT configuration",
+      "text": "interface GigabitEthernet0/0/0\n ip address 10.10.10.1 255.255.255.0\n ip nat inside\ninterface GigabitEthernet0/0/1\n ip address 203.0.113.2 255.255.255.252\nip nat inside source list 1 interface GigabitEthernet0/0/1 overload\naccess-list 1 permit 10.10.10.0 0.0.0.255"
+    },
+    "prompt": "Eligible client packets enter Gi0/0/0 and leave Gi0/0/1 in this conventional inside-source PAT design. Routes and filtering are correct. Which missing interface setting prevents the shown mapping from operating as intended?",
+    "options": [
+      "ip nat outside on GigabitEthernet0/0/1",
+      "ip nat outside on GigabitEthernet0/0/0",
+      "A permit for 203.0.113.0/30 in source ACL 1",
+      "A pool statement replacing interface overload"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The intended egress lacks its outside designation. Correct that demonstrated omission and verify fresh traffic; an empty translation table by itself could have several causes.",
+    "whyWrong": {
+      "1": "The client-facing interface is the intended inside interface.",
+      "2": "The source ACL selects client addresses to translate, not the resulting outside address.",
+      "3": "Interface overload is a valid PAT form and does not require a named pool."
+    }
+  },
+  {
+    "id": "exam-readiness-q06",
+    "type": "multi",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 2,
+    "prompt": "Build numbered ACL 110 to deny Telnet from 192.168.10.0/24 to 10.0.0.5 and permit all other IPv4 packets. Which two entries are needed, with the deny entered first? (Choose two.)",
+    "options": [
+      "access-list 110 deny tcp 192.168.10.0 0.0.0.255 host 10.0.0.5 eq 23",
+      "access-list 110 deny tcp 192.168.10.0 255.255.255.0 host 10.0.0.5 eq 23",
+      "access-list 110 permit ip any any",
+      "access-list 110 deny ip 192.168.10.0 0.0.0.255 host 10.0.0.5",
+      "access-list 110 permit tcp any any eq 23"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The extended deny matches the source /24, destination host and TCP destination port 23. A subsequent general IPv4 permit avoids unintentionally denying all other traffic; interface attachment must still match the intended path.",
+    "whyWrong": {
+      "1": "That wildcard ignores the first three octets and fixes the last octet at zero.",
+      "3": "Deny ip would also block other services from that source to the host.",
+      "4": "Permitting only Telnet leaves other protocols subject to the implicit deny."
+    }
+  },
+  {
+    "id": "exam-readiness-q07",
+    "type": "single",
+    "objectives": [
+      "v1:4.6",
+      "v2:1.7"
+    ],
+    "difficulty": 2,
+    "prompt": "The remote DHCP server 10.0.0.10 has the correct VLAN 20 pool and a working return route. Client broadcasts arrive at R1 Gi0/0.20, but that interface has no relay configuration. Which addition fits?",
+    "options": [
+      "ip helper-address 10.0.0.10 on Gi0/0.20",
+      "ip helper-address 10.0.0.10 on the server-facing interface",
+      "default-router 10.0.0.10 in a new local DHCP pool",
+      "ip address 10.0.0.10 on the VLAN 20 subinterface"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The helper is placed on the interface receiving client broadcasts. It relays toward the named server and supplies relay information used for pool selection; the prompt establishes the other prerequisites.",
+    "whyWrong": {
+      "1": "That interface does not receive the original client broadcast.",
+      "2": "A new local pool changes the intended remote-server design.",
+      "3": "Assigning the server’s address to the router creates a different addressing fault."
+    }
+  },
+  {
+    "id": "exam-readiness-q09",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative R2 HSRP brief",
+      "text": "P indicates configured to preempt\nInterface Grp Pri P State    Active     Standby Virtual IP\nGi0/0     1   150   Standby 10.1.1.1   local   10.1.1.254"
+    },
+    "prompt": "R1 became active before R2 joined and remains healthy at priority 100. R2 now shows priority 150 without a P flag. What explains its standby role?",
+    "options": [
+      "The lower IP address must remain active in every HSRP group",
+      "Priority 150 is outside the supported HSRP range",
+      "R1’s router ID overrides the HSRP priority comparison",
+      "R2 has not been configured to preempt the existing active router"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A higher-priority HSRP router does not take over a healthy existing active router solely by joining when preemption is disabled. The missing P flag supports that explanation; configured preemption delays and actual status should also be inspected before changing roles.",
+    "whyWrong": {
+      "0": "The active role is not universally assigned to the lower IP address.",
+      "1": "150 is a valid priority.",
+      "2": "An OSPF router ID does not control HSRP roles."
+    }
+  },
+  {
+    "id": "exam-readiness-q10",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.a",
+      "v2:1.5.a",
+      "v2:1.5.d"
+    ],
+    "difficulty": 2,
+    "prompt": "Three nearby US-domain 2.4 GHz APs use 20 MHz channels 1,4,8. A survey confirms adjacent-channel overlap. Which plan reduces that overlap while retaining three 20 MHz cells?",
+    "options": [
+      "Put all three APs on channel 6 at maximum power",
+      "Use channels 1,6,11 with survey-appropriate power",
+      "Change the middle AP to a bonded 40 MHz channel",
+      "Keep channels 1,4,8 and increase all transmit powers"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "1,6,11 is the conventional separated 2.4 GHz channel plan for this setting. The survey and local rules still govern reuse, power and interference; channel numbers alone do not guarantee throughput.",
+    "whyWrong": {
+      "0": "Co-channel reuse requires shared airtime and does not provide three separate channels.",
+      "2": "A wider channel consumes more of this limited band.",
+      "3": "Increasing power does not remove frequency overlap and can increase the affected area."
+    }
+  },
+  {
+    "id": "exam-readiness-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.9.d",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "For this exercise, construct an IPv6 link-local address with first 64 bits FE80:0:0:0 and a modified EUI-64 IID from 00:1A:2B:3C:4D:5E. Which result is correct?",
+    "options": [
+      "FE80::21A:2BFF:FE3C:4D5E",
+      "FE80::1A:2BFF:FE3C:4D5E",
+      "FE80::21A:2B3C:4D5E",
+      "FE80::1A2B:3CFF:FE4D:5E00"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Insert FF:FE between the MAC halves and invert the first octet’s U/L bit with XOR 0x02. The IID is 021A:2BFF:FE3C:4D5E; leading-zero compression gives the first choice.",
+    "whyWrong": {
+      "1": "This leaves the U/L bit unchanged.",
+      "2": "This omits FF:FE and does not construct the intended 64-bit IID.",
+      "3": "This rearranges the MAC bytes incorrectly."
+    }
+  },
+  {
+    "id": "exam-readiness-q16",
+    "type": "single",
+    "objectives": [
+      "v2:4.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative authoritative answer and change record",
+      "text": "portal.example.test. 300 IN A 192.0.2.15\nApproved new web address: 192.0.2.25\nHTTP to 192.0.2.25: expected page"
+    },
+    "prompt": "The authoritative DNS answer for portal.example.test is shown. The change record says the web server moved to 192.0.2.25 and the new address serves the expected page. Which record needs correction?",
+    "options": [
+      "The MX record naming the mail exchanger",
+      "The PTR record used only for reverse lookup",
+      "The NS record naming the authoritative servers",
+      "The A record still pointing at the previous IPv4 address"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The A record supplies the IPv4 address used for this forward lookup. Correct the authoritative data and assess caching/TTL before concluding every client has received the new answer.",
+    "whyWrong": {
+      "0": "Mail exchange is not the requested web hostname’s IPv4 mapping.",
+      "1": "A reverse record does not replace the forward A record used here.",
+      "2": "The evidence identifies an answer-data problem rather than an incorrect delegation."
+    }
+  },
+  {
+    "id": "exam-readiness-q17",
+    "type": "single",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "prompt": "A play targets IOS devices with a working network_cli connection. Which task choice gathers the current IPv4 routing table without intentionally changing configuration?",
+    "options": [
+      "cisco.ios.ios_command with commands: [show ip route]",
+      "cisco.ios.ios_config with lines: [ip routing]",
+      "ansible.builtin.shell with commands: [show ip route]",
+      "cisco.ios.ios_config with lines: [no ip route 0.0.0.0 0.0.0.0]"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "ios_command executes supported operational commands through the network connection. Verify the inventory target, authentication and returned device output; the name of a module alone does not guarantee every possible command is read-only.",
+    "whyWrong": {
+      "1": "This requests a configuration change.",
+      "2": "shell is not the matching IOS network_cli command module, and commands is not its shown interface.",
+      "3": "This asks to remove routing configuration."
+    }
+  },
+  {
+    "id": "exam-readiness-q18",
+    "type": "single",
+    "objectives": [
+      "v2:5.2",
+      "v1:6.4"
+    ],
+    "difficulty": 2,
+    "prompt": "An approved assistant will receive sanitized lab evidence. The review must compare possible DHCP causes and return a table of read-only checks, without making changes. Which prompt meets that contract?",
+    "options": [
+      "Act as a network analyst. Use this sanitized evidence to choose the most likely relay repair and return its configuration commands.",
+      "Act as a network analyst. Treat these sanitized exhibits as lab data; return a table of facts, competing causes and read-only checks with reasons. Do not make changes.",
+      "Act as a network analyst. Use these sanitized exhibits to write a chronological incident summary with no proposed tests.",
+      "Act as a network analyst. Treat these sanitized exhibits as lab data; assume the pool is exhausted and return read-only checks of that cause only."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The prompt specifies a useful role, approved data, task boundary and output format while preserving uncertainty. Its recommendations still need verification against the actual devices and documentation.",
+    "whyWrong": {
+      "0": "The request needs comparative diagnosis and read-only checks, not a preselected repair configuration.",
+      "2": "A summary omits the requested competing causes and diagnostic checks.",
+      "3": "The requested comparison cannot be met by assuming one cause before testing it."
+    }
+  },
+  {
+    "id": "exam-readiness-q19",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2.b"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 learns the neighbor link-local address FE80::2 on Gi0/0/1. Which IPv6 static-route form identifies the correct link for destination 2001:DB8:20::/64?",
+    "options": [
+      "ipv6 route 2001:DB8:20::/64 FE80::2",
+      "ip route 2001:DB8:20::/64 gigabitethernet0/0/1 FE80::2",
+      "ipv6 route 2001:DB8:20::/64 gigabitethernet0/0/1 FE80::2",
+      "ipv6 route FE80::/64 gigabitethernet0/0/1 2001:DB8:20::2"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A link-local next hop needs an outgoing interface because the same address scope can exist on different links. Verify next-hop reachability, route installation and the destination’s return route after configuration.",
+    "whyWrong": {
+      "0": "The interface is missing for this link-local next hop.",
+      "1": "ip route is the IPv4 command family.",
+      "3": "This changes the destination prefix and next-hop roles."
+    }
+  },
+  {
+    "id": "exam-readiness-q20",
+    "type": "single",
+    "objectives": [
+      "v1:1.12",
+      "v2:1.2"
+    ],
+    "difficulty": 2,
+    "prompt": "A lab host runs two VMs with different guest operating systems and several containers on one Linux VM. Which description correctly locates their kernels?",
+    "options": [
+      "Each VM has a guest kernel; those Linux containers share their container host’s kernel",
+      "All VMs and containers on the hardware must share one guest kernel",
+      "Each container needs a complete independent guest kernel just like a VM",
+      "The switch chooses a kernel according to the container VLAN tag"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A VM provides a guest operating-system environment with its own kernel. Ordinary OS-level containers share their host kernel while isolating processes and resources. Here their host is the Linux VM.",
+    "whyWrong": {
+      "1": "The hypervisor can host separate guest kernels; a VM is not merely another host process namespace.",
+      "2": "An independent guest kernel is characteristic of a VM rather than an ordinary container.",
+      "3": "VLAN forwarding does not select operating-system kernels."
+    }
+  },
+  {
+    "id": "exam-readiness-q21",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "prompt": "Two site gateways protect traffic between private LANs across an untrusted transit. The outer packet identifies the gateways while the original host-to-host IP packet is protected inside ESP. Which description fits?",
+    "options": [
+      "Remote-access VPN using transport mode between the two endpoint laptops",
+      "Site-to-site IPsec using tunnel mode between the gateways",
+      "Site-to-site ESP transport mode hiding the entire original IP header",
+      "A routed VLAN trunk whose 802.1Q tag encrypts the original packet"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tunnel mode adds an outer IP header for the tunnel endpoints and protects the encapsulated original IP packet according to the negotiated ESP suite. The site gateways serve their LANs, which makes this site-to-site.",
+    "whyWrong": {
+      "0": "The described endpoints are site gateways, not individual remote-access clients.",
+      "2": "Transport mode does not encapsulate the complete original packet under a new outer tunnel IP header in this way.",
+      "3": "A VLAN tag carries VLAN identification; it does not provide IPsec confidentiality."
+    }
+  },
+  {
+    "id": "exam-readiness-q24",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "prompt": "You will copy a lab router configuration with SCP to an approved server for the first time. Its SSH host-key fingerprint differs from the value supplied through your trusted inventory. Which action is appropriate?",
+    "options": [
+      "Accept the offered key because SCP encrypts any server connection automatically",
+      "Stop the transfer and verify the server identity through a trusted channel before accepting a key",
+      "Use plain FTP to avoid the SSH identity check",
+      "Delete the expected fingerprint and retry with host-key checking disabled"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Encryption alone does not identify the intended server. An unexpected key can result from a legitimate change or a different endpoint; resolve it through a trusted channel before sending the configuration.",
+    "whyWrong": {
+      "0": "An encrypted connection to an unverified endpoint can still deliver the file to the wrong system.",
+      "2": "Changing to unprotected transfer does not establish the intended server identity.",
+      "3": "Disabling the check removes the evidence needed to authenticate the server."
+    }
+  },
+  {
+    "id": "exam-readiness-q25",
+    "type": "single",
+    "objectives": [
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 and R2 have an OSPFv3 adjacency over a link using FE80::1 and FE80::2, and R1 learns the intended IPv6 /64 through that link. Both router IDs are distinct dotted-decimal values. Which observation is normal?",
+    "options": [
+      "A dotted-decimal router ID requires IPv4 OSPFv2 to carry the IPv6 route",
+      "The neighbor link-local address must be replaced by a global address before any route is usable",
+      "OSPFv3 can use IPv6 link-local neighbors while retaining a 32-bit router identifier",
+      "Two routers must use an identical router ID when their next hops are link-local"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "OSPFv3 uses link-local addressing on ordinary IPv6 links, while its router ID remains a 32-bit identifier commonly displayed in dotted decimal. The router IDs must be unique; they do not have to be routable IPv4 interface addresses.",
+    "whyWrong": {
+      "0": "The display format of the identifier does not change the routing protocol’s IPv6 function.",
+      "1": "The outgoing link disambiguates a link-local next hop.",
+      "3": "A shared router ID creates ambiguity rather than a required neighbor relationship."
+    }
+  },
+  {
+    "id": "exam-readiness-q28",
+    "type": "single",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.b"
+    ],
+    "difficulty": 2,
+    "prompt": "DHCP clients pass DAI, but an authorized statically addressed printer is rejected. Its IP/MAC are confirmed in the approved inventory, and no DHCP snooping binding exists for it. Which design best preserves inspection?",
+    "options": [
+      "Disable DAI for the entire VLAN; permit static and dynamic hosts without further ARP validation",
+      "Add supported static ARP validation for the verified printer; keep client ports untrusted",
+      "Trust all client access ports; continue relying on DHCP snooping to inspect their ARP messages",
+      "Point the printer at an internal DNS resolver; use its forward record as the ARP validation source"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A static host may have no DHCP-learned binding. Use the documented ARP ACL or other supported static validation mechanism for the verified host, then test its ARP/application traffic while maintaining the rest of the inspection boundary.",
+    "whyWrong": {
+      "0": "This removes validation from unrelated hosts.",
+      "2": "DAI relies on its own trust boundary and validation data; trusting clients bypasses checks on those ingress ports.",
+      "3": "DNS does not provide the IP-to-MAC authorization used by DAI."
+    }
+  },
+  {
+    "id": "exam-readiness-q29",
+    "type": "single",
+    "objectives": [
+      "v1:6.3.a",
+      "v1:6.3.b",
+      "v2:5.3"
+    ],
+    "difficulty": 2,
+    "prompt": "An application asks a controller for inventory through a documented API. The controller separately programs switches, which continue forwarding frames in hardware. Which mapping is correct?",
+    "options": [
+      "Application-to-controller is southbound; every forwarded packet belongs to the management plane",
+      "Controller-to-switch is northbound; switches no longer have a data plane",
+      "Application-to-controller is northbound; switch packet forwarding remains a data-plane function",
+      "Both APIs replace IP reachability, so the controller needs no working underlying network"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Northbound describes the controller’s application-facing interface. Southbound interfaces face managed infrastructure. The forwarding function remains in the data plane; the API does not replace the underlay path.",
+    "whyWrong": {
+      "0": "The application-facing API is northbound, and ordinary packet forwarding is a data-plane task.",
+      "1": "Device-facing control is southbound; forwarding still has to occur on the network devices.",
+      "3": "Control and management exchanges still require a functioning transport path."
+    }
+  },
+  {
+    "id": "exam-readiness-q22",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "prompt": "Which action addresses the demonstrated link fault and restores the approved design before retesting throughput?",
+    "options": [
+      "Raise the IP MTU at both ends, then repeat the transfer and check whether late collisions stop",
+      "Replace the default route, then repeat the transfer without changing either endpoint link setting",
+      "Restore the approved auto settings at both capable ends; verify duplex, fresh counters and the transfer",
+      "Force full duplex on the switch only; retain the current NIC configuration without checking negotiation"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The settings and negotiated result establish a duplex mismatch: the forced peer does not negotiate duplex, and the auto side has fallen back to half duplex. The approved design uses negotiation at both capable ends. Retest counter deltas and the original transfer after alignment.",
+    "whyWrong": {
+      "0": "Late collisions concern the Ethernet link; they do not establish an IP MTU problem.",
+      "1": "A healthy route cannot compensate for the observed local duplex mismatch.",
+      "3": "Matching forced full duplex may remove the mismatch, but it does not restore the specified auto design or verify the resulting state."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored evidence for this case",
+      "text": "Approved design: both capable NIC and switch port use autonegotiation.\nNIC configuration: forced 100 Mb/s, full duplex.\nSW1 port: auto speed/duplex; operational 100 Mb/s, half duplex.\nDuring the same transfer, switch late-collision counters increase. Cable test passes."
+    }
+  },
+  {
+    "id": "exam-readiness-q26",
+    "type": "single",
+    "objectives": [
+      "v2:4.4"
+    ],
+    "difficulty": 2,
+    "prompt": "A user still reaches the retired server. Which explanation and next check best fit the records?",
+    "options": [
+      "The recursive answer is cached; wait for its remaining TTL or clear only the authorized cache, then query again",
+      "The authoritative server must still contain the old A record because every resolver always agrees immediately",
+      "The MX record controls this web connection and must point to the new address",
+      "A PTR update is required before an A record can be used by a browser"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The authoritative answer already has the approved address; the recursive resolver has an older answer with time remaining. Track expiry or perform an authorized targeted cache refresh, then confirm a new lookup and application request. Repeatedly editing correct authoritative data does not remove an existing cache entry.",
+    "whyWrong": {
+      "1": "Caches can retain a previous answer until its TTL expires.",
+      "2": "Mail exchanger selection is not used for this ordinary web hostname lookup.",
+      "3": "Reverse lookup is not a prerequisite for the displayed forward A answer."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored evidence for this case",
+      "text": "Approved portal.example.test IPv4 address: 192.0.2.25\nAuthoritative query now: A 192.0.2.25, TTL 300\nClient’s recursive resolver now: A 192.0.2.15, remaining TTL 120\nHTTP to 192.0.2.25 returns the expected page."
+    }
+  },
+  {
+    "id": "exam-readiness-q27",
+    "type": "single",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "prompt": "What can you report from this automation run?",
+    "options": [
+      "Both devices returned current route tables because changed=0 proves success",
+      "R2’s routing table is empty because there is no stdout entry for that host",
+      "The play needs an IOS configuration module before show commands can return output",
+      "R1 returned the requested evidence; R2 needs connection troubleshooting before its routing state can be assessed"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "R1 has command output. R2 failed before the command executed, so its routing state remains unobserved. Check inventory, reachability, credentials and the indicated connection error before a scoped retry. changed=0 alone is neither proof of successful collection nor a security guarantee.",
+    "whyWrong": {
+      "0": "The unreachable result means the R2 command did not execute.",
+      "1": "Missing output after a connection failure does not describe the device’s route table.",
+      "2": "Operational show commands can be executed through ios_command without using ios_config."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored evidence for this case",
+      "text": "Task: cisco.ios.ios_command, commands: [show ip route]\nR1: ok; stdout contains connected and OSPF routes\nR2: UNREACHABLE; SSH connection timed out; no command output\nRecap: R1 ok=1 changed=0 unreachable=0; R2 ok=0 changed=0 unreachable=1"
+    }
+  },
+  {
+    "id": "exam-readiness-q30",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which narrowly scoped edit restores the approved policy?",
+    "options": [
+      "Remove sequence 10 only; retain the specific deny and final permit, then test both blocked HTTP and permitted ICMP",
+      "Remove sequence 20 only; the first permit already keeps the client reachable",
+      "Move sequence 20 after sequence 30 so the default permit is evaluated first",
+      "Change sequence 20 to deny ip any any and keep sequence 10 ahead of it"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The first entry permits every packet from the client subnet, including HTTP, before the specific deny is reached. Removing that unintended broad permit lets the existing specific deny and final permit express the requirement. New TCP/80 and ICMP tests check both policy outcomes.",
+    "whyWrong": {
+      "1": "Removing the intended deny further departs from the required service restriction.",
+      "2": "A later deny cannot override a preceding permit.",
+      "3": "The first broad permit would still win, and the broader deny would also affect other sources."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored evidence for this case",
+      "text": "Approved policy: deny TCP/80 from 172.20.40.0/24 to 10.220.30.10; allow its other IPv4 traffic.\nACL inbound on the client subinterface:\n10 permit ip 172.20.40.0 0.0.0.255 any\n20 deny tcp 172.20.40.0 0.0.0.255 host 10.220.30.10 eq 80\n30 permit ip any any\nNew client HTTP succeeds and increments line 10; line 20 remains unchanged."
+    }
+  },
+  {
+    "id": "exam-readiness-q23",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10",
+      "v2:1.6"
+    ],
+    "difficulty": 3,
+    "prompt": "Which dependency should be investigated next for the affected WLAN?",
+    "options": [
+      "Delete and recreate the saved WPA2 profile before collecting evidence beyond the completed key exchange",
+      "Test the client’s DNS resolver before checking whether the client obtained usable IP parameters",
+      "Adjust the radio channel first, without examining the newly selected VLAN’s forwarding and DHCP path",
+      "Trace the new VLAN 30 mapping, forwarding and gateway/relay path to the DHCP server"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Association and key exchange have completed, and the client obtains a valid lease on a different WLAN. The affected WLAN is mapped to a newly introduced VLAN without observed DHCP replies. Trace that VLAN’s forwarding, gateway/relay and server path rather than restarting security configuration.",
+    "whyWrong": {
+      "0": "The completed key exchange and current no-Offer stage direct the next check beyond the saved security profile.",
+      "1": "The client has not obtained usable addressing. First establish the DHCP path before diagnosing name resolution.",
+      "2": "No radio fault is demonstrated, while the changed VLAN and missing DHCP replies identify a more relevant next boundary."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored evidence for this case",
+      "text": "WLAN LAB-STAFF: client associated; WPA2 key exchange successful; mapped to VLAN 30.\nClient: repeated DHCP Discover, no Offer; no static address configured.\nSame client on LAB-TEST/VLAN 10 obtains a lease and browses normally.\nChange record: LAB-STAFF was remapped from VLAN 10 to VLAN 30."
+    }
+  }
+]

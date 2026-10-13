@@ -1,0 +1,64 @@
+[
+  {
+    "id": "fhrp-hsrp-vrrp-t01",
+    "title": "A responsive virtual gateway has lost its only upstream path",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "scenario": "R1 and R2 are a healthy IPv4 HSRP pair for 192.168.10.1. R1's priority is 110 and R2 is 100; both have preempt. R1's only upstream link Gi0/1 failed. R2 still has a working path and a verified return route. R1 configuration has no HSRP track command. Representative evidence follows.",
+    "exhibits": [
+      {
+        "title": "R1 HSRP detail",
+        "text": "State Active\nActive router local; Standby router 192.168.10.3\nPreemption enabled\nPriority 110 (configured 110)"
+      },
+      {
+        "title": "R1 interface status",
+        "text": "Gi0/0 192.168.10.2 up/up\nGi0/1 10.0.13.1 down/down"
+      }
+    ],
+    "question": "Which configuration gap explains why the upstream failure has not changed gateway preference?",
+    "options": [
+      "R2 has no preemption configured.",
+      "R1's uplink health is not linked to its HSRP priority.",
+      "R1 and R2 use the same virtual IP.",
+      "R1's configured priority is already below R2."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The group still hears a healthy Active router on the LAN, and R1 remains priority 110. Its failed uplink is not tracked, so that failure does not lower its preference. A tracking decrement of 20 makes R1 90 and permits preempt-enabled R2 at 100 to take over.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# track 1 interface gigabitethernet0/1 line-protocol\nR1(config-track)# exit\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# standby 1 track 1 decrement 20\nR1(config-if)# end\nR1# show standby\n```\nUse this object form on a supporting IOS image; the legacy interface form is an alternative as explained in the lab. Verify R2 Active and a real remote destination. Restore the physical fault separately, then verify R1 priority returns to 110 and routing works."
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-t02",
+    "title": "Two active routers use different HSRP versions",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "scenario": "R1 and R2 should share group 1 and VIP 192.168.10.1. Their switch ports are confirmed in VLAN 10, both real addresses can ping, and the condition persists after convergence time. Each device reports Active with unknown Standby. These are representative excerpts.",
+    "exhibits": [
+      {
+        "title": "R1 show standby excerpt",
+        "text": "GigabitEthernet0/0 - Group 1 (version 2)\nState Active; Priority 110; Preemption enabled\nVirtual IP 192.168.10.1\nActive virtual MAC 0000.0c9f.f001\nStandby router unknown"
+      },
+      {
+        "title": "R2 show standby excerpt",
+        "text": "GigabitEthernet0/0 - Group 1 (version 1)\nState Active; Priority 100; Preemption enabled\nVirtual IP 192.168.10.1\nActive virtual MAC 0000.0c07.ac01\nStandby router unknown"
+      }
+    ],
+    "question": "Which fault is directly established?",
+    "options": [
+      "Both routers must have identical real interface addresses.",
+      "Both priorities must be equal before any election can occur.",
+      "The peers run incompatible HSRP versions for the intended group.",
+      "Preemption must be disabled on both routers to avoid duplicate Active."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The version lines and virtual MAC patterns identify v2 on R1 and v1 on R2. They do not exchange compatible group Hellos, so each can consider itself Active. Raising priority will not repair the version mismatch.",
+    "fix": "```ios R2\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# standby version 2\nR2(config-if)# end\nR2# show standby\nR2# show standby brief\n```\nThis scenario assumes version 2 is the intended supported design. Verify one Active, one Standby, peer addresses known, and successful client traffic before saving."
+  }
+]

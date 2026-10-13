@@ -1,0 +1,73 @@
+[
+  {
+    "id": "routing-table-t01",
+    "title": "Only part of the branch subnet is reachable",
+    "objectives": [
+      "v1:3.2.a",
+      "v2:3.1"
+    ],
+    "scenario": "After a route change, a user can reach branch host 10.20.30.50 but not 10.20.30.200. Both hosts share the intended /24, have verified local connectivity, and previously worked from this source. R1's current output and the change record follow.",
+    "exhibits": [
+      {
+        "title": "R1 installed route excerpt",
+        "text": "O 10.20.30.0/24 [110/20] via 10.0.12.2\nS 10.20.30.128/25 is directly connected, Null0"
+      },
+      {
+        "title": "R1 destination lookup",
+        "text": "Routing entry for 10.20.30.128/25\nKnown via \"static\", distance 1, metric 0\nRouting Descriptor Blocks:\n* directly connected, via Null0"
+      },
+      {
+        "title": "Change record",
+        "text": "Added: ip route 10.20.30.128 255.255.255.128 Null0\nIntended policy: all of 10.20.30.0/24 remains reachable through the branch router"
+      }
+    ],
+    "question": "Which change explains the split result?",
+    "options": [
+      "The /24 OSPF metric is compared directly with the static metric.",
+      "The new /25 discard overrides the /24 for the .200 destination",
+      "The /24 route cannot coexist with a /25 in one routing table",
+      "The /25 is less preferred because the /24 was learned first."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The .200 address lies inside 10.20.30.128/25; .50 does not. The more-specific static sends .200 to Null0 while the /24 continues to serve .50. This is longest prefix match, not a comparison between static and OSPF distances.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ip route 10.20.30.128 255.255.255.128 Null0\nR1(config)# end\nR1# show ip route 10.20.30.200\n```\nConfirm that the /24 is now selected, then test both .50 and .200 from the affected source. Verify replies and save the corrected configuration after the intended policy is restored."
+  },
+  {
+    "id": "routing-table-t02",
+    "title": "The intended backup link is preferred",
+    "objectives": [
+      "v1:3.2.b",
+      "v1:3.3.d",
+      "v2:3.1"
+    ],
+    "scenario": "Traffic for 10.60.0.0/16 uses the backup path through 10.0.99.2. The intended primary is OSPF. Both next hops are reachable. A protocol inspection confirms a currently eligible OSPF candidate for exactly 10.60.0.0/16 with distance 110 and cost 20; the selected table entry is shown below.",
+    "exhibits": [
+      {
+        "title": "R1 static configuration",
+        "text": "ip route 10.60.0.0 255.255.0.0 10.0.99.2"
+      },
+      {
+        "title": "R1 installed route",
+        "text": "S 10.60.0.0/16 [1/0] via 10.0.99.2"
+      },
+      {
+        "title": "Verified candidate and next-hop observations",
+        "text": "OSPF candidate: 10.60.0.0/16, AD 110, cost 20, via 10.0.12.2\n10.0.12.2: resolved and reachable\n10.0.99.2: resolved and reachable\nRequired policy: OSPF primary, static backup"
+      }
+    ],
+    "question": "What makes the backup preferred?",
+    "options": [
+      "Equal-distance paths are load-sharing, and this flow selected the backup.",
+      "OSPF must be absent whenever a static line is configured.",
+      "The static command uses default AD 1, which beats OSPF 110",
+      "The OSPF cost must be lower than the static metric of zero"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The candidates describe the same /16, so source preference applies. The static command omits an AD override and uses 1. Its metric is not compared directly with the OSPF metric. The separate exact-prefix candidate evidence establishes that a usable OSPF alternative exists.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ip route 10.60.0.0 255.255.0.0 10.0.99.2\nR1(config)# ip route 10.60.0.0 255.255.0.0 10.0.99.2 130\nR1(config)# end\nR1# show ip route 10.60.0.0\nR1# show running-config | include ^ip route\n```\nWith the stated OSPF candidate still eligible, its AD 110 is preferred over 130. Verify the selected source and traffic in both directions. A planned failure test must separately establish that the backup remains eligible and actually forwards when the primary is withdrawn."
+  }
+]

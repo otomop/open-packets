@@ -1,0 +1,212 @@
+[
+  {
+    "id": "cdp-lldp-d06",
+    "task": "Check a cable diagram against CDP. Display the brief neighbor table containing SW1’s local interfaces and the peers’ advertised ports.",
+    "mode": "SW1#",
+    "answer": "show cdp neighbors",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-a-neighbour-table",
+      "hint": "Keep the command’s local device separate from the neighboring device.",
+      "takeaway": "Local Intrfce belongs to SW1; Port ID belongs to the advertising peer. Verify the reverse observation before correcting the diagram.",
+      "syntax": [
+        {
+          "text": "show cdp neighbors",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cdp-lldp-d10",
+    "task": "On an LLDP-capable IOS switch, display the brief received-neighbor table to compare local and remote port IDs with the diagram.",
+    "mode": "SW1#",
+    "answer": "show lldp neighbors",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-a-neighbour-table",
+      "hint": "Use the protocol the peer actually advertises.",
+      "takeaway": "Read this table’s own capability legend: LLDP B denotes bridge. The displayed remote port ID belongs to the peer, not to the switch where you ran the command.",
+      "syntax": [
+        {
+          "text": "show lldp neighbors",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cdp-lldp-d07",
+    "task": "The brief CDP table identifies a neighbor but omits the management-address detail you need. Display detailed records for all current neighbors.",
+    "mode": "SW1#",
+    "answer": "show cdp neighbors detail",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-a-neighbour-table",
+      "hint": "Expand the received neighbor records, not the local interface configuration.",
+      "takeaway": "Read whichever addresses the peer actually advertises. A listed address is not a successful reachability test and does not authenticate the neighbor’s identity.",
+      "syntax": [
+        {
+          "text": "show cdp neighbors detail",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cdp-lldp-d11",
+    "task": "The brief LLDP view omits the chassis and management details needed to resolve a neighbor identity. Display all received neighbor details on this supporting image.",
+    "mode": "SW1#",
+    "answer": "show lldp neighbors detail",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lldp-the-standard-everyone-speaks",
+      "hint": "Use the expanded LLDP neighbor view.",
+      "takeaway": "Compare chassis ID, port ID and system name; those identifiers may have different formats. Optional management fields can be absent without making the advertisement invalid.",
+      "syntax": [
+        {
+          "text": "show lldp neighbors detail",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "cdp-lldp-d01",
+    "task": "CDP has been disabled globally on SW1. Re-enable its device-wide process while retaining existing per-interface exclusions.",
+    "mode": "SW1(config)#",
+    "answer": "cdp run",
+    "accept": [],
+    "teaching": {
+      "sectionId": "cdp-the-cisco-protocol",
+      "hint": "Global process state and interface permission are separate controls.",
+      "takeaway": "The global process must run before permitted interfaces participate. This does not override an interface explicitly configured not to use CDP.",
+      "syntax": [
+        {
+          "text": "cdp run",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "cdp-lldp-d03",
+    "task": "A compatible non-Cisco neighbor uses LLDP. On this LLDP-capable IOS image, enable SW1’s global LLDP process.",
+    "mode": "SW1(config)#",
+    "answer": "lldp run",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lldp-the-standard-everyone-speaks",
+      "hint": "Enabling Cisco’s other discovery protocol would not enable LLDP.",
+      "takeaway": "Required interfaces still need appropriate transmit and receive settings. A running global process alone does not establish that a neighbor has been learned.",
+      "syntax": [
+        {
+          "text": "lldp run",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "cdp-lldp-d02",
+    "task": "The selected SW1 interface faces an unmanaged boundary where CDP is prohibited. Disable CDP only there, preserving internal discovery.",
+    "mode": "SW1(config-if)#",
+    "answer": "no cdp enable",
+    "accept": [],
+    "teaching": {
+      "sectionId": "cdp-the-cisco-protocol",
+      "hint": "Use an interface-scoped change rather than stopping the global process.",
+      "takeaway": "Other interfaces can continue CDP. LLDP is a separate protocol and retains its own transmit and receive settings.",
+      "syntax": [
+        {
+          "text": "no cdp enable",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "cdp-lldp-d04",
+    "task": "On the selected SW1 link, stop advertising SW1 through LLDP but keep SW1 able to receive the peer’s advertisements.",
+    "mode": "SW1(config-if)#",
+    "answer": "no lldp transmit",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lldp-the-standard-everyone-speaks",
+      "hint": "Choose the sending direction only.",
+      "takeaway": "The peer stops receiving fresh SW1 advertisements; its cached record may remain temporarily. SW1 can still learn the peer if the opposite transmit and local receive settings permit it.",
+      "syntax": [
+        {
+          "text": "no lldp transmit",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "cdp-lldp-d05",
+    "task": "On the selected SW1 link, stop learning incoming LLDP information while leaving SW1’s outgoing advertisements enabled.",
+    "mode": "SW1(config-if)#",
+    "answer": "no lldp receive",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lldp-the-standard-everyone-speaks",
+      "hint": "Choose the receiving direction only.",
+      "takeaway": "SW1 stops refreshing peer information on this link. The peer may still learn SW1, and old cached entries need not disappear immediately.",
+      "syntax": [
+        {
+          "text": "no lldp receive",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "cdp-lldp-d09",
+    "task": "CDP runs globally, but an expected neighbor is missing. Display local CDP interface participation to check whether the intended port is enabled for discovery.",
+    "mode": "SW1#",
+    "answer": "show cdp interface",
+    "accept": [],
+    "teaching": {
+      "sectionId": "cdp-the-cisco-protocol",
+      "hint": "Check the local protocol interface state before blaming IP routing.",
+      "takeaway": "This shows local participation, not proof of a received peer advertisement. Then check the far end, physical state and record freshness.",
+      "syntax": [
+        {
+          "text": "show cdp interface",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

@@ -1,0 +1,64 @@
+[
+  {
+    "id": "ai-in-network-operations-t01",
+    "title": "The printer becomes unreachable after an assisted change",
+    "objectives": [
+      "v2:5.1",
+      "v1:6.4"
+    ],
+    "scenario": "A Catalyst 2960-S connects a documented 100-Mbps-only printer on Gi1/0/12. Its NIC is fixed at 100 Mbps/full duplex. An assistant's approved scope covered only this port, but its submitted change forced the switch to 1000 Mbps/full duplex. The printer became unreachable immediately afterward. The exhibits are representative.",
+    "exhibits": [
+      {
+        "title": "Change record",
+        "text": "Approved target: SW2 Gi1/0/12\nApplied settings: speed 1000; duplex full\nVerification recorded: commands accepted"
+      },
+      {
+        "title": "Post-change evidence",
+        "text": "Gi1/0/12: notconnect, configured speed 1000, configured duplex full\nPrinter specification and local NIC screen: 100 Mbps maximum, fixed full duplex\nVLAN membership unchanged"
+      }
+    ],
+    "question": "Which explanation and next action best fit the evidence?",
+    "options": [
+      "Restore the verified peer-compatible settings and test printer service.",
+      "Move the port to another VLAN before revisiting its speed setting.",
+      "Keep 1000 Mbps and change only duplex to match an older printer.",
+      "Leave the port unchanged and treat command acceptance as closure."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The switch was forced to 1000 Mbps while the verified printer supports only 100 Mbps and is fixed full duplex. Correct the speed/duplex pair on the approved port. No VLAN change is supported; duplex alone cannot fix incompatible speed. Accepted commands do not prove link or printer service.",
+    "fix": "After reviewing the one-port correction and retaining console access, use:\n```ios\nSW2# configure terminal\nSW2(config)# interface gigabitethernet1/0/12\nSW2(config-if)# speed 100\nSW2(config-if)# duplex full\nSW2(config-if)# end\nSW2# show interfaces gigabitethernet1/0/12 status\nSW2# show interfaces gigabitethernet1/0/12\n```\nThese settings match the explicitly verified fixed peer; they are not a recommendation to force every endpoint. Check for link restoration, printer/application access, and new error increments over an interval. Record why capability verification and service testing should have preceded acceptance of the agent's change."
+  },
+  {
+    "id": "ai-in-network-operations-t02",
+    "title": "Nightly alerts prompt a proposal to interrupt the WAN",
+    "objectives": [
+      "v1:6.4",
+      "v2:5.1"
+    ],
+    "scenario": "An incident detector learned an overnight utilization baseline before a new backup schedule began. Its purpose is to identify service-impacting incidents. It now raises an alert every night. The assistant proposes shutting the WAN interface to prevent presumed congestion.",
+    "exhibits": [
+      {
+        "title": "Collected observations",
+        "text": "Earlier baseline: 10–20% utilization overnight\nCurrent 02:00–02:20 utilization: approximately 65%\nApproved change record: backup starts at 02:00\nTests during the alert interval: no loss, no added application delay, service remains available"
+      },
+      {
+        "title": "Assistant proposal",
+        "text": "The utilization anomaly proves an outage is imminent.\nShut the WAN interface at 02:00 every night.\nConfidence: high"
+      }
+    ],
+    "question": "Which response is supported?",
+    "options": [
+      "Apply the scheduled shutdown because a learned baseline identifies a necessary repair.",
+      "Raise the global threshold without checking whether other traffic still needs detection.",
+      "Review the explained deviation while preserving alerts for service-impacting conditions.",
+      "Keep the original incident diagnosis because any measured deviation proves service loss."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The change record and service tests explain this particular interval without confirmed service impact. Under the stated detector purpose, it is a false positive for an incident. Neither the learned baseline nor a real measurement justifies shutting the WAN, changing all detection policy without review, or asserting an outage despite the supplied service results.",
+    "fix": "Document the time window, backup change, and service evidence. Review the model/baseline or alert policy through the normal operations process, retaining detection for genuinely harmful behavior. Compare later observations and service tests after any approved adjustment. Do not label all high utilization harmless, and do not infer causation merely because timestamps align."
+  }
+]

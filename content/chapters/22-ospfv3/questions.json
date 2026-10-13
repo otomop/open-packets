@@ -1,0 +1,630 @@
+[
+  {
+    "id": "ospfv3-q01",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "What does the value 3 in the Interface ID column identify?",
+    "options": [
+      "The neighboring router's interface used for this relationship.",
+      "The local OSPF process number on R1.",
+      "The third configured IPv6 prefix in the routing table.",
+      "The number of Full neighbors on Gi0/0."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "OSPFv3 neighbor output includes the neighbor's interface ID. The final Interface column names the local interface, while the Neighbor ID column names the remote router RID.",
+    "whyWrong": {
+      "1": "Process number is not the neighbor's Interface ID field.",
+      "2": "The column is an OSPF interface identifier, not a prefix index.",
+      "3": "This row describes one neighbor; it is not a count."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R1# show ipv6 ospf neighbor\nNeighbor ID     Pri State        Dead Time Interface ID Interface\n2.2.2.2          50 FULL/BDR     00:00:35  3            GigabitEthernet0/0"
+    }
+  },
+  {
+    "id": "ospfv3-q02",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "Which source address does an OSPFv3 Hello use on an ordinary IPv6 Ethernet link?",
+    "options": [
+      "The interface global unicast address.",
+      "The interface link-local unicast address.",
+      "The multicast address ff02::5.",
+      "The 32-bit dotted-decimal router ID."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "On ordinary links, OSPFv3 uses the local link-local address as its packet source. The Hello destination is the link-local multicast group ff02::5.",
+    "whyWrong": {
+      "0": "OSPFv3 neighbor communication on this link uses link-local source addressing.",
+      "2": "ff02::5 is a destination group, not the source address.",
+      "3": "The RID is a protocol identifier rather than an IPv6 packet source."
+    }
+  },
+  {
+    "id": "ospfv3-q07",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.b"
+    ],
+    "difficulty": 1,
+    "prompt": "On R1, a direct two-router adjacency to RID 3.3.3.3 is FULL/ -. What does the dash indicate?",
+    "options": [
+      "The neighbor has no link-local address.",
+      "The neighbor has not completed database synchronization.",
+      "No DR or BDR role applies to that point-to-point adjacency.",
+      "The local process has no router ID."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The role suffix is separate from the synchronization state. A dash is expected for point-to-point operation, which has no DR/BDR election.",
+    "whyWrong": {
+      "0": "A valid link-local relationship is still required on the ordinary link.",
+      "1": "Full indicates synchronization completed.",
+      "3": "An operating OSPFv3 adjacency already has router identity."
+    }
+  },
+  {
+    "id": "ospfv3-q03",
+    "type": "multi",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "On a healthy IPv6 Ethernet link with unique RIDs and link-local addresses, which two values must agree for the intended classic OSPFv3 relationship? Choose two.",
+    "options": [
+      "Local process ID",
+      "Area ID",
+      "Global unicast prefix",
+      "Classic IPv6 instance ID",
+      "Interface priority"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "The area and instance identify the intended OSPFv3 relationship on the link. Local process labels and interface priorities may differ; matching global prefixes are not a Hello requirement.",
+    "whyWrong": {
+      "0": "The process number is local and is not compared between neighbors.",
+      "2": "OSPFv3 neighbor exchange uses link-local addressing and does not require identical global prefixes.",
+      "4": "Different priorities can intentionally select DR/BDR preferences."
+    }
+  },
+  {
+    "id": "ospfv3-q05",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 1,
+    "prompt": "What are the normal IOS OSPFv3 Hello/dead defaults for the broadcast Ethernet and point-to-point types in this chapter?",
+    "options": [
+      "10 seconds and 40 seconds.",
+      "3 seconds and 10 seconds.",
+      "1 second and approximately 3.6 seconds.",
+      "30 seconds and 120 seconds."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The IOS broadcast and point-to-point types studied here use 10/40 by default. Always inspect effective values because explicit timer configuration can override defaults.",
+    "whyWrong": {
+      "1": "Those are ordinary HSRP Hello/hold values, not these OSPF defaults.",
+      "2": "Those resemble VRRP timing, not OSPFv3 defaults.",
+      "3": "Those are associated with other OSPF network types, not the types named here."
+    }
+  },
+  {
+    "id": "ospfv3-q04",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.d"
+    ],
+    "difficulty": 2,
+    "prompt": "R2 is IPv6-only and the OSPFv3 process reports it cannot select a RID. What is the appropriate correction?",
+    "options": [
+      "Use R2 link-local IPv6 address as the router-id value.",
+      "Match R2 local process number to R1 so it can inherit R1 identity.",
+      "Use R1's existing RID so both routers join the same process.",
+      "Configure an explicit unique RID such as 2.2.2.2."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Classic IOS needs a 32-bit RID even for IPv6-only operation. Configuring it explicitly supplies the identifier without adding an unnecessary IPv4 interface.",
+    "whyWrong": {
+      "0": "The RID uses 32-bit dotted-decimal form, not a 128-bit IPv6 address.",
+      "1": "Process numbers are local configuration labels and do not supply a unique RID.",
+      "2": "The RIDs must be unique."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "%OSPFv3-4-NORTRID: OSPFv3 process 20 could not pick a router-id, please configure manually"
+    }
+  },
+  {
+    "id": "ospfv3-q08",
+    "type": "multi",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 has addressed IPv6 interfaces and a configured classic process 10 with RID 1.1.1.1. IPv6 forwarding and Gi0/0 activation are not yet configured. Which two commands supply these missing parts? Choose two.",
+    "options": [
+      "ipv6 unicast-routing in global mode",
+      "network 2001:db8:123::/64 area 0 in process mode",
+      "ip ospf 10 area 0 in interface mode",
+      "ipv6 ospf 10 area 0 in Gi0/0 mode",
+      "router-id 2001:db8::1 in process mode"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "IPv6 unicast-routing enables IPv6 forwarding, and ipv6 ospf 10 area 0 activates the classic IPv6 OSPF process on the interface. The process RID and addressing are already supplied by the question.",
+    "whyWrong": {
+      "1": "Classic OSPFv3 does not use an IPv4-style network activation statement.",
+      "2": "ip ospf activates OSPFv2 for IPv4 rather than this OSPFv3 interface.",
+      "4": "A RID is 32-bit dotted decimal, not a 128-bit IPv6 address."
+    }
+  },
+  {
+    "id": "ospfv3-q12",
+    "type": "single",
+    "objectives": [
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "A supported IOS XE router has router ospfv3 10 and address-family ipv6 unicast configured. Which interface command activates that process in area 0?",
+    "options": [
+      "ip ospf 10 area 0",
+      "ospfv3 10 ipv4 area 0",
+      "ospfv3 10 ipv6 area 0",
+      "network 2001:db8:123::/64 area 0"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The address-family interface command names the process, IPv6 family, and area. Keep it distinct from classic ipv6 ospf syntax and from OSPFv2.",
+    "whyWrong": {
+      "0": "That activates OSPFv2 for IPv4.",
+      "1": "That selects the IPv4 family, not the requested IPv6 family.",
+      "3": "This is not the address-family interface activation command."
+    }
+  },
+  {
+    "id": "ospfv3-q18",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which value identifies the adjacent forwarding neighbor for packets to the global prefix?",
+    "options": [
+      "Interface ID 7 without any IPv6 address",
+      "FE80::13:3 together with local Gi0/1",
+      "Local process 10 together with area 0",
+      "3.3.3.3 interpreted as the IPv6 next hop"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Keep the identifiers separate: router ID names the OSPF speaker, interface ID identifies its interface, and the route uses a scoped IPv6 next hop.",
+    "whyWrong": {
+      "0": "An interface identifier in OSPF output is not an IPv6 next-hop address.",
+      "2": "Those identify local configuration and area participation, not the Ethernet neighbor.",
+      "3": "The dotted-decimal value identifies the OSPF router, not its IPv6 forwarding address."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Neighbor identity and IPv6 route (exercise)",
+      "text": "R1 process 10, area 0\nNeighbor RID 3.3.3.3, Interface ID 7, FULL/ -, local Gi0/1\nO 2001:db8:30::/64 [110/26]\n  via FE80::13:3, GigabitEthernet0/1"
+    }
+  },
+  {
+    "id": "ospfv3-q21",
+    "type": "multi",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two statements about this IPv6-only transit are correct? Choose two.",
+    "options": [
+      "The missing transit global prefix prevents all global client traffic from crossing.",
+      "Routes to the global client prefixes can use scoped link-local next hops.",
+      "The global destination must be rewritten to the link-local next hop at every router.",
+      "The link-local addresses can support the OSPFv3 adjacency.",
+      "Each transit interface must first receive an IPv4 address."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "OSPFv3 separates router identity, link-local neighbor communication and advertised global prefixes. This does not remove the need for routes in both directions.",
+    "whyWrong": {
+      "0": "Global end-to-end packets can cross the routed link using link-local neighbor next hops.",
+      "2": "The next hop selects local delivery; the packet destination remains the remote global address.",
+      "4": "An explicit unique 32-bit RID does not require IPv4 forwarding addresses."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "IPv6-only transit requirements (exercise)",
+      "text": "R1/R2 Ethernet transit has only unique link-local addresses.\nBoth use explicit unique RIDs, area 0 and matching OSPFv3 settings.\nTheir separate client LANs have global /64s activated in OSPFv3.\nIPv6 forwarding is enabled; no filters."
+    }
+  },
+  {
+    "id": "ospfv3-q09",
+    "type": "single",
+    "objectives": [
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "R3's Loopback0 has 2001:db8:3::3/64 and OSPFv3 network state LOOPBACK. R1 learns 2001:db8:3::3/128. What explains the prefix length?",
+    "options": [
+      "Normal loopback advertisement represents the interface address as a host route.",
+      "OSPFv3 must advertise the configured /64 from every interface state.",
+      "The remote router must widen the received /128 to /64 before installation.",
+      "A Full adjacency always converts every prefix into a /128."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "OSPFv3 represents addresses of an interface in Loopback state as /128 host prefixes. Do not assume that the address command prefix length always equals the advertised prefix length.",
+    "whyWrong": {
+      "1": "A Loopback-state interface has special host-prefix advertisement behavior.",
+      "2": "It installs the advertised host prefix; it does not widen it to match the configuration line.",
+      "3": "Physical LAN prefixes can be advertised as /64; this is loopback-specific."
+    }
+  },
+  {
+    "id": "ospfv3-q11",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Two routers on the same Ethernet link have valid unique link-local addresses and matching OSPFv3 parameters. Their global addresses are 2001:db8:1::1/64 and 2001:db8:2::2/64. Which statement is correct?",
+    "options": [
+      "They must fail Hellos because an IPv6 subnet mask field differs.",
+      "They can form an adjacency, but that does not validate the intended global addressing.",
+      "Their global prefixes must match before either router can advertise any other LAN.",
+      "Full adjacency would prove that both configured global prefixes follow the site addressing plan."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The adjacency uses link-local communication and has no matching-global-prefix requirement. A network intended to share one global prefix should still be addressed consistently, and client reachability must be verified separately.",
+    "whyWrong": {
+      "0": "OSPFv3 Hellos do not carry the OSPFv2 subnet-mask field.",
+      "2": "Ordinary OSPFv3 neighbor communication uses link-local addressing; separate enabled LAN prefixes can be advertised.",
+      "3": "Operational adjacency does not validate the intended global address plan."
+    }
+  },
+  {
+    "id": "ospfv3-q06",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.c"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 is DROTHER while healthy R2 and R3 are the established DR and BDR. An engineer raises R1's interface priority from 1 to 200. What immediately follows?",
+    "options": [
+      "R1 preempts R2 and becomes DR as soon as its next Hello arrives.",
+      "R1 keeps its current role while the existing DR/BDR remain healthy.",
+      "R1 must become BDR because the new priority is highest.",
+      "R1 stops forming adjacencies because 200 is outside the range."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A priority change changes future election preference but does not erase current segment roles. It differs from a clean election where no DR or BDR already exists.",
+    "whyWrong": {
+      "0": "OSPF DR/BDR election is non-preemptive.",
+      "2": "An existing healthy BDR is not displaced merely by a higher-priority arrival.",
+      "3": "200 is within the IOS range 0–255."
+    }
+  },
+  {
+    "id": "ospfv3-q14",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.c"
+    ],
+    "difficulty": 2,
+    "prompt": "All candidates are known before a fresh OSPFv3 broadcast election, with no existing DR/BDR. Who is DR and BDR?",
+    "options": [
+      "RID 4.4.4.4 is DR; RID 3.3.3.3 is BDR.",
+      "RID 2.2.2.2 is DR; RID 4.4.4.4 is BDR.",
+      "RID 1.1.1.1 is DR; RID 3.3.3.3 is BDR.",
+      "The highest global IPv6 address is DR; the next highest is BDR."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Exclude the priority-0 router, then compare the RIDs of the priority-1 candidates. The higher two eligible RIDs win in this clean-election scenario.",
+    "whyWrong": {
+      "1": "Priority 0 excludes 2.2.2.2 from either role.",
+      "2": "Among equal eligible priorities, higher RIDs are preferred.",
+      "3": "The election tiebreaker is RID, not global IPv6 address."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "RID       Priority\n1.1.1.1   1\n2.2.2.2   0\n3.3.3.3   1\n4.4.4.4   1"
+    }
+  },
+  {
+    "id": "ospfv3-q15",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 is a DROTHER and shows this stable entry for R4; its DR and BDR neighbors are Full. What does the entry mean?",
+    "options": [
+      "The global /64 masks must differ.",
+      "Bidirectional Hellos work, and this DROTHER pair need not become Full.",
+      "The link-local addresses must be duplicated.",
+      "R1 should clear its process until every neighbor becomes Full."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Two DROTHERs normally remain 2-Way on a broadcast segment. The Full relationships with DR/BDR provide the expected synchronization pattern.",
+    "whyWrong": {
+      "0": "This state does not prove a global-prefix mismatch.",
+      "2": "The entry alone does not support duplicate-address diagnosis.",
+      "3": "A reset is unnecessary for the expected DROTHER pattern."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "Neighbor ID  Pri State          Dead Time Interface ID Interface\n4.4.4.4       1 2WAY/DROTHER   00:00:34  4            Gi0/0"
+    }
+  },
+  {
+    "id": "ospfv3-q17",
+    "type": "single",
+    "objectives": [
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 can reach R3 directly at outgoing cost 25 or across a shared segment at outgoing cost 10. R3's LAN cost is 1. Which route matches the lower-cost choice?",
+    "options": [
+      "[110/26] via FE80::13:3, GigabitEthernet0/1",
+      "[11/110] via FE80::3, GigabitEthernet0/0",
+      "[110/10] via 3.3.3.3, GigabitEthernet0/0",
+      "[110/11] via FE80::3, GigabitEthernet0/0"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The shared path costs 10 + 1 = 11. Its next hop is R3's link-local address on that link, combined with R1's exit interface.",
+    "whyWrong": {
+      "0": "That is the more expensive direct path while the shared path is healthy.",
+      "1": "The bracket fields reverse administrative distance and metric.",
+      "2": "This omits the remote LAN cost and substitutes a RID for an IPv6 next hop."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R1 Gi0/0: shared path, next hop FE80::3, cost 10\nR1 Gi0/1: direct path, next hop FE80::13:3, cost 25\nR3 LAN: 2001:db8:30::/64, outgoing cost 1"
+    }
+  },
+  {
+    "id": "ospfv3-q19",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which disagreement prevents this intended OSPFv3 relationship?",
+    "options": [
+      "The router IDs differ.",
+      "The global prefixes are absent from the transit interfaces.",
+      "The local process numbers differ.",
+      "The on-link instance IDs differ."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Area, effective timers and instance must fit the intended relationship. Here the instance mismatch separates the packets despite working link-local communication.",
+    "whyWrong": {
+      "0": "Distinct router IDs are required.",
+      "1": "Ordinary OSPFv3 neighbors can communicate over a link using link-local addresses.",
+      "2": "Local process numbers do not have to match between peers."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Intended neighbor parameters (exercise)",
+      "text": "R1/R2 directly connected, link-local ping succeeds, no filters.\nR1: process 10, RID 1.1.1.1, area 0, instance 0, Hello/dead 10/40\nR2: process 20, RID 2.2.2.2, area 0, instance 1, Hello/dead 10/40\nBoth interfaces activated and non-passive; network type point-to-point."
+    }
+  },
+  {
+    "id": "ospfv3-q20",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "What is the correct interpretation of this dual-stack status?",
+    "options": [
+      "OSPFv2 Full proves that IPv6 prefixes are also exchanged.",
+      "IPv4 OSPF is healthy on this link; IPv6 needs its own OSPFv3 activation and verification.",
+      "Giving OSPFv3 the same process number as OSPFv2 automatically activates the interface.",
+      "The IPv6 failure proves that the Ethernet cable is down."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Verify each protocol/address family. A working IPv4 routing process is not evidence that the IPv6 process participates on that interface.",
+    "whyWrong": {
+      "0": "The IPv4 process does not automatically exchange the IPv6 address family.",
+      "2": "A matching local number is not interface activation.",
+      "3": "IPv4 adjacency and the stated link-local ping demonstrate a working link."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Separate IPv4 and IPv6 routing state (exercise)",
+      "text": "R1/R2 IPv4 OSPFv2 neighbors: FULL/ - on Gi0/0\nIPv6 link-local ping on Gi0/0 succeeds.\nR1 Gi0/0 has no classic ipv6 ospf or address-family ospfv3 activation.\nR1 IPv6 OSPF neighbor table is empty."
+    }
+  },
+  {
+    "id": "ospfv3-q22",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 2,
+    "prompt": "Which correction is supported without disturbing the healthy transit relationship?",
+    "options": [
+      "Make the transit global prefixes identical before checking the client LAN.",
+      "Change R3 router ID to 2001:db8:30::1.",
+      "Remove passive status so that the PC can become an OSPFv3 neighbor.",
+      "Correct R3 LAN prefix to the approved :30: /64 and verify its advertisement."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Full verifies the transit adjacency, not correctness of the LAN addressing plan. The router advertises the configured :300: prefix while the PC uses approved :30:.",
+    "whyWrong": {
+      "0": "Transit adjacency is already Full; the observed LAN prefix differs from the documented plan.",
+      "1": "The RID is 32-bit dotted decimal and does not define the advertised LAN prefix.",
+      "2": "A PC does not need an OSPF adjacency; the connected LAN prefix must be correct."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Client plan and advertised global prefix (exercise)",
+      "text": "Approved PC LAN: 2001:db8:30::/64\nPC-B: 2001:db8:30::10/64; gateway FE80::30:1\nR3 LAN: 2001:db8:300::1/64, FE80::30:1, up, passive, OSPFv3 activated\nR1/R3 transit Full; R1 learns 2001:db8:300::/64, not :30: /64."
+    }
+  },
+  {
+    "id": "ospfv3-q16",
+    "type": "single",
+    "objectives": [
+      "v2:3.3"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 and R3 remain Full, but R1 loses the route to R3's LAN 2001:db8:30::/64. Which missing line explains the result?",
+    "options": [
+      "no passive-interface gigabitethernet0/2 under process 30",
+      "An IPv4 address on R3's Gi0/2",
+      "ipv6 ospf 30 area 0 on R3's Gi0/2",
+      "ipv6 ospf priority 255 on R3's Gi0/2"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Gi0/2 remains addressed and up, but it is not activated in the OSPFv3 process. Passive-interface only controls neighbor formation; it does not activate a prefix by itself.",
+    "whyWrong": {
+      "0": "A client LAN can correctly remain passive; activation is what is missing.",
+      "1": "An IPv4 address is not required for this IPv6 LAN advertisement.",
+      "3": "Election priority is irrelevant on a passive client LAN."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R3# show running-config — relevant excerpts\nipv6 router ospf 30\n router-id 3.3.3.3\n passive-interface gigabitethernet0/2\ninterface GigabitEthernet0/2\n ipv6 address 2001:db8:30::1/64\n no shutdown"
+    }
+  },
+  {
+    "id": "ospfv3-q25",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "What evidence best distinguishes a neighbor problem from a missing advertised LAN in this case?",
+    "options": [
+      "Clear both OSPFv3 processes first because any missing route requires a fresh election.",
+      "Enable Hellos on the passive client LAN before checking its OSPFv3 activation.",
+      "Compare the remote LAN activation and prefix with the route table while preserving the Full transit adjacency.",
+      "Replace all link-local addresses because global destinations cannot use them as next hops."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Local gateway success, Full transit and a missing remote route narrow the next inspection to prefix participation. They do not establish one unique cause until the remote interface configuration is read.",
+    "whyWrong": {
+      "0": "A restart discards useful evidence and does not enroll a missing LAN.",
+      "1": "A client LAN can remain passive while its prefix is advertised. Inspect activation and prefix participation before changing neighbor policy.",
+      "3": "Scoped link-local next hops are normal in OSPFv3."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Neighbor and missing LAN evidence (exercise)",
+      "text": "Remote PC can ping its local router.\nR1 and that router are Full on the transit.\nR1 lacks the remote client /64 and has no default.\nThe remote LAN OSPFv3 activation has not yet been checked."
+    }
+  },
+  {
+    "id": "ospfv3-q13",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "The direct IPv6 adjacency repeatedly stalls in ExStart. Which issue is supported by the comparison?",
+    "options": [
+      "An area mismatch during Hello acceptance.",
+      "A mismatch between local process labels.",
+      "An election failure because no DR exists.",
+      "An MTU mismatch during database exchange."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The interfaces agree on the displayed adjacency parameters but have different MTUs. Inspect and correct the supported MTU value rather than treating ping success as proof that database exchange can complete.",
+    "whyWrong": {
+      "0": "Both areas are 0 in the evidence.",
+      "1": "Different process labels are allowed.",
+      "2": "Both sides intentionally use point-to-point, which does not elect DR/BDR."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or output",
+      "text": "R1: Area 0, Instance 0, RID 1.1.1.1, POINT_TO_POINT, Hello 10, Dead 40, MTU 1500\nR3: Area 0, Instance 0, RID 3.3.3.3, POINT_TO_POINT, Hello 10, Dead 40, MTU 1400\nNeighbor repeatedly EXSTART/ -"
+    }
+  },
+  {
+    "id": "ospfv3-q24",
+    "type": "single",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "difficulty": 3,
+    "prompt": "Which paired route prediction is correct?",
+    "options": [
+      "Both directions use the direct link at cost 6.",
+      "R1: shared path, cost 17. R3: direct path, cost 6.",
+      "R1 uses cost 27 shared; R3 uses cost 36 direct.",
+      "Both directions use the shared link at cost 17."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "R1 compares shared 10+7=17 with direct 30+7=37. R3 compares shared 20+1=21 with direct 5+1=6.",
+    "whyWrong": {
+      "0": "R1 direct path totals 30+7=37, not 6.",
+      "2": "Receiving-side costs are not added again to the calculating router outgoing path.",
+      "3": "R3 has a cheaper direct outgoing cost and a different destination LAN cost."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Directed OSPFv3 costs (exercise)",
+      "text": "All adjacencies Full in area 0; no other paths.\nR1 shared outgoing cost 10; direct-to-R3 cost 30.\nR3 shared outgoing cost 20; direct-to-R1 cost 5.\nLAN-A on R1 cost 1; LAN-B on R3 cost 7.\nUse each router own outgoing costs."
+    }
+  }
+]

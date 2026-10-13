@@ -1,0 +1,573 @@
+[
+  {
+    "id": "rest-apis-json-q01",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "The API documentation says X-Lab-API-Key carries an issued API key. Which mechanism is shown?",
+    "options": [
+      "An API key in a documented vendor-specific header.",
+      "HTTP Basic containing an encoded username and password.",
+      "An OAuth authorization-code exchange with a browser redirect.",
+      "A TLS client certificate encoded in an HTTP header."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The supplied contract identifies this header as an API-key mechanism. A random-looking string by itself would not establish how a credential was issued.",
+    "whyWrong": {
+      "1": "Basic uses its own Authorization scheme and encodes user:password.",
+      "2": "No authorization-code flow or redirect is shown.",
+      "3": "A client certificate participates in TLS; this field is a documented key."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored request excerpt",
+      "text": "GET /api/devices HTTP/1.1\nX-Lab-API-Key: fictional-training-key\nAccept: application/json"
+    }
+  },
+  {
+    "id": "rest-apis-json-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "Which two HTTP methods have idempotent semantics? Choose two.",
+    "options": [
+      "POST",
+      "PATCH",
+      "PUT",
+      "DELETE"
+    ],
+    "answer": [
+      2,
+      3
+    ],
+    "explanation": "PUT and DELETE have the same intended state effect when repeated identically. Their responses can differ between attempts, and incidental logging can occur more than once.",
+    "whyWrong": {
+      "0": "POST is not guaranteed idempotent; API-specific facilities may make particular operations safe to repeat.",
+      "1": "PATCH is not guaranteed idempotent, although a particular patch operation can be."
+    }
+  },
+  {
+    "id": "rest-apis-json-q08",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "Which REST constraint requires requests to supply their interaction context without relying on a remembered conversational sequence?",
+    "options": [
+      "Layered-system architecture",
+      "Stateless interaction",
+      "Response cacheability",
+      "Optional code on demand"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Statelessness concerns the interaction between client and server. It does not prohibit resource databases, authorization data or server logs.",
+    "whyWrong": {
+      "0": "Layering concerns intermediaries and component visibility.",
+      "2": "Caching governs reuse of responses rather than conversational context.",
+      "3": "Code on demand concerns optional executable code supplied to clients."
+    }
+  },
+  {
+    "id": "rest-apis-json-q09",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "What can be concluded from the Basic scheme in this header?",
+    "options": [
+      "Its credential is reversible encoding and needs transport protection.",
+      "Its credential is a one-way password hash verified without a password.",
+      "Its credential is encrypted by the Basic scheme using a public key.",
+      "Its credential proves an OAuth browser grant has completed."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "HTTP Basic encodes user:password with Base64. The sample is fictional; real use requires authenticated HTTPS and careful credential handling.",
+    "whyWrong": {
+      "1": "Basic does not replace the password with a one-way hash.",
+      "2": "The Basic scheme does not provide encryption.",
+      "3": "A Basic header does not identify an OAuth browser flow."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored header",
+      "text": "Authorization: Basic bGFiOnRyYWluaW5n"
+    }
+  },
+  {
+    "id": "rest-apis-json-q10",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "In https://controller.example/api/devices?hostname=R1, which component is the query?",
+    "options": [
+      "/api/devices",
+      "controller.example",
+      "https",
+      "hostname=R1"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The question mark introduces the query, here hostname=R1. The API defines what the parameter means and whether it is supported.",
+    "whyWrong": {
+      "0": "That is the path.",
+      "1": "That is the server authority/host portion.",
+      "2": "That is the scheme."
+    }
+  },
+  {
+    "id": "rest-apis-json-q11",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "Which request header identifies the media type of a submitted JSON body?",
+    "options": [
+      "Authorization: Bearer example",
+      "Content-Length: 128",
+      "Content-Type: application/json",
+      "Accept: application/json"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Content-Type describes the representation carried in that message. A correct media type does not prove that its fields meet the API's schema.",
+    "whyWrong": {
+      "0": "Authorization carries access credentials, not body encoding.",
+      "1": "Content-Length describes size, not the media type.",
+      "3": "Accept expresses acceptable response formats."
+    }
+  },
+  {
+    "id": "rest-apis-json-q12",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "Which format best matches the supplied mapping and sequence syntax?",
+    "options": [
+      "JSON using double-quoted names and bracketed arrays.",
+      "YAML using indentation and sequence markers.",
+      "XML using paired element tags and attributes.",
+      "CSV using commas as record-field separators."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "This is a common YAML presentation. Recognize the syntax without assuming that every YAML document must use only this style.",
+    "whyWrong": {
+      "0": "These unquoted mapping names and dash sequence syntax are not JSON.",
+      "2": "There are no XML elements or attributes.",
+      "3": "The structure is nested rather than comma-separated records."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored configuration text",
+      "text": "devices:\n  - hostname: R1\n    enabled: true"
+    }
+  },
+  {
+    "id": "rest-apis-json-q13",
+    "type": "single",
+    "objectives": [
+      "v1:6.7"
+    ],
+    "difficulty": 1,
+    "prompt": "What types are the four values in order?",
+    "options": [
+      "Number, string, boolean and null.",
+      "Number, number, string and absent member.",
+      "String, string, string and empty object.",
+      "Number, string, boolean and empty string."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The syntax distinguishes all four values. An explicit null member is also different from the member being absent.",
+    "whyWrong": {
+      "1": "The second is quoted, false is boolean and last is an explicit null.",
+      "2": "JSON has built-in value types; not every value is a string.",
+      "3": "Null is distinct from an empty string."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored JSON values",
+      "text": "{\"a\":24,\"b\":\"24\",\"c\":false,\"d\":null}"
+    }
+  },
+  {
+    "id": "rest-apis-json-q14",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "prompt": "A documented POST creates a new resource immediately. Which status most specifically expresses creation?",
+    "options": [
+      "202 Accepted",
+      "204 No Content",
+      "409 Conflict",
+      "201 Created"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "201 specifically reports creation of one or more resources. Inspect the representation and Location header when provided to identify what was created.",
+    "whyWrong": {
+      "0": "202 says processing was accepted, not necessarily completed.",
+      "1": "204 indicates successful handling with no content but does not specifically express creation.",
+      "2": "409 identifies a conflict rather than successful creation."
+    }
+  },
+  {
+    "id": "rest-apis-json-q02",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "An API supports PUT for complete replacement and PATCH for a partial modification. Which method should change only an interface description?",
+    "options": [
+      "PUT",
+      "GET",
+      "DELETE",
+      "PATCH"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "PATCH matches the stated partial-change contract. The body still has to use the API's documented patch format and authorization.",
+    "whyWrong": {
+      "0": "The supplied contract says PUT replaces the representation.",
+      "1": "GET requests a read, not this modification.",
+      "2": "DELETE requests removal, not a field update."
+    }
+  },
+  {
+    "id": "rest-apis-json-q04",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "What correction is supported by this controller response?",
+    "options": [
+      "Change the account's role because authentication definitely succeeded.",
+      "Obtain a new valid credential through the documented authentication flow.",
+      "Change the inventory path because the requested collection is absent.",
+      "Request a larger API rate limit before attempting another read."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The error body states that the supplied token expired. Renew it through the documented flow, protect the replacement credential and retry the read with bounded error handling.",
+    "whyWrong": {
+      "0": "The response explicitly identifies an expired credential; permission may be checked later.",
+      "2": "The supplied error identifies credential expiry rather than a missing resource.",
+      "3": "No rate-limit error is shown."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored controller response",
+      "text": "HTTP/1.1 401 Unauthorized\nContent-Type: application/json\n{\"error\":\"token_expired\",\"message\":\"Present a current access token\"}"
+    }
+  },
+  {
+    "id": "rest-apis-json-q05",
+    "type": "single",
+    "objectives": [
+      "v1:6.7"
+    ],
+    "difficulty": 2,
+    "prompt": "Which statement about the displayed JSON is correct?",
+    "options": [
+      "response is an array, and response[1].hostname is R2.",
+      "response is an object with keys R1 and R2.",
+      "ports is numeric in both records because both contain digits.",
+      "version is a number because its characters are 1.0."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The array contains two device objects. Zero-based position 1 is its second item; JSON types are determined by syntax, not how a value looks to a person.",
+    "whyWrong": {
+      "1": "Square brackets make response an array; the hostnames are member values.",
+      "2": "Quotes make the second ports value a string.",
+      "3": "The quotes make version a string."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored JSON document",
+      "text": "{\"response\":[{\"hostname\":\"R1\",\"ports\":3},{\"hostname\":\"R2\",\"ports\":\"3\"}],\"version\":\"1.0\"}"
+    }
+  },
+  {
+    "id": "rest-apis-json-q06",
+    "type": "multi",
+    "objectives": [
+      "v1:6.7"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two syntax faults make this document invalid JSON? Choose two.",
+    "options": [
+      "The member name managed uses single quotes.",
+      "The array ends with a trailing comma after 30.",
+      "The null value is not enclosed in double quotes.",
+      "The true value is written in lowercase.",
+      "The member names are not alphabetically ordered."
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "JSON requires double-quoted member names and does not allow trailing commas. The boolean and null values shown are otherwise valid.",
+    "whyWrong": {
+      "2": "Unquoted lowercase null is valid JSON.",
+      "3": "Lowercase true is the required boolean syntax.",
+      "4": "Object member ordering need not be alphabetical."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Faulty JSON",
+      "text": "{\"hostname\":\"R1\",'managed':true,\"vlans\":[10,20,30,],\"site\":null}"
+    }
+  },
+  {
+    "id": "rest-apis-json-q07",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "A read-only inventory GET returns 503 with Retry-After: 30. Which response is most appropriate?",
+    "options": [
+      "Revise the requested fields before retrying this inventory read.",
+      "Obtain a different token before repeating this inventory read.",
+      "Wait at least the stated interval, then retry with a bounded limit.",
+      "Poll for completion because the server accepted the request."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "503 is a server-error response indicating temporary unavailability in this scenario. Honor the supplied retry guidance for the safe read, while limiting repeated attempts and retaining useful error evidence.",
+    "whyWrong": {
+      "0": "The response supplies temporary-unavailability guidance, not a schema error.",
+      "1": "No credential-expiry or authentication error is supplied.",
+      "3": "503 is not a successful asynchronous submission such as 202."
+    }
+  },
+  {
+    "id": "rest-apis-json-q15",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "What authentication pattern is shown in this documented API exchange?",
+    "options": [
+      "An OAuth redirect flow is proved by the custom header name.",
+      "A client certificate is supplied in the token JSON member.",
+      "Basic acquires a token; the data call presents that token.",
+      "Basic sends the password on both of the shown requests."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The example shows a product-defined token acquisition pattern. It does not establish a universal token lifetime, token format or OAuth grant.",
+    "whyWrong": {
+      "0": "This exchange does not demonstrate an OAuth redirect or authorization code.",
+      "1": "The member is an issued token, not evidence of a TLS client certificate.",
+      "3": "The second request shows the token header rather than Basic."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored exchange",
+      "text": "POST /auth/token\nAuthorization: Basic <fictional encoded credentials>\nResponse: {\"Token\":\"fictional-issued-token\"}\n\nGET /inventory\nX-Auth-Token: fictional-issued-token"
+    }
+  },
+  {
+    "id": "rest-apis-json-q16",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "A job submission returns 202 with a task URL. What should the client conclude?",
+    "options": [
+      "Treat the task URL as confirmation that the resource is already changed.",
+      "Inspect the task outcome, then verify the intended device result.",
+      "Repeat the submission until one response contains the status 200.",
+      "Parse the task URL as the location of a deleted resource."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "202 indicates acceptance for processing. The API's task status and the required operational checks determine whether the intended change actually completed.",
+    "whyWrong": {
+      "0": "A queued task can still fail before changing the device.",
+      "2": "Repeated submissions can create duplicate work; follow the supplied task instead.",
+      "3": "No deletion or deleted-resource contract is shown."
+    }
+  },
+  {
+    "id": "rest-apis-json-q17",
+    "type": "single",
+    "objectives": [
+      "v1:6.7"
+    ],
+    "difficulty": 2,
+    "prompt": "The schema requires enabled to be a boolean. Which assessment is correct?",
+    "options": [
+      "The document is invalid JSON because false is quoted.",
+      "The document is valid and satisfies the boolean requirement.",
+      "The document is valid JSON but fails the stated field type.",
+      "The document fails because an object cannot contain one member."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Double quotes encode a string. Parsing and checking the required field type are separate decisions.",
+    "whyWrong": {
+      "0": "A quoted string is valid JSON.",
+      "1": "The schema requires a boolean, not the string containing its spelling.",
+      "3": "A JSON object may have one member."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Syntax versus field type",
+      "text": "Schema: enabled must be boolean.\nBody: {\"enabled\":\"false\"}"
+    }
+  },
+  {
+    "id": "rest-apis-json-q18",
+    "type": "single",
+    "objectives": [
+      "v1:6.7"
+    ],
+    "difficulty": 2,
+    "prompt": "Using zero-based array notation, which path selects the enabled value for interface Gi0/1?",
+    "options": [
+      "devices[0].interfaces[1].enabled",
+      "devices[1].interfaces[0].enabled",
+      "devices[0].interfaces.enabled[1]",
+      "devices[0].interfaces[0].enabled"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The first device is at index 0, and its second interface is at index 1. The final member contains boolean false.",
+    "whyWrong": {
+      "1": "There is no second device in this document.",
+      "2": "interfaces is an array; select an element before reading its enabled member.",
+      "3": "That selects Gi0/0, not Gi0/1."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Nested device data",
+      "text": "{\"devices\":[{\"name\":\"R1\",\"interfaces\":[{\"name\":\"Gi0/0\",\"enabled\":true},{\"name\":\"Gi0/1\",\"enabled\":false}]}]}"
+    }
+  },
+  {
+    "id": "rest-apis-json-q19",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "What should this client do before attempting to parse a JSON response body?",
+    "options": [
+      "Treat the missing body as a failed write and retry it.",
+      "Add Accept: application/json to require an error document.",
+      "Replace DELETE with GET so deletion returns an object.",
+      "Recognize that 204 completes without a response body."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "204 is a successful response without content. A client should branch on response semantics instead of unconditionally parsing JSON.",
+    "whyWrong": {
+      "0": "An absent body is expected for 204 and does not establish failure.",
+      "1": "Accept does not require a body on a 204 response.",
+      "2": "GET reads; it does not replace the intended deletion."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied API evidence",
+      "text": "Documented operation: DELETE /api/devices/r8\nResponse: HTTP/1.1 204 No Content\nNo message body follows."
+    }
+  },
+  {
+    "id": "rest-apis-json-q20",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "Which conclusion about repeated DELETE requests is correct?",
+    "options": [
+      "The method loses idempotence whenever the response code changes.",
+      "The intended absent state can be the same despite different statuses.",
+      "The second response must be changed to 204 to preserve the resource.",
+      "The client must recreate the object before checking the first result."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Idempotence concerns the intended state effect of repetition, not identical response bytes. Both attempts leave this resource absent.",
+    "whyWrong": {
+      "0": "Identical status codes are not the definition of idempotence.",
+      "2": "Changing a returned status is not a resource-state operation.",
+      "3": "Recreation would contradict the deletion goal."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied API evidence",
+      "text": "First DELETE /api/devices/r8: 204; resource removed.\nSecond identical DELETE: 404; resource already absent."
+    }
+  },
+  {
+    "id": "rest-apis-json-q21",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 2,
+    "prompt": "Why is the proposed credential renewal not supported as the first correction?",
+    "options": [
+      "A 200 response proves the role can perform every write.",
+      "A successful GET guarantees that the PATCH body is valid.",
+      "The request reaches authorization with a known read-only role.",
+      "Changing Accept would grant the missing modification privilege."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The identity-service check confirms a current token, the successful read exercises it, and the write error identifies missing scope. Compare the operation with authorized role policy rather than assuming expiry.",
+    "whyWrong": {
+      "0": "Read permission does not imply write permission.",
+      "1": "GET success does not validate a different operation or its body.",
+      "3": "Response-format negotiation does not grant authorization."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied API evidence",
+      "text": "Identity check: current token belongs to inventory-reader; not expired.\nGET /api/devices/r8: 200.\nPATCH /api/devices/r8: 403 {\"error\":\"scope_required\",\"scope\":\"device.write\"}.\nRole policy: inventory-reader has device.read only.\nProposed repair: renew the same role token repeatedly."
+    }
+  }
+]

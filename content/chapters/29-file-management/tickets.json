@@ -1,0 +1,63 @@
+[
+  {
+    "id": "file-management-t01",
+    "title": "The old hostname returned but a temporary interface remains",
+    "objectives": [
+      "v1:4.9",
+      "v2:4.2"
+    ],
+    "scenario": "In an isolated lab, R1-before.cfg was saved before an unused, unnumbered Loopback29 was created. The file contains hostname R1 and no reference to Loopback29. A learner changed the hostname and added the loopback, then applied the backup. No other changes are intended.",
+    "exhibits": [
+      {
+        "title": "Console history",
+        "text": "R1-TEMP# copy flash:R1-before.cfg running-config\nDestination filename [running-config]?\n[OK]\nR1#"
+      },
+      {
+        "title": "Active configuration excerpt",
+        "text": "hostname R1\ninterface Loopback29\n description TEMPORARY_MERGE_TEST"
+      }
+    ],
+    "question": "What explains the remaining interface?",
+    "options": [
+      "The file merged into running-config without removing the extra interface",
+      "The file was staged locally and none of its commands reached running-config",
+      "The active configuration exactly matches the old file; the interface is only cached",
+      "The copy replaced startup-config while the current configuration stayed unchanged"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The explicit running-config destination and changed hostname show that commands were applied. A merge does not remove an extra interface merely because the source omits it. Staging, exact replacement and a startup-only copy do not explain all the observations.",
+    "fix": "Compare the active result with the intended lab baseline, then remove only the known unused interface:\n\n```ios R1\nR1# configure terminal\nR1(config)# no interface loopback29\nR1(config)# end\nR1# show ip interface brief\n```\nRetest the actual lab connectivity. Save the verified result with a separate `copy running-config startup-config` operation, completing its prompt. A full configuration replacement would require a complete validated file and an appropriate recovery procedure; it is unnecessary for this demonstrated harmless change."
+  },
+  {
+    "id": "file-management-t03",
+    "title": "SSH works, but the protected source file cannot be read",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "scenario": "In an isolated IOS XE/Ubuntu transfer lab, S1 has already verified the server host key. The ccnafile account can read another test file through SFTP. The engineer now requests probe.txt at the exact path below. Destination space is sufficient. These are authored diagnostic observations, not a captured device session.",
+    "exhibits": [
+      {
+        "title": "Transfer stages",
+        "text": "Server host-key verification: passed\nSSH account ccnafile: accepted\nSFTP subsystem: started\nOPEN /home/ccnafile/ccna-files/probe.txt: Permission denied"
+      },
+      {
+        "title": "Trusted Ubuntu console inspection",
+        "text": "Parent directories allow ccnafile to traverse them.\nls -l /home/ccnafile/ccna-files/probe.txt\n-rw------- 1 root root 30 probe.txt\nsudo -u ccnafile test -r /home/ccnafile/ccna-files/probe.txt\nExit status: 1"
+      }
+    ],
+    "question": "Which correction addresses the demonstrated source-file problem?",
+    "options": [
+      "Repeat the request with the FTP control port instead of SSH",
+      "Replace the verified host key to permit the current SFTP account",
+      "Make the intended ccnafile account the owner, retaining private file permissions",
+      "Reset the login password before retrying the unchanged file permissions"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Authentication and the SFTP subsystem succeeded. The exact file exists but mode 600 permits only its root owner to read it. The negative account-specific read test confirms the source-file access fault. Port, key and password changes do not address that evidence.",
+    "fix": "At the trusted Ubuntu console, first confirm this is the intended benign lab file. Grant access only to its intended lab owner:\n\n```bash\nsudo chown ccnafile:ccnafile /home/ccnafile/ccna-files/probe.txt\nsudo chmod 600 /home/ccnafile/ccna-files/probe.txt\nsudo -u ccnafile test -r /home/ccnafile/ccna-files/probe.txt\n```\n\nThe last command should exit successfully without output. Repeat the original SFTP request from S1 to a new named flash file, completing each prompt. Inspect its size/content and compare its hash with the trusted source. Do not relax the whole directory to world-writable access or change the SSH identity policy."
+  }
+]

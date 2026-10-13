@@ -1,0 +1,64 @@
+[
+  {
+    "id": "ipv4-addressing-t01",
+    "title": "One workstation cannot reach a nearby routed subnet",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "scenario": "SALES-07 belongs on 10.20.30.0/24. R1 directly connects that LAN on Gi0/0 and file-server LAN 10.20.40.0/24 on Gi0/1. Other sales PCs reach file server 10.20.40.10. SALES-07 reaches local peer 10.20.30.60 and its router at 10.20.30.1, but repeatedly fails to reach the file server. The administrator has confirmed proxy ARP is disabled on Gi0/0 and no extra host routes exist.",
+    "exhibits": [
+      {
+        "title": "Recorded SALES-07 settings",
+        "text": "Address: 10.20.30.50\nMask: 255.255.0.0\nGateway: 10.20.30.1"
+      },
+      {
+        "title": "R1 configuration excerpt",
+        "text": "interface GigabitEthernet0/0\n ip address 10.20.30.1 255.255.255.0\n no ip proxy-arp"
+      },
+      {
+        "title": "Representative observation for the failed attempt",
+        "text": "SALES-07 sends ARP requests for 10.20.40.10 on the sales LAN.\nNo reply to those requests arrives.\nR1’s 10.20.40.1/24 interface is up/up and the file server’s gateway is 10.20.40.1."
+      }
+    ],
+    "question": "Which configuration error explains the destination-specific failure?",
+    "options": [
+      "The gateway address is outside SALES-07's configured subnet.",
+      "The PC's /16 mask incorrectly treats the file server as local.",
+      "R1 requires a default route to reach its directly connected LAN.",
+      "The file-server address is the broadcast of its /24 subnet."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The PC’s /16 makes 10.20.0.0–10.20.255.255 appear local, including 10.20.40.10. Its observed ARP target matches that wrong decision. The file server is behind R1 and proxy ARP is disabled, so the local request cannot find that remote host. Gateway 10.20.30.1 is within both masks, the file server is a usable /24 host, and R1 has a directly connected path; widening or adding a default route would not repair the PC’s mask.",
+    "fix": "Restore SALES-07 to address `10.20.30.50`, mask `255.255.255.0`, and gateway `10.20.30.1`. Keep the administrator’s proxy-ARP policy unchanged. Read the corrected settings, then test local peer `10.20.30.60`, gateway `10.20.30.1`, and file server `10.20.40.10`. The corrected /24 makes the file server remote and selects the actual local gateway."
+  },
+  {
+    "id": "ipv4-addressing-t02",
+    "title": "Local communication works with an invalid gateway setting",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "scenario": "LAN-B is 192.168.44.192/27, with R1 at 192.168.44.193. PC-B can reach local PC-C at .200 and R1 at .193, but cannot reach LAN-A host 192.168.44.130. PC-C reaches LAN-A successfully. R1's two LAN interfaces are up/up and their masks match the plan.",
+    "exhibits": [
+      {
+        "title": "Recorded PC-B settings",
+        "text": "Address: 192.168.44.194\nMask: 255.255.255.224\nGateway: 192.168.44.192"
+      }
+    ],
+    "question": "What is wrong with PC-B's configuration?",
+    "options": [
+      "Its /27 mask must be /24 to allow any remote communication.",
+      "Its .194 address is the subnet broadcast and must be removed.",
+      "Its gateway is the network address, not the router interface.",
+      "Its .193 local ping proves the gateway field is already correct."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The subnet spans .192–.223; .192 is the network address, while R1 actually owns .193. The host's own .194 address and /27 mask are valid. Local pings use local delivery and do not establish that the default-gateway field is correct, so the successful ping to .193 does not contradict the fault.",
+    "fix": "Set PC-B's default gateway to `192.168.44.193`, retaining address `192.168.44.194` and mask `255.255.255.224`. Verify the values and retry both PC-C and `192.168.44.130`. Do not widen the LAN mask or duplicate R1's address."
+  }
+]

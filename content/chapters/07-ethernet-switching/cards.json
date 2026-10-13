@@ -1,0 +1,163 @@
+[
+  {
+    "id": "ethernet-switching-c01",
+    "front": "What is the basic untagged Ethernet frame size, and what is counted?",
+    "back": "64–1518 bytes for the basic 1500-byte-payload framing, destination MAC through FCS. Preamble, SFD, and interframe gap are excluded.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c02",
+    "front": "What is the data-area size in the basic untagged Ethernet II frame?",
+    "back": "46–1500 bytes including any minimum-size padding. The 1500-byte payload limit is distinct from the total Ethernet frame length.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c03",
+    "front": "What are the Ethernet II header and FCS sizes?",
+    "back": "Destination MAC 6 + source MAC 6 + EtherType 2 = 14-byte untagged header; FCS adds 4 bytes.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c05",
+    "front": "Which Ethernet II types distinguish IPv4 from ARP?",
+    "back": "0x0800 identifies IPv4; 0x0806 identifies ARP. The EtherType describes the Ethernet payload protocol.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c06",
+    "front": "Is every frame longer than 1518 bytes invalid?",
+    "back": "No. VLAN tags and supported larger-frame configurations change valid sizes. Interpret size/error counters against the platform and interface configuration.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c07",
+    "front": "How long is a MAC address, and what does an OUI identify?",
+    "back": "48 bits, or 12 hexadecimal digits. An OUI identifies an organizational allocation; locally assigned MACs and other IEEE allocation sizes also exist.",
+    "tags": [
+      "number",
+      "concept"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c08",
+    "front": "How do you identify an Ethernet group address and broadcast address?",
+    "back": "The low-order bit of the first octet is set for group addresses. The all-ones broadcast address is ffff.ffff.ffff.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c09",
+    "front": "What information does ordinary switching learn and look up?",
+    "back": "Learn source MAC + VLAN → ingress port. Look up destination MAC in the VLAN to forward, filter, or flood.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c10",
+    "front": "Does unknown-unicast flooding change the destination MAC?",
+    "back": "No. It copies the unicast frame to eligible forwarding ports in the same VLAN, excluding the ingress port.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c11",
+    "front": "What refreshes a dynamic MAC entry, and what is the reference 2960 timer?",
+    "back": "Frames received from that source refresh its location. The documented 2960 IOS 15.0(2)SE default is 300 seconds; verify the actual device.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c13",
+    "front": "What creates a static MAC entry for a VLAN and interface?",
+    "back": "mac address-table static H.H.H vlan N interface X. It does not age or disappear in a dynamic-table clear; remove the matching configuration to undo it.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c14",
+    "front": "How do you clear learned MAC entries without removing static entries?",
+    "back": "At privileged EXEC: clear mac address-table dynamic. Hosts sending new frames can be learned again immediately.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c15",
+    "front": "Which columns matter in show mac address-table?",
+    "back": "VLAN, MAC address, entry type, and port. Read the VLAN first; a dynamic row gives the learned path toward the source.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c16",
+    "front": "Store-and-forward compared with cut-through?",
+    "back": "Store-and-forward receives the whole frame and checks FCS before forwarding. Cut-through can start before the complete frame/FCS arrives.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c17",
+    "front": "How do switch ports and VLANs separate Ethernet domains?",
+    "back": "Switch ports separate collision domains; full-duplex links have no collisions. A VLAN is a broadcast domain that can span multiple switches.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c18",
+    "front": "Why can a Layer 2 loop carry repeated flooded traffic?",
+    "back": "Ordinary Ethernet has no hop-count field to stop circulation. Spanning tree creates a loop-free forwarding topology.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c19",
+    "front": "MAC address table versus ARP table?",
+    "back": "MAC table: MAC + VLAN → port. IPv4 ARP table: on-link IP → MAC. Clearing either table does not directly clear the other.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c20",
+    "front": "Do many MAC addresses on one port prove a fault?",
+    "back": "No. An uplink can carry many hosts. Compare the topology; repeated moves of one MAC warrant investigation but do not alone identify the cause.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c21",
+    "front": "Can the Ethernet FCS repair a corrupted frame?",
+    "back": "No. The CRC detects corruption; it is not error correction. A store-and-forward switch discards a frame that fails its FCS check.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ethernet-switching-c22",
+    "front": "A learned host transmits on a new port. Must the old entry age out first?",
+    "back": "No. With ordinary dynamic learning and no restriction, the new source frame updates its MAC/VLAN location to the new ingress port.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

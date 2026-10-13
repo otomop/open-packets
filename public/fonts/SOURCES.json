@@ -1,0 +1,166 @@
+{
+  "fetchedAt": "2026-09-20T01:49:23.3490023Z",
+  "stylesheetSource": "https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700..900&family=Archivo:ital,wght@0,400..700;1,400..600&family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+  "license": "SIL Open Font License 1.1",
+  "notes": "Unmodified official WOFF2 assets. Latin and Latin-ext subsets only. Archivo and Big Shoulders Display use variable weight ranges; IBM Plex Mono retains the three original static weights. Family names and authored styles are unchanged.",
+  "files": [
+    {
+      "file": "archivo-italic-400-600-latin-ext-v25.woff2",
+      "family": "Archivo",
+      "style": "italic",
+      "weight": "400 600",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/archivo/v25/k3kBo8UDI-1M0wlSfdzyIEkpwTM29hr-8mTYCx6muLRm.woff2",
+      "contentType": "font/woff2",
+      "bytes": 35016,
+      "sha256": "cbaf874ff231b0aba7c129e385be1f9949d63f9b51d8290898cbb3ce143dec3d"
+    },
+    {
+      "file": "archivo-italic-400-600-latin-v25.woff2",
+      "family": "Archivo",
+      "style": "italic",
+      "weight": "400 600",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/archivo/v25/k3kBo8UDI-1M0wlSfdzyIEkpwTM29hr-8mTYCxCmuA.woff2",
+      "contentType": "font/woff2",
+      "bytes": 39156,
+      "sha256": "3d109f97a71d3d3d04d16e5c4b95be8f89146a55ebbed239b90f5a8c5d4f437a"
+    },
+    {
+      "file": "archivo-normal-400-700-latin-ext-v25.woff2",
+      "family": "Archivo",
+      "style": "normal",
+      "weight": "400 700",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLyTOxK-vA.woff2",
+      "contentType": "font/woff2",
+      "bytes": 32608,
+      "sha256": "ff4f17d21930e36d6d93baba663e624cb767afc3feebf7adaebd82242638de05"
+    },
+    {
+      "file": "archivo-normal-400-700-latin-v25.woff2",
+      "family": "Archivo",
+      "style": "normal",
+      "weight": "400 700",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLydOxI.woff2",
+      "contentType": "font/woff2",
+      "bytes": 34928,
+      "sha256": "8f704806dbedeaaeca334b11ec348bc3ac3a439d6431544b3afb54f534ee4967"
+    },
+    {
+      "file": "big-shoulders-display-normal-700-900-latin-ext-v24.woff2",
+      "family": "Big Shoulders Display",
+      "style": "normal",
+      "weight": "700 900",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/bigshouldersdisplay/v24/fC1_PZJEZG-e9gHhdI4-NBbfd2ys3SjJCx1cwtDuHpM.woff2",
+      "contentType": "font/woff2",
+      "bytes": 29556,
+      "sha256": "2239cea544338b4de9b0344f8ce6b2aed761afe2173d40edd6a7cf49fb9308f7"
+    },
+    {
+      "file": "big-shoulders-display-normal-700-900-latin-v24.woff2",
+      "family": "Big Shoulders Display",
+      "style": "normal",
+      "weight": "700 900",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/bigshouldersdisplay/v24/fC1_PZJEZG-e9gHhdI4-NBbfd2ys3SjJCx1czNDu.woff2",
+      "contentType": "font/woff2",
+      "bytes": 35436,
+      "sha256": "698f9960927e7b5a0c38e5bf388cd0a6e42d855062fe70366cf5057664e39401"
+    },
+    {
+      "file": "ibm-plex-mono-normal-400-latin-ext-v20.woff2",
+      "family": "IBM Plex Mono",
+      "style": "normal",
+      "weight": "400",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1iEq129k.woff2",
+      "contentType": "font/woff2",
+      "bytes": 13348,
+      "sha256": "6bc0f226a5b7884a8170e3f62c63d7675609d4631bdc5931b5cdab81821f00eb"
+    },
+    {
+      "file": "ibm-plex-mono-normal-400-latin-v20.woff2",
+      "family": "IBM Plex Mono",
+      "style": "normal",
+      "weight": "400",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
+      "contentType": "font/woff2",
+      "bytes": 14708,
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7"
+    },
+    {
+      "file": "ibm-plex-mono-normal-500-latin-ext-v20.woff2",
+      "family": "IBM Plex Mono",
+      "style": "normal",
+      "weight": "500",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwl5FgtIU.woff2",
+      "contentType": "font/woff2",
+      "bytes": 13432,
+      "sha256": "6bb06407c97584b0867a959e05e8874693bfeb8c317de190811c51598f2d99ea"
+    },
+    {
+      "file": "ibm-plex-mono-normal-500-latin-v20.woff2",
+      "family": "IBM Plex Mono",
+      "style": "normal",
+      "weight": "500",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgg.woff2",
+      "contentType": "font/woff2",
+      "bytes": 14888,
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22"
+    },
+    {
+      "file": "ibm-plex-mono-normal-600-latin-ext-v20.woff2",
+      "family": "IBM Plex Mono",
+      "style": "normal",
+      "weight": "600",
+      "subset": "latin-ext",
+      "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwl5FgtIU.woff2",
+      "contentType": "font/woff2",
+      "bytes": 14328,
+      "sha256": "32057cf50dd14bdb21a2c93766c4a2c43e4abe688ea3922df3203cac7751a98b"
+    },
+    {
+      "file": "ibm-plex-mono-normal-600-latin-v20.woff2",
+      "family": "IBM Plex Mono",
+      "style": "normal",
+      "weight": "600",
+      "subset": "latin",
+      "source": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3vAOwlBFgg.woff2",
+      "contentType": "font/woff2",
+      "bytes": 15620,
+      "sha256": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83"
+    }
+  ],
+  "licenseFiles": [
+    {
+      "file": "licenses/archivo/OFL.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/archivo/OFL.txt"
+    },
+    {
+      "file": "licenses/archivo/METADATA.pb",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/archivo/METADATA.pb"
+    },
+    {
+      "file": "licenses/bigshouldersdisplay/OFL.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/bigshouldersdisplay/OFL.txt"
+    },
+    {
+      "file": "licenses/bigshouldersdisplay/METADATA.pb",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/bigshouldersdisplay/METADATA.pb"
+    },
+    {
+      "file": "licenses/ibmplexmono/OFL.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexmono/OFL.txt"
+    },
+    {
+      "file": "licenses/ibmplexmono/METADATA.pb",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexmono/METADATA.pb"
+    }
+  ]
+}

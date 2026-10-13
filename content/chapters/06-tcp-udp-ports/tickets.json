@@ -1,0 +1,62 @@
+[
+  {
+    "id": "tcp-udp-ports-t01",
+    "title": "HTTP fails while ping and DNS still work",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "scenario": "PC-A and SRV1 share a working VLAN and IPv4 subnet. A fresh HTTP request fails. The technician collects the following client and server observations; they are representative teaching evidence.",
+    "exhibits": [
+      {
+        "title": "PC-A test results",
+        "text": "ping 192.168.40.20: replies received\nnslookup www.lab.test: returns 192.168.40.20\nFresh request to http://192.168.40.20: fails\nFresh request to http://www.lab.test: fails"
+      },
+      {
+        "title": "SRV1 Services settings",
+        "text": "HTTP: Off\nDNS: On\nA record www.lab.test: 192.168.40.20"
+      }
+    ],
+    "question": "Which diagnosis is directly supported by all the evidence?",
+    "options": [
+      "The client needs a different default gateway for the HTTP service.",
+      "The name record points to a different host from the approved server.",
+      "The HTTP service is disabled while the other tested services still work.",
+      "A failed TCP opening is impossible because the ICMP round trip succeeds."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The server setting explicitly identifies HTTP Off, while the fresh lookup returns the approved address and ICMP replies. An incorrect gateway is not needed for this same-subnet exchange, and successful ICMP does not establish a TCP opening. Without the server-setting exhibit, the failed-browser symptom alone would not identify one cause.",
+    "fix": "On SRV1, open Services → HTTP and set HTTP On. Start fresh requests to both http://192.168.40.20 and http://www.lab.test, verify that the page loads, then save the restored Packet Tracer topology. Do not change addressing or routing to repair a deliberately stopped service."
+  },
+  {
+    "id": "tcp-udp-ports-t02",
+    "title": "The server address works but its name does not",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "scenario": "The isolated LAN contains PC-A at 192.168.40.10/24 and SRV1 at 192.168.40.20/24. No device uses 192.168.40.99. HTTP and DNS are enabled on SRV1, and its www.lab.test A record correctly points to 192.168.40.20. The technician checks a fresh browser request and the PC configuration.",
+    "exhibits": [
+      {
+        "title": "PC-A configured settings",
+        "text": "IPv4 address: 192.168.40.10\nSubnet mask: 255.255.255.0\nDNS server: 192.168.40.99"
+      },
+      {
+        "title": "Observed tests",
+        "text": "http://192.168.40.20: page loads\nnslookup www.lab.test using configured DNS: fails\nhttp://www.lab.test: name cannot be resolved"
+      }
+    ],
+    "question": "Which correction addresses the demonstrated cause?",
+    "options": [
+      "Set PC-A’s DNS server to 192.168.40.20 and repeat the fresh lookup.",
+      "Replace the server’s correct A record with a pointer to 192.168.40.99.",
+      "Change SRV1’s HTTP port to 53 so that the browser can request the name.",
+      "Set a default gateway on PC-A before attempting its on-link DNS server."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The client sends name queries to an explicitly unused address, while direct-IP HTTP already works. Correct the selected resolver, then requery and repeat the original named request. Changing the valid A record or the HTTP port confuses separate services; a default gateway does not make the unused on-link resolver exist.",
+    "fix": "Open PC-A Desktop → IP Configuration, change DNS Server to 192.168.40.20, and run nslookup www.lab.test. Confirm the returned address, open http://www.lab.test, and save the repaired topology. Leave the working server IP, subnet mask, and HTTP service unchanged."
+  }
+]

@@ -1,0 +1,197 @@
+[
+  {
+    "id": "trunks-dtp-d01",
+    "task": "The selected switch port connects to a router that does not negotiate DTP. Configure the switch port as a static trunk.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport mode trunk",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-trunks-on-2960-3560-and-9200",
+      "hint": "The required link mode must not depend on the peer negotiating.",
+      "takeaway": "Static trunk mode supplies the intended local mode. Match native and allowed VLAN settings with the peer and verify the operational state.",
+      "syntax": [
+        {
+          "text": "switchport mode trunk",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d02",
+    "task": "Both ends use the default untagged-native behavior. On this selected trunk, match the peer’s agreed native VLAN 99.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport trunk native vlan 99",
+    "accept": [],
+    "teaching": {
+      "sectionId": "native-vlan-the-one-vlan-that-travels-untagged",
+      "hint": "Ordinary untagged ingress belongs to the native VLAN.",
+      "takeaway": "Configure the same native interpretation at both ends. A mismatch can classify untagged traffic into different VLANs even when tagged traffic still works.",
+      "syntax": [
+        {
+          "text": "switchport trunk native vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "99",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d03",
+    "task": "The approved new trunk must carry exactly VLANs 10, 20 and 99. Replace its allowed list with that complete set.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport trunk allowed vlan 10,20,99",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-allowed-vlan-list",
+      "hint": "Here the requirement is replacement, not addition.",
+      "takeaway": "A bare allowed-list command replaces the previous list. Use it only when you intend that complete set; otherwise existing working VLANs can be removed.",
+      "syntax": [
+        {
+          "text": "switchport trunk allowed vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10,20,99",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d04",
+    "task": "This trunk already carries VLANs 10, 20 and 99. Permit VLAN 30 as well while preserving every existing allowed VLAN.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport trunk allowed vlan add 30",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-allowed-vlan-list",
+      "hint": "Choose the list operation that extends the current set.",
+      "takeaway": "Adding VLAN 30 preserves the existing entries. VLAN 30 must also exist, be permitted at the far end and be forwarding before its traffic can cross.",
+      "syntax": [
+        {
+          "text": "switchport trunk allowed vlan add",
+          "kind": "keyword"
+        },
+        {
+          "text": "30",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d05",
+    "task": "VLAN 20 is being retired from this trunk. Remove only VLAN 20 and preserve all other allowed VLANs.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport trunk allowed vlan remove 20",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-allowed-vlan-list",
+      "hint": "Change one member of the set without replacing the set.",
+      "takeaway": "Removal affects this trunk’s permitted VLANs. It does not delete VLAN 20 from the switch database or reassign its access ports.",
+      "syntax": [
+        {
+          "text": "switchport trunk allowed vlan remove",
+          "kind": "keyword"
+        },
+        {
+          "text": "20",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d06",
+    "task": "The selected port is already a static trunk to a peer that does not use DTP. Stop sending DTP negotiation messages.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport nonegotiate",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dtp-how-a-port-decides-to-trunk",
+      "hint": "Trunk mode and negotiation-message transmission are separate settings.",
+      "takeaway": "Suppressing DTP does not configure the far end or stop 802.1Q tagging. Keep static trunking and matching VLAN settings on both peers.",
+      "syntax": [
+        {
+          "text": "switchport nonegotiate",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d10",
+    "task": "A VLAN works locally but fails across the interswitch link. Display operational trunks with their native, allowed, active and forwarding VLAN lists.",
+    "mode": "SW1#",
+    "answer": "show interfaces trunk",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Choose the trunk view that separates permission from effective forwarding.",
+      "takeaway": "An allowed VLAN can still be absent, inactive or nonforwarding. Compare the relevant lists at both ends before changing configuration.",
+      "syntax": [
+        {
+          "text": "show interfaces trunk",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d11",
+    "task": "Gi0/1 is missing from the operational trunk list. Display its detailed administrative and operational switchport settings.",
+    "mode": "SW1#",
+    "answer": "show interfaces gigabitethernet0/1 switchport",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "A missing operational entry is a reason to inspect the named port’s configured mode.",
+      "takeaway": "Compare administrative intent with current operation. The port may be configured as a trunk yet lack an operational link; do not change its VLAN list without that distinction.",
+      "syntax": [
+        {
+          "text": "show interfaces",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/1",
+          "kind": "interface"
+        },
+        {
+          "text": "switchport",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "trunks-dtp-d13",
+    "task": "VLAN 30 appears in the trunk’s allowed list but not its allowed-and-active list. Display the local VLAN database summary before editing the trunk.",
+    "mode": "SW1#",
+    "answer": "show vlan brief",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-allowed-vlan-list",
+      "hint": "Permission on the trunk does not create the VLAN.",
+      "takeaway": "Check whether VLAN 30 exists and is active locally, then check the peer. Repeating an allowed-list command cannot create a missing VLAN database entry.",
+      "syntax": [
+        {
+          "text": "show vlan brief",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

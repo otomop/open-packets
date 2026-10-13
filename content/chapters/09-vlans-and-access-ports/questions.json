@@ -1,0 +1,573 @@
+[
+  {
+    "id": "vlans-and-access-ports-q05",
+    "type": "multi",
+    "objectives": [
+      "v1:2.1.a",
+      "v2:2.2.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two checks help establish the intended switch-side data/voice configuration? Choose two.",
+    "options": [
+      "Check only that the port is administratively configured as access",
+      "Verify that both configured VLANs exist and are active",
+      "Treat successful PC data traffic as proof of voice registration",
+      "Read the port’s access VLAN and voice VLAN settings",
+      "Require the phone port to negotiate a general-purpose trunk"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Start with the VLAN database and the port’s actual data/voice settings. Phone power, provisioning, IP services and registration require their own checks.",
+    "whyWrong": {
+      "0": "Access mode alone does not identify whether the intended data and voice VLANs are active.",
+      "2": "PC traffic does not verify voice addressing or call-control registration.",
+      "4": "The access-plus-voice feature does not require a general-purpose trunk."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q09",
+    "type": "single",
+    "objectives": [
+      "v1:2.1",
+      "v2:2.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command directly displays a port’s administrative mode, operational mode, access VLAN and voice VLAN?",
+    "options": [
+      "`show mac address-table interface fastethernet0/1`",
+      "`show interfaces fastethernet0/1 switchport`",
+      "`show ip interface brief`",
+      "`show power inline`"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The switchport view puts intended mode, operating mode and VLAN assignments together. Use VLAN and MAC-table commands alongside it for a fuller diagnosis.",
+    "whyWrong": {
+      "0": "That shows learned MAC entries rather than all the listed switchport settings.",
+      "2": "That reports IP/interface state rather than the full data/voice VLAN configuration.",
+      "3": "That reports PoE information, not all of these VLAN and mode fields."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q12",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.a",
+      "v2:2.2.c"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1# show interfaces fa0/7 switchport — excerpt",
+      "text": "Operational Mode: static access\nAccess Mode VLAN: 10 (USERS)\nVoice VLAN: 30 (Inactive)"
+    },
+    "prompt": "The port is intended to provide data VLAN 10 and voice VLAN 30. What switch-side defect is visible, without making assumptions about the phone’s fallback behavior?",
+    "options": [
+      "The phone is proven to have registered in the data VLAN",
+      "The data VLAN is inactive because the voice VLAN is missing",
+      "The configured voice VLAN is inactive on this switch",
+      "The port must be a trunk because a voice VLAN is configured"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The switchport excerpt identifies an inactive voice VLAN. Verify the VLAN database, create or restore the intended VLAN, and then check the phone’s separate power/provisioning/IP state.",
+    "whyWrong": {
+      "0": "This output does not establish phone addressing or registration.",
+      "1": "The excerpt identifies the inactive voice VLAN separately.",
+      "3": "Access-plus-voice operation does not require general trunk mode."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q13",
+    "type": "single",
+    "objectives": [
+      "v1:2.1",
+      "v2:2.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement about VLAN 1 is accurate for the Catalyst lab defaults?",
+    "options": [
+      "Its existence means the switch already has secure remote management",
+      "It is the factory-default data access VLAN on this lab switch",
+      "It automatically routes packets between newly created VLANs",
+      "It is deleted automatically when another access VLAN is created"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VLAN 1 has default roles on the referenced Catalyst platform. Do not confuse those defaults with static access mode on every port or a complete, secure management configuration.",
+    "whyWrong": {
+      "0": "VLAN existence does not create an IP address, SSH service or authentication policy.",
+      "2": "A VLAN is a Layer 2 domain and does not by itself enable inter-VLAN routing.",
+      "3": "Creating another VLAN does not delete VLAN 1."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q01",
+    "type": "single",
+    "objectives": [
+      "v1:2.1",
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "SW1# show vlan brief — excerpt",
+      "text": "10 USERS    active Fa0/1\n20 PRINTERS active Fa0/2"
+    },
+    "prompt": "PC-A is 192.168.10.11/24 on Fa0/1; PC-B is 192.168.10.12/24 on Fa0/2. Both links are up, and no routing or VLAN translation is configured. Why can they not communicate?",
+    "options": [
+      "Their host addresses belong to different IPv4 subnets",
+      "The peers occupy different Layer 2 broadcast domains",
+      "The switch needs a management IP to learn either MAC address",
+      "Their default gateways must forward the same-subnet ARP request"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The masks make each peer appear local, but ARP and ordinary switching remain within the assigned VLAN. Correct the mistaken VLAN membership rather than inventing a gateway requirement for same-subnet peers.",
+    "whyWrong": {
+      "0": "Both addresses belong to 192.168.10.0/24.",
+      "2": "Layer 2 forwarding does not require a switch management IP.",
+      "3": "The hosts consider each other on-link; a gateway does not bridge their separate VLAN broadcasts."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q03",
+    "type": "single",
+    "objectives": [
+      "v1:2.1",
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied relevant verification notes",
+      "text": "SW1 Fa0/4:\n Administrative Mode: static access\n Operational Mode: static access\n Access Mode VLAN: 20 (Inactive)\nComplete VLAN database check: VLAN 20 is absent."
+    },
+    "prompt": "A printer’s address and cable have not changed. Which correction addresses the condition shown for its data VLAN?",
+    "options": [
+      "Recreate the intended VLAN 20 in the VLAN database",
+      "Move the printer to VLAN 1 while retaining its address",
+      "Change the switch management gateway to the printer",
+      "Clear learned MAC entries while leaving VLAN 20 absent"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The port retains an access-VLAN assignment, but that VLAN is inactive. Restore the intended VLAN and verify the local data path; do not change host addressing to hide the switch-side fault.",
+    "whyWrong": {
+      "1": "That changes the intended membership instead of restoring the missing VLAN.",
+      "2": "A management gateway cannot create a Layer 2 VLAN.",
+      "3": "A dynamic table clear cannot recreate an absent VLAN."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q04",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.a",
+      "v2:2.2.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A phone is provisioned to tag voice traffic with VLAN 30. Its attached PC sends ordinary untagged data. The switchport has access VLAN 10 and voice VLAN 30. How are those two traffic types classified?",
+    "options": [
+      "Both traffic types enter VLAN 30 because the phone is the physical neighbor",
+      "PC data enters VLAN 30; tagged voice enters VLAN 10",
+      "PC data enters VLAN 10; tagged voice enters VLAN 30",
+      "Both traffic types enter VLAN 10 because the port remains access mode"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The ordinary PC traffic uses the access VLAN, while correctly tagged phone voice traffic uses the configured voice VLAN. This describes the stated provisioning; it does not claim that every phone automatically obtains those settings.",
+    "whyWrong": {
+      "0": "The configured access VLAN still classifies ordinary untagged PC data.",
+      "1": "This reverses the data and voice assignments.",
+      "3": "The voice-VLAN feature permits the stated tagged voice behavior on an access port."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q06",
+    "type": "single",
+    "objectives": [
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An AP requires 25 W available at the powered device. Considering the standard limits below, what is the lowest listed PoE standard that can supply it?",
+    "options": [
+      "IEEE 802.3at, with up to 25.5 W available at the PD",
+      "IEEE 802.3af, with up to 12.95 W available at the PD",
+      "IEEE 802.3bt Type 3, as the first standard above 25 W at the PD",
+      "IEEE 802.3bt Type 4, as the first standard above 25 W at the PD"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Compare power needed at the device with device-side capability, not just the switch-port source rating. 802.3at supplies up to 25.5 W at the PD under its specified conditions.",
+    "whyWrong": {
+      "1": "The requirement exceeds the device-side capability of 802.3af.",
+      "2": "Type 3 can supply more power, but 802.3at already meets 25 W.",
+      "3": "Type 4 is not the lowest standard that meets this requirement."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q07",
+    "type": "single",
+    "objectives": [
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A switch has a usable 370 W PoE allocation budget and 24 powered ports. Ten phones reserve 6.3 W each. Each additional AP requires 30 W of allocation at the PSE. How many APs fit within the remaining power and port capacity?",
+    "options": [
+      "9 APs, because every phone reserves a full 15.4 W",
+      "11 APs, because 307 divided by 30 rounds to eleven",
+      "14 APs, because fourteen physical ports remain free",
+      "10 APs, using 300 W of the remaining 307 W"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The phones reserve 63 W, leaving 307 W. Ten 30 W allocations fit, and there are enough ports; eleven require 330 W. This calculation uses the stated allocations rather than momentary measured consumption.",
+    "whyWrong": {
+      "0": "The problem explicitly supplies a 6.3 W reservation per phone.",
+      "1": "Capacity must be rounded down; eleven allocations would exceed the remaining budget.",
+      "2": "Available port count does not override the shared power limit."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q08",
+    "type": "single",
+    "objectives": [
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "PoE allocation evidence — representative excerpt",
+      "text": "Available: 370.0 W\nAllocated: 345.0 W\nRemaining:  25.0 W\nRequested allocation on Gi1/0/13: 30.0 W\nOperational state: power-deny"
+    },
+    "prompt": "A compatible AP requests 30 W of PSE allocation on a port whose configured maximum is 30 W. Its cable and hardware capability pass checks. What best explains the denial shown?",
+    "options": [
+      "The 30 W per-port maximum is below the 30 W request",
+      "The known-good cable cannot carry the supported PoE allocation",
+      "The shared budget has only 25 W remaining for a 30 W request",
+      "The AP has no assigned IP address before power negotiation"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The per-port requirement is supported, but the shared remaining budget is insufficient. Provide supported capacity or move an endpoint to a compatible PSE with enough budget; verify actual requirements before changing limits.",
+    "whyWrong": {
+      "0": "The stated maximum equals the request; the shared allocation is the failing constraint.",
+      "1": "The scenario verifies the cable and device compatibility.",
+      "3": "PoE discovery and allocation do not require a preexisting host IP address."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q17",
+    "type": "single",
+    "objectives": [
+      "v2:2.2.d"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A virtual host presents tagged traffic for several VLANs over one physical uplink. Which connectivity choice fits that requirement?",
+    "options": [
+      "A single access VLAN selected from the host’s management address",
+      "A voice-VLAN command for each of the virtual machines",
+      "An unconfigured port chosen only because its speed matches",
+      "A trunk with VLAN tagging and an allowed list matching the host"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Several tagged VLANs on one uplink call for compatible trunking at both ends. Chapter 10 teaches the configuration; a virtual host does not automatically imply LACP or a particular edge-protection policy.",
+    "whyWrong": {
+      "0": "One ordinary access VLAN does not carry all the stated tagged VLANs.",
+      "1": "The voice feature is not a general list of VM VLANs.",
+      "2": "Physical speed alone does not establish VLAN tagging and membership."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q11",
+    "type": "single",
+    "objectives": [
+      "v2:2.2.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An AP’s design uses one untagged management VLAN; client traffic is tunneled to its controller rather than locally presented as separate VLANs. Which port choice fits the stated uplink?",
+    "options": [
+      "An access port in the AP management VLAN, with suitable power",
+      "A trunk whose native VLAN is chosen from a wireless client subnet",
+      "A voice port with the AP management VLAN used as voice VLAN",
+      "A routed port that removes the AP’s Layer 2 management VLAN"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Use the traffic actually presented by the AP. The stated tunneled design can use a single access VLAN; APs that locally present multiple VLANs require a different configuration.",
+    "whyWrong": {
+      "1": "The stated uplink presents only its untagged management network.",
+      "2": "An AP management uplink does not require the phone voice-VLAN feature.",
+      "3": "That changes the stated Layer 2 attachment rather than implementing it."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q14",
+    "type": "single",
+    "objectives": [
+      "v2:2.2.e"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which endpoint calls for particular care before reusing assumptions from a single-PC access-port design?",
+    "options": [
+      "A single printer specified to send one untagged data network",
+      "A single workstation with one untagged Ethernet interface",
+      "A standalone sensor specified to use one untagged data VLAN",
+      "A transparent firewall that bridges frames from other devices"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A bridging appliance can carry other devices’ source addresses and participate in a wider Layer 2 path. Review its forwarding role and VLAN requirements before selecting edge protections or MAC limits, which are taught later.",
+    "whyWrong": {
+      "0": "That stated requirement fits ordinary access-port selection.",
+      "1": "That stated requirement fits the basic host-port example.",
+      "2": "That stated requirement alone does not imply a bridging role."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q15",
+    "type": "multi",
+    "objectives": [
+      "v1:2.1",
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "After erasing startup configuration on the referenced Catalyst platform, a technician still finds normal-range user VLANs. Which two statements explain how to verify this state? Choose two.",
+    "options": [
+      "VLAN information can persist in the separate VLAN database",
+      "Erasing startup configuration guarantees deletion of every switch file",
+      "The name of a VLAN determines whether it is stored persistently",
+      "A remaining VLAN proves a router is still forwarding between subnets",
+      "Check VLAN definitions and interface assignments separately"
+    ],
+    "answer": [
+      0,
+      4
+    ],
+    "explanation": "The VLAN database can persist independently of the startup configuration. VTP mode and platform influence how definitions are stored; inspect the actual VLAN database and running interface assignments instead of assuming a universal reset result.",
+    "whyWrong": {
+      "1": "Other persistent files can remain.",
+      "2": "A VLAN label is not its persistence mechanism; inspect the platform's database and configuration.",
+      "3": "A VLAN database entry says nothing by itself about routing."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q21",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.a",
+      "v2:2.2.a"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An untagged printer must join existing active VLAN 50 on unused Fa0/8. The port is enabled. Which interface configuration implements that requirement?",
+    "options": [
+      "`switchport mode trunk` and `switchport trunk allowed vlan 50`",
+      "`switchport mode access` and `switchport voice vlan 50`",
+      "`switchport mode access` and `switchport access vlan 50`",
+      "`switchport mode access` and `switchport access vlan 1`"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Use static access mode and the required data VLAN. A voice-VLAN setting is a different operation; no multi-VLAN uplink is required.",
+    "whyWrong": {
+      "0": "A trunk is not the requested ordinary untagged endpoint attachment.",
+      "1": "The voice command does not replace the printer's access-VLAN assignment.",
+      "3": "This assigns a different VLAN from the requirement."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q24",
+    "type": "single",
+    "objectives": [
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative PoE configuration and state",
+      "text": "Interface Gi1/0/7\n power inline never\nVerified per-port capability: sufficient for this endpoint\nShared remaining allocation: sufficient\nObserved endpoint power: off"
+    },
+    "prompt": "The compatible endpoint and cable work on a second PoE port. This port has sufficient supported power and shared budget. Which narrow change addresses the displayed administrative condition?",
+    "options": [
+      "Set `power inline auto` on the intended supported interface",
+      "Assign the port to the endpoint's untagged data VLAN",
+      "Clear its dynamic MAC entries before retrying power",
+      "Add a management address to the switch's existing VLAN"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The port is administratively prevented from supplying PoE. Restore automatic detection on that port, then verify actual allocation and endpoint startup.",
+    "whyWrong": {
+      "1": "VLAN membership does not override the power administrative state.",
+      "2": "Dynamic MAC state does not enable PoE detection.",
+      "3": "A management IP address is not needed for PoE discovery."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q26",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.a",
+      "v2:2.2.a"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An ordinary PC must use a fixed access port in existing VLAN 10. The port operates as access but its administrative mode is dynamic auto. Which change completes the stated mode requirement?",
+    "options": [
+      "Set `switchport voice vlan 10` and leave the administrative mode",
+      "Set `switchport mode trunk` while retaining VLAN 10",
+      "Set `switchport access vlan 10` again while retaining dynamic auto",
+      "Set `switchport mode access` while retaining access VLAN 10"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Operational access state does not mean the port is fixed in static access mode. Select the required administrative mode and verify both mode fields and VLAN membership.",
+    "whyWrong": {
+      "0": "Voice-VLAN configuration does not set static access mode.",
+      "1": "A trunk does not meet the fixed access-port requirement.",
+      "2": "The VLAN assignment is already correct; it does not change administrative mode."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q27",
+    "type": "multi",
+    "objectives": [
+      "v2:2.2.a"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A replacement IoT sensor sends one untagged data network and needs PoE. Existing VLAN 60 is correct, but its static access port remains in VLAN 10 with power administratively disabled. Capability and budget are sufficient. Which two interface changes meet the requirement?",
+    "options": [
+      "`switchport voice vlan 60`",
+      "`power inline never`",
+      "`switchport access vlan 60`",
+      "`switchport access vlan 10`",
+      "`power inline auto`"
+    ],
+    "answer": [
+      2,
+      4
+    ],
+    "explanation": "Set data membership to VLAN 60 and enable supported automatic PoE detection. Those correct independent port attributes; the existing static access mode can remain.",
+    "whyWrong": {
+      "0": "The sensor requires a data access VLAN, not a phone voice VLAN.",
+      "1": "This retains the power-disable condition.",
+      "3": "This retains the wrong data VLAN."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q25",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.a",
+      "v2:2.2.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied voice/data checks",
+      "text": "Fa0/7 operational access VLAN 10, voice VLAN 30\nVLANs 10 and 30 active\nPhone power on; phone IPv4 address 0.0.0.0\nPC data test to VLAN 10 peer succeeds"
+    },
+    "prompt": "The attached PC communicates normally. The powered phone's voice VLAN is active, but its displayed IPv4 address is 0.0.0.0; its design requires automatic addressing. What should be checked next before changing switchport mode?",
+    "options": [
+      "Whether the working PC can still use its existing data-VLAN address",
+      "Whether the phone's required voice addressing and provisioning service is available",
+      "Whether changing both data and voice to VLAN 10 permits the phone to boot",
+      "Whether clearing the PC's MAC entry makes the switch assign the phone an IP"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Power and the switch-side VLAN assignment are verified, but the phone has not obtained its required address. Investigate the voice-network service and provisioning path; working PC traffic does not validate that separate service.",
+    "whyWrong": {
+      "0": "Repeating the working data test does not check voice address acquisition.",
+      "2": "That discards the documented voice-network design without identifying the missing service.",
+      "3": "The MAC table supplies forwarding locations, not endpoint IP configuration."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q22",
+    "type": "single",
+    "objectives": [
+      "v1:2.1",
+      "v2:2.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied endpoint and switch evidence",
+      "text": "Documented LAN: VLAN 40, 192.168.40.0/24\nPC-A: 192.168.40.10/24, no gateway, Fa0/1\nPC-B: 192.168.41.20/24, no gateway, Fa0/2\nFa0/1 and Fa0/2: connected; static access VLAN 40\nVLAN 40: active; fresh A and B MAC entries in VLAN 40"
+    },
+    "prompt": "Both PCs use the same active VLAN and their source MACs are learned on the expected ports. No router or gateway is configured. Which correction addresses the documented inconsistency?",
+    "options": [
+      "Move PC-B's port to a new VLAN named after its current address",
+      "Give PC-B an unused address in the documented 192.168.40.0/24 LAN",
+      "Create a switch management SVI using PC-B's current address",
+      "Change only PC-A's mask to /16 while leaving PC-B at /24"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VLAN membership is correct, but PC-B's address belongs to another IP subnet. With no routing path, use an unused address in the intended LAN, such as 192.168.40.20/24.",
+    "whyWrong": {
+      "0": "Moving the port would break the documented common VLAN and would not supply routing.",
+      "2": "A management address does not correct PC-B's local-versus-remote decision.",
+      "3": "That makes the hosts disagree about on-link scope and does not implement the documented /24 LAN."
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-q23",
+    "type": "single",
+    "objectives": [
+      "v2:2.2.b"
+    ],
+    "difficulty": 3,
+    "exhibit": null,
+    "prompt": "An AP needs a supported 30 W allocation at the PSE. All listed PoE ports and cabling support its negotiation method. Which unused port meets both the per-port and shared-budget constraints?",
+    "options": [
+      "SW-A: per-port maximum 15.4 W; shared remaining 60 W",
+      "SW-B: per-port maximum 30 W; shared remaining 25 W",
+      "SW-C: per-port maximum 30 W; shared remaining 40 W",
+      "SW-D: per-port maximum 20 W; shared remaining 80 W"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "SW-C satisfies both constraints. Spare shared power cannot raise an individual port's supported limit, and an adequate per-port limit cannot create missing shared capacity.",
+    "whyWrong": {
+      "0": "The per-port maximum is below the required allocation.",
+      "1": "The shared remaining capacity is less than 30 W.",
+      "3": "The per-port maximum is below 30 W despite ample shared capacity."
+    }
+  }
+]

@@ -1,0 +1,5434 @@
+{
+  "capturedOn": "2026-09-20",
+  "chapters": [
+    {
+      "id": "start-here",
+      "number": 0,
+      "title": "Start here",
+      "part": "start",
+      "prereqs": [],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "which-exam-you-are-sitting",
+          "title": "Which exam you are sitting"
+        },
+        {
+          "id": "install-packet-tracer-and-learn-its-workspace",
+          "title": "Install Packet Tracer and learn its workspace"
+        },
+        {
+          "id": "the-command-line-modes-help-and-the-pager",
+          "title": "The command line: modes, help and the pager"
+        },
+        {
+          "id": "saving-reloading-and-the-domain-lookup-trap",
+          "title": "Saving, reloading and the domain-lookup trap"
+        },
+        {
+          "id": "how-to-study-with-this-site",
+          "title": "How to study with this site"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Prepare the project"
+        },
+        {
+          "id": "step-2",
+          "title": "Cable and inspect the ports"
+        },
+        {
+          "id": "step-3",
+          "title": "Address the PCs and test the LAN"
+        },
+        {
+          "id": "step-4",
+          "title": "Enter IOS and set the hostname"
+        },
+        {
+          "id": "step-5",
+          "title": "Practice help and interpret interface status"
+        },
+        {
+          "id": "step-6",
+          "title": "Introduce and correct a controlled fault"
+        },
+        {
+          "id": "step-7",
+          "title": "Save and verify"
+        },
+        {
+          "id": "step-8",
+          "title": "Observe an unsaved reload"
+        }
+      ]
+    },
+    {
+      "id": "network-models",
+      "number": 1,
+      "title": "Network models",
+      "part": "foundations",
+      "prereqs": [
+        "start-here"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-we-need-a-model",
+          "title": "Why we need a model"
+        },
+        {
+          "id": "seven-layers-four-layers-five-pdus",
+          "title": "Seven layers, four layers, five PDUs"
+        },
+        {
+          "id": "encapsulation-and-de-encapsulation",
+          "title": "Encapsulation and de-encapsulation"
+        },
+        {
+          "id": "local-or-remote-the-host-s-first-decision",
+          "title": "Local or remote: the host's first decision"
+        },
+        {
+          "id": "the-packet-walk-pc-a-to-server-b-and-back",
+          "title": "The packet walk: PC-A to Server-B and back"
+        },
+        {
+          "id": "where-the-layers-live-devices-and-commands",
+          "title": "Where the layers live: devices and commands"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Build and label the topology"
+        },
+        {
+          "id": "step-2",
+          "title": "Configure the router interfaces"
+        },
+        {
+          "id": "step-3",
+          "title": "Configure the hosts and record the baseline"
+        },
+        {
+          "id": "step-4",
+          "title": "Observe the first remote exchange"
+        },
+        {
+          "id": "step-5",
+          "title": "Compare local and remote delivery"
+        },
+        {
+          "id": "step-6",
+          "title": "Read the three tables"
+        },
+        {
+          "id": "step-7",
+          "title": "Introduce a return-path fault"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore and verify"
+        }
+      ]
+    },
+    {
+      "id": "components-and-topologies",
+      "number": 2,
+      "title": "Components & topologies",
+      "part": "foundations",
+      "prereqs": [
+        "network-models"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-roles-matter-more-than-boxes",
+          "title": "Why roles matter more than boxes"
+        },
+        {
+          "id": "routers-switches-endpoints-and-servers",
+          "title": "Routers, switches, endpoints and servers"
+        },
+        {
+          "id": "firewalls-ips-access-points-and-controllers",
+          "title": "Firewalls, IPS, access points and controllers"
+        },
+        {
+          "id": "power-over-ethernet",
+          "title": "Power over Ethernet"
+        },
+        {
+          "id": "campus-designs-two-tier-three-tier-and-spine-leaf",
+          "title": "Campus designs: two-tier, three-tier and spine-leaf"
+        },
+        {
+          "id": "wan-soho-and-cloud",
+          "title": "WAN, SOHO and cloud"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Place, label and cable the devices"
+        },
+        {
+          "id": "step-2",
+          "title": "Name the switches and inspect their connections"
+        },
+        {
+          "id": "step-3",
+          "title": "Address and enable the router and endpoints"
+        },
+        {
+          "id": "step-4",
+          "title": "Test the local server"
+        },
+        {
+          "id": "step-5",
+          "title": "Test the other LAN"
+        },
+        {
+          "id": "step-6",
+          "title": "Shut one router interface and observe the effect"
+        },
+        {
+          "id": "step-7",
+          "title": "Restore and verify service"
+        },
+        {
+          "id": "step-8",
+          "title": "Save the restored configurations"
+        },
+        {
+          "id": "step-9",
+          "title": "Explain the roles and a proposed expansion"
+        }
+      ]
+    },
+    {
+      "id": "cabling-and-interfaces",
+      "number": 3,
+      "title": "Cabling & interfaces",
+      "part": "foundations",
+      "prereqs": [
+        "network-models"
+      ],
+      "sections": [
+        {
+          "id": "why-the-wire-still-matters",
+          "title": "Why the wire still matters"
+        },
+        {
+          "id": "copper-standards-categories-and-pinouts",
+          "title": "Copper: standards, categories and pinouts"
+        },
+        {
+          "id": "fiber-single-mode-multimode-and-optics",
+          "title": "Fiber: single-mode, multimode and optics"
+        },
+        {
+          "id": "shared-media-point-to-point-and-duplex",
+          "title": "Shared media, point-to-point and duplex"
+        },
+        {
+          "id": "autonegotiation-and-the-mismatch",
+          "title": "Autonegotiation and the mismatch"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and address the network"
+        },
+        {
+          "id": "step-2",
+          "title": "Record the working baseline"
+        },
+        {
+          "id": "step-3",
+          "title": "Introduce a controlled duplex mismatch"
+        },
+        {
+          "id": "step-4",
+          "title": "Restore duplex agreement and test again"
+        },
+        {
+          "id": "step-5",
+          "title": "Introduce a speed mismatch"
+        },
+        {
+          "id": "step-6",
+          "title": "Restore speed negotiation and verify recovery"
+        },
+        {
+          "id": "step-7",
+          "title": "Identify an administrative shutdown"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore, retest and save the final state"
+        },
+        {
+          "id": "step-9",
+          "title": "Diagnose supplied physical-layer evidence"
+        }
+      ]
+    },
+    {
+      "id": "ipv4-addressing",
+      "number": 4,
+      "title": "IPv4 addressing",
+      "part": "foundations",
+      "prereqs": [
+        "network-models"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-the-mask-decides-everything",
+          "title": "Why the mask decides everything"
+        },
+        {
+          "id": "binary-and-the-32-bit-address",
+          "title": "Binary and the 32-bit address"
+        },
+        {
+          "id": "masks-prefixes-and-block-sizes",
+          "title": "Masks, prefixes and block sizes"
+        },
+        {
+          "id": "network-broadcast-and-usable-hosts",
+          "title": "Network, broadcast and usable hosts"
+        },
+        {
+          "id": "practice-problems",
+          "title": "Practice problems"
+        },
+        {
+          "id": "configuring-addresses-on-ios",
+          "title": "Configuring addresses on IOS"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Build and name the devices"
+        },
+        {
+          "id": "step-2",
+          "title": "Address R1's two interfaces"
+        },
+        {
+          "id": "step-3",
+          "title": "Address the PCs"
+        },
+        {
+          "id": "step-4",
+          "title": "Verify the masks with the right commands"
+        },
+        {
+          "id": "step-5",
+          "title": "Test local and remote communication"
+        },
+        {
+          "id": "step-6",
+          "title": "Observe rejection of an invalid address"
+        },
+        {
+          "id": "step-7",
+          "title": "Introduce a gateway fault and record the symptoms"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the gateway and check mask decisions"
+        },
+        {
+          "id": "step-9",
+          "title": "Restore and save"
+        }
+      ]
+    },
+    {
+      "id": "subnetting-vlsm",
+      "number": 5,
+      "title": "Subnetting & VLSM",
+      "part": "foundations",
+      "prereqs": [
+        "ipv4-addressing"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-one-mask-never-fits-everyone",
+          "title": "Why one mask never fits everyone"
+        },
+        {
+          "id": "the-block-size-method-in-any-octet",
+          "title": "The block-size method in any octet"
+        },
+        {
+          "id": "vlsm-allocate-largest-first",
+          "title": "VLSM: allocate largest first"
+        },
+        {
+          "id": "summarisation-keep-the-shared-bits",
+          "title": "Summarisation: keep the shared bits"
+        },
+        {
+          "id": "private-public-and-special-purpose-ranges",
+          "title": "Private, public and special-purpose ranges"
+        },
+        {
+          "id": "ten-drills",
+          "title": "Ten drills"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Allocate the block on paper"
+        },
+        {
+          "id": "step-2",
+          "title": "Cable the topology and address the router"
+        },
+        {
+          "id": "step-3",
+          "title": "Address the PCs with dotted masks"
+        },
+        {
+          "id": "step-4",
+          "title": "Read the plan back from the routing table"
+        },
+        {
+          "id": "step-5",
+          "title": "Test every pair"
+        },
+        {
+          "id": "step-6",
+          "title": "Check a proposed Operations expansion"
+        },
+        {
+          "id": "step-7",
+          "title": "Move Operations into additional allocated space"
+        },
+        {
+          "id": "step-8",
+          "title": "Verify the final plan and save"
+        }
+      ]
+    },
+    {
+      "id": "tcp-udp-ports",
+      "number": 6,
+      "title": "TCP, UDP & ports",
+      "part": "foundations",
+      "prereqs": [
+        "network-models"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-ip-alone-is-not-enough",
+          "title": "Why IP alone is not enough"
+        },
+        {
+          "id": "ports-sockets-and-multiplexing",
+          "title": "Ports, sockets and multiplexing"
+        },
+        {
+          "id": "two-headers-two-philosophies",
+          "title": "Two headers, two philosophies"
+        },
+        {
+          "id": "opening-and-closing-a-connection",
+          "title": "Opening and closing a connection"
+        },
+        {
+          "id": "windowing-flow-control-and-congestion-control",
+          "title": "Windowing, flow control and congestion control"
+        },
+        {
+          "id": "which-application-uses-which-transport-and-why",
+          "title": "Which application uses which transport, and why"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, address and name the switch"
+        },
+        {
+          "id": "step-2",
+          "title": "Turn on the services and load the page in Realtime mode"
+        },
+        {
+          "id": "step-3",
+          "title": "Capture the three-way handshake"
+        },
+        {
+          "id": "step-4",
+          "title": "Capture a DNS lookup over UDP"
+        },
+        {
+          "id": "step-5",
+          "title": "Look at the socket table with netstat"
+        },
+        {
+          "id": "step-6",
+          "title": "Prove that ping and a listening port are different questions"
+        },
+        {
+          "id": "step-7",
+          "title": "Restore the service and save"
+        }
+      ]
+    },
+    {
+      "id": "ethernet-switching",
+      "number": 7,
+      "title": "Ethernet switching",
+      "part": "foundations",
+      "prereqs": [
+        "network-models"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-switch-and-not-a-hub",
+          "title": "Why a switch and not a hub"
+        },
+        {
+          "id": "anatomy-of-an-ethernet-frame",
+          "title": "Anatomy of an Ethernet frame"
+        },
+        {
+          "id": "mac-addresses-oui-unicast-multicast-broadcast",
+          "title": "MAC addresses: OUI, unicast, multicast, broadcast"
+        },
+        {
+          "id": "learn-forward-filter-flood",
+          "title": "Learn, forward, filter, flood"
+        },
+        {
+          "id": "aging-static-entries-and-the-table-commands",
+          "title": "Aging, static entries and the table commands"
+        },
+        {
+          "id": "switching-methods-and-domains",
+          "title": "Switching methods and domains"
+        },
+        {
+          "id": "why-vlans-and-spanning-tree-exist",
+          "title": "Why VLANs and spanning tree exist"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, address and record the MAC addresses"
+        },
+        {
+          "id": "step-2",
+          "title": "Start from an empty table"
+        },
+        {
+          "id": "step-3",
+          "title": "One ping, one frame at a time"
+        },
+        {
+          "id": "step-4",
+          "title": "Bring PC-C into the table"
+        },
+        {
+          "id": "step-5",
+          "title": "Prove unknown-unicast flooding"
+        },
+        {
+          "id": "step-6",
+          "title": "Aging and a static entry"
+        },
+        {
+          "id": "step-7",
+          "title": "Add a second switch and watch one port learn two MACs"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the defaults and save"
+        },
+        {
+          "id": "step-9",
+          "title": "Introduce one incorrect static entry"
+        },
+        {
+          "id": "step-10",
+          "title": "Recover the fault and confirm the baseline"
+        }
+      ]
+    },
+    {
+      "id": "ios-essentials",
+      "number": 8,
+      "title": "IOS essentials",
+      "part": "foundations",
+      "prereqs": [
+        "start-here"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-device-access-comes-first",
+          "title": "Why device access comes first"
+        },
+        {
+          "id": "modes-prompts-and-the-two-configurations",
+          "title": "Modes, prompts and the two configurations"
+        },
+        {
+          "id": "lines-console-aux-and-vty",
+          "title": "Lines: console, AUX and VTY"
+        },
+        {
+          "id": "passwords-secrets-and-the-local-user-database",
+          "title": "Passwords, secrets and the local user database"
+        },
+        {
+          "id": "remote-access-telnet-ssh-http-https-and-the-management-menu",
+          "title": "Remote access: Telnet, SSH, HTTP/HTTPS and the management menu"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, console in and address the router"
+        },
+        {
+          "id": "step-2",
+          "title": "Banner and console timeout"
+        },
+        {
+          "id": "step-3",
+          "title": "Shared line passwords, and a Telnet session in cleartext"
+        },
+        {
+          "id": "step-4",
+          "title": "Hide the line passwords with service password-encryption"
+        },
+        {
+          "id": "step-5",
+          "title": "enable password versus enable secret"
+        },
+        {
+          "id": "step-6",
+          "title": "Named users and login local"
+        },
+        {
+          "id": "step-7",
+          "title": "Turn on SSH and turn off Telnet"
+        },
+        {
+          "id": "step-8",
+          "title": "See who is connected"
+        },
+        {
+          "id": "step-9",
+          "title": "Restrict the VTY lines with an access-class"
+        },
+        {
+          "id": "step-10",
+          "title": "Save and confirm what survived"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "ios-essentials-q01",
+            "cue": "An administrator on R1's console types `enable` and, at the `Password:` prompt, enters the string that was configured with `enable password`. What happens?"
+          },
+          {
+            "id": "ios-essentials-q02",
+            "cue": "Which statement about `service password-encryption` is accurate?"
+          },
+          {
+            "id": "ios-essentials-q03",
+            "cue": "A router's hostname has been set to `R1`, but no `ip domain-name` has been configured. The administrator enters `crypto key generate rsa general-keys modulus 2048`. What does IOS print?"
+          },
+          {
+            "id": "ios-essentials-q04",
+            "cue": "Which two commands must already be in place before `crypto key generate rsa` succeeds on a Cisco router? (Choose two.)"
+          },
+          {
+            "id": "ios-essentials-q05",
+            "cue": "A Catalyst 2960 has the VTY configuration shown. Which statement about this configuration is correct?"
+          },
+          {
+            "id": "ios-essentials-q06",
+            "cue": "Which combination puts an administrator directly at the `R1#` prompt after logging in, without typing the enable secret?"
+          },
+          {
+            "id": "ios-essentials-q07",
+            "cue": "R1 has `access-list 10 permit 10.8.0.0 0.0.0.255` and `access-class 10 in` under `line vty 0 4`. A host at 10.9.0.5 pings R1 and then opens an SSH session to it. What is the result?"
+          },
+          {
+            "id": "ios-essentials-q08",
+            "cue": "What does the first line of this output indicate, and what should the administrator do?"
+          },
+          {
+            "id": "ios-essentials-q09",
+            "cue": "Which two statements about network device management access are true? (Choose two.)"
+          },
+          {
+            "id": "ios-essentials-q10",
+            "cue": "In `show running-config` on an IOS 15 router a line reads `enable secret 5 $1$mERr$QI2lCt6bUUAcYfCT0DM621`. What does the `5` mean?"
+          },
+          {
+            "id": "ios-essentials-q11",
+            "cue": "SSH to R1 connects and prompts for a password, but every login attempt fails whatever username and password are typed. Based on the output, what is the cause?"
+          },
+          {
+            "id": "ios-essentials-q12",
+            "cue": "After configuring SSH and local users on router R1, the administrator wants the configuration to survive a reload. Which command does this, and where does the copy end up?"
+          },
+          {
+            "id": "ios-essentials-q13",
+            "cue": "An administrator needs to know the IP address from which an active SSH session to R1 was opened. Which command shows it?"
+          },
+          {
+            "id": "ios-essentials-q14",
+            "cue": "R1 has RSA keys, `ip ssh version 2`, a local user, and `login local` with `transport input telnet` under `line vty 0 4`. `show ip ssh` reports `SSH Enabled - version 2.0`. Telnet to R1 works, but SSH connections are refused. What is the cause?"
+          },
+          {
+            "id": "ios-essentials-q15",
+            "cue": "R1's startup-config has just been erased and the router reloaded, so it has no IP addresses and every interface is shut down. Which management path in the diagram still works?"
+          },
+          {
+            "id": "ios-essentials-q16",
+            "cue": "Which two tasks require privileged EXEC mode (the `#` prompt) rather than user EXEC mode (`>`)? (Choose two.)"
+          }
+        ],
+        "cards": [
+          {
+            "id": "ios-essentials-c01",
+            "cue": "Which mode do these prompts show: `R1>`, `R1#`, `R1(config)#`, `R1(config-if)#`, `R1(config-line)#`?"
+          },
+          {
+            "id": "ios-essentials-c02",
+            "cue": "Commands to go up a mode, and the difference between `exit` and `end`?"
+          },
+          {
+            "id": "ios-essentials-c03",
+            "cue": "Where do running-config and startup-config live?"
+          },
+          {
+            "id": "ios-essentials-c04",
+            "cue": "Command to save the configuration (and its old alias)?"
+          },
+          {
+            "id": "ios-essentials-c05",
+            "cue": "How many VTY lines on a router vs a Catalyst switch?"
+          },
+          {
+            "id": "ios-essentials-c06",
+            "cue": "Default `exec-timeout`, and how to disable it?"
+          },
+          {
+            "id": "ios-essentials-c07",
+            "cue": "`login` vs `login local` on a line?"
+          },
+          {
+            "id": "ios-essentials-c08",
+            "cue": "`enable secret` vs `enable password` — which wins, and how are they stored?"
+          },
+          {
+            "id": "ios-essentials-c09",
+            "cue": "Password types 0, 4, 5, 7, 8, 9?"
+          },
+          {
+            "id": "ios-essentials-c10",
+            "cue": "What does `service password-encryption` do, and what does removing it do?"
+          },
+          {
+            "id": "ios-essentials-c11",
+            "cue": "The SSH recipe, in order?"
+          },
+          {
+            "id": "ios-essentials-c12",
+            "cue": "RSA modulus: range, minimum for SSHv2, recommended value?"
+          },
+          {
+            "id": "ios-essentials-c13",
+            "cue": "`show ip ssh` says `SSH Enabled - version 1.99`. Meaning and fix?"
+          },
+          {
+            "id": "ios-essentials-c14",
+            "cue": "Ports: Telnet, SSH, HTTP, HTTPS, TACACS+, RADIUS?"
+          },
+          {
+            "id": "ios-essentials-c15",
+            "cue": "Console port settings, cable, and in-band or out-of-band?"
+          },
+          {
+            "id": "ios-essentials-c16",
+            "cue": "`access-class` vs `ip access-group`?"
+          },
+          {
+            "id": "ios-essentials-c17",
+            "cue": "`show users` vs `show ssh` vs `show ip ssh`?"
+          },
+          {
+            "id": "ios-essentials-c18",
+            "cue": "Privilege levels: default, maximum, and the effect of `username … privilege 15`?"
+          },
+          {
+            "id": "ios-essentials-c19",
+            "cue": "Order in which `banner motd`, `banner login` and `banner exec` appear?"
+          },
+          {
+            "id": "ios-essentials-c20",
+            "cue": "`transport input` options on a VTY line, and the one that turns Telnet off?"
+          },
+          {
+            "id": "ios-essentials-c21",
+            "cue": "User EXEC versus privileged EXEC: what can each do?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "ios-essentials-d01",
+            "cue": "Protect privileged EXEC with a hashed password of EnableSecret1."
+          },
+          {
+            "id": "ios-essentials-d02",
+            "cue": "Create a local user admin with a hashed password AdminSecret1 who lands directly in privileged EXEC."
+          },
+          {
+            "id": "ios-essentials-d03",
+            "cue": "Rewrite every cleartext password in the configuration as type 7."
+          },
+          {
+            "id": "ios-essentials-d04",
+            "cue": "Set the domain name lab.local so that RSA keys can be generated."
+          },
+          {
+            "id": "ios-essentials-d05",
+            "cue": "Generate the 2048-bit RSA key pair for SSH, in the form Packet Tracer accepts."
+          },
+          {
+            "id": "ios-essentials-d06",
+            "cue": "Make the SSH server refuse version 1 clients."
+          },
+          {
+            "id": "ios-essentials-d07",
+            "cue": "Make this VTY line authenticate against the local username database."
+          },
+          {
+            "id": "ios-essentials-d08",
+            "cue": "Allow only SSH on this VTY line and refuse Telnet."
+          },
+          {
+            "id": "ios-essentials-d09",
+            "cue": "Permit only sources matched by standard ACL 10 to open sessions on this VTY line."
+          },
+          {
+            "id": "ios-essentials-d10",
+            "cue": "Close an idle session on this line after 5 minutes."
+          },
+          {
+            "id": "ios-essentials-d11",
+            "cue": "Display the SSH server state, version and RSA key name."
+          },
+          {
+            "id": "ios-essentials-d12",
+            "cue": "List who is logged in, on which line, and from which IP address."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "ios-essentials-t01",
+            "cue": "SSH refused from the new management VLAN, still works from the old one"
+          },
+          {
+            "id": "ios-essentials-t02",
+            "cue": "Nobody can log in over SSH after a configuration clean-up; the console still works"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vlans-and-access-ports",
+      "number": 9,
+      "title": "VLANs & access ports",
+      "part": "switching",
+      "prereqs": [
+        "ethernet-switching"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-one-switch-needs-many-broadcast-domains",
+          "title": "Why one switch needs many broadcast domains"
+        },
+        {
+          "id": "vlan-numbers-names-and-where-they-live",
+          "title": "VLAN numbers, names and where they live"
+        },
+        {
+          "id": "access-ports-how-an-untagged-frame-gets-a-vlan",
+          "title": "Access ports: how an untagged frame gets a VLAN"
+        },
+        {
+          "id": "voice-vlan-two-vlans-on-one-access-port",
+          "title": "Voice VLAN: two VLANs on one access port"
+        },
+        {
+          "id": "poe-power-as-a-negotiated-budget",
+          "title": "PoE: power as a negotiated budget"
+        },
+        {
+          "id": "one-template-per-endpoint",
+          "title": "One template per endpoint"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Build the topology and power the phone"
+        },
+        {
+          "id": "step-2",
+          "title": "Create the VLANs"
+        },
+        {
+          "id": "step-3",
+          "title": "Assign the access ports and prove the boundaries"
+        },
+        {
+          "id": "step-4",
+          "title": "Add the voice VLAN and watch the port appear twice"
+        },
+        {
+          "id": "step-5",
+          "title": "Delete a VLAN and read `(Inactive)`"
+        },
+        {
+          "id": "step-6",
+          "title": "Same subnet, wrong VLAN"
+        },
+        {
+          "id": "step-7",
+          "title": "Apply the edge-port templates"
+        },
+        {
+          "id": "step-8",
+          "title": "Optional — PoE on a 3650"
+        },
+        {
+          "id": "step-9",
+          "title": "Save the baseline"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "vlans-and-access-ports-q01",
+            "cue": "PC-B (192.168.10.12/24) on Fa0/2 cannot ping PC-C (192.168.10.13/24) on Fa0/3 of the same switch. Both link lights are green. Based on the exhibit, why does the ping fail?"
+          },
+          {
+            "id": "vlans-and-access-ports-q02",
+            "cue": "Which VLANs exist on a Catalyst switch by default and cannot be deleted?"
+          },
+          {
+            "id": "vlans-and-access-ports-q03",
+            "cue": "A printer on Fa0/4 stopped responding this morning; its link light is green and its address has not changed. What happened, and what restores it?"
+          },
+          {
+            "id": "vlans-and-access-ports-q04",
+            "cue": "An access port is configured with `switchport access vlan 10` and `switchport voice vlan 30`. A Cisco IP phone with a PC plugged into its PC port is connected. How do the frames from the two devices arrive at the switch?"
+          },
+          {
+            "id": "vlans-and-access-ports-q05",
+            "cue": "Which two statements about a Catalyst switch port configured with both an access VLAN and a voice VLAN are true? (Choose two.)"
+          },
+          {
+            "id": "vlans-and-access-ports-q06",
+            "cue": "A wireless access point needs 25 W delivered at the device to run all of its radios. Which PoE standard is the lowest that can supply it?"
+          },
+          {
+            "id": "vlans-and-access-ports-q07",
+            "cue": "A 24-port PoE+ switch has a 370 W PoE budget. Ten Cisco IP phones negotiate 6.3 W each over CDP, and the remaining powered devices are class 4 access points. How many of those access points can the switch power at full allocation?"
+          },
+          {
+            "id": "vlans-and-access-ports-q08",
+            "cue": "A newly installed access point on Gi1/0/13 never powers on. Based on the exhibit, what is the cause and the least disruptive fix?"
+          },
+          {
+            "id": "vlans-and-access-ports-q09",
+            "cue": "Which command shows, for one port, both the administrative and the operational switchport mode, the access VLAN and the voice VLAN?"
+          },
+          {
+            "id": "vlans-and-access-ports-q10",
+            "cue": "An ESXi host connects two NICs to one switch. Its distributed switch uses an LACP link aggregation group; the VMs live in VLANs 110 and 120 and host management is VLAN 100. Which two switch-side settings are correct? (Choose two.)"
+          },
+          {
+            "id": "vlans-and-access-ports-q11",
+            "cue": "A controller-based access point runs in local mode: every client frame is tunnelled inside CAPWAP to the wireless LAN controller. Which switchport configuration fits this AP?"
+          },
+          {
+            "id": "vlans-and-access-ports-q12",
+            "cue": "A new Cisco IP phone on Fa0/7 receives an address from the data VLAN's DHCP scope and never registers. Based on the exhibit, what is wrong?"
+          },
+          {
+            "id": "vlans-and-access-ports-q13",
+            "cue": "Which statement about VLAN 1 on a Catalyst switch is correct?"
+          },
+          {
+            "id": "vlans-and-access-ports-q14",
+            "cue": "Which endpoint should not receive the standard desktop port template of PortFast, BPDU guard and port security with a maximum of one MAC address?"
+          },
+          {
+            "id": "vlans-and-access-ports-q15",
+            "cue": "An engineer runs `erase startup-config` followed by `reload` to return a Catalyst switch to factory defaults, but after the reboot `show vlan brief` still lists VLANs 10, 20 and 30. Why?"
+          },
+          {
+            "id": "vlans-and-access-ports-q16",
+            "cue": "Which command limits the power a switch port may allocate to a connected device to 7 W while still letting the switch detect and classify that device?"
+          }
+        ],
+        "cards": [
+          {
+            "id": "vlans-and-access-ports-c01",
+            "cue": "Normal-range, extended-range and reserved VLAN IDs?"
+          },
+          {
+            "id": "vlans-and-access-ports-c02",
+            "cue": "Which VLANs exist by default and cannot be deleted?"
+          },
+          {
+            "id": "vlans-and-access-ports-c03",
+            "cue": "Three roles VLAN 1 plays by default?"
+          },
+          {
+            "id": "vlans-and-access-ports-c04",
+            "cue": "Where are normal-range VLANs stored, and what does `erase startup-config` do to them?"
+          },
+          {
+            "id": "vlans-and-access-ports-c05",
+            "cue": "Commands to create VLAN 10 named USERS? Default name if you skip the name?"
+          },
+          {
+            "id": "vlans-and-access-ports-c06",
+            "cue": "What happens when you enter `switchport access vlan 40` and VLAN 40 does not exist?"
+          },
+          {
+            "id": "vlans-and-access-ports-c07",
+            "cue": "Effect of `no vlan 20` on ports still assigned to VLAN 20?"
+          },
+          {
+            "id": "vlans-and-access-ports-c08",
+            "cue": "Two commands that make a port a fixed access port in VLAN 10?"
+          },
+          {
+            "id": "vlans-and-access-ports-c09",
+            "cue": "On a phone port with access VLAN 10 and voice VLAN 30, how do PC and phone frames arrive?"
+          },
+          {
+            "id": "vlans-and-access-ports-c10",
+            "cue": "How does a phone learn which voice VLAN to tag with?"
+          },
+          {
+            "id": "vlans-and-access-ports-c11",
+            "cue": "Three side effects of `switchport voice vlan 30` on a port?"
+          },
+          {
+            "id": "vlans-and-access-ports-c12",
+            "cue": "Voice VLAN keyword variants: `dot1p`, `untagged`, `none`?"
+          },
+          {
+            "id": "vlans-and-access-ports-c13",
+            "cue": "PoE wattage per port: 802.3af / 802.3at / 802.3bt Type 3 / Type 4?"
+          },
+          {
+            "id": "vlans-and-access-ports-c14",
+            "cue": "PoE classes 0–4 and the power each reserves?"
+          },
+          {
+            "id": "vlans-and-access-ports-c15",
+            "cue": "`power inline auto` vs `static` vs `never`? Unit of `auto max`?"
+          },
+          {
+            "id": "vlans-and-access-ports-c16",
+            "cue": "In `show power inline`, what do Oper `on`, `off` and `power-deny` mean?"
+          },
+          {
+            "id": "vlans-and-access-ports-c17",
+            "cue": "PoE budget arithmetic: 370 W budget, 24 PoE+ ports — how many at 15.4 W, how many at 30 W?"
+          },
+          {
+            "id": "vlans-and-access-ports-c18",
+            "cue": "Switchport template for a desktop, printer or IoT device?"
+          },
+          {
+            "id": "vlans-and-access-ports-c19",
+            "cue": "Local-mode AP vs FlexConnect/autonomous AP switchport?"
+          },
+          {
+            "id": "vlans-and-access-ports-c20",
+            "cue": "Hypervisor host and network-appliance switchport rules?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "vlans-and-access-ports-d01",
+            "cue": "Enter VLAN configuration mode for VLAN 10, creating it if it does not exist."
+          },
+          {
+            "id": "vlans-and-access-ports-d02",
+            "cue": "Give the VLAN you are configuring the name USERS."
+          },
+          {
+            "id": "vlans-and-access-ports-d03",
+            "cue": "Fix the current interface as an access port so it can never negotiate a trunk."
+          },
+          {
+            "id": "vlans-and-access-ports-d04",
+            "cue": "Place the current access port in VLAN 10."
+          },
+          {
+            "id": "vlans-and-access-ports-d05",
+            "cue": "Add voice VLAN 30 to the current access port so a Cisco phone tags its traffic with it."
+          },
+          {
+            "id": "vlans-and-access-ports-d06",
+            "cue": "List every VLAN with its status and the access ports assigned to it."
+          },
+          {
+            "id": "vlans-and-access-ports-d07",
+            "cue": "Show the administrative and operational mode, access VLAN and voice VLAN of interface FastEthernet0/1."
+          },
+          {
+            "id": "vlans-and-access-ports-d08",
+            "cue": "Disable Power over Ethernet on the current interface."
+          },
+          {
+            "id": "vlans-and-access-ports-d09",
+            "cue": "Keep PoE detection on the current interface but cap the allocation at 7 watts."
+          },
+          {
+            "id": "vlans-and-access-ports-d10",
+            "cue": "Display the PoE budget (available, used, remaining) and the power state of every port."
+          },
+          {
+            "id": "vlans-and-access-ports-d11",
+            "cue": "Make the current trunk port toward a hypervisor an edge port that skips the STP listening and learning states."
+          },
+          {
+            "id": "vlans-and-access-ports-d12",
+            "cue": "Add the current interface to port channel 1 using LACP, actively initiating negotiation with the connected server."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "vlans-and-access-ports-t01",
+            "cue": "New phones on the third floor take data-VLAN addresses and never register"
+          },
+          {
+            "id": "vlans-and-access-ports-t02",
+            "cue": "A relocated user's PC cannot reach anything from the new desk"
+          }
+        ]
+      }
+    },
+    {
+      "id": "trunks-dtp",
+      "number": 10,
+      "title": "Trunks, 802.1Q & DTP",
+      "part": "switching",
+      "prereqs": [
+        "vlans-and-access-ports"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-one-link-must-carry-many-vlans",
+          "title": "Why one link must carry many VLANs"
+        },
+        {
+          "id": "the-802-1q-tag",
+          "title": "The 802.1Q tag"
+        },
+        {
+          "id": "native-vlan-the-one-vlan-that-travels-untagged",
+          "title": "Native VLAN: the one VLAN that travels untagged"
+        },
+        {
+          "id": "the-allowed-vlan-list",
+          "title": "The allowed VLAN list"
+        },
+        {
+          "id": "dtp-how-a-port-decides-to-trunk",
+          "title": "DTP: how a port decides to trunk"
+        },
+        {
+          "id": "configuring-trunks-on-2960-3560-and-9200",
+          "title": "Configuring trunks on 2960, 3560 and 9200"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name the switches and build the access edges"
+        },
+        {
+          "id": "step-2",
+          "title": "Watch DTP leave the link as access, then negotiate a trunk"
+        },
+        {
+          "id": "step-3",
+          "title": "Make trunk 1 static, with native VLAN 99 and a narrow allowed list"
+        },
+        {
+          "id": "step-4",
+          "title": "Trunk SW2 to the 3560 and meet the encapsulation rejection"
+        },
+        {
+          "id": "step-5",
+          "title": "Prove both VLAN paths and read the MAC table"
+        },
+        {
+          "id": "step-6",
+          "title": "Break the allowed list the way people really do, then repair it narrowly"
+        },
+        {
+          "id": "step-7",
+          "title": "Cause a native VLAN mismatch and read every symptom"
+        },
+        {
+          "id": "step-8",
+          "title": "Save the baseline"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "trunks-dtp-q01",
+            "cue": "An engineer is working out why VLAN 30 does not pass over SW1's trunk to SW2, while VLANs 10 and 20 do. Based on the output, what is the cause?"
+          },
+          {
+            "id": "trunks-dtp-q02",
+            "cue": "How large is the VLAN Identifier field in an 802.1Q tag, and which VLAN IDs are usable?"
+          },
+          {
+            "id": "trunks-dtp-q03",
+            "cue": "Two Catalyst 2960 switches are cabled Gi0/1 to Gi0/1. Neither port has any switchport commands configured and both are up/up. What is the operational state of the link?"
+          },
+          {
+            "id": "trunks-dtp-q04",
+            "cue": "SW2's Gi0/1 is configured with `switchport mode dynamic auto` and cannot be changed. Which two configurations on the connected port of SW1 will make the link a trunk? (Choose two.)"
+          },
+          {
+            "id": "trunks-dtp-q05",
+            "cue": "This message repeats on SW1's console every minute. The design calls for VLAN 99 as the native VLAN on this trunk. Which action resolves the condition it reports?"
+          },
+          {
+            "id": "trunks-dtp-q06",
+            "cue": "A trunk currently allows VLANs 10, 20 and 99. Which command adds VLAN 30 without disturbing the existing list?"
+          },
+          {
+            "id": "trunks-dtp-q07",
+            "cue": "An engineer sees this response while configuring Gi0/1 on a Catalyst 3560. Which command must be entered before the mode command will succeed?"
+          },
+          {
+            "id": "trunks-dtp-q08",
+            "cue": "A frame belonging to the native VLAN is forwarded out an 802.1Q trunk port. How is it sent, and how does the receiving switch classify it?"
+          },
+          {
+            "id": "trunks-dtp-q09",
+            "cue": "VLAN 20 exists on both switches and both access ports are correct. PC-B cannot ping PC-D, but VLAN 10 hosts on the two switches can ping each other. What is the cause?"
+          },
+          {
+            "id": "trunks-dtp-q10",
+            "cue": "Which two statements about `switchport nonegotiate` are true? (Choose two.)"
+          },
+          {
+            "id": "trunks-dtp-q11",
+            "cue": "SW1's Gi0/1 connects to SW2's Gi0/1 in the same VTP domain, and both ports are up/up. Which configuration on SW2's Gi0/1 is consistent with this output?"
+          },
+          {
+            "id": "trunks-dtp-q12",
+            "cue": "What is the maximum size of an Ethernet frame carrying a single 802.1Q tag, and why?"
+          },
+          {
+            "id": "trunks-dtp-q13",
+            "cue": "Which configuration on a user-facing port best prevents an attacker's device from negotiating a trunk with the switch (switch spoofing)?"
+          },
+          {
+            "id": "trunks-dtp-q14",
+            "cue": "An engineer enters `switchport trunk allowed vlan remove 1` on a trunk whose native VLAN is 1. What happens to CDP and DTP frames on that link?"
+          },
+          {
+            "id": "trunks-dtp-q15",
+            "cue": "DSW1 is a Catalyst 3560. What does the Encapsulation value `n-802.1q` on Gi0/2 indicate, compared with `802.1q` on Gi0/1?"
+          }
+        ],
+        "cards": [
+          {
+            "id": "trunks-dtp-c01",
+            "cue": "Size and position of the 802.1Q tag?"
+          },
+          {
+            "id": "trunks-dtp-c02",
+            "cue": "Value of the 802.1Q TPID field?"
+          },
+          {
+            "id": "trunks-dtp-c03",
+            "cue": "The three fields of the 802.1Q Tag Control Information and their sizes?"
+          },
+          {
+            "id": "trunks-dtp-c04",
+            "cue": "Usable 802.1Q VLAN IDs? Normal vs extended range?"
+          },
+          {
+            "id": "trunks-dtp-c05",
+            "cue": "Maximum size of a frame with one 802.1Q tag?"
+          },
+          {
+            "id": "trunks-dtp-c06",
+            "cue": "Default native VLAN on a Cisco trunk? Command to change it?"
+          },
+          {
+            "id": "trunks-dtp-c07",
+            "cue": "How are native VLAN frames carried, and how is an untagged received frame classified?"
+          },
+          {
+            "id": "trunks-dtp-c08",
+            "cue": "Log message for a native VLAN mismatch, and what PVST+ does about it?"
+          },
+          {
+            "id": "trunks-dtp-c09",
+            "cue": "Symptom of a native VLAN mismatch that hides it?"
+          },
+          {
+            "id": "trunks-dtp-c10",
+            "cue": "Default allowed VLAN list on a trunk?"
+          },
+          {
+            "id": "trunks-dtp-c11",
+            "cue": "`switchport trunk allowed vlan 30` vs `... allowed vlan add 30`?"
+          },
+          {
+            "id": "trunks-dtp-c12",
+            "cue": "The three VLAN lists in show interfaces trunk, in order?"
+          },
+          {
+            "id": "trunks-dtp-c13",
+            "cue": "Default DTP administrative mode on Catalyst 2960 / 3560 / 9200 ports?"
+          },
+          {
+            "id": "trunks-dtp-c14",
+            "cue": "DTP results: auto + auto? desirable + auto? trunk + access?"
+          },
+          {
+            "id": "trunks-dtp-c15",
+            "cue": "How often are DTP frames sent, and to which MAC address?"
+          },
+          {
+            "id": "trunks-dtp-c16",
+            "cue": "What does `switchport nonegotiate` do, and when is it rejected?"
+          },
+          {
+            "id": "trunks-dtp-c17",
+            "cue": "Command needed on a Catalyst 3560 before `switchport mode trunk`? On a 2960 / 9200?"
+          },
+          {
+            "id": "trunks-dtp-c18",
+            "cue": "802.1Q vs DTP — what does each do?"
+          },
+          {
+            "id": "trunks-dtp-c19",
+            "cue": "Effect of `switchport trunk allowed vlan remove 1` on CDP, VTP, DTP and PAgP?"
+          },
+          {
+            "id": "trunks-dtp-c20",
+            "cue": "Which ports does show interfaces trunk list? Where do you look for the others?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "trunks-dtp-d01",
+            "cue": "Make this port a trunk unconditionally, without relying on negotiation."
+          },
+          {
+            "id": "trunks-dtp-d02",
+            "cue": "Set the native VLAN of this trunk to VLAN 99."
+          },
+          {
+            "id": "trunks-dtp-d03",
+            "cue": "Allow only VLANs 10, 20 and 99 on this trunk, replacing whatever list is there."
+          },
+          {
+            "id": "trunks-dtp-d04",
+            "cue": "Add VLAN 30 to this trunk's allowed list without removing the existing VLANs."
+          },
+          {
+            "id": "trunks-dtp-d05",
+            "cue": "Remove VLAN 20 from this trunk's allowed list, keeping the rest."
+          },
+          {
+            "id": "trunks-dtp-d06",
+            "cue": "Stop this port from sending DTP frames."
+          },
+          {
+            "id": "trunks-dtp-d07",
+            "cue": "Make this port actively ask its neighbour to form a trunk via DTP."
+          },
+          {
+            "id": "trunks-dtp-d08",
+            "cue": "On a Catalyst 3560, select 802.1Q as the trunk encapsulation for this port."
+          },
+          {
+            "id": "trunks-dtp-d09",
+            "cue": "Restore this trunk's allowed list to the default of every VLAN."
+          },
+          {
+            "id": "trunks-dtp-d10",
+            "cue": "Display every operational trunk with its mode, encapsulation, native VLAN and the three VLAN lists."
+          },
+          {
+            "id": "trunks-dtp-d11",
+            "cue": "Show the administrative and operational mode, DTP state and native VLAN for Gi0/1."
+          },
+          {
+            "id": "trunks-dtp-d12",
+            "cue": "Return this port to a plain access port that will never trunk."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "trunks-dtp-t01",
+            "cue": "VLANs 10 and 20 lost their path to the core after last night's change window"
+          },
+          {
+            "id": "trunks-dtp-t02",
+            "cue": "Access switch management address unreachable after the distribution switch was replaced"
+          }
+        ]
+      }
+    },
+    {
+      "id": "inter-vlan-routing",
+      "number": 11,
+      "title": "Inter-VLAN routing",
+      "part": "switching",
+      "prereqs": [
+        "trunks-dtp",
+        "ipv4-addressing"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-vlan-boundary-needs-a-router",
+          "title": "Why a VLAN boundary needs a router"
+        },
+        {
+          "id": "the-packet-walk-macs-change-ips-do-not",
+          "title": "The packet walk: MACs change, IPs do not"
+        },
+        {
+          "id": "router-on-a-stick",
+          "title": "Router-on-a-stick"
+        },
+        {
+          "id": "svis-on-a-multilayer-switch",
+          "title": "SVIs on a multilayer switch"
+        },
+        {
+          "id": "routed-ports-and-the-four-designs-compared",
+          "title": "Routed ports and the four designs compared"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Build the switch side of Part A"
+        },
+        {
+          "id": "step-2",
+          "title": "Trigger the ordering error, then configure R1 properly"
+        },
+        {
+          "id": "step-3",
+          "title": "Verify the routes and ping across"
+        },
+        {
+          "id": "step-4",
+          "title": "Catch the native-VLAN mismatch and fix it"
+        },
+        {
+          "id": "step-5",
+          "title": "Follow the packet in Simulation mode"
+        },
+        {
+          "id": "step-6",
+          "title": "Break the trunk with DTP, then restore and save"
+        },
+        {
+          "id": "step-7",
+          "title": "Build the SVI design on a 3650 in a new file"
+        },
+        {
+          "id": "step-8",
+          "title": "Turn on routing"
+        },
+        {
+          "id": "step-9",
+          "title": "Break autostate, then delete the VLAN under the SVI"
+        },
+        {
+          "id": "step-10",
+          "title": "Add a routed port toward R1"
+        },
+        {
+          "id": "step-11",
+          "title": "Save Part B"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "inter-vlan-routing-q01",
+            "cue": "An engineer is adding VLAN 30 to a router-on-a-stick configuration and sees this message. What should they do next?"
+          },
+          {
+            "id": "inter-vlan-routing-q02",
+            "cue": "PC-A (192.168.10.11, MAC A) pings PC-B (192.168.20.12, MAC B) through router-on-a-stick R1, whose Gi0/0 has MAC R. Which addresses does the frame that R1 sends toward PC-B carry?"
+          },
+          {
+            "id": "inter-vlan-routing-q03",
+            "cue": "Which two conditions must be true for `interface vlan 20` on a multilayer switch to show up/up in `show ip interface brief`? (Choose two.)"
+          },
+          {
+            "id": "inter-vlan-routing-q04",
+            "cue": "Hosts in VLAN 10 work normally, but nobody in VLAN 20 can reach the gateway 192.168.20.1. VLAN 20 is listed as active in `show vlan brief`. What is the most likely cause?"
+          },
+          {
+            "id": "inter-vlan-routing-q05",
+            "cue": "A 2960's Gi0/1 connects to a router configured as router-on-a-stick. The port is left at its default `dynamic auto` mode. What happens?"
+          },
+          {
+            "id": "inter-vlan-routing-q06",
+            "cue": "SW2 is a Layer 2 access switch with a management SVI in VLAN 99 (192.168.99.10/24, gateway router at 192.168.99.1). Administrators on 10.1.1.0/24 cannot SSH to it, although hosts in VLAN 99 can. Which command fixes this?"
+          },
+          {
+            "id": "inter-vlan-routing-q07",
+            "cue": "Which command sequence makes GigabitEthernet1/0/24 on a Catalyst 3650 a Layer 3 interface with the address 10.0.0.2/30?"
+          },
+          {
+            "id": "inter-vlan-routing-q08",
+            "cue": "PC-A in VLAN 10 can ping 192.168.10.1 but cannot reach anything in VLAN 20. The switch trunk allows VLANs 10 and 20. Based on the output, what is wrong?"
+          },
+          {
+            "id": "inter-vlan-routing-q09",
+            "cue": "Which two statements about `ip default-gateway` on a Cisco switch are true? (Choose two.)"
+          },
+          {
+            "id": "inter-vlan-routing-q10",
+            "cue": "A distribution switch must route between 40 user VLANs at full line rate, with no dependency on a single uplink cable. Which design fits?"
+          },
+          {
+            "id": "inter-vlan-routing-q11",
+            "cue": "What does `routed` in the Vlan column for Gi1/0/24 tell you?"
+          },
+          {
+            "id": "inter-vlan-routing-q12",
+            "cue": "An engineer configures `interface vlan 30` with an IP address and `no shutdown` on a multilayer switch, but `show ip interface brief` shows `Vlan30 ... down down`. What does this state indicate?"
+          },
+          {
+            "id": "inter-vlan-routing-q13",
+            "cue": "A switch trunk toward a router-on-a-stick is configured with `switchport trunk native vlan 99`. The router has only Gi0/0.10 with `encapsulation dot1Q 10` and Gi0/0.20 with `encapsulation dot1Q 20`, both addressed. What is the result?"
+          },
+          {
+            "id": "inter-vlan-routing-q14",
+            "cue": "PC-A (192.168.10.11/24, default gateway 192.168.10.1) has an empty ARP cache and pings 192.168.20.12 in another VLAN. What is the destination MAC address of the first frame PC-A transmits?"
+          },
+          {
+            "id": "inter-vlan-routing-q15",
+            "cue": "Both SVIs on this Catalyst 3560 are up/up and every host can ping its own gateway, yet no host can reach the other VLAN. `show ip route` prints `Default gateway is not set`. What is missing?"
+          }
+        ],
+        "cards": [
+          {
+            "id": "inter-vlan-routing-c01",
+            "cue": "When does a host send a packet to its default gateway?"
+          },
+          {
+            "id": "inter-vlan-routing-c02",
+            "cue": "What changes and what stays the same when a packet is routed between VLANs?"
+          },
+          {
+            "id": "inter-vlan-routing-c03",
+            "cue": "First frame a host with an empty ARP cache sends to a remote destination?"
+          },
+          {
+            "id": "inter-vlan-routing-c04",
+            "cue": "Router-on-a-stick?"
+          },
+          {
+            "id": "inter-vlan-routing-c05",
+            "cue": "Command that binds subinterface Gi0/0.10 to VLAN 10?"
+          },
+          {
+            "id": "inter-vlan-routing-c06",
+            "cue": "What happens if `ip address` is typed on a subinterface before `encapsulation dot1Q`?"
+          },
+          {
+            "id": "inter-vlan-routing-c07",
+            "cue": "How does a RoaS router handle the trunk's native VLAN?"
+          },
+          {
+            "id": "inter-vlan-routing-c08",
+            "cue": "Why must the switch port toward a RoaS router be `switchport mode trunk`?"
+          },
+          {
+            "id": "inter-vlan-routing-c09",
+            "cue": "Does the parent interface in RoaS need an address? What must it have?"
+          },
+          {
+            "id": "inter-vlan-routing-c10",
+            "cue": "SVI?"
+          },
+          {
+            "id": "inter-vlan-routing-c11",
+            "cue": "Command that lets a Catalyst 3560 route between SVIs, and its default?"
+          },
+          {
+            "id": "inter-vlan-routing-c12",
+            "cue": "Three conditions for an SVI to be up/up?"
+          },
+          {
+            "id": "inter-vlan-routing-c13",
+            "cue": "SVI states: `administratively down/down`, `down/down`, `up/down`?"
+          },
+          {
+            "id": "inter-vlan-routing-c14",
+            "cue": "Command to turn a multilayer switch port into a routed port?"
+          },
+          {
+            "id": "inter-vlan-routing-c15",
+            "cue": "Properties of a routed port?"
+          },
+          {
+            "id": "inter-vlan-routing-c16",
+            "cue": "`ip default-gateway` versus `ip route 0.0.0.0 0.0.0.0`?"
+          },
+          {
+            "id": "inter-vlan-routing-c17",
+            "cue": "`C` and `L` in `show ip route`?"
+          },
+          {
+            "id": "inter-vlan-routing-c18",
+            "cue": "IOS reply to `ip address` on a Layer 2 switchport?"
+          },
+          {
+            "id": "inter-vlan-routing-c19",
+            "cue": "Trade-offs of router-on-a-stick versus SVIs?"
+          },
+          {
+            "id": "inter-vlan-routing-c20",
+            "cue": "Legacy per-VLAN inter-VLAN routing design?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "inter-vlan-routing-d01",
+            "cue": "Enter configuration mode for the subinterface of GigabitEthernet0/0 that will serve VLAN 20 (use the conventional number)."
+          },
+          {
+            "id": "inter-vlan-routing-d02",
+            "cue": "Bind the current subinterface to VLAN 10 with 802.1Q tagging."
+          },
+          {
+            "id": "inter-vlan-routing-d03",
+            "cue": "Make the current subinterface handle the trunk's untagged frames for native VLAN 99."
+          },
+          {
+            "id": "inter-vlan-routing-d04",
+            "cue": "Enable IPv4 routing on this multilayer switch so it forwards between its SVIs."
+          },
+          {
+            "id": "inter-vlan-routing-d05",
+            "cue": "Create (or enter) the switched virtual interface for VLAN 10."
+          },
+          {
+            "id": "inter-vlan-routing-d06",
+            "cue": "Convert the current physical switch port into a Layer 3 routed port."
+          },
+          {
+            "id": "inter-vlan-routing-d07",
+            "cue": "On a Layer 2 switch, give its own management traffic a next hop of 192.168.99.1."
+          },
+          {
+            "id": "inter-vlan-routing-d08",
+            "cue": "Show every interface's address, status and protocol state in one table."
+          },
+          {
+            "id": "inter-vlan-routing-d09",
+            "cue": "Show the state, hardware type and address of the SVI for VLAN 10."
+          },
+          {
+            "id": "inter-vlan-routing-d10",
+            "cue": "Display only the directly connected routes."
+          },
+          {
+            "id": "inter-vlan-routing-d11",
+            "cue": "Confirm that GigabitEthernet1/0/24 is no longer a switchport (Layer 2 disabled)."
+          },
+          {
+            "id": "inter-vlan-routing-d12",
+            "cue": "List the trunk ports with their native VLAN and the VLANs allowed and active on each."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "inter-vlan-routing-t01",
+            "cue": "VLAN 30's gateway vanished after a clean-up"
+          },
+          {
+            "id": "inter-vlan-routing-t02",
+            "cue": "New VLAN 30 subinterface is up/up but hands out no gateway"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cdp-lldp",
+      "number": 12,
+      "title": "CDP & LLDP",
+      "part": "switching",
+      "prereqs": [
+        "ethernet-switching"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-diagram-needs-a-witness",
+          "title": "Why a diagram needs a witness"
+        },
+        {
+          "id": "cdp-the-cisco-protocol",
+          "title": "CDP: the Cisco protocol"
+        },
+        {
+          "id": "lldp-the-standard-everyone-speaks",
+          "title": "LLDP: the standard everyone speaks"
+        },
+        {
+          "id": "reading-a-neighbour-table",
+          "title": "Reading a neighbour table"
+        },
+        {
+          "id": "validating-a-diagram-against-the-output",
+          "title": "Validating a diagram against the output"
+        },
+        {
+          "id": "security-what-you-are-broadcasting",
+          "title": "Security: what you are broadcasting"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Name the devices and address them — leave the router port down"
+        },
+        {
+          "id": "step-2",
+          "title": "Read the CDP tables — and notice who is missing"
+        },
+        {
+          "id": "step-3",
+          "title": "Validate the diagram against the output"
+        },
+        {
+          "id": "step-4",
+          "title": "Read the detail"
+        },
+        {
+          "id": "step-5",
+          "title": "Watch the timers"
+        },
+        {
+          "id": "step-6",
+          "title": "Enable LLDP and compare the capability codes"
+        },
+        {
+          "id": "step-7",
+          "title": "Make LLDP one-way"
+        },
+        {
+          "id": "step-8",
+          "title": "Silence discovery on the user-facing ports"
+        },
+        {
+          "id": "step-9",
+          "title": "Restore LLDP on the uplink, save, and record the map"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "cdp-lldp-q01",
+            "cue": "According to the output, which cabling statement is correct?"
+          },
+          {
+            "id": "cdp-lldp-q02",
+            "cue": "A Cisco switch runs CDP with all timers at their defaults. How often does it send advertisements, and how long does a neighbour keep the entry without hearing another one?"
+          },
+          {
+            "id": "cdp-lldp-q03",
+            "cue": "An administrator enters `lldp run` on a Catalyst switch and changes nothing else. Which timer values does the switch now use?"
+          },
+          {
+            "id": "cdp-lldp-q04",
+            "cue": "What kind of device is DIST1, and why does its capability column not show S?"
+          },
+          {
+            "id": "cdp-lldp-q05",
+            "cue": "Which two statements about LLDP on a Cisco IOS switch are true? (Choose two.)"
+          },
+          {
+            "id": "cdp-lldp-q06",
+            "cue": "An administrator wants SW1 to stop sending and processing CDP on FastEthernet0/7 only, leaving every other interface unchanged. Which configuration achieves this?"
+          },
+          {
+            "id": "cdp-lldp-q07",
+            "cue": "The network diagram shows SW2 Gi0/1 connected to SW1 Gi0/1, and R1 Gi0/1 connected to SW2 Gi0/2. Based on the output, what must be corrected in the diagram?"
+          },
+          {
+            "id": "cdp-lldp-q08",
+            "cue": "SW1 and SW2 are joined by a single link that is up/up. `show lldp neighbors` on SW2 lists SW1, but the same command on SW1 shows no entries even after five minutes. `show cdp neighbors` on each switch lists the other. What is the most likely cause?"
+          },
+          {
+            "id": "cdp-lldp-q09",
+            "cue": "Which statement is supported by the output?"
+          },
+          {
+            "id": "cdp-lldp-q10",
+            "cue": "Which two commands display the CDP advertisement interval and holdtime configured on a Cisco switch? (Choose two.)"
+          },
+          {
+            "id": "cdp-lldp-q11",
+            "cue": "A company wants CDP to keep working for its Cisco IP phones on access ports and for topology mapping between its own switches, but wants to stop leaking device details over the link to its ISP. Which action fits?"
+          },
+          {
+            "id": "cdp-lldp-q12",
+            "cue": "The administrator expected to see the directly connected switch SW2, which has LLDP running. Which command on SW1 fixes this?"
+          },
+          {
+            "id": "cdp-lldp-q13",
+            "cue": "`show cdp neighbors` on SW1 shows a Holdtme value of 174 for neighbour R1. Both devices use default CDP timers. How long ago did SW1 last receive an advertisement from R1, and when is the next one normally due?"
+          },
+          {
+            "id": "cdp-lldp-q14",
+            "cue": "CDP was disabled on SW3 with `no cdp run`. An administrator then enters `cdp enable` under interface Gi0/1 and waits two minutes, but the neighbour on Gi0/1 still does not list SW3. Why?"
+          },
+          {
+            "id": "cdp-lldp-q15",
+            "cue": "A Cisco switch port connects to an IP phone that supports LLDP-MED. Which information does LLDP-MED let the switch pass to the phone that basic LLDP does not?"
+          },
+          {
+            "id": "cdp-lldp-q16",
+            "cue": "`show cdp neighbors` on SW1 lists a Cisco switch MEETING-SW on Fa0/3 with Port ID Gig 1/0/5, yet the cable from SW1 Fa0/3 goes into a small unmanaged desktop switch in a meeting room. What explains the entry?"
+          }
+        ],
+        "cards": [
+          {
+            "id": "cdp-lldp-c01",
+            "cue": "CDP: default state on a Cisco IOS device?"
+          },
+          {
+            "id": "cdp-lldp-c02",
+            "cue": "CDP advertisement interval and holdtime?"
+          },
+          {
+            "id": "cdp-lldp-c03",
+            "cue": "LLDP: default state on Cisco IOS and the command to enable it?"
+          },
+          {
+            "id": "cdp-lldp-c04",
+            "cue": "LLDP advertisement interval, holdtime and reinit delay?"
+          },
+          {
+            "id": "cdp-lldp-c05",
+            "cue": "`cdp run` vs `cdp enable`?"
+          },
+          {
+            "id": "cdp-lldp-c06",
+            "cue": "LLDP per-interface controls?"
+          },
+          {
+            "id": "cdp-lldp-c07",
+            "cue": "Which standard defines LLDP, and what does LLDP-MED add?"
+          },
+          {
+            "id": "cdp-lldp-c08",
+            "cue": "Default CDP version, and what version 2 adds?"
+          },
+          {
+            "id": "cdp-lldp-c09",
+            "cue": "Capability letter for a switch: CDP vs LLDP?"
+          },
+          {
+            "id": "cdp-lldp-c10",
+            "cue": "Capability letter for an IP phone: CDP vs LLDP?"
+          },
+          {
+            "id": "cdp-lldp-c11",
+            "cue": "`Local Intrfce` vs `Port ID` in show cdp neighbors?"
+          },
+          {
+            "id": "cdp-lldp-c12",
+            "cue": "What does `show cdp neighbors detail` add to the brief table?"
+          },
+          {
+            "id": "cdp-lldp-c13",
+            "cue": "Commands that show the CDP timers?"
+          },
+          {
+            "id": "cdp-lldp-c14",
+            "cue": "What do `show cdp` / `show lldp` print when the protocol is off?"
+          },
+          {
+            "id": "cdp-lldp-c21",
+            "cue": "LLDP verification: neighbour details, and per-port transmit/receive state?"
+          },
+          {
+            "id": "cdp-lldp-c16",
+            "cue": "Holdtime columns: CDP `Holdtme` vs LLDP `Hold-time`?"
+          },
+          {
+            "id": "cdp-lldp-c17",
+            "cue": "Does a CDP/LLDP neighbour entry prove IP reachability?"
+          },
+          {
+            "id": "cdp-lldp-c18",
+            "cue": "Neighbour missing on an up/up link — check in what order?"
+          },
+          {
+            "id": "cdp-lldp-c19",
+            "cue": "Where should discovery be disabled, and where kept?"
+          },
+          {
+            "id": "cdp-lldp-c20",
+            "cue": "Two Cisco switches list each other, but an unmanaged switch sits between them. Why?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "cdp-lldp-d01",
+            "cue": "CDP was disabled on this switch. Turn it back on for the whole device."
+          },
+          {
+            "id": "cdp-lldp-d02",
+            "cue": "Stop CDP on the current interface only, in both directions."
+          },
+          {
+            "id": "cdp-lldp-d03",
+            "cue": "Enable LLDP on every interface of this switch."
+          },
+          {
+            "id": "cdp-lldp-d04",
+            "cue": "On the current interface, stop sending LLDP advertisements but keep listening for the neighbour's."
+          },
+          {
+            "id": "cdp-lldp-d05",
+            "cue": "On the current interface, ignore incoming LLDP advertisements while continuing to send our own."
+          },
+          {
+            "id": "cdp-lldp-d06",
+            "cue": "Display the CDP neighbour table (device ID, local interface, holdtime, capability, platform, port ID)."
+          },
+          {
+            "id": "cdp-lldp-d07",
+            "cue": "Display every CDP neighbour's IP address, platform, IOS version, native VLAN and duplex."
+          },
+          {
+            "id": "cdp-lldp-d08",
+            "cue": "Show whether CDP is running globally, with the advertisement interval, holdtime and version."
+          },
+          {
+            "id": "cdp-lldp-d09",
+            "cue": "Show which interfaces are participating in CDP and the timers each one uses."
+          },
+          {
+            "id": "cdp-lldp-d10",
+            "cue": "Display the LLDP neighbour table."
+          },
+          {
+            "id": "cdp-lldp-d11",
+            "cue": "Display the LLDP neighbours with chassis ID, system name, capabilities, time remaining and management address."
+          },
+          {
+            "id": "cdp-lldp-d12",
+            "cue": "Show the global LLDP status, advertisement interval, holdtime and reinit delay."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "cdp-lldp-t01",
+            "cue": "The monitoring system says the ACC3 uplink is down, but ACC3 users are working"
+          },
+          {
+            "id": "cdp-lldp-t02",
+            "cue": "The new warehouse switch does not show up in LLDP on CORE2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "etherchannel",
+      "number": 13,
+      "title": "EtherChannel",
+      "part": "switching",
+      "prereqs": [
+        "trunks-dtp"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-two-links-are-worse-than-one-bundle",
+          "title": "Why two links are worse than one bundle"
+        },
+        {
+          "id": "negotiating-the-bundle-lacp-pagp-and-on",
+          "title": "Negotiating the bundle: LACP, PAgP and on"
+        },
+        {
+          "id": "what-has-to-match",
+          "title": "What has to match"
+        },
+        {
+          "id": "configuring-layer-2-and-layer-3-port-channels",
+          "title": "Configuring Layer 2 and Layer 3 port channels"
+        },
+        {
+          "id": "load-balancing-and-limits",
+          "title": "Load balancing and limits"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name the switches and create the VLANs"
+        },
+        {
+          "id": "step-2",
+          "title": "Build the LACP bundle"
+        },
+        {
+          "id": "step-3",
+          "title": "Verify the bundle three ways"
+        },
+        {
+          "id": "step-4",
+          "title": "Fail one member while a ping runs"
+        },
+        {
+          "id": "step-5",
+          "title": "Restore the member"
+        },
+        {
+          "id": "step-6",
+          "title": "Failure case A — passive on both ends"
+        },
+        {
+          "id": "step-7",
+          "title": "Failure case B — on facing active"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore active on both ends and save"
+        },
+        {
+          "id": "step-9",
+          "title": "A Layer 3 EtherChannel between two multilayer switches"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "etherchannel-q01",
+            "cue": "What does this output prove about port-channel 1 on SW1?"
+          },
+          {
+            "id": "etherchannel-q02",
+            "cue": "Two switches are connected by two links that should form one EtherChannel. Which two mode combinations, one on each switch, produce a working bundle? (Choose two.)"
+          },
+          {
+            "id": "etherchannel-q03",
+            "cue": "SW1 and SW2 are connected by Fa0/23 and Fa0/24, and both switches have `channel-group 1 mode passive` on both ports. The cables are correct and the links are up. Which single change brings the bundle up?"
+          },
+          {
+            "id": "etherchannel-q04",
+            "cue": "Two switches are connected by a four-member EtherChannel of 1 Gbps links. One backup job copies a single large file from one server to one storage host across the bundle. What throughput can that job reach?"
+          },
+          {
+            "id": "etherchannel-q05",
+            "cue": "You are building a Layer 3 EtherChannel between two multilayer switches. Where is the IP address configured, and what must be done to the member ports first?"
+          },
+          {
+            "id": "etherchannel-q06",
+            "cue": "DSW1's log also contains `%EC-5-CANNOT_BUNDLE2: Gi1/0/2 is not compatible with Gi1/0/1 and will be suspended (vlan mask is different)`. What is wrong?"
+          },
+          {
+            "id": "etherchannel-q07",
+            "cue": "How many ports can forward traffic in one EtherChannel, and how many can be configured in the group when LACP is used?"
+          },
+          {
+            "id": "etherchannel-q08",
+            "cue": "Two switches are joined by three parallel Gigabit links that are bundled as Po1 on both ends. Why does spanning tree not block two of the three links?"
+          },
+          {
+            "id": "etherchannel-q09",
+            "cue": "Which statement about Po2 on CORE1 is correct?"
+          },
+          {
+            "id": "etherchannel-q10",
+            "cue": "Which two settings must be identical on every physical member before a switch will bundle them into one Layer 2 EtherChannel? (Choose two.)"
+          },
+          {
+            "id": "etherchannel-q11",
+            "cue": "Which command changes how a Catalyst switch chooses the member link for each frame across all of its EtherChannels?"
+          },
+          {
+            "id": "etherchannel-q12",
+            "cue": "Which statement correctly pairs an EtherChannel protocol with its origin and its channel modes?"
+          },
+          {
+            "id": "etherchannel-q13",
+            "cue": "For the same two links, the neighbour SW1 shows `Po1(SD)` with protocol `LACP` and both members flagged `I`. What explains the two outputs?"
+          },
+          {
+            "id": "etherchannel-q14",
+            "cue": "An access switch's two-link uplink bundle to the distribution switch carries almost all downstream traffic on one member. The distribution switch is the default gateway for every user VLAN and uses the default load-balancing method of a 3560. Which change on the distribution switch spreads the downstream traffic?"
+          },
+          {
+            "id": "etherchannel-q15",
+            "cue": "Which command shows the neighbouring switch's LACP system ID, port priority and port state for each member of a bundle?"
+          },
+          {
+            "id": "etherchannel-q16",
+            "cue": "SW1 configures its two uplinks with `channel-group 1 mode active`; SW2 configures the other ends of the same links with `channel-group 5 mode active`. All trunk settings match. What happens?"
+          }
+        ],
+        "cards": [
+          {
+            "id": "etherchannel-c01",
+            "cue": "What is an EtherChannel, and what does spanning tree see?"
+          },
+          {
+            "id": "etherchannel-c02",
+            "cue": "LACP: standard and modes?"
+          },
+          {
+            "id": "etherchannel-c03",
+            "cue": "PAgP: origin and modes?"
+          },
+          {
+            "id": "etherchannel-c04",
+            "cue": "What does channel mode `on` do?"
+          },
+          {
+            "id": "etherchannel-c05",
+            "cue": "Which mode pairings never form a bundle?"
+          },
+          {
+            "id": "etherchannel-c06",
+            "cue": "Maximum active members? Maximum configured with LACP?"
+          },
+          {
+            "id": "etherchannel-c07",
+            "cue": "What must match between the physical members of one bundle?"
+          },
+          {
+            "id": "etherchannel-c08",
+            "cue": "Must the channel-group number match the neighbour's?"
+          },
+          {
+            "id": "etherchannel-c09",
+            "cue": "Layer 3 EtherChannel: the three configuration steps in order?"
+          },
+          {
+            "id": "etherchannel-c10",
+            "cue": "Command to set the load-balancing method, and the 2960/3560 default?"
+          },
+          {
+            "id": "etherchannel-c11",
+            "cue": "Max throughput of one flow over a 2 × 1 Gbps bundle?"
+          },
+          {
+            "id": "etherchannel-c12",
+            "cue": "`Po1(SU)` vs `Po1(RU)` vs `Po1(SD)`?"
+          },
+          {
+            "id": "etherchannel-c13",
+            "cue": "Member flags P / I / s / D / H in `show etherchannel summary`?"
+          },
+          {
+            "id": "etherchannel-c14",
+            "cue": "Command that shows the partner's LACP system ID, flags and port state?"
+          },
+          {
+            "id": "etherchannel-c15",
+            "cue": "LACP timers?"
+          },
+          {
+            "id": "etherchannel-c16",
+            "cue": "LACP system priority default, and what the system ID decides?"
+          },
+          {
+            "id": "etherchannel-c17",
+            "cue": "Syslog when a member fails the compatibility check?"
+          },
+          {
+            "id": "etherchannel-c18",
+            "cue": "STP cost of a port-channel made of two 100 Mbps links? Two 1 Gbps links?"
+          },
+          {
+            "id": "etherchannel-c21",
+            "cue": "Once a Layer 2 bundle exists, where do trunk and VLAN settings belong?"
+          },
+          {
+            "id": "etherchannel-c20",
+            "cue": "Bundle is `SU` with all members `P` but VLAN traffic fails — where do you look?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "etherchannel-d01",
+            "cue": "Put the selected interfaces into EtherChannel group 1 using LACP, with this switch initiating the negotiation."
+          },
+          {
+            "id": "etherchannel-d02",
+            "cue": "Put the selected interfaces into EtherChannel group 1 using LACP, responding only if the neighbour initiates."
+          },
+          {
+            "id": "etherchannel-d03",
+            "cue": "Put the selected interfaces into EtherChannel group 2 using Cisco's proprietary protocol, with this switch initiating."
+          },
+          {
+            "id": "etherchannel-d04",
+            "cue": "Put the selected interfaces into EtherChannel group 1 with no negotiation protocol at all."
+          },
+          {
+            "id": "etherchannel-d05",
+            "cue": "Display every port-channel with its layer, in-use state, protocol and the flag of each member."
+          },
+          {
+            "id": "etherchannel-d06",
+            "cue": "Display the aggregator details for each port-channel: age, protocol, port state and the mode of each member."
+          },
+          {
+            "id": "etherchannel-d07",
+            "cue": "Display the LACP partner's system ID, flags, priority and port state for each member."
+          },
+          {
+            "id": "etherchannel-d08",
+            "cue": "Make this switch hash on both source and destination IP addresses when choosing a member link."
+          },
+          {
+            "id": "etherchannel-d09",
+            "cue": "Display the load-balancing method in use and the fields hashed per protocol."
+          },
+          {
+            "id": "etherchannel-d10",
+            "cue": "Enter configuration mode for the logical interface of EtherChannel group 1."
+          },
+          {
+            "id": "etherchannel-d11",
+            "cue": "Display this switch's own LACP system priority and MAC address."
+          },
+          {
+            "id": "etherchannel-d12",
+            "cue": "Remove the current interface from its EtherChannel group."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "etherchannel-t01",
+            "cue": "Half of the uplink bundle stopped carrying traffic after a VLAN was added"
+          },
+          {
+            "id": "etherchannel-t02",
+            "cue": "The replacement access switch's uplink bundle never comes up"
+          }
+        ]
+      }
+    },
+    {
+      "id": "spanning-tree",
+      "number": 14,
+      "title": "Spanning tree",
+      "part": "switching",
+      "prereqs": [
+        "ethernet-switching",
+        "vlans-and-access-ports",
+        "trunks-dtp"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-redundancy-needs-a-referee",
+          "title": "Why redundancy needs a referee"
+        },
+        {
+          "id": "bridge-ids-and-the-root-election",
+          "title": "Bridge IDs and the root election"
+        },
+        {
+          "id": "port-roles-root-designated-alternate-backup",
+          "title": "Port roles: root, designated, alternate, backup"
+        },
+        {
+          "id": "port-states-and-convergence",
+          "title": "Port states and convergence"
+        },
+        {
+          "id": "configuring-rapid-pvst",
+          "title": "Configuring Rapid PVST+"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and create VLAN 10"
+        },
+        {
+          "id": "step-2",
+          "title": "Find the accidental root"
+        },
+        {
+          "id": "step-3",
+          "title": "Switch to Rapid PVST+ and set the root deliberately"
+        },
+        {
+          "id": "step-4",
+          "title": "Read SW1's decision"
+        },
+        {
+          "id": "step-5",
+          "title": "Break the root port and watch RSTP recover"
+        },
+        {
+          "id": "step-6",
+          "title": "Change the arithmetic with a manual cost"
+        },
+        {
+          "id": "step-7",
+          "title": "Restore the baseline and save"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "spanning-tree-q01",
+            "cue": "Based on the output, which statement about SW1 is true?"
+          },
+          {
+            "id": "spanning-tree-q02",
+            "cue": "Three switches run Rapid PVST+ for VLAN 20 with these bridge IDs: SW-A 32788.0011.2233.aaaa, SW-B 28692.0011.2233.ffff, SW-C 32788.0011.2233.0001. Which switch is the root bridge?"
+          },
+          {
+            "id": "spanning-tree-q03",
+            "cue": "All switches use default priorities. An administrator enters `spanning-tree vlan 10 root primary` on SW2. What priority does SW2 now advertise for VLAN 10?"
+          },
+          {
+            "id": "spanning-tree-q04",
+            "cue": "Using default short-method costs, which SW4 interface becomes the root port, and why?"
+          },
+          {
+            "id": "spanning-tree-q05",
+            "cue": "Which two statements about RSTP port states are correct? (Choose two.)"
+          },
+          {
+            "id": "spanning-tree-q06",
+            "cue": "A switch running classic 802.1D stops receiving BPDUs on its root port, although the link itself stays up, and must unblock an alternate path that was previously in the blocking state. Roughly how long before that port forwards user traffic?"
+          },
+          {
+            "id": "spanning-tree-q07",
+            "cue": "What can you conclude from SW3's interface table?"
+          },
+          {
+            "id": "spanning-tree-q08",
+            "cue": "SW1 has two parallel Gigabit links to the root bridge, Gi0/1 and Gi0/2, with identical cost. Which factor decides SW1's root port?"
+          },
+          {
+            "id": "spanning-tree-q09",
+            "cue": "Users complain that links take about 30 seconds to come up after a change. What is the most direct fix on SW2 and its neighbours?"
+          },
+          {
+            "id": "spanning-tree-q10",
+            "cue": "An engineer configures `spanning-tree vlan 30 cost 2` on SW1's Fa0/24, which connects to SW2. What is the effect?"
+          },
+          {
+            "id": "spanning-tree-q11",
+            "cue": "Which two statements about designated ports are true? (Choose two.)"
+          },
+          {
+            "id": "spanning-tree-q12",
+            "cue": "In Rapid PVST+, how does a switch detect that a directly connected neighbour has failed when the physical link stays up?"
+          },
+          {
+            "id": "spanning-tree-q13",
+            "cue": "SW1 became the VLAN 10 root after `spanning-tree vlan 10 root primary` was entered, which saved the configuration shown. A new switch with `spanning-tree vlan 10 priority 4096` is then connected. What happens to the VLAN 10 root role?"
+          },
+          {
+            "id": "spanning-tree-q14",
+            "cue": "Which command shows, for every VLAN on a switch, the root bridge ID, the cost to reach it and the local root port in one table?"
+          }
+        ],
+        "cards": [
+          {
+            "id": "spanning-tree-c01",
+            "cue": "Default STP bridge priority on a Catalyst switch?"
+          },
+          {
+            "id": "spanning-tree-c02",
+            "cue": "How is the root bridge chosen?"
+          },
+          {
+            "id": "spanning-tree-c03",
+            "cue": "Priority set by `spanning-tree vlan N root primary`?"
+          },
+          {
+            "id": "spanning-tree-c04",
+            "cue": "Priority set by `spanning-tree vlan N root secondary`?"
+          },
+          {
+            "id": "spanning-tree-c05",
+            "cue": "Valid bridge priority values?"
+          },
+          {
+            "id": "spanning-tree-c06",
+            "cue": "Short-method STP port costs for 10 M / 100 M / 1 G / 10 G?"
+          },
+          {
+            "id": "spanning-tree-c07",
+            "cue": "Root port selection order (tie-breakers)?"
+          },
+          {
+            "id": "spanning-tree-c08",
+            "cue": "On which interface is STP cost added?"
+          },
+          {
+            "id": "spanning-tree-c09",
+            "cue": "How many root ports and designated ports?"
+          },
+          {
+            "id": "spanning-tree-c10",
+            "cue": "RSTP port roles?"
+          },
+          {
+            "id": "spanning-tree-c11",
+            "cue": "802.1D port states in order, with durations?"
+          },
+          {
+            "id": "spanning-tree-c12",
+            "cue": "RSTP port states?"
+          },
+          {
+            "id": "spanning-tree-c13",
+            "cue": "STP timers: hello / max age / forward delay?"
+          },
+          {
+            "id": "spanning-tree-c14",
+            "cue": "How fast does RSTP declare a neighbour dead?"
+          },
+          {
+            "id": "spanning-tree-c15",
+            "cue": "Command to run Rapid PVST+, and the default on a 2960/3560?"
+          },
+          {
+            "id": "spanning-tree-c16",
+            "cue": "In `show spanning-tree`, what does `128.25` under Prio.Nbr mean?"
+          },
+          {
+            "id": "spanning-tree-c17",
+            "cue": "How do you know from `show spanning-tree` whether this switch is the root?"
+          },
+          {
+            "id": "spanning-tree-c18",
+            "cue": "Standards: 802.1D vs 802.1w, and the Cisco per-VLAN versions?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "spanning-tree-d01",
+            "cue": "Switch this device to Rapid PVST+."
+          },
+          {
+            "id": "spanning-tree-d02",
+            "cue": "Make this switch the root bridge for VLAN 10 using the macro command."
+          },
+          {
+            "id": "spanning-tree-d03",
+            "cue": "Make this switch the backup root for VLAN 10 using the macro command."
+          },
+          {
+            "id": "spanning-tree-d04",
+            "cue": "Set this switch's VLAN 20 bridge priority explicitly to the lowest non-zero multiple of 4096."
+          },
+          {
+            "id": "spanning-tree-d05",
+            "cue": "Display the full spanning-tree status for VLAN 10 (root ID, bridge ID, interface roles and states)."
+          },
+          {
+            "id": "spanning-tree-d06",
+            "cue": "Show, for every VLAN, the root bridge ID, the cost to reach it and the local root port."
+          },
+          {
+            "id": "spanning-tree-d07",
+            "cue": "Show the STP mode and which VLANs this switch is the root for, plus the global PortFast/BPDU guard defaults."
+          },
+          {
+            "id": "spanning-tree-d08",
+            "cue": "On the current interface, set the VLAN 10 spanning-tree cost to 8."
+          },
+          {
+            "id": "spanning-tree-d09",
+            "cue": "On the current interface, set the VLAN 10 port priority to 64 so a downstream switch prefers this link."
+          },
+          {
+            "id": "spanning-tree-d10",
+            "cue": "Show spanning-tree detail for interface GigabitEthernet0/1 (role, state, cost, whether it is an edge port)."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "spanning-tree-t01",
+            "cue": "The 10 Gbps core link is idle and traffic crawls over a 1 Gbps path"
+          },
+          {
+            "id": "spanning-tree-t02",
+            "cue": "Every link in the access closet takes 30 seconds to come up"
+          }
+        ]
+      }
+    },
+    {
+      "id": "stp-protection",
+      "number": 15,
+      "title": "STP protection",
+      "part": "switching",
+      "prereqs": [
+        "spanning-tree"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "the-tree-believes-every-port",
+          "title": "The tree believes every port"
+        },
+        {
+          "id": "portfast-declaring-an-edge",
+          "title": "PortFast: declaring an edge"
+        },
+        {
+          "id": "bpdu-guard-a-bpdu-on-an-edge-port-is-a-violation",
+          "title": "BPDU guard: a BPDU on an edge port is a violation"
+        },
+        {
+          "id": "bpdu-filter-switching-the-protocol-off-v1-1-only",
+          "title": "BPDU filter: switching the protocol off (v1.1 only)"
+        },
+        {
+          "id": "root-guard-the-root-stays-where-you-put-it",
+          "title": "Root guard: the root stays where you put it"
+        },
+        {
+          "id": "loop-guard-silence-is-not-consent",
+          "title": "Loop guard: silence is not consent"
+        },
+        {
+          "id": "choosing-the-guard",
+          "title": "Choosing the guard"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Time a host port without PortFast"
+        },
+        {
+          "id": "step-2",
+          "title": "Enable PortFast — per interface on SW1, globally on SW2"
+        },
+        {
+          "id": "step-3",
+          "title": "Add BPDU guard and record the port's state first"
+        },
+        {
+          "id": "step-4",
+          "title": "Trigger BPDU guard with a rogue switch"
+        },
+        {
+          "id": "step-5",
+          "title": "Recover the port — by hand, then by timer"
+        },
+        {
+          "id": "step-6",
+          "title": "Hold a priority-0 rogue with root guard"
+        },
+        {
+          "id": "step-7",
+          "title": "Enable loop guard (failure test is CML/hardware only)"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the baseline and save"
+        }
+      ],
+      "banks": {
+        "questions": [
+          {
+            "id": "stp-protection-q01",
+            "cue": "A user reports that the PC on SW1 Fa0/5 lost its connection right after a colleague plugged a small desk switch into the same wall jack. Based on the log, what happened and what restores the port?"
+          },
+          {
+            "id": "stp-protection-q02",
+            "cue": "What does enabling PortFast on an access port change about how the switch treats that port?"
+          },
+          {
+            "id": "stp-protection-q03",
+            "cue": "An administrator wants PortFast on every access port of a switch using one global command, while trunk ports stay unaffected. Which command achieves this?"
+          },
+          {
+            "id": "stp-protection-q04",
+            "cue": "Users on the switch connected to DSW1 Gi1/0/10 have no connectivity in VLAN 20, although other VLANs on the same link work. Based on the output, what is happening on Gi1/0/10?"
+          },
+          {
+            "id": "stp-protection-q05",
+            "cue": "A switch has BPDU guard on its access ports. Which two statements about recovering a port that BPDU guard has err-disabled are true? (Choose two.)"
+          },
+          {
+            "id": "stp-protection-q06",
+            "cue": "Which event causes a port configured with loop guard to enter the loop-inconsistent state?"
+          },
+          {
+            "id": "stp-protection-q07",
+            "cue": "CORE must remain the root bridge. A test switch configured with priority 0 will be connected to ASW1 Gi0/2. Where should root guard be configured so that the test switch can never become the root bridge?"
+          },
+          {
+            "id": "stp-protection-q08",
+            "cue": "How does the global command `spanning-tree portfast bpdufilter default` differ from `spanning-tree bpdufilter enable` on an interface?"
+          },
+          {
+            "id": "stp-protection-q09",
+            "cue": "Fa0/7 on this switch has no spanning-tree commands under its interface configuration. A colleague connects a second switch to Fa0/7. What happens?"
+          },
+          {
+            "id": "stp-protection-q10",
+            "cue": "A trunk port to a hypervisor host carries several VLANs and is not a PortFast port. The administrator wants the port err-disabled if the host ever bridges a BPDU back into the switch. Which interface command does this?"
+          },
+          {
+            "id": "stp-protection-q11",
+            "cue": "Which statement correctly contrasts root guard with BPDU guard?"
+          },
+          {
+            "id": "stp-protection-q12",
+            "cue": "Which two protection states clear automatically, without any administrator action, once the condition that caused them ends? (Choose two.)"
+          },
+          {
+            "id": "stp-protection-q13",
+            "cue": "SW3 Gi0/2 is a fibre uplink that was the root port for VLANs 10 and 20. The interface is still up/up. Which explanation fits the output?"
+          },
+          {
+            "id": "stp-protection-q14",
+            "cue": "An access port is configured with both `spanning-tree bpduguard enable` and `spanning-tree bpdufilter enable`. A switch is connected to it and starts sending BPDUs. What happens?"
+          }
+        ],
+        "cards": [
+          {
+            "id": "stp-protection-c01",
+            "cue": "What does PortFast do to a port?"
+          },
+          {
+            "id": "stp-protection-c02",
+            "cue": "Interface command for PortFast on an access port?"
+          },
+          {
+            "id": "stp-protection-c03",
+            "cue": "PortFast on a trunk port (server or hypervisor uplink)?"
+          },
+          {
+            "id": "stp-protection-c04",
+            "cue": "Global command that enables PortFast on all non-trunking ports?"
+          },
+          {
+            "id": "stp-protection-c05",
+            "cue": "Does PortFast disable spanning tree on the port?"
+          },
+          {
+            "id": "stp-protection-c06",
+            "cue": "BPDU guard: trigger and result?"
+          },
+          {
+            "id": "stp-protection-c07",
+            "cue": "Two ways to enable BPDU guard, and their scope?"
+          },
+          {
+            "id": "stp-protection-c08",
+            "cue": "How do you recover a port that BPDU guard err-disabled?"
+          },
+          {
+            "id": "stp-protection-c09",
+            "cue": "Default errdisable recovery interval and its range?"
+          },
+          {
+            "id": "stp-protection-c10",
+            "cue": "Syslog strings for BPDU guard firing?"
+          },
+          {
+            "id": "stp-protection-c11",
+            "cue": "Root guard: trigger, result, and command?"
+          },
+          {
+            "id": "stp-protection-c12",
+            "cue": "Where does root guard belong — and where must it never go?"
+          },
+          {
+            "id": "stp-protection-c13",
+            "cue": "How does a root-inconsistent port recover?"
+          },
+          {
+            "id": "stp-protection-c14",
+            "cue": "Loop guard: trigger, result, and commands?"
+          },
+          {
+            "id": "stp-protection-c15",
+            "cue": "On which ports does loop guard actually act?"
+          },
+          {
+            "id": "stp-protection-c16",
+            "cue": "Root guard vs BPDU guard in one line each?"
+          },
+          {
+            "id": "stp-protection-c17",
+            "cue": "Can root guard and loop guard run on the same port?"
+          },
+          {
+            "id": "stp-protection-c18",
+            "cue": "`show spanning-tree` shows `Desg BKN*4 ... *ROOT_Inc`. Meaning?"
+          },
+          {
+            "id": "stp-protection-c19",
+            "cue": "BPDU filter: interface form vs global form?"
+          },
+          {
+            "id": "stp-protection-c20",
+            "cue": "Which show commands reveal guard states and global defaults?"
+          }
+        ],
+        "commands": [
+          {
+            "id": "stp-protection-d01",
+            "cue": "Make this access port an edge port that forwards immediately."
+          },
+          {
+            "id": "stp-protection-d02",
+            "cue": "Enable PortFast on this trunk port, which connects to a hypervisor host."
+          },
+          {
+            "id": "stp-protection-d03",
+            "cue": "Enable PortFast on every non-trunking port of the switch with one command."
+          },
+          {
+            "id": "stp-protection-d04",
+            "cue": "Err-disable this port if it ever receives a BPDU, regardless of its PortFast state."
+          },
+          {
+            "id": "stp-protection-d05",
+            "cue": "Enable BPDU guard on every port that is in the PortFast operational state."
+          },
+          {
+            "id": "stp-protection-d06",
+            "cue": "Let the switch automatically re-enable ports that BPDU guard has err-disabled."
+          },
+          {
+            "id": "stp-protection-d07",
+            "cue": "Set the errdisable recovery timer to 60 seconds."
+          },
+          {
+            "id": "stp-protection-d08",
+            "cue": "Prevent a switch behind this designated port from ever becoming the root bridge."
+          },
+          {
+            "id": "stp-protection-d09",
+            "cue": "Enable loop guard on every point-to-point port of the switch."
+          },
+          {
+            "id": "stp-protection-d10",
+            "cue": "Enable loop guard on this single uplink interface."
+          },
+          {
+            "id": "stp-protection-d11",
+            "cue": "List every port that a guard has blocked, across all VLANs."
+          },
+          {
+            "id": "stp-protection-d12",
+            "cue": "Display the STP mode and the state of the global PortFast, BPDU guard, BPDU filter and loop guard defaults."
+          }
+        ],
+        "tickets": [
+          {
+            "id": "stp-protection-t01",
+            "cue": "Conference-room port keeps going dead minutes after the helpdesk fixes it"
+          },
+          {
+            "id": "stp-protection-t02",
+            "cue": "Users behind the new lab switch have no VLAN 10 connectivity; everyone else is fine"
+          }
+        ]
+      }
+    },
+    {
+      "id": "layer2-security",
+      "number": 16,
+      "title": "Layer 2 security",
+      "part": "switching",
+      "prereqs": [
+        "vlans-and-access-ports",
+        "dhcp"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-the-access-port-needs-its-own-defences",
+          "title": "Why the access port needs its own defences"
+        },
+        {
+          "id": "port-security-who-may-talk-on-this-port",
+          "title": "Port security: who may talk on this port"
+        },
+        {
+          "id": "violation-modes-aging-and-err-disable-recovery",
+          "title": "Violation modes, aging and err-disable recovery"
+        },
+        {
+          "id": "dhcp-snooping-one-trusted-path-to-the-server",
+          "title": "DHCP snooping: one trusted path to the server"
+        },
+        {
+          "id": "dynamic-arp-inspection-arp-must-match-the-bindings",
+          "title": "Dynamic ARP Inspection: ARP must match the bindings"
+        },
+        {
+          "id": "storm-control-and-ipv6-ra-guard",
+          "title": "Storm control and IPv6 RA guard"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Build VLAN 10 and the legitimate DHCP server"
+        },
+        {
+          "id": "step-2",
+          "title": "Enable sticky port security on PC-A's port"
+        },
+        {
+          "id": "step-3",
+          "title": "Cause a violation, recover, then switch to restrict"
+        },
+        {
+          "id": "step-4",
+          "title": "Enable DHCP snooping and find the option 82 trap"
+        },
+        {
+          "id": "step-5",
+          "title": "Attack with a rogue DHCP server and watch it lose"
+        },
+        {
+          "id": "step-6",
+          "title": "Enable DAI, then rescue the static printer with an ARP ACL"
+        },
+        {
+          "id": "step-7",
+          "title": "Add a storm-control threshold and read it"
+        },
+        {
+          "id": "step-8",
+          "title": "Save the baseline and read the RA guard configuration"
+        }
+      ]
+    },
+    {
+      "id": "routing-table",
+      "number": 17,
+      "title": "The routing table",
+      "part": "routing",
+      "prereqs": [
+        "subnetting-vlsm"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-the-table-is-the-whole-story",
+          "title": "Why the table is the whole story"
+        },
+        {
+          "id": "anatomy-of-one-route",
+          "title": "Anatomy of one route"
+        },
+        {
+          "id": "the-legend-route-source-codes",
+          "title": "The legend: route source codes"
+        },
+        {
+          "id": "administrative-distance-choosing-between-sources",
+          "title": "Administrative distance: choosing between sources"
+        },
+        {
+          "id": "metrics-and-equal-cost-paths",
+          "title": "Metrics and equal-cost paths"
+        },
+        {
+          "id": "longest-prefix-match-the-forwarding-decision",
+          "title": "Longest prefix match: the forwarding decision"
+        },
+        {
+          "id": "the-default-route-and-the-gateway-of-last-resort",
+          "title": "The default route and the gateway of last resort"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and address the routers"
+        },
+        {
+          "id": "step-2",
+          "title": "Read the connected and local routes"
+        },
+        {
+          "id": "step-3",
+          "title": "Let OSPF add a dynamic route"
+        },
+        {
+          "id": "step-4",
+          "title": "Watch administrative distance replace the route, then float it"
+        },
+        {
+          "id": "step-5",
+          "title": "Prove that a longer prefix beats a better distance"
+        },
+        {
+          "id": "step-6",
+          "title": "Add a default route and meet the lookup quirk"
+        },
+        {
+          "id": "step-7",
+          "title": "Add a second link and see equal-cost paths"
+        },
+        {
+          "id": "step-8",
+          "title": "Save the baseline"
+        }
+      ]
+    },
+    {
+      "id": "static-routing-ipv4",
+      "number": 18,
+      "title": "Static routing (IPv4)",
+      "part": "routing",
+      "prereqs": [
+        "routing-table"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-router-needs-to-be-told",
+          "title": "Why a router needs to be told"
+        },
+        {
+          "id": "the-ip-route-command",
+          "title": "The ip route command"
+        },
+        {
+          "id": "next-hop-exit-interface-or-both",
+          "title": "Next hop, exit interface, or both"
+        },
+        {
+          "id": "default-routes",
+          "title": "Default routes"
+        },
+        {
+          "id": "floating-static-routes",
+          "title": "Floating static routes"
+        },
+        {
+          "id": "the-return-path-and-how-to-test-it",
+          "title": "The return path and how to test it"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable and address R1, and set the PCs"
+        },
+        {
+          "id": "step-2",
+          "title": "Address R2 and check the connected routes"
+        },
+        {
+          "id": "step-3",
+          "title": "Add R1's route and prove the one-way problem"
+        },
+        {
+          "id": "step-4",
+          "title": "Add the return route on R2"
+        },
+        {
+          "id": "step-5",
+          "title": "Add floating static routes in both directions"
+        },
+        {
+          "id": "step-6",
+          "title": "Fail the primary link and watch the backup install"
+        },
+        {
+          "id": "step-7",
+          "title": "Host and default forms, and a lookup that ignores the default"
+        },
+        {
+          "id": "step-8",
+          "title": "Remove the practice routes and save"
+        }
+      ]
+    },
+    {
+      "id": "ipv6-addressing",
+      "number": 19,
+      "title": "IPv6 addressing",
+      "part": "routing",
+      "prereqs": [
+        "ipv4-addressing"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-ipv6-looks-the-way-it-does",
+          "title": "Why IPv6 looks the way it does"
+        },
+        {
+          "id": "writing-an-address-without-making-a-mistake",
+          "title": "Writing an address without making a mistake"
+        },
+        {
+          "id": "prefixes-and-how-big-a-subnet-is",
+          "title": "Prefixes and how big a subnet is"
+        },
+        {
+          "id": "address-types",
+          "title": "Address types"
+        },
+        {
+          "id": "modified-eui-64",
+          "title": "Modified EUI-64"
+        },
+        {
+          "id": "neighbor-discovery-and-getting-an-address",
+          "title": "Neighbor Discovery and getting an address"
+        },
+        {
+          "id": "configuring-ipv6-on-ios",
+          "title": "Configuring IPv6 on IOS"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Build the topology and give PC-A a static address"
+        },
+        {
+          "id": "step-2",
+          "title": "Turn R1 into an IPv6 router and address Gi0/0"
+        },
+        {
+          "id": "step-3",
+          "title": "Read the full interface output and the neighbor cache"
+        },
+        {
+          "id": "step-4",
+          "title": "Configure Gi0/1 with modified EUI-64 and check your arithmetic"
+        },
+        {
+          "id": "step-5",
+          "title": "Let PC-B address itself with SLAAC"
+        },
+        {
+          "id": "step-6",
+          "title": "Make R2 a SLAAC client on the router-to-router link"
+        },
+        {
+          "id": "step-7",
+          "title": "Watch Neighbor Discovery in Simulation mode"
+        },
+        {
+          "id": "step-8",
+          "title": "Break it, understand it, restore it and save"
+        }
+      ]
+    },
+    {
+      "id": "static-routing-ipv6",
+      "number": 20,
+      "title": "Static routing (IPv6)",
+      "part": "routing",
+      "prereqs": [
+        "ipv6-addressing",
+        "static-routing-ipv4"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "same-decision-different-addresses",
+          "title": "Same decision, different addresses"
+        },
+        {
+          "id": "turning-on-ipv6-routing",
+          "title": "Turning on IPv6 routing"
+        },
+        {
+          "id": "the-forms-of-ipv6-route",
+          "title": "The forms of `ipv6 route`"
+        },
+        {
+          "id": "link-local-next-hops-need-a-link",
+          "title": "Link-local next hops need a link"
+        },
+        {
+          "id": "network-default-host-and-floating-routes",
+          "title": "Network, default, host and floating routes"
+        },
+        {
+          "id": "hosts-gateways-and-the-return-path",
+          "title": "Hosts, gateways and the return path"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable the triangle and configure R1"
+        },
+        {
+          "id": "step-2",
+          "title": "Configure R2"
+        },
+        {
+          "id": "step-3",
+          "title": "Configure R3"
+        },
+        {
+          "id": "step-4",
+          "title": "Address the PCs and prove each link"
+        },
+        {
+          "id": "step-5",
+          "title": "Add the primary routes and see the link-local rule enforced"
+        },
+        {
+          "id": "step-6",
+          "title": "Add the backup path as floating static routes"
+        },
+        {
+          "id": "step-7",
+          "title": "Break the primary link and watch the floating route take over"
+        },
+        {
+          "id": "step-8",
+          "title": "Host route, default route, clean-up and save"
+        }
+      ]
+    },
+    {
+      "id": "ospfv2",
+      "number": 21,
+      "title": "OSPFv2",
+      "part": "routing",
+      "prereqs": [
+        "routing-table",
+        "static-routing-ipv4"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-link-state-protocol",
+          "title": "Why a link-state protocol"
+        },
+        {
+          "id": "router-id-and-process-id",
+          "title": "Router ID and process ID"
+        },
+        {
+          "id": "becoming-neighbours-then-adjacent",
+          "title": "Becoming neighbours, then adjacent"
+        },
+        {
+          "id": "network-types-dr-and-bdr",
+          "title": "Network types, DR and BDR"
+        },
+        {
+          "id": "cost-and-the-best-path",
+          "title": "Cost and the best path"
+        },
+        {
+          "id": "configuring-single-area-ospfv2",
+          "title": "Configuring single-area OSPFv2"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and address every device"
+        },
+        {
+          "id": "step-2",
+          "title": "Start OSPF on R1 and take control of the router ID"
+        },
+        {
+          "id": "step-3",
+          "title": "Bring up R2 and R3 and watch the adjacencies form"
+        },
+        {
+          "id": "step-4",
+          "title": "Prove the election is non-preemptive, then force it"
+        },
+        {
+          "id": "step-5",
+          "title": "Convert the R1–R3 link to point-to-point"
+        },
+        {
+          "id": "step-6",
+          "title": "Originate a default route and test it from PC-A"
+        },
+        {
+          "id": "step-7",
+          "title": "Break the LAN adjacency with a timer mismatch"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the timers and save"
+        }
+      ]
+    },
+    {
+      "id": "ospfv3",
+      "number": 22,
+      "title": "OSPFv3",
+      "part": "routing",
+      "prereqs": [
+        "ospfv2",
+        "ipv6-addressing"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-ospf-needed-a-new-version",
+          "title": "Why OSPF needed a new version"
+        },
+        {
+          "id": "what-changed-and-what-stayed",
+          "title": "What changed and what stayed"
+        },
+        {
+          "id": "router-id-and-neighbour-requirements",
+          "title": "Router ID and neighbour requirements"
+        },
+        {
+          "id": "network-types-point-to-point-and-broadcast",
+          "title": "Network types: point-to-point and broadcast"
+        },
+        {
+          "id": "lsas-where-the-prefixes-went",
+          "title": "LSAs: where the prefixes went"
+        },
+        {
+          "id": "configuring-ospfv3",
+          "title": "Configuring OSPFv3"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and address the routers"
+        },
+        {
+          "id": "step-2",
+          "title": "Start OSPFv3 — and see why the router ID is mandatory"
+        },
+        {
+          "id": "step-3",
+          "title": "Read the neighbour table and the DR/BDR result"
+        },
+        {
+          "id": "step-4",
+          "title": "Read the interface and routing tables"
+        },
+        {
+          "id": "step-5",
+          "title": "Convert the R1–R2 link to point-to-point"
+        },
+        {
+          "id": "step-6",
+          "title": "Control the election with priority"
+        },
+        {
+          "id": "step-7",
+          "title": "Break the adjacency with an area mismatch, then repair it"
+        },
+        {
+          "id": "step-8",
+          "title": "Make the LAN passive, prove end-to-end, and save"
+        }
+      ]
+    },
+    {
+      "id": "fhrp-hsrp-vrrp",
+      "number": 23,
+      "title": "FHRP: HSRP & VRRP",
+      "part": "routing",
+      "prereqs": [
+        "inter-vlan-routing"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "the-problem-a-host-trusts-one-gateway",
+          "title": "The problem: a host trusts one gateway"
+        },
+        {
+          "id": "hsrp-groups-roles-and-the-election",
+          "title": "HSRP: groups, roles and the election"
+        },
+        {
+          "id": "states-timers-and-failover-mechanics",
+          "title": "States, timers and failover mechanics"
+        },
+        {
+          "id": "configuring-hsrp-priority-preemption-tracking-timers",
+          "title": "Configuring HSRP: priority, preemption, tracking, timers"
+        },
+        {
+          "id": "vrrp-and-glbp",
+          "title": "VRRP and GLBP"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "interpreting-status-and-troubleshooting",
+          "title": "Interpreting status and troubleshooting"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable the LAN and prepare the switch"
+        },
+        {
+          "id": "step-2",
+          "title": "Configure R1 as the preferred gateway"
+        },
+        {
+          "id": "step-3",
+          "title": "Configure R2 and the WAN router, then check the roles"
+        },
+        {
+          "id": "step-4",
+          "title": "Inspect the virtual identity"
+        },
+        {
+          "id": "step-5",
+          "title": "Fail the active router and watch the standby take over"
+        },
+        {
+          "id": "step-6",
+          "title": "Restore R1 and prove what preemption does"
+        },
+        {
+          "id": "step-7",
+          "title": "Track the uplink so a dead WAN link moves the gateway"
+        },
+        {
+          "id": "step-8",
+          "title": "Move the group to HSRP version 2 and save"
+        }
+      ]
+    },
+    {
+      "id": "dhcp",
+      "number": 24,
+      "title": "DHCP",
+      "part": "services",
+      "prereqs": [
+        "inter-vlan-routing"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-host-cannot-address-itself",
+          "title": "Why a host cannot address itself"
+        },
+        {
+          "id": "the-four-messages-dora",
+          "title": "The four messages: DORA"
+        },
+        {
+          "id": "leases-renewal-and-the-other-messages",
+          "title": "Leases, renewal and the other messages"
+        },
+        {
+          "id": "the-ios-dhcp-server",
+          "title": "The IOS DHCP server"
+        },
+        {
+          "id": "the-ios-dhcp-client",
+          "title": "The IOS DHCP client"
+        },
+        {
+          "id": "relay-crossing-the-router-with-ip-helper-address",
+          "title": "Relay: crossing the router with ip helper-address"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable and address the routers"
+        },
+        {
+          "id": "step-2",
+          "title": "Build the DHCP server and its return route"
+        },
+        {
+          "id": "step-3",
+          "title": "Prove that the router blocks the Discover"
+        },
+        {
+          "id": "step-4",
+          "title": "Add the relay and read the exchange end to end"
+        },
+        {
+          "id": "step-5",
+          "title": "Make R3 a DHCP client"
+        },
+        {
+          "id": "step-6",
+          "title": "Fault 1 — helper on the wrong interface"
+        },
+        {
+          "id": "step-7",
+          "title": "Fault 2 — an exhausted pool"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore and save"
+        }
+      ]
+    },
+    {
+      "id": "dns",
+      "number": 25,
+      "title": "DNS",
+      "part": "services",
+      "prereqs": [
+        "tcp-udp-ports"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-the-network-needs-a-directory",
+          "title": "Why the network needs a directory"
+        },
+        {
+          "id": "how-a-query-walks-the-tree",
+          "title": "How a query walks the tree"
+        },
+        {
+          "id": "the-record-types-and-their-rules",
+          "title": "The record types and their rules"
+        },
+        {
+          "id": "dns-on-a-cisco-router",
+          "title": "DNS on a Cisco router"
+        },
+        {
+          "id": "diagnosing-by-symptom",
+          "title": "Diagnosing by symptom"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable and address the devices"
+        },
+        {
+          "id": "step-2",
+          "title": "Build the zone on DNS1 and the web page on WEB1"
+        },
+        {
+          "id": "step-3",
+          "title": "Make R1 a DNS client"
+        },
+        {
+          "id": "step-4",
+          "title": "Static entries beat DNS, and what happens when lookup is off"
+        },
+        {
+          "id": "step-5",
+          "title": "Resolve from PC-A and watch the packets"
+        },
+        {
+          "id": "step-6",
+          "title": "Break it three ways"
+        },
+        {
+          "id": "step-7",
+          "title": "Restore and save"
+        }
+      ]
+    },
+    {
+      "id": "nat-pat",
+      "number": 26,
+      "title": "NAT & PAT",
+      "part": "services",
+      "prereqs": [
+        "static-routing-ipv4"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-translation-exists",
+          "title": "Why translation exists"
+        },
+        {
+          "id": "the-four-address-terms",
+          "title": "The four address terms"
+        },
+        {
+          "id": "static-nat",
+          "title": "Static NAT"
+        },
+        {
+          "id": "dynamic-nat-with-a-pool",
+          "title": "Dynamic NAT with a pool"
+        },
+        {
+          "id": "pat-overload-on-an-interface-or-a-pool",
+          "title": "PAT: overload on an interface or a pool"
+        },
+        {
+          "id": "ios-xe-and-packet-tracer-specifics",
+          "title": "IOS XE and Packet Tracer specifics"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Address, route, and prove that routing alone fails"
+        },
+        {
+          "id": "step-2",
+          "title": "Mark the interfaces and add a static mapping"
+        },
+        {
+          "id": "step-3",
+          "title": "Give the ISP a return route and watch the translation live"
+        },
+        {
+          "id": "step-4",
+          "title": "Replace the static mapping with a two-address pool"
+        },
+        {
+          "id": "step-5",
+          "title": "Overload the outside interface"
+        },
+        {
+          "id": "step-6",
+          "title": "Overload the pool instead"
+        },
+        {
+          "id": "step-7",
+          "title": "Watch entries expire, then clear them"
+        },
+        {
+          "id": "step-8",
+          "title": "Leave the realistic configuration in place and save"
+        }
+      ]
+    },
+    {
+      "id": "ntp-syslog-snmp",
+      "number": 27,
+      "title": "NTP, syslog & SNMP",
+      "part": "services",
+      "prereqs": [
+        "ios-essentials"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-time-logs-and-counters-belong-together",
+          "title": "Why time, logs and counters belong together"
+        },
+        {
+          "id": "ntp-stratum-and-the-time-hierarchy",
+          "title": "NTP: stratum and the time hierarchy"
+        },
+        {
+          "id": "configuring-and-verifying-ntp-on-ios",
+          "title": "Configuring and verifying NTP on IOS"
+        },
+        {
+          "id": "syslog-severity-facility-and-the-anatomy-of-a-message",
+          "title": "Syslog: severity, facility and the anatomy of a message"
+        },
+        {
+          "id": "where-messages-go-the-four-logging-destinations",
+          "title": "Where messages go: the four logging destinations"
+        },
+        {
+          "id": "snmp-managers-agents-and-the-mib",
+          "title": "SNMP: managers, agents and the MIB"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Address the devices and look at an unsynchronised clock"
+        },
+        {
+          "id": "step-2",
+          "title": "Turn on the server's NTP service and make R1 a client"
+        },
+        {
+          "id": "step-3",
+          "title": "Let R1 serve time to SW1"
+        },
+        {
+          "id": "step-4",
+          "title": "Timestamp the log, enlarge the buffer, and generate an event"
+        },
+        {
+          "id": "step-5",
+          "title": "Send the messages to the syslog server"
+        },
+        {
+          "id": "step-6",
+          "title": "See messages in a remote session with terminal monitor"
+        },
+        {
+          "id": "step-7",
+          "title": "Enable SNMP and read the router from PC1"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the hostname and save"
+        }
+      ]
+    },
+    {
+      "id": "qos",
+      "number": 28,
+      "title": "QoS",
+      "part": "services",
+      "prereqs": [
+        "tcp-udp-ports"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-busy-link-needs-a-policy",
+          "title": "Why a busy link needs a policy"
+        },
+        {
+          "id": "classification-deciding-what-a-packet-is",
+          "title": "Classification: deciding what a packet is"
+        },
+        {
+          "id": "marking-cos-ip-precedence-and-dscp",
+          "title": "Marking: CoS, IP Precedence and DSCP"
+        },
+        {
+          "id": "the-trust-boundary",
+          "title": "The trust boundary"
+        },
+        {
+          "id": "queuing-who-goes-next",
+          "title": "Queuing: who goes next"
+        },
+        {
+          "id": "congestion-avoidance-dropping-on-purpose",
+          "title": "Congestion avoidance: dropping on purpose"
+        },
+        {
+          "id": "policing-and-shaping-enforcing-a-rate",
+          "title": "Policing and shaping: enforcing a rate"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, address and route"
+        },
+        {
+          "id": "step-2",
+          "title": "Enable QoS on the switch and set trust"
+        },
+        {
+          "id": "step-3",
+          "title": "Classify with ACLs and class-maps"
+        },
+        {
+          "id": "step-4",
+          "title": "Mark inbound on the LAN interface"
+        },
+        {
+          "id": "step-5",
+          "title": "Queue outbound with LLQ and CBWFQ"
+        },
+        {
+          "id": "step-6",
+          "title": "Police the bulk class"
+        },
+        {
+          "id": "step-7",
+          "title": "Shape the WAN link"
+        },
+        {
+          "id": "step-8",
+          "title": "Save the baseline"
+        }
+      ]
+    },
+    {
+      "id": "file-management",
+      "number": 29,
+      "title": "File & image management",
+      "part": "services",
+      "prereqs": [
+        "ios-essentials"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-file-management-matters",
+          "title": "Why file management matters"
+        },
+        {
+          "id": "where-ios-keeps-its-files",
+          "title": "Where IOS keeps its files"
+        },
+        {
+          "id": "the-copy-command-and-its-url-forms",
+          "title": "The copy command and its URL forms"
+        },
+        {
+          "id": "tftp-ftp-scp-and-sftp",
+          "title": "TFTP, FTP, SCP and SFTP"
+        },
+        {
+          "id": "merge-replace-and-archive",
+          "title": "Merge, replace and archive"
+        },
+        {
+          "id": "images-boot-system-and-the-config-register",
+          "title": "Images, boot system and the config register"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Address R1 and switch on the server's services"
+        },
+        {
+          "id": "step-2",
+          "title": "Explore the file systems"
+        },
+        {
+          "id": "step-3",
+          "title": "Back up the running configuration to TFTP"
+        },
+        {
+          "id": "step-4",
+          "title": "Back up over FTP with stored credentials"
+        },
+        {
+          "id": "step-5",
+          "title": "Prove merge versus replace"
+        },
+        {
+          "id": "step-6",
+          "title": "Stage a second image and boot from it"
+        },
+        {
+          "id": "step-7",
+          "title": "Restore the original boot image and clean up"
+        },
+        {
+          "id": "step-8",
+          "title": "Make R1 an SCP server (CML/hardware only)"
+        }
+      ]
+    },
+    {
+      "id": "client-os-troubleshooting",
+      "number": 30,
+      "title": "Client OS troubleshooting",
+      "part": "services",
+      "prereqs": [
+        "ipv4-addressing",
+        "dhcp"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "four-parameters-decide-everything",
+          "title": "Four parameters decide everything"
+        },
+        {
+          "id": "the-same-questions-on-three-operating-systems",
+          "title": "The same questions on three operating systems"
+        },
+        {
+          "id": "reading-windows",
+          "title": "Reading Windows"
+        },
+        {
+          "id": "reading-macos-and-linux",
+          "title": "Reading macOS and Linux"
+        },
+        {
+          "id": "four-parameters-four-failure-signatures",
+          "title": "Four parameters, four failure signatures"
+        },
+        {
+          "id": "wireless-clients-three-settings-that-must-match",
+          "title": "Wireless clients: three settings that must match"
+        },
+        {
+          "id": "verify-and-troubleshoot-the-ladder",
+          "title": "Verify and troubleshoot: the ladder"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable the network and configure R1"
+        },
+        {
+          "id": "step-2",
+          "title": "Read the lease field by field"
+        },
+        {
+          "id": "step-3",
+          "title": "Climb the ladder while everything works"
+        },
+        {
+          "id": "step-4",
+          "title": "Fault 1 — wrong DNS server"
+        },
+        {
+          "id": "step-5",
+          "title": "Fault 2 — wrong default gateway"
+        },
+        {
+          "id": "step-6",
+          "title": "Fault 3 — wrong subnet mask, and why proxy ARP hides it"
+        },
+        {
+          "id": "step-7",
+          "title": "Fault 4 — no DHCP server, and the APIPA address"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the baseline and save"
+        }
+      ]
+    },
+    {
+      "id": "troubleshooting-toolkit",
+      "number": 31,
+      "title": "Troubleshooting toolkit",
+      "part": "services",
+      "prereqs": [
+        "routing-table",
+        "cdp-lldp"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-you-need-a-method",
+          "title": "Why you need a method"
+        },
+        {
+          "id": "layer-by-layer",
+          "title": "Layer by layer"
+        },
+        {
+          "id": "ping-and-extended-ping",
+          "title": "Ping and extended ping"
+        },
+        {
+          "id": "traceroute-on-ios-windows-and-linux",
+          "title": "Traceroute on IOS, Windows and Linux"
+        },
+        {
+          "id": "interfaces-counters-mac-and-arp-tables",
+          "title": "Interfaces, counters, MAC and ARP tables"
+        },
+        {
+          "id": "logs-and-device-operations",
+          "title": "Logs and device operations"
+        },
+        {
+          "id": "reading-packet-captures",
+          "title": "Reading packet captures"
+        },
+        {
+          "id": "verify-and-troubleshoot-a-fault-walk",
+          "title": "Verify and troubleshoot: a fault walk"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and address everything"
+        },
+        {
+          "id": "step-2",
+          "title": "Record the healthy baseline"
+        },
+        {
+          "id": "step-3",
+          "title": "Read the three ping codes"
+        },
+        {
+          "id": "step-4",
+          "title": "Prove a return route with extended ping and traceroute"
+        },
+        {
+          "id": "step-5",
+          "title": "A dead link — status, logs and CDP"
+        },
+        {
+          "id": "step-6",
+          "title": "A wrong VLAN — MAC table and ARP table"
+        },
+        {
+          "id": "step-7",
+          "title": "Capture ARP, DHCP through the relay, and a DNS failure"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the baseline and save"
+        }
+      ]
+    },
+    {
+      "id": "security-concepts",
+      "number": 32,
+      "title": "Security concepts",
+      "part": "security",
+      "prereqs": [
+        "network-models"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-network-engineer-owns-security",
+          "title": "Why a network engineer owns security"
+        },
+        {
+          "id": "threat-vulnerability-exploit-mitigation",
+          "title": "Threat, vulnerability, exploit, mitigation"
+        },
+        {
+          "id": "reconnaissance-spoofing-and-denial-of-service",
+          "title": "Reconnaissance, spoofing and denial of service"
+        },
+        {
+          "id": "man-in-the-middle-malware-and-the-human-layer",
+          "title": "Man in the middle, malware and the human layer"
+        },
+        {
+          "id": "password-attacks-and-layer-2-attacks",
+          "title": "Password attacks and Layer 2 attacks"
+        },
+        {
+          "id": "password-policy-and-its-alternatives",
+          "title": "Password policy and its alternatives"
+        },
+        {
+          "id": "the-security-program-awareness-training-physical-access",
+          "title": "The security program: awareness, training, physical access"
+        },
+        {
+          "id": "hardening-the-device-verify-and-troubleshoot",
+          "title": "Hardening the device: verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, address and confirm reachability"
+        },
+        {
+          "id": "step-2",
+          "title": "Build the weak baseline and look at it as an attacker"
+        },
+        {
+          "id": "step-3",
+          "title": "Enforce length and hashed storage"
+        },
+        {
+          "id": "step-4",
+          "title": "Replace Telnet with SSH and remove the line password"
+        },
+        {
+          "id": "step-5",
+          "title": "Add login blocking and log every attempt"
+        },
+        {
+          "id": "step-6",
+          "title": "Add a banner and an idle timeout on the VTY lines"
+        },
+        {
+          "id": "step-7",
+          "title": "Verify the hardened state and save"
+        }
+      ]
+    },
+    {
+      "id": "aaa-tacacs-radius",
+      "number": 33,
+      "title": "AAA: TACACS+ & RADIUS",
+      "part": "security",
+      "prereqs": [
+        "ios-essentials"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "three-questions-three-answers",
+          "title": "Three questions, three answers"
+        },
+        {
+          "id": "local-accounts-versus-a-central-server",
+          "title": "Local accounts versus a central server"
+        },
+        {
+          "id": "tacacs-versus-radius",
+          "title": "TACACS+ versus RADIUS"
+        },
+        {
+          "id": "aaa-new-model-and-staying-out-of-the-lock-out",
+          "title": "`aaa new-model` and staying out of the lock-out"
+        },
+        {
+          "id": "servers-and-server-groups",
+          "title": "Servers and server groups"
+        },
+        {
+          "id": "method-lists-authentication-authorization-accounting",
+          "title": "Method lists: authentication, authorization, accounting"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Address R1 and build the local recovery path"
+        },
+        {
+          "id": "step-2",
+          "title": "Switch on the AAA service and define R1 and a user"
+        },
+        {
+          "id": "step-3",
+          "title": "Enable AAA with local-only lists"
+        },
+        {
+          "id": "step-4",
+          "title": "Define the server, the group and the method list"
+        },
+        {
+          "id": "step-5",
+          "title": "Prove that a rejection stops the list"
+        },
+        {
+          "id": "step-6",
+          "title": "Prove that an error falls back to local"
+        },
+        {
+          "id": "step-7",
+          "title": "Watch the decision with debug"
+        },
+        {
+          "id": "step-8",
+          "title": "Save the working state"
+        }
+      ]
+    },
+    {
+      "id": "acls",
+      "number": 34,
+      "title": "Access control lists",
+      "part": "security",
+      "prereqs": [
+        "static-routing-ipv4",
+        "tcp-udp-ports"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-router-needs-a-filter",
+          "title": "Why a router needs a filter"
+        },
+        {
+          "id": "how-an-acl-is-evaluated",
+          "title": "How an ACL is evaluated"
+        },
+        {
+          "id": "wildcard-masks",
+          "title": "Wildcard masks"
+        },
+        {
+          "id": "standard-acls",
+          "title": "Standard ACLs"
+        },
+        {
+          "id": "extended-acls",
+          "title": "Extended ACLs"
+        },
+        {
+          "id": "named-acls-sequence-numbers-and-editing",
+          "title": "Named ACLs, sequence numbers and editing"
+        },
+        {
+          "id": "applying-an-acl-interfaces-direction-and-the-vty-lines",
+          "title": "Applying an ACL: interfaces, direction and the VTY lines"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Address the router and take a baseline"
+        },
+        {
+          "id": "step-2",
+          "title": "A standard ACL outbound on the server LAN"
+        },
+        {
+          "id": "step-3",
+          "title": "Replace it with a named extended ACL inbound on the client LAN"
+        },
+        {
+          "id": "step-4",
+          "title": "Insert an exception with a sequence number and resequence"
+        },
+        {
+          "id": "step-5",
+          "title": "Let servers answer but never initiate, with established"
+        },
+        {
+          "id": "step-6",
+          "title": "Restrict management access with access-class"
+        },
+        {
+          "id": "step-7",
+          "title": "Prove that outbound ACLs skip router-generated traffic"
+        },
+        {
+          "id": "step-8",
+          "title": "Clean up and save"
+        }
+      ]
+    },
+    {
+      "id": "vpns-ipsec",
+      "number": 35,
+      "title": "VPNs & IPsec",
+      "part": "security",
+      "prereqs": [
+        "tcp-udp-ports"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-traffic-needs-a-tunnel",
+          "title": "Why traffic needs a tunnel"
+        },
+        {
+          "id": "site-to-site-versus-remote-access",
+          "title": "Site-to-site versus remote access"
+        },
+        {
+          "id": "what-ipsec-provides-and-which-protocol-provides-it",
+          "title": "What IPsec provides, and which protocol provides it"
+        },
+        {
+          "id": "tunnel-mode-versus-transport-mode",
+          "title": "Tunnel mode versus transport mode"
+        },
+        {
+          "id": "ike-how-two-peers-agree-on-keys",
+          "title": "IKE: how two peers agree on keys"
+        },
+        {
+          "id": "gre-over-ipsec-vti-dmvpn-and-flexvpn",
+          "title": "GRE over IPsec, VTI, DMVPN and FlexVPN"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and address the underlay"
+        },
+        {
+          "id": "step-2",
+          "title": "Build the GRE tunnel"
+        },
+        {
+          "id": "step-3",
+          "title": "Run OSPF through the tunnel"
+        },
+        {
+          "id": "step-4",
+          "title": "Watch the ISP forward a packet it cannot read"
+        },
+        {
+          "id": "step-5",
+          "title": "Enable the security license on R-BR and R-HQ"
+        },
+        {
+          "id": "step-6",
+          "title": "Protect the tunnel with an IKEv1 crypto map"
+        },
+        {
+          "id": "step-7",
+          "title": "Break phase 1 and read the failure"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the key, verify and save"
+        }
+      ]
+    },
+    {
+      "id": "wireless-principles",
+      "number": 36,
+      "title": "Wireless principles",
+      "part": "wireless",
+      "prereqs": [
+        "network-models"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-radio-needs-its-own-rules",
+          "title": "Why radio needs its own rules"
+        },
+        {
+          "id": "rf-basics-frequency-power-and-noise",
+          "title": "RF basics: frequency, power and noise"
+        },
+        {
+          "id": "bands-and-channels",
+          "title": "Bands and channels"
+        },
+        {
+          "id": "the-802-11-standards",
+          "title": "The 802.11 standards"
+        },
+        {
+          "id": "service-sets-bss-ess-ibss-and-the-ssid",
+          "title": "Service sets: BSS, ESS, IBSS and the SSID"
+        },
+        {
+          "id": "interference-and-what-degrades-a-signal",
+          "title": "Interference and what degrades a signal"
+        },
+        {
+          "id": "security-protocols-wep-to-wpa3",
+          "title": "Security protocols: WEP to WPA3"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Place the devices and fit the wireless modules"
+        },
+        {
+          "id": "step-2",
+          "title": "Set the LAN address and DHCP scope"
+        },
+        {
+          "id": "step-3",
+          "title": "Name the WLAN and pick the channel"
+        },
+        {
+          "id": "step-4",
+          "title": "Apply WPA2-Personal with AES"
+        },
+        {
+          "id": "step-5",
+          "title": "Join from the laptop and verify the address"
+        },
+        {
+          "id": "step-6",
+          "title": "Break the security one layer at a time"
+        },
+        {
+          "id": "step-7",
+          "title": "Range and a second cell"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the baseline and save"
+        }
+      ]
+    },
+    {
+      "id": "wireless-architecture",
+      "number": 37,
+      "title": "Wireless architectures",
+      "part": "wireless",
+      "prereqs": [
+        "trunks-dtp"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-one-ap-is-easy-and-fifty-are-not",
+          "title": "Why one AP is easy and fifty are not"
+        },
+        {
+          "id": "autonomous-lightweight-and-cloud-managed",
+          "title": "Autonomous, lightweight and cloud-managed"
+        },
+        {
+          "id": "where-the-controller-lives-deployment-models",
+          "title": "Where the controller lives: deployment models"
+        },
+        {
+          "id": "capwap-the-tunnel-between-ap-and-wlc",
+          "title": "CAPWAP: the tunnel between AP and WLC"
+        },
+        {
+          "id": "ap-modes-what-job-the-radio-does",
+          "title": "AP modes: what job the radio does"
+        },
+        {
+          "id": "wlc-ports-and-interfaces",
+          "title": "WLC ports and interfaces"
+        },
+        {
+          "id": "access-or-trunk-and-lag-cabling-the-pieces",
+          "title": "Access or trunk, and LAG: cabling the pieces"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable the LAN and configure SW1"
+        },
+        {
+          "id": "step-2",
+          "title": "Router-on-a-stick and DHCP on R1"
+        },
+        {
+          "id": "step-3",
+          "title": "First-time setup of WLC1"
+        },
+        {
+          "id": "step-4",
+          "title": "Watch AP1 discover and join"
+        },
+        {
+          "id": "step-5",
+          "title": "Read the ports and interfaces, then add the client VLAN"
+        },
+        {
+          "id": "step-6",
+          "title": "Convert AP1 to FlexConnect and re-cut its switchport"
+        },
+        {
+          "id": "step-7",
+          "title": "LAG toward the controller (CML or hardware only)"
+        },
+        {
+          "id": "step-8",
+          "title": "Restore the baseline and save"
+        }
+      ]
+    },
+    {
+      "id": "wireless-security-config",
+      "number": 38,
+      "title": "Wireless security",
+      "part": "wireless",
+      "prereqs": [
+        "wireless-architecture"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-network-name-is-not-a-lock",
+          "title": "Why a network name is not a lock"
+        },
+        {
+          "id": "authentication-proving-who-is-joining",
+          "title": "Authentication: proving who is joining"
+        },
+        {
+          "id": "encryption-and-integrity-generation-by-generation",
+          "title": "Encryption and integrity, generation by generation"
+        },
+        {
+          "id": "personal-versus-enterprise",
+          "title": "Personal versus Enterprise"
+        },
+        {
+          "id": "building-a-wlan-in-the-wlc-gui",
+          "title": "Building a WLAN in the WLC GUI"
+        },
+        {
+          "id": "managing-the-controller-securely",
+          "title": "Managing the controller securely"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, power the AP and fit the laptop's radio"
+        },
+        {
+          "id": "step-2",
+          "title": "Make R1 the gateway and DHCP server"
+        },
+        {
+          "id": "step-3",
+          "title": "Address the controller and run the day-0 wizard"
+        },
+        {
+          "id": "step-4",
+          "title": "Confirm the AP has joined"
+        },
+        {
+          "id": "step-5",
+          "title": "Create the WPA2-PSK WLAN"
+        },
+        {
+          "id": "step-6",
+          "title": "Read the QoS and Advanced tabs"
+        },
+        {
+          "id": "step-7",
+          "title": "Join the laptop and verify every stage"
+        },
+        {
+          "id": "step-8",
+          "title": "Break it two ways, then restore and save"
+        }
+      ]
+    },
+    {
+      "id": "virtualization",
+      "number": 39,
+      "title": "Virtualization",
+      "part": "automation",
+      "prereqs": [
+        "components-and-topologies"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-one-box-pretends-to-be-many",
+          "title": "Why one box pretends to be many"
+        },
+        {
+          "id": "hypervisors-and-virtual-machines",
+          "title": "Hypervisors and virtual machines"
+        },
+        {
+          "id": "containers-share-the-kernel",
+          "title": "Containers share the kernel"
+        },
+        {
+          "id": "virtual-switches-vnics-and-the-trunk-to-the-host",
+          "title": "Virtual switches, vNICs and the trunk to the host"
+        },
+        {
+          "id": "cloud-virtualization-someone-else-runs",
+          "title": "Cloud: virtualization someone else runs"
+        },
+        {
+          "id": "vrfs-one-router-several-routing-tables",
+          "title": "VRFs: one router, several routing tables"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable, name and address the PCs"
+        },
+        {
+          "id": "step-2",
+          "title": "Prove that the global table refuses an overlap"
+        },
+        {
+          "id": "step-3",
+          "title": "Define the two VRFs"
+        },
+        {
+          "id": "step-4",
+          "title": "Move the interfaces into the VRFs"
+        },
+        {
+          "id": "step-5",
+          "title": "Read three routing tables"
+        },
+        {
+          "id": "step-6",
+          "title": "Ping from the right context"
+        },
+        {
+          "id": "step-7",
+          "title": "Add a global loopback, compare again, and save"
+        }
+      ]
+    },
+    {
+      "id": "network-management-and-sdn",
+      "number": 40,
+      "title": "Network management & SDN",
+      "part": "automation",
+      "prereqs": [
+        "ios-essentials"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-forty-switches-need-one-brain",
+          "title": "Why forty switches need one brain"
+        },
+        {
+          "id": "the-three-planes-of-a-network-device",
+          "title": "The three planes of a network device"
+        },
+        {
+          "id": "traditional-versus-controller-based-networking",
+          "title": "Traditional versus controller-based networking"
+        },
+        {
+          "id": "sdn-architecture-three-layers-and-two-apis",
+          "title": "SDN architecture: three layers and two APIs"
+        },
+        {
+          "id": "underlay-overlay-and-fabric",
+          "title": "Underlay, overlay and fabric"
+        },
+        {
+          "id": "cisco-sd-access-aci-and-sd-wan",
+          "title": "Cisco SD-Access, ACI and SD-WAN"
+        },
+        {
+          "id": "five-ways-to-manage-a-network",
+          "title": "Five ways to manage a network"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable and address the underlay"
+        },
+        {
+          "id": "step-2",
+          "title": "Turn on the control plane — OSPF"
+        },
+        {
+          "id": "step-3",
+          "title": "Send data and prove OSPF did not touch it"
+        },
+        {
+          "id": "step-4",
+          "title": "The management plane — SSH into R2"
+        },
+        {
+          "id": "step-5",
+          "title": "Open a model-driven southbound interface — RESTCONF and NETCONF"
+        },
+        {
+          "id": "step-6",
+          "title": "Label the layers, planes and APIs"
+        },
+        {
+          "id": "step-7",
+          "title": "Walk a VXLAN packet and detect drift"
+        },
+        {
+          "id": "step-8",
+          "title": "Save the baseline and tidy up"
+        }
+      ]
+    },
+    {
+      "id": "rest-apis-json",
+      "number": 41,
+      "title": "REST APIs & JSON",
+      "part": "automation",
+      "prereqs": [
+        "tcp-udp-ports"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-a-network-engineer-reads-http",
+          "title": "Why a network engineer reads HTTP"
+        },
+        {
+          "id": "what-makes-an-api-restful",
+          "title": "What makes an API RESTful"
+        },
+        {
+          "id": "requests-uris-verbs-and-headers",
+          "title": "Requests: URIs, verbs and headers"
+        },
+        {
+          "id": "responses-status-codes",
+          "title": "Responses: status codes"
+        },
+        {
+          "id": "authentication-four-ways-to-prove-who-you-are",
+          "title": "Authentication: four ways to prove who you are"
+        },
+        {
+          "id": "json-the-data-encoding-you-must-read",
+          "title": "JSON: the data encoding you must read"
+        },
+        {
+          "id": "json-xml-and-yaml-side-by-side",
+          "title": "JSON, XML and YAML side by side"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Check your tools"
+        },
+        {
+          "id": "step-2",
+          "title": "Get a token with Basic authentication"
+        },
+        {
+          "id": "step-3",
+          "title": "Read the inventory with the token"
+        },
+        {
+          "id": "step-4",
+          "title": "Filter with a query string and walk the JSON"
+        },
+        {
+          "id": "step-5",
+          "title": "Break it on purpose — 401 and 404"
+        },
+        {
+          "id": "step-6",
+          "title": "Validate JSON with a strict parser"
+        },
+        {
+          "id": "step-7",
+          "title": "RESTCONF on an IOS XE router (CML/hardware only)"
+        },
+        {
+          "id": "step-8",
+          "title": "Clean up"
+        }
+      ]
+    },
+    {
+      "id": "ansible-terraform",
+      "number": 42,
+      "title": "Ansible & Terraform",
+      "part": "automation",
+      "prereqs": [
+        "ios-essentials"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-configuration-management-exists",
+          "title": "Why configuration management exists"
+        },
+        {
+          "id": "four-tools-two-philosophies",
+          "title": "Four tools, two philosophies"
+        },
+        {
+          "id": "ansible-control-node-inventory-and-variables",
+          "title": "Ansible: control node, inventory and variables"
+        },
+        {
+          "id": "playbooks-modules-and-a-real-run",
+          "title": "Playbooks, modules and a real run"
+        },
+        {
+          "id": "running-it-safely-check-syntax-vault-idempotence",
+          "title": "Running it safely: check, syntax, vault, idempotence"
+        },
+        {
+          "id": "terraform-providers-state-and-the-plan-apply-cycle",
+          "title": "Terraform: providers, state and the plan/apply cycle"
+        },
+        {
+          "id": "reading-the-output",
+          "title": "Reading the output"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Read the inventory and name the scope"
+        },
+        {
+          "id": "step-2",
+          "title": "Read the playbook and predict the run"
+        },
+        {
+          "id": "step-3",
+          "title": "Predict two runs of a configuration play"
+        },
+        {
+          "id": "step-4",
+          "title": "Predict the failure modes"
+        },
+        {
+          "id": "step-5",
+          "title": "Read a Terraform configuration and write the plan"
+        },
+        {
+          "id": "step-6",
+          "title": "Predict three more plans"
+        },
+        {
+          "id": "step-7",
+          "title": "Optional — run the Terraform cycle and the playbook for real"
+        }
+      ]
+    },
+    {
+      "id": "ai-in-network-operations",
+      "number": 43,
+      "title": "AI in network operations",
+      "part": "automation",
+      "prereqs": [
+        "network-management-and-sdn"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "why-the-exam-cares-about-ai-now",
+          "title": "Why the exam cares about AI now"
+        },
+        {
+          "id": "the-vocabulary-ai-ml-deep-learning-generative",
+          "title": "The vocabulary: AI, ML, deep learning, generative"
+        },
+        {
+          "id": "predictive-ai-baselines-anomalies-and-forecasts",
+          "title": "Predictive AI: baselines, anomalies and forecasts"
+        },
+        {
+          "id": "generative-ai-llms-hallucination-and-the-assistant",
+          "title": "Generative AI: LLMs, hallucination and the assistant"
+        },
+        {
+          "id": "writing-the-prompt-persona-instructions-context-classificati",
+          "title": "Writing the prompt: persona, instructions, context, classification, format, constraints"
+        },
+        {
+          "id": "agentic-ai-the-loop-the-tools-and-the-guardrails",
+          "title": "Agentic AI: the loop, the tools and the guardrails"
+        },
+        {
+          "id": "verify-and-troubleshoot-evaluating-an-agent-s-proposal",
+          "title": "Verify and troubleshoot: evaluating an agent's proposal"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Build the lab and record a baseline"
+        },
+        {
+          "id": "step-2",
+          "title": "Classify the data before you paste it"
+        },
+        {
+          "id": "step-3",
+          "title": "Evaluate assistant response A"
+        },
+        {
+          "id": "step-4",
+          "title": "Evaluate assistant response B"
+        },
+        {
+          "id": "step-5",
+          "title": "Evaluate the agent's configuration proposal"
+        },
+        {
+          "id": "step-6",
+          "title": "Feed the agent a poisoned description"
+        },
+        {
+          "id": "step-7",
+          "title": "Clean up and save"
+        }
+      ]
+    },
+    {
+      "id": "capstone-branch-network",
+      "number": 44,
+      "title": "Capstone: the branch network",
+      "part": "capstone",
+      "prereqs": [
+        "ospfv2",
+        "nat-pat",
+        "acls",
+        "dhcp"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "what-the-branch-must-do",
+          "title": "What the branch must do"
+        },
+        {
+          "id": "the-addressing-plan",
+          "title": "The addressing plan"
+        },
+        {
+          "id": "build-order-layer-2-first",
+          "title": "Build order: Layer 2 first"
+        },
+        {
+          "id": "the-branch-router-subinterfaces-dhcp-and-ospf",
+          "title": "The branch router: subinterfaces, DHCP and OSPF"
+        },
+        {
+          "id": "hq-and-the-internet-edge",
+          "title": "HQ and the Internet edge"
+        },
+        {
+          "id": "policy-and-management",
+          "title": "Policy and management"
+        },
+        {
+          "id": "verify-and-troubleshoot",
+          "title": "Verify and troubleshoot"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Cable everything, set up the servers and the ISP"
+        },
+        {
+          "id": "step-2",
+          "title": "Create the VLANs, the access ports and the router trunk"
+        },
+        {
+          "id": "step-3",
+          "title": "Bundle the inter-switch links, set the root and add management SVIs"
+        },
+        {
+          "id": "step-4",
+          "title": "R1 as router-on-a-stick and DHCP server"
+        },
+        {
+          "id": "step-5",
+          "title": "The transit, OSPF, the HQ LAN and the default route"
+        },
+        {
+          "id": "step-6",
+          "title": "PAT on R2, proved with an extended ping"
+        },
+        {
+          "id": "step-7",
+          "title": "The guest policy and its acceptance matrix"
+        },
+        {
+          "id": "step-8",
+          "title": "SSH, NTP and syslog on every Cisco device"
+        },
+        {
+          "id": "step-9",
+          "title": "Save the baseline, then inject and repair three faults"
+        },
+        {
+          "id": "step-10",
+          "title": "Cold rebuild from the requirements"
+        }
+      ]
+    },
+    {
+      "id": "exam-readiness",
+      "number": 45,
+      "title": "Exam readiness",
+      "part": "capstone",
+      "prereqs": [
+        "capstone-branch-network"
+      ],
+      "sections": [
+        {
+          "id": "intro",
+          "title": ""
+        },
+        {
+          "id": "what-you-are-walking-into",
+          "title": "What you are walking into"
+        },
+        {
+          "id": "two-blueprints-one-exam-number",
+          "title": "Two blueprints, one exam number"
+        },
+        {
+          "id": "pacing-and-question-attack",
+          "title": "Pacing and question attack"
+        },
+        {
+          "id": "rate-yourself-by-domain",
+          "title": "Rate yourself by domain"
+        },
+        {
+          "id": "the-numbers-to-memorise",
+          "title": "The numbers to memorise"
+        },
+        {
+          "id": "the-final-two-weeks",
+          "title": "The final two weeks"
+        },
+        {
+          "id": "exam-day-and-after",
+          "title": "Exam day, and after"
+        },
+        {
+          "id": "exam-focus",
+          "title": "Exam focus"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Start the clock, cable and name (5 min)"
+        },
+        {
+          "id": "step-2",
+          "title": "Switch — VLANs, access ports, trunk (10 min)"
+        },
+        {
+          "id": "step-3",
+          "title": "R1 — router-on-a-stick and DHCP (10 min)"
+        },
+        {
+          "id": "step-4",
+          "title": "The routed link and OSPF on both routers (10 min)"
+        },
+        {
+          "id": "step-5",
+          "title": "R1 — SSH-only management and the ACL (10 min)"
+        },
+        {
+          "id": "step-6",
+          "title": "Verification sweep and score (10 min)"
+        },
+        {
+          "id": "step-7",
+          "title": "Save and reset for a second run (5 min)"
+        }
+      ]
+    }
+  ]
+}

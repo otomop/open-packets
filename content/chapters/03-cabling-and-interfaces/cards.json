@@ -1,0 +1,146 @@
+[
+  {
+    "id": "cabling-and-interfaces-c01",
+    "front": "What is the usual copper Ethernet channel limit, and what must you check?",
+    "back": "100 m for the specified category on supporting ports, commonly 90 m installed plus 10 m patch leads. Some copper modules have shorter limits.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c02",
+    "front": "Cable choices for 1 Gbps and for a full 100 m 10GBASE-T channel?",
+    "back": "Cat5e or better is the normal new 1 Gbps choice. Use Cat6A for 10GBASE-T at 100 m on supporting interfaces.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c22",
+    "front": "Which pin groups form the four physical twisted pairs?",
+    "back": "1–2, 3–6, 4–5 and 7–8. A split pair can pass simple pin continuity while using the wrong physical pairing.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c04",
+    "front": "Which pairs does a conventional 10/100 crossover exchange?",
+    "back": "Pins 1–2 exchange with pins 3–6: 1↔3 and 2↔6. This is the 10/100 crossover mapping, not a complete rule for every four-pair interface.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c05",
+    "front": "Without auto-MDIX, when is crossover used on traditional 10/100 ports?",
+    "back": "Between like electrical arrangements: switch–switch or PC–router, for example. PC/router/server–switch uses straight-through.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c06",
+    "front": "How does a rollover console cable differ from an Ethernet cable?",
+    "back": "A traditional rollover reverses pins for a serial console connection. Connect it to the Console port; similar-looking connectors do not make it Ethernet.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c09",
+    "front": "How do single-mode and multimode fiber differ?",
+    "back": "Single-mode has a smaller core and commonly supports longer-distance optical designs. Multimode has a larger core and commonly serves shorter links; use specifications, not jacket color alone.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c10",
+    "front": "What do common 1 Gbps SFP and 10 Gbps SFP+ examples teach about module choice?",
+    "back": "Match form factor, supported port speed, Ethernet optical standard and fiber. Physical fit and matching connectors alone do not establish compatibility.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c14",
+    "front": "Hub versus switch: collision and broadcast domains?",
+    "back": "A hub's devices share one collision domain. A switch separates port segments, while ports in one VLAN share a broadcast domain. Full-duplex Ethernet has no normal collisions.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c15",
+    "front": "What can an automatic 10/100 end do when its peer is forced to 100/full?",
+    "back": "Detect 100 Mbps but not the forced duplex setting, then operate at half duplex. The resulting link can be up with a duplex mismatch.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c16",
+    "front": "What evidence supports a duplex-mismatch diagnosis?",
+    "back": "Opposing operational duplex settings at the two ends. Collisions/late collisions or received-frame errors may support it, but counters alone are not conclusive.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c18",
+    "front": "What does the a- prefix in a-full or a-100 mean?",
+    "back": "The setting was selected automatically, rather than explicitly forced. It can reflect negotiation or sensed/defaulted behavior, so compare both ends.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c19",
+    "front": "Administrative shutdown versus a lost physical link: what evidence matters?",
+    "back": "Administratively down identifies the local shutdown. A down/notconnect state can have several causes, including the far end; inspect both ends.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c12",
+    "front": "What are runts and giants?",
+    "back": "Runts are undersized Ethernet frames. Giants exceed the permitted frame size for that interface and encapsulation; tags and larger configured frames affect the limit.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c13",
+    "front": "What does a late collision suggest on a half-duplex 10/100 link?",
+    "back": "A collision occurred beyond the permitted window. Investigate duplex agreement and physical/hardware conditions; it is not proof of one specific defect.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c20",
+    "front": "What do increasing output drops commonly suggest?",
+    "back": "An egress queue cannot hold all offered traffic. Examine load and queue behavior; drops do not automatically prove a cable fault.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c21",
+    "front": "Is −16 dBm within a supplied receive range of −12 through −1 dBm?",
+    "back": "No. −16 dBm is lower power than the −12 dBm limit. Check transmitter, path, connectors, distance and compatibility; the reading alone does not isolate the cause.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "cabling-and-interfaces-c17",
+    "front": "How do you restore automatic speed and duplex in interface configuration?",
+    "back": "Use speed auto and duplex auto on both supported ends. Verify matching operational settings and a fresh traffic test.",
+    "tags": [
+      "command"
+    ]
+  }
+]

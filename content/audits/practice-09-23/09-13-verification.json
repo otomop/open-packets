@@ -1,0 +1,116 @@
+{
+  "checkedAt": "2026-09-20T17:38:13.623Z",
+  "scope": "09-13",
+  "fragments": 1587,
+  "closedSolutionDisclosures": 9,
+  "decisions": 292,
+  "actions": {
+    "keep": 167,
+    "revise": 58,
+    "retire": 25,
+    "add": 42
+  },
+  "chapters": [
+    {
+      "number": 9,
+      "id": "vlans-and-access-ports",
+      "questions": 21,
+      "cards": 19,
+      "commands": 11,
+      "tickets": 2,
+      "steps": 10,
+      "difficulty": [
+        4,
+        16,
+        1
+      ],
+      "singleAnswerPositions": [
+        4,
+        5,
+        5,
+        4
+      ]
+    },
+    {
+      "number": 10,
+      "id": "trunks-dtp",
+      "questions": 22,
+      "cards": 18,
+      "commands": 10,
+      "tickets": 2,
+      "steps": 10,
+      "difficulty": [
+        4,
+        16,
+        2
+      ],
+      "singleAnswerPositions": [
+        5,
+        5,
+        4,
+        4
+      ]
+    },
+    {
+      "number": 11,
+      "id": "inter-vlan-routing",
+      "questions": 23,
+      "cards": 21,
+      "commands": 12,
+      "tickets": 2,
+      "steps": 12,
+      "difficulty": [
+        4,
+        17,
+        2
+      ],
+      "singleAnswerPositions": [
+        5,
+        5,
+        5,
+        5
+      ]
+    },
+    {
+      "number": 12,
+      "id": "cdp-lldp",
+      "questions": 17,
+      "cards": 17,
+      "commands": 12,
+      "tickets": 2,
+      "steps": 9,
+      "difficulty": [
+        6,
+        10,
+        1
+      ],
+      "singleAnswerPositions": [
+        3,
+        4,
+        4,
+        4
+      ]
+    },
+    {
+      "number": 13,
+      "id": "etherchannel",
+      "questions": 23,
+      "cards": 22,
+      "commands": 9,
+      "tickets": 2,
+      "steps": 9,
+      "difficulty": [
+        8,
+        13,
+        2
+      ],
+      "singleAnswerPositions": [
+        5,
+        5,
+        4,
+        4
+      ]
+    }
+  ],
+  "limits": "Static content, React SSR and arithmetic checks only; no Packet Tracer/CML/device execution, browser layout measurement, or psychometric calibration."
+}

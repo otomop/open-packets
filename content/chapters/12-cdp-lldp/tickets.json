@@ -1,0 +1,72 @@
+[
+  {
+    "id": "cdp-lldp-t01",
+    "title": "The uplink monitoring record points at the wrong port",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "scenario": "The documentation and monitoring configuration claim that SW1 Gi0/1 connects to SW2 Gi0/1. The technician has just inspected the cable labels and sees its SW2 end on Gi0/2. Fresh CDP observations were collected at both ends. The exhibits are representative records, not live output from this app.",
+    "exhibits": [
+      {
+        "title": "SW1 discovery record",
+        "text": "Device ID  Local Intrfce  Holdtme  Port ID\nSW2        Gig 0/1       176      Gig 0/2"
+      },
+      {
+        "title": "SW2 discovery record",
+        "text": "Device ID  Local Intrfce  Holdtme  Port ID\nSW1        Gig 0/2       175      Gig 0/1"
+      },
+      {
+        "title": "Existing documentation",
+        "text": "Link: SW1 Gi0/1 ↔ SW2 Gi0/1\nMonitor interface: SW2 Gi0/1"
+      }
+    ],
+    "question": "Which correction follows from the corroborated evidence?",
+    "options": [
+      "Change only SW1's documented port to Gi0/2.",
+      "Correct the SW2 link and monitoring target to Gi0/2; retain SW1 Gi0/1.",
+      "Keep the old monitoring target because the remote Port ID describes a management SVI.",
+      "Change both documented ends to Gi0/2 because that remote port appears in the new record."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Both directions and the physical inspection identify SW1 Gi0/1 ↔ SW2 Gi0/2. The stale record uses the wrong SW2 port. Reversing the columns would move the error to SW1; interface numbers need not match. The observations support correcting this link record, but they do not prove that every VLAN or management service works. The Port ID is the neighbor's advertised sending port, not its management SVI. The reverse observation confirms SW1 remains on Gi0/1; changing both ends would introduce another error.",
+    "fix": "Update the local documentation to `SW1 Gi0/1 ↔ SW2 Gi0/2`, record when and how it was checked, and correct the intended monitoring interface using the monitoring system’s approved edit flow. This exercise does not change any real monitoring service. Preserve the original record in the change history.\n\n```ios SW1\nSW1# show cdp neighbors\nSW1# show cdp neighbors detail\nSW1# show interfaces gigabitethernet0/1\n```\n\n```ios SW2\nSW2# show cdp neighbors\nSW2# show interfaces gigabitethernet0/2\n```\n\nVerify refreshed observations and both physical port states. Test the required VLAN or management path separately before declaring the service healthy. If hostname or cable evidence disagrees, investigate identity and cache freshness instead of automatically overwriting the drawing."
+  },
+  {
+    "id": "cdp-lldp-t02",
+    "title": "CDP works, but the new uplink has no LLDP neighbor",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "scenario": "SW1 Gi0/1 is connected to SW2 Gi0/2. The link is up, CDP is receiving current entries in both directions, and both images support LLDP. SW1 has LLDP enabled globally and has explicitly enabled transmit and receive on Gi0/1. SW2’s recorded global output is below. Old entries have expired.",
+    "exhibits": [
+      {
+        "title": "SW1 configuration excerpt",
+        "text": "lldp run\ninterface GigabitEthernet0/1\n lldp transmit\n lldp receive"
+      },
+      {
+        "title": "SW2# show lldp",
+        "text": "% LLDP is not enabled"
+      },
+      {
+        "title": "Link inspection",
+        "text": "SW1 Gi0/1 ↔ SW2 Gi0/2; link up; fresh CDP observations in both directions"
+      }
+    ],
+    "question": "What is the most direct correction?",
+    "options": [
+      "Enable SW2 LLDP globally and its Gi0/2 transmit/receive directions.",
+      "Enable only SW2 Gi0/2 transmit/receive while leaving its global process disabled.",
+      "Clear SW1's LLDP table without changing SW2's configuration.",
+      "Change SW1's LLDP holdtime while leaving SW2's global process disabled."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "SW2 explicitly reports a disabled LLDP process. Its global process and intended interface directions must permit operation. Interface controls alone cannot override global disablement. Clearing SW1's table or adjusting a lifetime does not make SW2 send LLDP advertisements. CDP remains a separate working protocol.",
+    "fix": "On the supporting SW2 image:\n\n```ios SW2\nSW2# configure terminal\nSW2(config)# lldp run\nSW2(config)# interface gigabitethernet0/2\nSW2(config-if)# lldp transmit\nSW2(config-if)# lldp receive\nSW2(config-if)# end\nSW2# show lldp\nSW2# show lldp interface gigabitethernet0/2\nSW2# show lldp neighbors\n```\n\n```ios SW1\nSW1# show lldp interface gigabitethernet0/1\nSW1# show lldp neighbors\n```\n\nWait for an actual advertisement opportunity according to the configured timers, then verify each device receives the intended peer and remote port. Review interface discovery policy on other ports after globally enabling LLDP. Save the intended configuration after verification. If a simulator lacks LLDP, use these records as the paper exercise and do not label it an executed protocol test."
+  }
+]

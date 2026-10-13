@@ -1,0 +1,164 @@
+[
+  {
+    "id": "ansible-terraform-c01",
+    "front": "What format describes an Ansible playbook?",
+    "back": "YAML: mappings, lists and indentation organize the plays and tasks.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c02",
+    "front": "What does agentless push mean for the IOS CLI example?",
+    "back": "The control node initiates an SSH session when the job runs. Network modules execute on the controller; no Ansible agent or Python interpreter is installed on IOS.",
+    "tags": [
+      "concept",
+      "compare"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c05",
+    "front": "What distinguishes Terraform's configuration and state?",
+    "back": "HCL configuration describes intended resources. State associates those resource addresses with managed objects and recorded attributes.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c06",
+    "front": "How do you select an explicit Ansible inventory?",
+    "back": "Use -i inventory.yml (or another inventory path). An explicit inventory avoids relying on a default location or other configured source.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c07",
+    "front": "Which two inventory variables identify the IOS CLI connection and platform?",
+    "back": "ansible_connection: ansible.netcommon.network_cli and ansible_network_os: cisco.ios.ios.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c08",
+    "front": "How can an authorized IOS task request enable mode?",
+    "back": "Use ansible_become: true and ansible_become_method: enable with the appropriate enable credential. A separate escalation is unnecessary when the account already has sufficient privilege.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c10",
+    "front": "How does a play differ from a task?",
+    "back": "A play selects hosts and organizes work. A task invokes a module with arguments for those selected hosts.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c11",
+    "front": "After register: result, where is the second ios_command result?",
+    "back": "result.stdout[1] contains its output string; result.stdout_lines[1] contains that output split into lines. Indexing begins at zero.",
+    "tags": [
+      "concept",
+      "command"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c12",
+    "front": "ios_command versus ios_config?",
+    "back": "ios_command runs operational EXEC commands. ios_config manages supported configuration sections.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c13",
+    "front": "What does --syntax-check establish?",
+    "back": "It checks playbook syntax and structure without executing tasks. It does not validate live reachability, device privilege, or IOS command support.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c14",
+    "front": "Does --check guarantee that a playbook cannot affect a device?",
+    "back": "No. Behavior depends on module support and task settings; review actual commands and permissions.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c15",
+    "front": "Does failed=1 prove SSH login succeeded?",
+    "back": "No. A network connection or authentication error can appear as a task failure. Read the error text. An IOS invalid-command response is stronger evidence that the device processed the command.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c16",
+    "front": "What does Ansible Vault protect?",
+    "back": "Stored files or variables. Decrypted values can still be exposed by task output; Vault does not automatically redact them.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c17",
+    "front": "What is the basic Terraform workflow?",
+    "back": "Write configuration, initialize its directory, validate and plan, review, then apply. Later changes repeat planning and verification; destroy is removal, not a required step in every run.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c18",
+    "front": "What does Terraform -/+ indicate?",
+    "back": "Destroy the existing instance, then create a replacement. It is not an in-place update.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c20",
+    "front": "What does idempotence mean in configuration management?",
+    "back": "Once the intended state is satisfied, repeating the operation does not introduce additional changes. It depends on module behavior, arguments, and platform normalization.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c22",
+    "front": "Why is a valid inventory group not enough to authorize a run?",
+    "back": "The selected devices and the task contents both need to match the approved scope. --limit narrows targets but cannot make an unsafe command safe.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c23",
+    "front": "What can a local debug playbook prove without a router?",
+    "back": "That the controller can parse and execute that local task. It cannot prove IOS connectivity or make IOS modules run against a Linux shell.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c24",
+    "front": "Why prepare known_hosts before an Ansible network run?",
+    "back": "The persistent SSH connection cannot rely on an interactive first-use prompt. Verify the target key through a trusted process and keep checking enabled.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c25",
+    "front": "What happens when applying a saved Terraform plan?",
+    "back": "Terraform applies that plan without another confirmation prompt. The saved plan may contain sensitive data and does not automatically include later configuration edits.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

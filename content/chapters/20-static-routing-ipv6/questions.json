@@ -1,0 +1,747 @@
+[
+  {
+    "id": "static-routing-ipv6-q13",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which syntax difference is correct?",
+    "options": [
+      "IPv6 routes use dotted-decimal subnet masks.",
+      "IPv4 static routes must always use link-local next hops.",
+      "IPv6 uses prefix/length and scopes link-local next hops by interface.",
+      "IPv6 route commands select a source rather than a destination."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "IPv6 uses slash prefix notation. The link-local scope rule is an additional constraint on its next-hop form.",
+    "whyWrong": {
+      "0": "Dotted subnet masks are the IPv4 form here.",
+      "1": "IPv4 statics do not have the IPv6 link-local scope rule.",
+      "3": "The route identifies destination reachability; it does not generally choose the packet source."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q15",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "In S 2001:DB8:20::/64 [1/0], what are the bracketed numbers?",
+    "options": [
+      "Administrative distance 1 and metric 0",
+      "Metric 1 and administrative distance 0",
+      "One route advertisement and zero errors",
+      "One next-hop router and zero alternate paths"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "IOS displays [administrative distance/metric]. These values do not count traffic events or alternate routes.",
+    "whyWrong": {
+      "1": "The order is reversed.",
+      "2": "The fields are not packet or advertisement counters.",
+      "3": "Next-hop and path counts are not encoded in this pair."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q01",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "S 2001:DB8:20::/64 [1/0]\n  via FE80::2, GigabitEthernet0/0"
+    },
+    "prompt": "Which statement correctly reads the installed static entry?",
+    "options": [
+      "The remote /64 uses fe80::2 on Gi0/0 with distance 1.",
+      "The /64 has a hop count of 1 and a loss count of 0.",
+      "The route describes R1's own local /128 address.",
+      "The route applies only to a host whose suffix is ::2."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The destination prefix is 2001:db8:20::/64; the bracketed values are distance and metric. The interface scopes the link-local next hop.",
+    "whyWrong": {
+      "1": "The brackets are not hop count and loss count.",
+      "2": "The S /64 is a remote static network route, not an L /128.",
+      "3": "fe80::2 is the next hop, not the destination prefix's host identifier."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q07",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which global command enables inter-interface IPv6 forwarding on the basic IOS router?",
+    "options": [
+      "ipv6 enable",
+      "ipv6 unicast-routing",
+      "ip routing",
+      "ipv6 address autoconfig"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "ipv6 unicast-routing enables IPv6 router forwarding. Interfaces also need appropriate addressing and usable links.",
+    "whyWrong": {
+      "0": "ipv6 enable is an interface command for IPv6 processing/link-local operation.",
+      "2": "ip routing controls IPv4 forwarding.",
+      "3": "Autoconfig is an interface address-assignment instruction, not this global forwarding setting."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q09",
+    "type": "multi",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An IOS router has active IPv6-addressed interfaces but no ipv6 unicast-routing. In this basic unfiltered setup, which TWO behaviors are expected?",
+    "options": [
+      "It can answer a directly attached host pinging its own interface address.",
+      "It forwards packets between its IPv6 interfaces normally.",
+      "It does not provide the required inter-interface IPv6 forwarding.",
+      "Its interface IPv6 addresses must immediately be erased."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The router can function as an IPv6 endpoint without being enabled to forward IPv6 traffic between interfaces.",
+    "whyWrong": {
+      "1": "That forwarding requires the global IPv6 routing setting in this setup.",
+      "3": "Disabling forwarding does not erase assigned interface addresses."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q08",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "S 2001:DB8:20::/64 [5/0]\n  via FE80::3, GigabitEthernet0/1"
+    },
+    "prompt": "R1 is configured with a distance-1 primary and distance-5 backup. What does this installed entry establish?",
+    "options": [
+      "The primary cable is certainly unplugged.",
+      "The backup has exactly five intermediate hops.",
+      "The backup is selected; the cause needs more evidence.",
+      "The backup is only configured and cannot forward traffic."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The table shows the selected backup. The absence of the primary alone does not distinguish physical failure from other eligibility or configuration causes.",
+    "whyWrong": {
+      "0": "A table entry does not uniquely prove a cable fault.",
+      "1": "5 is distance, not hops.",
+      "3": "This is the installed table, so the route is selected; neighbor and end-to-end checks still matter."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q02",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Neighbor fe80::2 is reachable on R1 Gi0/0. Which command routes the remote 2001:db8:20::/64 through that neighbor?",
+    "options": [
+      "ipv6 route 2001:db8:20::/64 fe80::2",
+      "ipv6 route 2001:db8:20::/64 gigabitethernet0/0 fe80::2",
+      "ip route 2001:db8:20::/64 gigabitethernet0/0 fe80::2",
+      "ipv6 route fe80::2/128 gigabitethernet0/0 2001:db8:20::"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The fully specified IPv6 command supplies the destination prefix, local interface and link-local next hop.",
+    "whyWrong": {
+      "0": "A link-local next hop needs an interface.",
+      "2": "ip route is the IPv4 command family.",
+      "3": "This changes the destination into the neighbor's own link-local address instead of the remote LAN."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q03",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "R1(config)# ipv6 route 2001:db8:20::/64 fe80::2\nThe command is rejected; exact error text varies by image."
+    },
+    "prompt": "Why does the shown command lack required information?",
+    "options": [
+      "The command must include the source LAN prefix before its destination prefix.",
+      "A link-local next hop can never carry routed traffic.",
+      "The link-local next hop needs its exit interface.",
+      "The neighbor hardware address must be appended to the route."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A link-local address is meaningful on a particular link, so the IOS route must name that link's interface.",
+    "whyWrong": {
+      "0": "An ordinary destination static route does not require a source-prefix field.",
+      "1": "Link-local next hops are valid when scoped to the correct interface.",
+      "3": "The command needs IPv6 next-hop scope; ND supplies its Ethernet binding."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q05",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "Primary: R1 Gi0/0 fe80::1 — R2 Gi0/0 fe80::2\nBackup: R1 Gi0/1 fe80::1 — R2 Gi0/1 fe80::3\nRemote LAN behind R2: 2001:db8:20::/64"
+    },
+    "prompt": "R1 must route the remote LAN through R2 on the primary link. Which choice uses the correct scoped link-local next hop?",
+    "options": [
+      "ipv6 route 2001:db8:20::/64 gigabitethernet0/0 fe80::1",
+      "ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::2",
+      "ipv6 route 2001:db8:20::/64 fe80::2",
+      "ipv6 route 2001:db8:20::/64 gigabitethernet0/0 fe80::2"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "R2's primary link-local address is fe80::2, reachable through R1 Gi0/0.",
+    "whyWrong": {
+      "0": "fe80::1 is R1's own local address in this plan.",
+      "1": "fe80::2 is not the peer on the backup link.",
+      "2": "The link-local next hop lacks an interface."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q10",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which command adds an IPv6 default using the resolvable non-link-local next hop 2001:db8:12::2?",
+    "options": [
+      "ipv6 route ::/128 2001:db8:12::2",
+      "ipv6 route 0.0.0.0/0 2001:db8:12::2",
+      "ip route ::/0 2001:db8:12::2",
+      "ipv6 route ::/0 2001:db8:12::2"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "::/0 matches all IPv6 addresses and provides the default when no longer installed prefix matches.",
+    "whyWrong": {
+      "0": "::/128 identifies one special address, not all destinations.",
+      "1": "An IPv4 dotted destination is not the IPv6 default syntax.",
+      "2": "Use ipv6 route for this address family."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q12",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A working /64 route uses Gi0/0. Only 2001:db8:20::12 should use usable backup neighbor fe80::3 on Gi0/1. Which addition achieves that?",
+    "options": [
+      "ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::3",
+      "ipv6 route 2001:db8:20::12/128 gigabitethernet0/1 fe80::3",
+      "ipv6 route ::/0 gigabitethernet0/1 fe80::3",
+      "ipv6 route 2001:db8:20::12/64 gigabitethernet0/1 fe80::3"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A /128 matches only that host, leaving other /64 addresses on their existing network route.",
+    "whyWrong": {
+      "0": "Another /64 affects the whole network candidate, not just one host.",
+      "2": "A default cannot override the existing /64 for that host.",
+      "3": "A host address with /64 does not describe the intended single-address route."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "ipv6 route 2001:db8:20::/64 GigabitEthernet0/0 FE80::2\nipv6 route 2001:db8:20::/64 GigabitEthernet0/1 FE80::3 5"
+    },
+    "prompt": "Both links and their neighbors are usable. Which TWO statements follow from the configured routes?",
+    "options": [
+      "The primary is preferred because its ordinary distance is 1.",
+      "The distance-5 route forwards half the traffic while the primary is installed.",
+      "The backup can become selected if the preferred route is withdrawn.",
+      "Distance 5 means the backup traverses five routers."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "These are candidates for the same /64. Lower distance selects the primary; the backup can be selected after withdrawal if its path remains usable.",
+    "whyWrong": {
+      "1": "The unequal distances implement standby rather than equal-cost multipath.",
+      "3": "The final 5 is administrative distance, not a hop count."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q06",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "::/0 via Gi0/0, distance 1\n2001:db8:20::/64 via Gi0/1, distance 1\n2001:db8:20::12/128 via Gi0/2, distance 200"
+    },
+    "prompt": "All displayed routes are installed. Which interface handles destination 2001:db8:20::12?",
+    "options": [
+      "Gi0/2, because the /128 is the longest match",
+      "Gi0/1, because its distance is less than 200",
+      "Gi0/0, because a default takes priority",
+      "All three, because the address matches all three"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The /128 matches the single destination more specifically than /64 or /0. Different installed prefix lengths are not ranked by distance during forwarding.",
+    "whyWrong": {
+      "1": "The lower distance of a different prefix does not override the /128.",
+      "2": "A default is the least specific match.",
+      "3": "Overlapping prefixes do not form equal-cost paths to the same prefix."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q16",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A repeated test cannot resolve fe80::2 on Gi0/1. Another cache entry shows fe80::2 on Gi0/0. What should you check?",
+    "options": [
+      "Use the Gi0/0 binding automatically for all interfaces.",
+      "Verify whether the intended peer actually owns fe80::2 on the Gi0/1 link.",
+      "Assume the repeated address proves global routing is disabled.",
+      "Delete all IPv6 routes because a neighbor state is not REACH."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Link-local neighbor identity includes its link. A binding on Gi0/0 does not establish a valid next hop on Gi0/1.",
+    "whyWrong": {
+      "0": "Cross-link reuse ignores scope and cannot supply the required neighbor.",
+      "2": "The evidence concerns one address/interface binding, not the global forwarding setting.",
+      "3": "Non-REACH states have different meanings; inspect the targeted fault rather than deleting all routes."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q11",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "interface GigabitEthernet0/0\n ipv6 address 2001:db8:12::1/64\n!\nipv6 route 2001:db8:20::/64 GigabitEthernet0/0\nRemote PC 2001:db8:20::12 is behind R2, not on this transit link."
+    },
+    "prompt": "R2 owns the remote LAN, but no proxy ND is configured. Why is this Ethernet interface-only route inappropriate for reaching a host behind R2?",
+    "options": [
+      "It attempts discovery for the remote host on the transit link.",
+      "It causes R1 to ask ARP for the remote IPv6 host.",
+      "The interface-only form automatically discovers the correct remote router through RA.",
+      "The Ethernet interface supplies the remote PC MAC without Neighbor Discovery."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "With no explicit next hop, the route makes remote destinations appear on-link. The remote PC does not hear neighbor discovery on the transit segment.",
+    "whyWrong": {
+      "1": "IPv6 uses Neighbor Discovery, not ARP.",
+      "2": "An interface-only route does not identify that adjacent next hop.",
+      "3": "Ethernet delivery still requires a usable neighbor mapping."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q26",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "Which neighbor-cache observation requires additional investigation rather than proving success or failure by its label alone?",
+    "options": [
+      "STALE lacks recent confirmation; test the intended neighbor and inspect the resulting state and traffic.",
+      "An empty cache proves the configured peer is absent from the link.",
+      "One INCOMPLETE entry proves the entire remote LAN is unreachable permanently.",
+      "STALE means the address is duplicated and must be reassigned."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Neighbor states describe the local resolution/reachability process. Combine them with the intended interface, traffic and repeated observations.",
+    "whyWrong": {
+      "1": "The cache contains discovered bindings, not a complete device inventory.",
+      "2": "Resolution can be in progress; persistent failure and the correct link/address must be checked.",
+      "3": "DAD evidence, not the STALE reachability state, identifies duplicates."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q21",
+    "type": "multi",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two observations make these repeated link-local next hops unambiguous? Choose two.",
+    "options": [
+      "Both routes use the same address text, so they must point to one physical router.",
+      "Neighbor entries can be combined without keeping their interface field.",
+      "The router must replace one link-local address with a global address.",
+      "Each route supplies its own local exit interface.",
+      "FE80::2 is verified on the adjacent peer interface of each separate link."
+    ],
+    "answer": [
+      3,
+      4
+    ],
+    "explanation": "Two separate links may each contain FE80::2. The route and neighbor cache must preserve the interface/address pair.",
+    "whyWrong": {
+      "0": "Repeated link-local text does not identify a global device.",
+      "1": "Discarding the interface loses the necessary link-local scope.",
+      "2": "The interface scopes the next hop, so replacement is not required."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Repeated link-local next hops (exercise)",
+      "text": "ipv6 route 2001:db8:21:1::/64 Gi0/0 FE80::2\nipv6 route 2001:db8:21:2::/64 Gi0/1 FE80::2\nGi0/0 and Gi0/1 connect to different routed links."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q17",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "Which installed route carries a packet to 2001:db8:44:ab3d::8?",
+    "options": [
+      "2001:db8:44:ab30::/61 through FE80::4 on Gi0/2",
+      "2001:db8:44:ab38::/61 through FE80::3 on Gi0/1",
+      "2001:db8:44:ab30::/60 through FE80::2 on Gi0/0",
+      "::/0 through FE80::5 on Gi0/3"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The fourth group ab3d is inside ab38 through ab3f. Match prefix bits before comparing candidate distances for the same prefix.",
+    "whyWrong": {
+      "0": "That /61 covers ab30 through ab37, not ab3d.",
+      "2": "The /60 matches, but the /61 matches more retained bits.",
+      "3": "A default loses to a longer installed match."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Installed IPv6 routes (exercise)",
+      "text": "Installed routes:\nS 2001:db8:44:ab30::/60 [1/0] via FE80::2, Gi0/0\nS 2001:db8:44:ab38::/61 [20/0] via FE80::3, Gi0/1\nS 2001:db8:44:ab30::/61 [5/0] via FE80::4, Gi0/2\nS ::/0 [1/0] via FE80::5, Gi0/3"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q24",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "After the exact temporary /128 is removed, which route matches the same destination?",
+    "options": [
+      "The installed /64 network route.",
+      "No route, because deleting a host route also deletes its containing network route.",
+      "The default, because it has lower distance than the /64.",
+      "A local L route, because every deleted static becomes local."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The next longest installed match is the /64. Configuration cleanup should name the exact temporary route so the baseline remains intact.",
+    "whyWrong": {
+      "1": "Removing one exact configured static does not remove a separate /64.",
+      "2": "The /64 is a longer destination match than /0.",
+      "3": "Local routes represent addresses owned by this router, not deleted remote statics."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Routes before exact cleanup (exercise)",
+      "text": "Before cleanup:\nS 2001:db8:24::44/128 [50/0] via FE80::3, Gi0/1\nS 2001:db8:24::/64 [20/0] via FE80::2, Gi0/0\nS ::/0 [1/0] via FE80::4, Gi0/2\nOnly the /128 configuration is removed."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q14",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative IOS excerpt",
+      "text": "PC-A: 2001:db8:10::11 behind R1\nPC-B: 2001:db8:20::12 behind R2\nComplete relevant R2 unicast routes; no default:\nC 2001:DB8:12::/64, Gi0/0\nL 2001:DB8:12::2/128, Gi0/0\nC 2001:DB8:20::/64, Gi0/2\nL 2001:DB8:20::1/128, Gi0/2"
+    },
+    "prompt": "Both hosts have correct local gateways and all links work. R1 has a route to PC-B's LAN. Which missing route explains why replies to PC-A cannot return through R2?",
+    "options": [
+      "An R1 route to R2's already connected transit prefix",
+      "An R2 host route to its own LAN address",
+      "An R2 route to LAN 20 through its own local interface address",
+      "An R2 route covering 2001:db8:10::/64 through R1"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The reply destination is PC-A in 2001:db8:10::/64. R2's supplied complete table lacks that prefix or a covering default.",
+    "whyWrong": {
+      "0": "R1's connected transit is not the missing reverse destination.",
+      "1": "R2 already owns its local LAN address.",
+      "2": "LAN 20 is already local to R2 and does not cover the reply destination in LAN 10."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q18",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "Why does the intended standby path already carry traffic for 2001:db8:18::25?",
+    "options": [
+      "The host route is used only after Neighbor Discovery on the /64 fails.",
+      "The /64 primary must have been removed because the /128 appears.",
+      "All distance-50 statics automatically override distance-1 statics.",
+      "The /128 is more specific; distance 50 does not make it a standby for the /64."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Floating candidates must cover the same intended prefix. A host route is independently eligible and wins the longest-match lookup for that host.",
+    "whyWrong": {
+      "0": "The /128 wins at route selection before a /64 neighbor failure is relevant.",
+      "1": "Different prefix lengths can coexist in the installed table.",
+      "2": "Lower distance is preferred between usable candidates for the same prefix."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Network and host route overlap (exercise)",
+      "text": "Both interfaces are up and both next hops resolve.\nS 2001:db8:18::/64 [1/0] via FE80::2, Gi0/0\nS 2001:db8:18::25/128 [50/0] via FE80::3, Gi0/1"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q20",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "Which missing information should be checked before assuming this configured static can install?",
+    "options": [
+      "A usable route resolving 2001:db8:120::2 without circular dependence.",
+      "A matching IPv4 static route to the same last two address groups.",
+      "A host route to every address inside the destination /64.",
+      "A MAC address written directly into the ipv6 route command."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The global next-hop-only form relies on recursive resolution. The connected /64 shown is a different prefix from the configured next hop.",
+    "whyWrong": {
+      "1": "IPv4 routes do not resolve an IPv6 next hop.",
+      "2": "A network route can cover the destination LAN.",
+      "3": "Static route configuration uses an IPv6 next hop; ND resolves the Ethernet neighbor later."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Recursive next-hop reachability (exercise)",
+      "text": "Configured: ipv6 route 2001:db8:20::/64 2001:db8:120::2\nOnly connected transit prefix: 2001:db8:12::/64\nNo other route to 2001:db8:120::2 and no default.\nThe desired remote /64 is absent from the installed table."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q25",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "What is the missing part of the redundant routing design?",
+    "options": [
+      "A higher distance on R1 primary so that it never returns.",
+      "A second copy of R1 backup route with the same values.",
+      "A default gateway on R1 pointing at PC-A.",
+      "A usable backup return route on R2 to PC-A LAN."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The backup must work in both directions for the tested sources. R1 route failover alone does not establish the reply path.",
+    "whyWrong": {
+      "0": "This does not supply R2 missing reverse route.",
+      "1": "R1 already has the outbound backup; copying it does not alter R2 return path.",
+      "2": "PC-A is an endpoint, not the next-hop router for the remote network."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Forward and return routes after failure (exercise)",
+      "text": "Primary directly cabled link fails; backup link and both LANs remain up.\nR1 now installs LAN-B /64 via the backup.\nR2 lost its only route to LAN-A /64; it has no default.\nBoth PCs retain their correct on-link gateways.\nPC-A to PC-B still fails."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q19",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 2,
+    "prompt": "Which conclusion about this failed remote ping is justified?",
+    "options": [
+      "The backup must install whenever any destination stops replying.",
+      "An ordinary static route can remain selected while a failure beyond its usable next hop breaks delivery.",
+      "A reachable next hop proves the remote LAN and its return route work.",
+      "Reducing both route distances to 1 creates reliable failure detection."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Route installation and successful delivery are different. Inspect downstream and reverse paths before treating the configured distance as a health monitor.",
+    "whyWrong": {
+      "0": "An ordinary static route does not monitor every end-to-end destination.",
+      "2": "Local next-hop reachability does not establish downstream or return reachability.",
+      "3": "That changes route preference or multipath behavior, not end-to-end health detection."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Remote failure with an installed primary (exercise)",
+      "text": "Primary and backup statics cover the same /64 at distances 1 and 20.\nPrimary exit interface is up; its connected next hop still answers.\nThe installed route remains the primary.\nA remote failure beyond that neighbor prevents replies; no tracking is configured."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q22",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 3,
+    "prompt": "Which missing return prefix explains why the endpoint test fails while the explicitly sourced router test succeeds?",
+    "options": [
+      "R2 needs a route covering 2001:db8:12::1, the connected transit source.",
+      "R2 needs a route covering 2001:db8:10::11, the client source.",
+      "PC-A should use R2 remote-LAN address as an on-link gateway.",
+      "R1 needs another route to 2001:db8:20::/64, the already covered destination."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The tests differ in source address. A reply to R1 transit address uses R2 connected route; a reply to PC-A requires the missing client-LAN route.",
+    "whyWrong": {
+      "0": "R2 already reaches that transit source through its connected prefix.",
+      "2": "That remote address is not on PC-A local link.",
+      "3": "The supplied outbound route already covers the destination."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two ping sources and the return table (exercise)",
+      "text": "R1: LAN 2001:db8:10::/64; transit 2001:db8:12::1/64\nR2: transit 2001:db8:12::2/64; LAN 2001:db8:20::/64\nR1 has a route to LAN 20. R2 has only those two connected prefixes.\nR1 ping to LAN-20 host with explicit source 2001:db8:12::1 succeeds.\nPC-A 2001:db8:10::11 uses its correct local R1 gateway; the same destination test fails."
+    }
+  },
+  {
+    "id": "static-routing-ipv6-q23",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 3,
+    "prompt": "What happens while the selected host route remains installed and its next hop cannot be resolved?",
+    "options": [
+      "Delivery through that host route fails; the router does not simply retry the less-specific /64 as a substitute.",
+      "The default route automatically replaces the /128 for that packet.",
+      "The router automatically forwards the same packet using the /64 because it has lower distance.",
+      "The neighbor failure proves that the destination host itself is powered off."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Correct syntax and installation do not prove next-hop delivery. Repair the verified scope/address error or remove the incorrect host route after diagnosis.",
+    "whyWrong": {
+      "1": "A default is less specific than both supplied routes.",
+      "2": "Longest matching installed prefix is selected first; failed ND does not make a less-specific route the normal fallback.",
+      "3": "It concerns the next hop on the transit link, not necessarily the remote host."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Selected host route and unresolved neighbor (exercise)",
+      "text": "S 2001:db8:23::/64 [1/0] via FE80::2, Gi0/0\nS 2001:db8:23::50/128 [200/0] via FE80::9, Gi0/1\nAfter repeated traffic, FE80::9 cannot resolve on Gi0/1.\nThe /128 remains installed; the /64 path is otherwise healthy."
+    }
+  }
+]

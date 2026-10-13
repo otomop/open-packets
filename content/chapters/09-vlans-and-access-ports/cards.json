@@ -1,0 +1,154 @@
+[
+  {
+    "id": "vlans-and-access-ports-c26",
+    "front": "Do matching IP subnet settings put two ports in the same VLAN?",
+    "back": "No. Port membership determines the Layer 2 domain; host addressing does not change that membership.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c01",
+    "front": "What are the normal and extended VLAN ranges on the lab Catalyst platform?",
+    "back": "Normal range: 1–1005. Extended range: 1006–4094. Usable user IDs also depend on reserved VLANs and platform support.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c03",
+    "front": "Does default VLAN 1 imply secure management or static access mode?",
+    "back": "No. VLAN 1 is the default data access VLAN, but port mode, IP management and authentication are separate configuration.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c05",
+    "front": "Create VLAN 10 named USERS: commands and modes?",
+    "back": "At global configuration, enter `vlan 10`; at VLAN configuration, enter `name USERS`. The number identifies the VLAN; the name is a label.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c08",
+    "front": "Two commands for a fixed access port in VLAN 10?",
+    "back": "`switchport mode access` and `switchport access vlan 10`. Verify operational mode and that VLAN 10 is active.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c04",
+    "front": "Why inspect both the VLAN database and interface configuration?",
+    "back": "The database defines VLANs; interface configuration assigns ports. Normal-range VLAN data may persist separately from startup configuration, with VTP/platform-dependent storage behavior.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c07",
+    "front": "What happens to a port’s data-VLAN assignment when that VLAN is deleted?",
+    "back": "The configured assignment remains, but the data VLAN becomes inactive. Recreate the VLAN or deliberately assign the port to the correct active VLAN.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c09",
+    "front": "Access VLAN 10 plus voice VLAN 30: ordinary PC data and tagged voice?",
+    "back": "Untagged PC data enters VLAN 10; correctly provisioned phone voice tagged with 30 enters VLAN 30. The port can remain in access mode.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c10",
+    "front": "How can a phone obtain voice-VLAN policy?",
+    "back": "Supported CDP or LLDP-MED discovery, or device provisioning/manual settings. Missing CDP alone does not prove every phone uses a particular fallback VLAN.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c21",
+    "front": "Does successful PC traffic through a phone prove voice service works?",
+    "back": "No. Verify voice VLAN, power, provisioning and IP/call services separately. Switch-side voice configuration is not proof of a registered call endpoint.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c22",
+    "front": "Does a missing data VLAN prove all traffic on a phone port must fail?",
+    "back": "No. A separate configured voice VLAN has its own forwarding context; investigate each traffic type and VLAN.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c18",
+    "front": "Port-selection starting point for one untagged PC, printer or IoT network?",
+    "back": "A static access port in the intended VLAN. Add suitable PoE only when required; apply later security features after reviewing the endpoint’s behavior.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c19",
+    "front": "AP with one untagged management VLAN versus several locally presented VLANs?",
+    "back": "The first can use an access port. Several VLANs presented on the uplink require compatible trunk tagging. Verify the AP’s actual forwarding design.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c20",
+    "front": "What must be known before choosing a virtual-host uplink's VLAN mode?",
+    "back": "Which networks the host presents, and whether each is tagged or untagged. A virtual host does not automatically require a trunk or an LACP bundle.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c24",
+    "front": "Why distinguish PSE power from PD power?",
+    "back": "The PSE supplies power; the PD receives it after cable losses. Compare a requirement with a rating measured at the same end.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c23",
+    "front": "Can configuration add PoE capability to a non-PoE Ethernet port?",
+    "back": "No. The PSE hardware must support it. Then check per-port capability, PD requirements, cabling, administrative state and shared allocation.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c15",
+    "front": "How do PoE automatic and never modes differ on a supporting port?",
+    "back": "`power inline auto` enables detection and allocation. `power inline never` prevents that port from supplying PoE; it does not choose the data VLAN.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c25",
+    "front": "Which two limits must a new PoE allocation satisfy?",
+    "back": "The port must support it, and the switch must have sufficient shared available budget. Passing one check does not establish the other.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c16",
+    "front": "What should you check after a power-denied indication?",
+    "back": "Requested allocation, remaining shared budget, configured per-port limit, device compatibility and cabling. Do not infer a unique cause from one status label.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

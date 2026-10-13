@@ -1,0 +1,560 @@
+[
+  {
+    "id": "ios-essentials-q01",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "R1 uses ordinary local enable authentication. An enable secret and a different enable password both exist at privilege 15. Which credential permits the transition from `>` to `#`?",
+    "options": [
+      "The password configured as the enable password",
+      "Either configured credential, tried in sequence",
+      "The password configured as the enable secret",
+      "The shared password under the console line"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "For the same privilege level, the enable secret takes precedence over the enable password. This question assumes local enable authentication, with no AAA method list changing that behavior.",
+    "whyWrong": {
+      "0": "The enable secret takes precedence for the same level.",
+      "1": "This local configuration does not fall back to the enable password.",
+      "3": "Line authentication and the enable transition are separate."
+    }
+  },
+  {
+    "id": "ios-essentials-q02",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On traditional IOS, what does `service password-encryption` do to applicable cleartext password fields?",
+    "options": [
+      "Stores those fields using reversible type 7 obfuscation",
+      "Replaces those fields with type 9 password verifiers",
+      "Encrypts terminal traffic for existing Telnet sessions",
+      "Converts the enable secret into a stronger hash"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The command obscures applicable cleartext password fields in the configuration. Type 7 is reversible, and removing the command does not automatically reveal plaintext for fields already converted.",
+    "whyWrong": {
+      "1": "That command does not select the scrypt algorithm for those fields.",
+      "2": "Stored configuration formatting does not protect a Telnet session.",
+      "3": "It does not upgrade the algorithm used by an enable secret."
+    }
+  },
+  {
+    "id": "ios-essentials-q10",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An IOS configuration contains `enable secret 5` followed by a stored verifier. What does the number identify?",
+    "options": [
+      "The privilege level assigned to the enable session",
+      "The type of password verifier stored in the configuration",
+      "The number of failed logins permitted before disconnection",
+      "The minimum number of characters in the original password"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Type 5 identifies the legacy MD5-based verifier format. A one-way hash is still vulnerable to password guessing; do not describe it as impossible to crack or as a universal current default.",
+    "whyWrong": {
+      "0": "The type marker is not the requested privilege level.",
+      "2": "Authentication retry settings are separate configuration.",
+      "3": "The marker does not encode the original password length."
+    }
+  },
+  {
+    "id": "ios-essentials-q15",
+    "type": "single",
+    "objectives": [
+      "v1:2.8"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A powered, normally running router has no usable IP interface. Which access method can still be used by an authorized technician with working credentials and the correct cable?",
+    "options": [
+      "An SSH session to its previous interface address",
+      "An HTTPS session to its previous interface address",
+      "A Telnet session to its default gateway address",
+      "A direct connection to its serial console"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A direct serial console does not require a configured IP interface. Authentication and the console’s own operational state still matter, so this is not a claim that physical access bypasses credentials.",
+    "whyWrong": {
+      "0": "SSH requires an IP path to a currently reachable server address.",
+      "1": "Web management also requires IP reachability.",
+      "2": "The gateway is not a substitute for a reachable router management address."
+    }
+  },
+  {
+    "id": "ios-essentials-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two identity settings are used by the conventional unnamed RSA-key workflow taught in this chapter? Choose two.",
+    "options": [
+      "An available public DNS resolver",
+      "A configured nondefault hostname",
+      "An established Telnet session from the client",
+      "A configured management-interface IP address",
+      "A configured local domain name"
+    ],
+    "answer": [
+      1,
+      4
+    ],
+    "explanation": "The conventional workflow uses a configured hostname and domain name for the device key identity. Other key-management forms exist, so this is a scoped workflow rather than a claim about every possible RSA command.",
+    "whyWrong": {
+      "0": "The identity settings do not require a live DNS query.",
+      "2": "A Telnet session is not a key-generation prerequisite.",
+      "3": "An IP address is needed for network reachability, but it is not one of the local identity settings used to generate this key pair."
+    }
+  },
+  {
+    "id": "ios-essentials-q12",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command saves the verified running configuration for the normal next boot?",
+    "options": [
+      "`copy running-config startup-config`",
+      "`copy startup-config running-config`",
+      "`show startup-config`",
+      "`configure terminal`"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The direction of the copy matters: active configuration is the source, startup configuration the destination. The device’s persistent storage implementation may vary, but the active-versus-saved distinction remains.",
+    "whyWrong": {
+      "1": "That loads saved settings into the active configuration rather than saving active changes.",
+      "2": "That displays the saved configuration without updating it.",
+      "3": "That enters configuration mode without saving changes."
+    }
+  },
+  {
+    "id": "ios-essentials-q16",
+    "type": "multi",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "With ordinary IOS privilege assignments, which two actions belong to privileged EXEC or require entering it first? Choose two.",
+    "options": [
+      "Send a basic ping permitted in user EXEC",
+      "Read the device hostname from its prompt",
+      "Inspect the full running configuration",
+      "Enter a username at a login prompt",
+      "Enter global configuration mode"
+    ],
+    "answer": [
+      2,
+      4
+    ],
+    "explanation": "Privileged EXEC provides access to configuration inspection and the entry point for configuration mode. Custom privilege or AAA policies can alter command access; this question uses the ordinary lab assignments.",
+    "whyWrong": {
+      "0": "A basic ping is normally available before privileged EXEC.",
+      "1": "The prompt is visible without privileged access.",
+      "3": "Logging in is separate from privileged EXEC."
+    }
+  },
+  {
+    "id": "ios-essentials-q06",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "With local authentication and no custom authorization, which account and line combination begins a session at privilege 15?",
+    "options": [
+      "A default-privilege local user on a line using `login local`",
+      "A shared line password with `login` and an enable secret",
+      "A local user with `secret` but no configured privilege",
+      "A privilege-15 local user on a line using `login local`"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Local user privilege and line authentication work together. A user configured with privilege 15 begins at privileged EXEC when authenticated by this local method.",
+    "whyWrong": {
+      "0": "The default local-user privilege is 1.",
+      "1": "The existence of an enable secret does not by itself make line login start at privilege 15.",
+      "2": "The secret controls password storage, not the initial privilege level."
+    }
+  },
+  {
+    "id": "ios-essentials-q17",
+    "type": "single",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A client cannot obtain ping replies from R1, but a new SSH login to R1 succeeds. What does this evidence establish?",
+    "options": [
+      "SSH access works even though this ICMP test did not receive replies",
+      "The successful SSH login proves ICMP is enabled on every interface",
+      "The failed ping proves the SSH session is connected to another subnet",
+      "The client must regenerate R1’s SSH host keys before continuing"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A service test answers a different question from a ping. Record the failed ICMP result separately; do not treat it as proof that all IP communication is broken.",
+    "whyWrong": {
+      "1": "SSH and ICMP are separate protocols and can be treated differently.",
+      "2": "The ping result does not identify the subnet of an authenticated SSH session.",
+      "3": "A successful session provides no basis for replacing the server keys."
+    }
+  },
+  {
+    "id": "ios-essentials-q08",
+    "type": "single",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "R1# show ip ssh — legacy image",
+      "text": "SSH Enabled - version 1.99\nAuthentication timeout: 120 secs; Authentication retries: 3"
+    },
+    "prompt": "A legacy IOS image reports the SSH version shown. Which configuration restricts that server to SSHv2?",
+    "options": [
+      "`transport input telnet` under the VTY lines",
+      "`service password-encryption` in global configuration mode",
+      "`ip ssh version 2` in global configuration mode",
+      "`login local` under the console and VTY lines"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "On an image reporting this compatibility mode, version 1.99 indicates support for SSHv1 and SSHv2. Explicitly select version 2; do not assume every current image starts in this legacy mode.",
+    "whyWrong": {
+      "0": "That permits Telnet rather than selecting the SSH version.",
+      "1": "That affects applicable stored passwords, not the SSH version.",
+      "3": "That selects local authentication, not an SSH protocol version."
+    }
+  },
+  {
+    "id": "ios-essentials-q09",
+    "type": "multi",
+    "objectives": [
+      "v1:2.8"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which two statements correctly distinguish management access methods? Choose two.",
+    "options": [
+      "A direct serial console can work without a configured IP interface",
+      "SSH always proves that a physically separate management network is used",
+      "An HTTP management page protects credentials in the same way as HTTPS",
+      "TACACS+ and RADIUS support AAA decisions rather than replacing SSH",
+      "Cloud management requires every product to disable local access"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Console access does not depend on the device’s IP forwarding path. Central AAA can support authentication and authorization while the administrator still uses SSH for the terminal session.",
+    "whyWrong": {
+      "1": "Whether management is in-band or out-of-band depends on the network design.",
+      "2": "HTTPS adds TLS; ordinary HTTP does not provide that protection.",
+      "4": "Local access and recovery capabilities vary by product."
+    }
+  },
+  {
+    "id": "ios-essentials-q13",
+    "type": "single",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Terminal sessions — representative excerpt",
+      "text": "    Line       User       Host(s)   Idle       Location\n*  0 con 0                idle      00:00:00\n   2 vty 0     admin      idle      00:00:05   10.8.0.10"
+    },
+    "prompt": "Which command most directly provides the terminal-session table shown, including the Location column?",
+    "options": [
+      "`show ip ssh`",
+      "`show privilege`",
+      "`show users`",
+      "`show ip interface brief`"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The terminal-session table identifies active lines and users; remote sessions can include a client address under Location. The asterisk marks the session issuing the command.",
+    "whyWrong": {
+      "0": "That reports SSH server settings rather than this terminal-line table.",
+      "1": "That reports the current session’s privilege level.",
+      "3": "That reports interface addresses and state, not the users of terminal lines."
+    }
+  },
+  {
+    "id": "ios-essentials-q18",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v1:4.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative current mode",
+      "text": "R1(config)#"
+    },
+    "prompt": "The intended idle timeout is five minutes on VTY 0–4. You are at the prompt shown. Which next command selects the correct configuration context?",
+    "options": [
+      "line vty 0 4",
+      "exec-timeout 5 0",
+      "interface gigabitethernet0/0",
+      "enable"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The global configuration prompt requires selecting the VTY lines before applying a line-specific timeout. Then enter exec-timeout 5 0 under the resulting config-line prompt.",
+    "whyWrong": {
+      "1": "The timeout belongs under line configuration, not directly at the shown global prompt.",
+      "2": "An Ethernet interface is not the terminal-line context for an EXEC idle timeout.",
+      "3": "Enable enters privileged EXEC from user EXEC; this session is already configuring the device."
+    }
+  },
+  {
+    "id": "ios-essentials-q20",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v1:4.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A previously trusted SSH server presents a different host key. A planned router replacement might explain it, but you have not verified the replacement record. What should you do before accepting the new key?",
+    "options": [
+      "Accept the key because a successful IP test proves the server identity.",
+      "Verify the expected device and new key through the trusted management process.",
+      "Delete the old key record and retry with the same username and password.",
+      "Change the VTY transport to Telnet until the client stops reporting the warning."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A legitimate replacement can change the host key, but the warning does not verify that explanation. Confirm the intended device and approved new identity before accepting it.",
+    "whyWrong": {
+      "0": "IP reachability does not authenticate the device presenting the key.",
+      "2": "Deleting the record removes the comparison without resolving the identity question.",
+      "3": "Switching to unprotected transport does not verify the server identity."
+    }
+  },
+  {
+    "id": "ios-essentials-q14",
+    "type": "single",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative access checks",
+      "text": "New SSH login: refused before authentication\nPing to management address: replies\nSSH server: enabled, version 2.0\nLocal user: confirmed present\nOnly VTY range:\nline vty 0 4\n login local\n transport input telnet"
+    },
+    "prompt": "Which narrow change meets the requirement to admit SSH and reject Telnet?",
+    "options": [
+      "Replace local-user authentication with a shared VTY line password.",
+      "Replace transport input telnet with transport input ssh on the VTY range.",
+      "Create another administrator at privilege 15 in the local username database.",
+      "Save the current configuration, then repeat the same new-session test."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The VTY range currently accepts Telnet only. Selecting SSH corrects the transport policy; verify a new session after the change and inspect any additional VTY ranges.",
+    "whyWrong": {
+      "0": "Changing the authentication method does not make this range accept SSH transport.",
+      "2": "An additional user does not change the accepted transport.",
+      "3": "Saving preserves the existing policy; it does not correct it."
+    }
+  },
+  {
+    "id": "ios-essentials-q05",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Abbreviated VTY configuration",
+      "text": "line vty 0 4\n login local\n transport input ssh\nline vty 5 15\n password 7 0822455D0A16\n login\n transport input telnet"
+    },
+    "prompt": "A device has VTY 0–15. Which problem is demonstrated by this abbreviated configuration?",
+    "options": [
+      "Each VTY range needs its own independently generated SSH host key.",
+      "The ranges use different authentication methods and accept different transports.",
+      "The local username database applies only to the lowest numbered VTY range.",
+      "The higher VTY range inherits SSH-only policy when the first range is occupied."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VTY 5–15 still permits Telnet with shared-line authentication. Apply the intended local-user and SSH policy to every available range; do not assume the policy on VTY 0–4 covers the rest.",
+    "whyWrong": {
+      "0": "One server key configuration can serve multiple VTY lines.",
+      "2": "The database is not limited by line number; each line selects its authentication policy.",
+      "3": "Each configured range retains its own transport settings."
+    }
+  },
+  {
+    "id": "ios-essentials-q03",
+    "type": "single",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative console review and client evidence",
+      "text": "ADMIN can reach R1 at its configured 10.8.0.1 address.\nHostname: R1\nLocal domain: not configured\nRSA host-key inventory: no generated key pair\nLocal user admin: present, privilege 15\nAll VTY lines: login local; transport input ssh\nSSH server: disabled"
+    },
+    "prompt": "R1 uses the conventional hostname/domain/RSA-key workflow. Which ordered correction addresses the missing SSH prerequisites without changing the working IP path or local login policy?",
+    "options": [
+      "Set a reachable DNS server and default route, then retry the existing SSH server.",
+      "Create another privilege-15 user and save; the VTY settings generate the host key.",
+      "Replace login local with a line password, then permit SSH and Telnet together.",
+      "Set the local domain, generate the supported RSA host key, and require SSHv2."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The working IP path and configured local user do not supply a host key. In the stated conventional workflow, configure the local domain before generating the supported RSA key, require SSHv2, and then verify the server and a fresh login. DNS resolution is not required merely to use the configured domain as identity data.",
+    "whyWrong": {
+      "0": "A DNS server and default route do not create the missing identity configuration or host key.",
+      "1": "Another user duplicates authentication data; VTY transport selection does not generate an RSA key.",
+      "2": "Changing authentication and allowing Telnet does not resolve the missing host key or meet SSH-only access."
+    }
+  },
+  {
+    "id": "ios-essentials-q11",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative console review and new-session test",
+      "text": "Fresh SSH test: server reached; username/password authentication fails.\nAll VTY lines:\n login local\n transport input ssh\nComplete username check: no username entries\nAAA method lists: none configured\nAn enable secret exists; the console session remains open."
+    },
+    "prompt": "Which correction addresses the failed login while preserving named-user authentication?",
+    "options": [
+      "Add a shared line password while leaving the empty local database selected.",
+      "Change the interface subnet before another username/password attempt.",
+      "Use the enable secret as an implicit replacement for the missing username.",
+      "Create the intended local username and secret through the working console."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The VTY lines request local-user authentication, but the local database has no accounts. Create the intended account through the working console, then verify a new remote session.",
+    "whyWrong": {
+      "0": "A shared line password is not the fallback for the local-user method.",
+      "1": "The session already reaches authentication; the evidence identifies the local database.",
+      "2": "The enable transition does not supply a missing login identity."
+    }
+  },
+  {
+    "id": "ios-essentials-q19",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v1:4.8",
+      "v2:4.1"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative complete relevant VTY excerpts",
+      "text": "RUNNING-CONFIG\nline vty 0 4\n login local\n transport input ssh\n\nSTARTUP-CONFIG\nline vty 0 4\n login local\n transport input telnet\n\nNormal boot is configured to load startup-config."
+    },
+    "prompt": "The policy requires SSH-only access after a normal reboot. Current new SSH succeeds and new Telnet is refused. What must be corrected before declaring the saved policy complete?",
+    "options": [
+      "Generate another RSA key because running and startup transports differ.",
+      "Remove the local user because it appears in both configuration stores.",
+      "Save the verified running configuration and inspect the saved VTY policy.",
+      "Merge the startup configuration into running to make both stores agree."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The desired active policy has been verified but is not reflected in startup-config. Save running to startup and inspect the result; agreement achieved by restoring the old Telnet policy would violate the requirement.",
+    "whyWrong": {
+      "0": "A differing saved transport is a persistence issue, not evidence of a missing or invalid host key.",
+      "1": "The intended local account belongs in both active and saved configurations.",
+      "3": "Merging the old saved VTY commands can restore the unwanted transport instead of preserving the verified policy."
+    }
+  },
+  {
+    "id": "ios-essentials-q21",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v1:4.8",
+      "v2:4.1"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative policy review",
+      "text": "REQUIREMENT\nadmin: initial privilege 15\nauditor: initial privilege 1\nRemote terminals: SSH only; local-user authentication\nOnly VTY lines 0–4 exist. No custom AAA authorization.\n\nRUNNING-CONFIG\nusername admin privilege 15 secret <stored verifier>\nusername auditor privilege 15 secret <stored verifier>\nline vty 0 4\n login local\n transport input telnet ssh"
+    },
+    "prompt": "Review the requirement and active configuration. Which pair of corrections meets the access policy while retaining the working admin account?",
+    "options": [
+      "Set both local users to privilege 1 and leave both VTY transports enabled.",
+      "Delete auditor and replace login local with a shared line password.",
+      "Change the console timeout and save without changing the username or transports.",
+      "Set auditor to privilege 1 and restrict the VTY range to SSH."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The requirement distinguishes initial privilege by local user and separately restricts the incoming transport. Correct auditor’s explicit privilege and the VTY transport, then test new auditor/admin sessions and Telnet refusal before saving.",
+    "whyWrong": {
+      "0": "Admin must still begin at privilege 15, and Telnet must be excluded.",
+      "1": "Deleting the required named account and using a shared line password violates the policy.",
+      "2": "The console timeout does not correct either demonstrated policy mismatch."
+    }
+  }
+]

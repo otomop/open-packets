@@ -1,0 +1,1262 @@
+[
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q01",
+    "action": "keep",
+    "reason": "Retain reviewed question covering CLIENTS-IN is applied inbound on R1 G0/0, facing 10.100.10.0/24. Which entry first matches an ICMP echo request from 10.100.10.11 to 10.100.20.20?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q02",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: With base address 172.16.32.0, which wildcard matches exactly the /20 subnet?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q03",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: Which source range matches the displayed entry?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q04",
+    "action": "keep",
+    "reason": "Retain reviewed question covering Which two numbers identify standard IPv4 ACLs on IOS? Choose two."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q05",
+    "action": "revise",
+    "reason": "Replace weak syntax distractors with plausible errors in first-match and TCP-flag reasoning."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q06",
+    "action": "revise",
+    "reason": "Label the explicitly scoped absent-list behavior as recognition; improve competing interpretations."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q07",
+    "action": "revise",
+    "reason": "Apply source-only placement to the supplied topology and preserved destinations."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q08",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: An extended ACL must block only TCP destination port 23 from PC1 to SRV. Following the usual placement guideline, where should it first filter those requests?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q09",
+    "action": "revise",
+    "reason": "Reading the explicit attachment field is retrieval, not a separate diagnostic inference."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q10",
+    "action": "revise",
+    "reason": "Recognizing the taught ACK/RST test is foundational; keep the forged-ACK limitation."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q11",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: On IOS supporting sequence editing, which action removes only sequence 20 from named extended ACL CLIENTS-IN?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q12",
+    "action": "retire",
+    "reason": "Retire legacy whole-list deletion recall; the warning remains in the lesson and safe sequence editing is assessed by acls-q11."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q13",
+    "action": "keep",
+    "reason": "Retain reviewed question covering R1 has only VTY lines 0–4. Which command, entered under those lines, restricts incoming management connections to sources permitted by standard ACL 10?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q14",
+    "action": "revise",
+    "reason": "Compare independent attachment and probe-path facts without claiming diagnostic analysis."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q15",
+    "action": "revise",
+    "reason": "Use believable port-placement and first-match mistakes as alternatives."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q16",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: What sources match access-list 1 permit 10.100.10.0 255.255.255.0?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q17",
+    "action": "keep",
+    "reason": "Retain reviewed question covering Which single ACE matches a UDP DNS query from a client using source port 51000 to server 10.1.1.53 on destination port 53?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q18",
+    "action": "add",
+    "reason": "Add distinct practice: What happens to a packet that matches no entry in a nonempty ordinary IPv4 interface ACL?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q19",
+    "action": "add",
+    "reason": "Add distinct practice: Which pair correctly predicts the first match for both packets?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q20",
+    "action": "add",
+    "reason": "Add distinct practice: Which ACE narrowly permits the displayed UDP reply?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q22",
+    "action": "add",
+    "reason": "Add distinct practice: An inbound ACL permit counter rises for a new HTTP request, but R1 has no usable route to its destination. What does that permit establish?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q24",
+    "action": "add",
+    "reason": "Add distinct practice: Which addresses match the source pair 10.34.0.77 0.0.0.31? Choose two."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q26",
+    "action": "add",
+    "reason": "Add distinct practice: A policy must permit client DNS queries to 10.34.8.53 over both supported transports and deny other traffic. Which two request entries are required? Choose two."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q27",
+    "action": "add",
+    "reason": "Add distinct practice: Two hosts with correct /24 masks share VLAN 10 and communicate directly through a Layer 2 switch. An ACL is inbound on the router's VLAN 10 gateway interface. Why does it not block their direct host-to-host packets?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q28",
+    "action": "add",
+    "reason": "Add distinct practice: Which conclusion follows from this controlled before/after comparison?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q21",
+    "action": "add",
+    "reason": "Add distinct practice: Which narrow change restores the required service while preserving the stated limits?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q23",
+    "action": "add",
+    "reason": "Add distinct practice: Which proposed insertion meets all three access requirements?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q25",
+    "action": "add",
+    "reason": "Add distinct practice: Which change procedure preserves the filtering policy and the console recovery path?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "questions",
+    "id": "acls-q29",
+    "action": "add",
+    "reason": "Add distinct practice: Which next action is supported without broadening a policy that is already correct?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c01",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Which numbered ranges identify standard IPv4 ACLs?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c02",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Which numbered ranges identify extended IPv4 ACLs?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c03",
+    "action": "revise",
+    "reason": "Keep first-match and implicit-deny as one short decision rule."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c04",
+    "action": "revise",
+    "reason": "Keep wildcard inversion atomic; noncontiguous detail remains with the bit rule."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c05",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What do wildcard bits 0 and 1 mean?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c06",
+    "action": "revise",
+    "reason": "Narrow the multi-prefix table to one useful /27 wildcard retrieval."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c07",
+    "action": "retire",
+    "reason": "Retire a second block-size shortcut; wildcard bit meaning and CIDR calculation remain independently cued."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c08",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What do host and any replace in an IPv4 ACL?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c09",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Which packet address does a standard IPv4 ACL match?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c10",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What additional fields can an extended IPv4 ACL use?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c11",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What are the usual placement guidelines for standard and extended ACLs?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c12",
+    "action": "keep",
+    "reason": "Retain reviewed card covering How is named ACL CLIENTS-IN attached inbound on an interface?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c13",
+    "action": "keep",
+    "reason": "Retain reviewed card covering How does a standard ACL restrict incoming VTY management access?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c14",
+    "action": "keep",
+    "reason": "Retain reviewed card covering How many ordinary IPv4 interface ACL references are available per interface?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c15",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What does TCP established actually check?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c16",
+    "action": "retire",
+    "reason": "Retire default sequence-increment trivia; drills and lab inspect actual sequence numbers."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c17",
+    "action": "keep",
+    "reason": "Retain reviewed card covering How do you remove only sequence 20 from a named ACL on supported IOS?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c18",
+    "action": "retire",
+    "reason": "Retire optional resequencing syntax from required card recall; the lesson retains the reference."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c19",
+    "action": "retire",
+    "reason": "Retire a separate legacy deletion card; safe deletion remains in c17 and the lesson warning."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c20",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Which two checks establish ACL contents and interface attachment?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c21",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Why is a successful router-originated ping insufficient to validate a transit ACL?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c22",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What is the classic IOS behavior for an absent or empty referenced interface ACL?"
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c23",
+    "action": "add",
+    "reason": "Add reply endpoint retrieval to support two-direction policy work."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "cards",
+    "id": "acls-c24",
+    "action": "add",
+    "reason": "Add bounded counter interpretation instead of another syntax catalog."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d01",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Permit sources in 10.100.10.0/24 using numbered standard ACL 10."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d02",
+    "action": "keep",
+    "reason": "Retain reviewed command covering In numbered extended ACL 101, permit TCP from 10.100.10.0/24 to host 10.100.20.20 destination port 443."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d03",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Attach IPv4 ACL 101 to packets entering the current interface."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d04",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Enter configuration mode for the named extended ACL CLIENTS-IN."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d05",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Add sequence 15 permitting ICMP echo requests from 10.100.10.10 to 10.100.20.20 in the current extended ACL."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d06",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Delete only sequence 20 from the current named ACL on IOS supporting sequence editing."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d07",
+    "action": "retire",
+    "reason": "Retire optional resequencing housekeeping from required command recall; retain the complete lesson/lab reference."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d08",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Permit TCP from any source to 10.100.10.0/24 when ACK or RST is set."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d09",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Restrict incoming sessions on the current VTY range using standard ACL VTY-ADMINS."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d10",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Display configured access lists and the match counters supported by this IOS image."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d11",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Display detailed IPv4 information, including ACL attachments, for GigabitEthernet0/0."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "commands",
+    "id": "acls-d12",
+    "action": "retire",
+    "reason": "Retire counter-clearing busywork; before/after deltas verify the same outcome without changing state."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "tickets",
+    "id": "acls-t01",
+    "action": "revise",
+    "reason": "Use a symptom-led title and alternatives tied to the management packet path."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "tickets",
+    "id": "acls-t02",
+    "action": "revise",
+    "reason": "Remove the disclosed first-match diagnosis from the ticket title."
+  },
+  {
+    "chapterId": "acls",
+    "bank": "tickets",
+    "id": "acls-t03",
+    "action": "revise",
+    "reason": "Neutralize the title and attach/verify the correct egress restriction before removing the incorrect ingress attachment."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q01",
+    "action": "revise",
+    "reason": "Selecting gateway-to-gateway protection from supplied requirements is application."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q02",
+    "action": "revise",
+    "reason": "Counter subtraction and bounded interpretation directly apply a taught rule."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q03",
+    "action": "keep",
+    "reason": "Retain reviewed question covering Which two protocol identifiers are correct for the ordinary IPsec arrangements in this chapter? Choose two."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q04",
+    "action": "revise",
+    "reason": "Replace remote protocol-switch distractions with competing encapsulation misconceptions."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q05",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: The packet layout is a teaching diagram of an ESP VPN with confidentiality enabled. Which mode is shown?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q07",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: Which service is absent from AH even when AH uses tunnel mode?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q08",
+    "action": "revise",
+    "reason": "Remote endpoint and authentication-policy comparisons are foundational recognition."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q09",
+    "action": "retire",
+    "reason": "Retire legacy MM_NO_STATE string interpretation; current negotiation-versus-data evidence remains in q17 and the lab."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q10",
+    "action": "keep",
+    "reason": "Retain reviewed question covering Which example directly fits ESP transport mode without another encapsulating tunnel?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q11",
+    "action": "retire",
+    "reason": "Retire a separate IKEv1 phase-1 recall item; deprecated terminology remains optional lesson context."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q13",
+    "action": "revise",
+    "reason": "Keep authentication trust scope while balancing the correct alternative."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q16",
+    "action": "revise",
+    "reason": "Applying selector-versus-filter semantics is application rather than combined diagnosis."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q17",
+    "action": "revise",
+    "reason": "Keep the IKE/data distinction as concise foundational knowledge."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q18",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: ISP has routes to both public gateway addresses but no route to either private LAN. Why can it still forward the encrypted tunnel-mode packet?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q19",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: A laptop has an IPsec split-tunnel policy for only 10.2.2.0/24. A public website is reached through the local Internet route. Which conclusion is correct?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q20",
+    "action": "keep",
+    "reason": "Retain reviewed question covering Which two pairings correctly describe IPsec protection services? Choose two."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q21",
+    "action": "add",
+    "reason": "Add distinct practice: Where can a suitable observer see the unencrypted HTTP content in this stated site-to-site design?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q23",
+    "action": "add",
+    "reason": "Add distinct practice: Which two facts remain visible to a transit observer without decryption keys in the described packet? Choose two."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "questions",
+    "id": "vpns-ipsec-q22",
+    "action": "add",
+    "reason": "Add distinct practice: Which next check best separates the remaining explanations for the failed named request?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c01",
+    "action": "revise",
+    "reason": "Narrow native ESP identification to one retrieval cue."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c02",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What identifies AH, and what does it not provide?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c03",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Which port commonly carries the initial IKE exchange?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c04",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What is the purpose of standard UDP NAT-T?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c23",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Does permit udp any any eq 50 permit native ESP?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c06",
+    "action": "revise",
+    "reason": "Narrow a four-service list to the essential confidentiality/integrity comparison."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c07",
+    "action": "keep",
+    "reason": "Retain reviewed card covering How do ESP tunnel and transport mode differ when encryption is enabled?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c08",
+    "action": "retire",
+    "reason": "Consolidate transport-mode comparison and use case in c07; do not require a second GRE-related recall cue."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c09",
+    "action": "retire",
+    "reason": "Retire legacy phase-1 recall; keep the IKEv1 deprecation context in the lesson."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c10",
+    "action": "retire",
+    "reason": "Retire legacy phase-2 recall; current negotiation/data separation remains in c11."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c11",
+    "action": "revise",
+    "reason": "Keep IKE negotiation versus data-SA purpose without an exchange-name catalog."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c22",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What does Diffie-Hellman provide, and what is still needed?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c14",
+    "action": "retire",
+    "reason": "Retire a broad optional transform-guidance card; retain the negotiated-encryption limitation in the lesson."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c15",
+    "action": "keep",
+    "reason": "Retain reviewed card covering How do pre-shared keys and certificates differ for peer authentication?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c16",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Where do site-to-site and remote-access IPsec terminate?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c17",
+    "action": "retire",
+    "reason": "Retire client-product branding recall; endpoint and policy comparisons are the relevant outcome."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c24",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What does split tunneling change about VPN protection?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c19",
+    "action": "revise",
+    "reason": "Keep current negotiation-state limits without requiring a legacy state-string comparison."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c20",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Encapsulation rises during a test but decapsulation does not. What is established?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c21",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Does a plain GRE tunnel protect its contents from reading?"
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c25",
+    "action": "add",
+    "reason": "Add an atomic anti-replay cue after narrowing the multi-service card."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "cards",
+    "id": "vpns-ipsec-c26",
+    "action": "add",
+    "reason": "Add the endpoint protection boundary required by the independent worksheet."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d03",
+    "action": "retire",
+    "reason": "Remove optional transform construction from required command recall for a describe objective."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d04",
+    "action": "retire",
+    "reason": "Remove optional crypto-map construction from required recall; preserve complete implementation reference."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d05",
+    "action": "retire",
+    "reason": "Remove optional crypto-map attachment recall; it remains supplied setup."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d08",
+    "action": "retire",
+    "reason": "Remove legacy IKEv1 command recall from the current conceptual checkpoint."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d09",
+    "action": "keep",
+    "reason": "Retain reviewed command covering On supported IOS XE, display IPsec SAs and encapsulation/decapsulation counters."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d10",
+    "action": "retire",
+    "reason": "Remove optional tunnel-interface inspection outside the core policy-based example."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d11",
+    "action": "keep",
+    "reason": "Retain reviewed command covering On supported IOS XE, display IKEv2 security associations."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d12",
+    "action": "retire",
+    "reason": "Remove repeated underlay route-query drill; routing verification is already taught before VPNs."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d13",
+    "action": "retire",
+    "reason": "Remove repeated ACL-display drill; selectors are interpreted here rather than recalled as another command."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "commands",
+    "id": "vpns-ipsec-d14",
+    "action": "retire",
+    "reason": "Remove optional crypto-map reference inspection from required command recall."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "tickets",
+    "id": "vpns-ipsec-t01",
+    "action": "revise",
+    "reason": "Neutralize the title and keep transport alternatives relevant to the captured packet."
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "bank": "tickets",
+    "id": "vpns-ipsec-t02",
+    "action": "revise",
+    "reason": "Use a neutral symptom title and plausible peer-parameter distractors."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q01",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: What can be concluded from this representative scan without consulting an AP inventory?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q02",
+    "action": "revise",
+    "reason": "A dBm power change applies the taught +3 dB rule."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q03",
+    "action": "revise",
+    "reason": "SNR subtraction with correct units is application."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q04",
+    "action": "keep",
+    "reason": "Retain reviewed question covering For neighboring APs using the ordinary North American 2.4 GHz 20 MHz plan, which two statements are correct? Choose two."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q05",
+    "action": "revise",
+    "reason": "Make the proposed channel candidate explicit and avoid claiming an unobserved optimal plan."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q06",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: Why can an AP using a DFS-required 5 GHz channel leave that channel even when its clients have strong signals?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q07",
+    "action": "retire",
+    "reason": "Retire a separate Wi-Fi 5 amendment-name lookup; band capability is exercised by q08 and new q23."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q08",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: Wi-Fi 6E extends which radio technology into compatible 6 GHz equipment?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q09",
+    "action": "keep",
+    "reason": "Retain reviewed question covering Which two statements describe a WPA3-Personal-only WLAN? Choose two."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q10",
+    "action": "revise",
+    "reason": "Read explicit authentication/cipher fields as retrieval rather than analysis."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q11",
+    "action": "revise",
+    "reason": "Replace impossible cipher combinations with plausible Personal/Enterprise choices."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q12",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: The managed deployment uses the same SSID and security on both APs with a common distribution system. What describes the combined service?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q13",
+    "action": "revise",
+    "reason": "Retain the assessed topic while balancing noncyclic answer positions: Which conclusion is best supported by the controlled observations?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q14",
+    "action": "revise",
+    "reason": "Selecting individual authentication from a revocation requirement is application."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q15",
+    "action": "revise",
+    "reason": "Selecting a beam pattern from stated coverage requirements applies the concept."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q16",
+    "action": "revise",
+    "reason": "Use believable PHY-versus-throughput misconceptions as alternatives."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q22",
+    "action": "add",
+    "reason": "Add distinct practice: What does CSMA/CA contribute to ordinary Wi-Fi operation?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q17",
+    "action": "add",
+    "reason": "Add distinct practice: Which comparison is supported by the two measurements?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q18",
+    "action": "add",
+    "reason": "Add distinct practice: Which channel-width conclusion is correct?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q21",
+    "action": "add",
+    "reason": "Add distinct practice: Can these two readings establish the laptop's SNR?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q23",
+    "action": "add",
+    "reason": "Add distinct practice: Which deployment change can meet the stated requirement without pretending a setting adds unsupported hardware?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q19",
+    "action": "add",
+    "reason": "Add distinct practice: Which next action best addresses the evidence without assuming more AP power fixes both directions?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q20",
+    "action": "add",
+    "reason": "Add distinct practice: Which next check best separates the wireless identity from the broken IP path?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "questions",
+    "id": "wireless-principles-q24",
+    "action": "add",
+    "reason": "Add distinct practice: Which next test would best distinguish the proposed RF causes?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c01",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Nonoverlapping 2.4 GHz channels in the usual North American 20 MHz plan?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c02",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Why do neighboring 2.4 GHz channel numbers overlap?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c03",
+    "action": "retire",
+    "reason": "Consolidate regulatory qualification into c01 instead of a second no-universal-count cue."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c04",
+    "action": "revise",
+    "reason": "State the width/reuse tradeoff in one atomic comparison."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c05",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What is DFS for?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c06",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What must support a 6 GHz WLAN?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c07",
+    "action": "retire",
+    "reason": "Consolidate wider-channel tradeoffs with c04."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c08",
+    "action": "revise",
+    "reason": "Narrow several numeric power facts to the +3 dB relationship."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c09",
+    "action": "keep",
+    "reason": "Retain reviewed card covering dB versus dBm versus dBi?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c10",
+    "action": "retire",
+    "reason": "Retire optional EIRP formula recall; retain it as a qualified lesson reference."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c11",
+    "action": "keep",
+    "reason": "Retain reviewed card covering How is SNR calculated from dBm readings?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c12",
+    "action": "retire",
+    "reason": "Retire wavelength examples from required retrieval; band and RF behavior carry the core outcome."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c13",
+    "action": "retire",
+    "reason": "Retire a multi-generation maximum-rate table; application versus PHY rate is the useful decision."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c14",
+    "action": "revise",
+    "reason": "Replace the long generation table with its retained Wi-Fi 6E band distinction."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c15",
+    "action": "keep",
+    "reason": "Retain reviewed card covering SSID versus BSSID?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c16",
+    "action": "revise",
+    "reason": "Narrow the service-set catalog to infrastructure BSS versus ESS."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c17",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Co-channel versus adjacent-channel effects?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c18",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What evidence identifies a non-Wi-Fi interferer?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c19",
+    "action": "revise",
+    "reason": "Narrow legacy security catalog to the modern lab choice and its boundary."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c20",
+    "action": "keep",
+    "reason": "Retain reviewed card covering What changes with WPA3-Personal?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c21",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Shared Personal credentials versus Enterprise credentials?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c22",
+    "action": "keep",
+    "reason": "Retain reviewed card covering Omnidirectional and directional antenna patterns?"
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c23",
+    "action": "add",
+    "reason": "Add the evidence boundary used throughout the RF worksheet."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c24",
+    "action": "add",
+    "reason": "Add asymmetric radio-path reasoning as an atomic cue."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "cards",
+    "id": "wireless-principles-c25",
+    "action": "add",
+    "reason": "Add shared-medium mechanism rather than another hardware generation table."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d01",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Show the current wireless interface status on Windows."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d02",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Scan and display visible BSSID details on Windows."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d03",
+    "action": "keep",
+    "reason": "Retain reviewed command covering Inspect the Windows wireless adapter driver's reported radio and authentication capabilities."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d04",
+    "action": "retire",
+    "reason": "Retire repeated client IP inspection here; chapter 30 owns OS addressing commands and lab setup supplies this query."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d05",
+    "action": "retire",
+    "reason": "Retire another fixed-address ping drill; retain the lab's explicit service tests."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d06",
+    "action": "retire",
+    "reason": "Retire the premature controller-profile command; chapter 38 owns controller configuration context."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d07",
+    "action": "retire",
+    "reason": "Retire the optional controller AP-inventory preview from this RF-principles bank."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "commands",
+    "id": "wireless-principles-d08",
+    "action": "retire",
+    "reason": "Retire the optional controller client-summary preview from this RF-principles bank."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "tickets",
+    "id": "wireless-principles-t01",
+    "action": "revise",
+    "reason": "Use a symptom-led title while retaining the controlled RF evidence."
+  },
+  {
+    "chapterId": "wireless-principles",
+    "bank": "tickets",
+    "id": "wireless-principles-t02",
+    "action": "revise",
+    "reason": "Do not reveal the security capability diagnosis in the ticket title."
+  }
+]

@@ -1,0 +1,130 @@
+[
+  {
+    "id": "network-management-and-sdn-c01",
+    "front": "What is the difference between control and data-plane work?",
+    "back": "Control establishes forwarding information; the data plane uses installed information to process traffic.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c02",
+    "front": "Name two clear control-plane operations.",
+    "back": "Forming an OSPF adjacency and selecting an STP port role.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c03",
+    "front": "Applying an installed ACL to a transit packet belongs to which plane?",
+    "back": "The data plane: it applies existing policy while processing traffic.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c05",
+    "front": "Must data-plane forwarding occur in a hardware ASIC?",
+    "back": "No. Physical switches often accelerate it; virtual routers can forward in software.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c06",
+    "front": "What does controller-based networking centralize?",
+    "back": "Some combination of network policy, management or control; device forwarding and protocols may remain distributed.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c07",
+    "front": "Common SDN layers, bottom to top?",
+    "back": "Infrastructure, controller and applications.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c08",
+    "front": "What is the northbound interface?",
+    "back": "The application-facing controller interface, often a REST API.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c09",
+    "front": "What is the southbound interface?",
+    "back": "The controller's interface to infrastructure, using supported protocols such as NETCONF, RESTCONF or SSH.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c10",
+    "front": "NETCONF versus RESTCONF at recognition level?",
+    "back": "NETCONF commonly uses SSH/XML RPCs; RESTCONF uses HTTP mechanisms with YANG-modeled JSON or XML.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c21",
+    "front": "Does one enable command prove a device API is usable?",
+    "back": "No. Platform support, authentication, transport, authorization and an actual request must be verified.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c13",
+    "front": "Underlay versus overlay?",
+    "back": "The underlay provides transport between tunnel endpoints; the overlay builds logical connectivity over it.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c20",
+    "front": "Can the five management approaches overlap?",
+    "back": "Yes. A cloud-hosted controller can be driven by automation using reviewed infrastructure-as-code definitions.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c22",
+    "front": "What is configuration drift?",
+    "back": "A difference between approved desired state and observed configuration within the managed scope.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c23",
+    "front": "What does an idempotent operation do when repeated?",
+    "back": "It has the same intended state effect; this is a property to verify, not a guarantee for every script.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c24",
+    "front": "What limits a controller inventory response as current evidence?",
+    "back": "Its collection time, source device and collection status; a successful API response may contain older observations.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "network-management-and-sdn-c25",
+    "front": "Does reverting an infrastructure file in Git restore deployed devices?",
+    "back": "Not by itself. Apply the reviewed recovery through the management workflow and verify the actual result.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

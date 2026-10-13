@@ -1,0 +1,282 @@
+[
+  {
+    "id": "ios-essentials-d01",
+    "task": "Set the privileged-EXEC enable secret to EnableLabSecret8 on this isolated lab router.",
+    "mode": "R1(config)#",
+    "answer": "enable secret EnableLabSecret8",
+    "accept": [],
+    "teaching": {
+      "sectionId": "passwords-secrets-and-the-local-user-database",
+      "hint": "The enable credential is separate from a user’s login secret.",
+      "takeaway": "This protects entry through enable. It does not create a local login account or encrypt a remote terminal session.",
+      "syntax": [
+        {
+          "text": "enable secret",
+          "kind": "keyword"
+        },
+        {
+          "text": "EnableLabSecret8",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d02",
+    "task": "Create local user admin with privilege level 15 and the lab secret AdminLabSecret8.",
+    "mode": "R1(config)#",
+    "answer": "username admin privilege 15 secret AdminLabSecret8",
+    "accept": [],
+    "teaching": {
+      "sectionId": "passwords-secrets-and-the-local-user-database",
+      "hint": "The username, initial privilege and secret are separate parts.",
+      "takeaway": "The account can start an EXEC session at privilege 15 when local authentication uses it. Creating the account alone does not make the VTY lines use the local database.",
+      "syntax": [
+        {
+          "text": "username",
+          "kind": "keyword"
+        },
+        {
+          "text": "admin",
+          "kind": "argument"
+        },
+        {
+          "text": "privilege",
+          "kind": "keyword"
+        },
+        {
+          "text": "15",
+          "kind": "argument"
+        },
+        {
+          "text": "secret",
+          "kind": "keyword"
+        },
+        {
+          "text": "AdminLabSecret8",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d04",
+    "task": "The lab uses the conventional hostname/domain/RSA workflow. R1 is already named; set its local domain to lab.test.",
+    "mode": "R1(config)#",
+    "answer": "ip domain-name lab.test",
+    "accept": [
+      "ip domain name lab.test"
+    ],
+    "teaching": {
+      "sectionId": "configure-ssh-step-by-step",
+      "hint": "This is device identity for key generation, not a DNS-server setting.",
+      "takeaway": "The domain participates in the conventional RSA-key identity workflow. No DNS lookup or external DNS server is required to generate the lab key.",
+      "syntax": [
+        {
+          "text": "ip domain-name",
+          "kind": "keyword"
+        },
+        {
+          "text": "lab.test",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d05",
+    "task": "R1 has its hostname and domain configured and supports the general-keys form. Generate a 2048-bit RSA key pair for the lab SSH server.",
+    "mode": "R1(config)#",
+    "answer": "crypto key generate rsa general-keys modulus 2048",
+    "accept": [
+      "crypto key generate rsa modulus 2048"
+    ],
+    "teaching": {
+      "sectionId": "configure-ssh-step-by-step",
+      "hint": "Specify RSA and the requested modulus in bits.",
+      "takeaway": "Key generation supplies cryptographic keys; it does not configure user authentication or VTY transport. Other IOS images may use an interactive modulus prompt.",
+      "syntax": [
+        {
+          "text": "crypto key generate rsa general-keys modulus",
+          "kind": "keyword"
+        },
+        {
+          "text": "2048",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d06",
+    "task": "R1’s SSH keys exist. Configure the server to accept SSH version 2 only.",
+    "mode": "R1(config)#",
+    "answer": "ip ssh version 2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configure-ssh-step-by-step",
+      "hint": "Set the protocol version independently of line transport.",
+      "takeaway": "Verify the reported version with show ip ssh. An enabled SSHv2 server can still be unreachable or refused by the VTY policy.",
+      "syntax": [
+        {
+          "text": "ip ssh version",
+          "kind": "keyword"
+        },
+        {
+          "text": "2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d-context-vty",
+    "task": "R1 provides exactly VTY lines 0 through 4. Select all of those remote terminal lines so you can apply the SSH login policy.",
+    "mode": "R1(config)#",
+    "answer": "line vty 0 4",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lines-console-aux-and-vty",
+      "hint": "Select the virtual terminal lines, not the physical console.",
+      "takeaway": "The prompt becomes R1(config-line)#. The supplied range covers this router; on another device, inspect the actual VTY ranges and apply the intended policy to all of them.",
+      "syntax": [
+        {
+          "text": "line vty",
+          "kind": "keyword"
+        },
+        {
+          "text": "0 4",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d07",
+    "task": "The selected VTY lines must authenticate against R1’s existing local username database. Configure that authentication method.",
+    "mode": "R1(config-line)#",
+    "answer": "login local",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lines-console-aux-and-vty",
+      "hint": "A shared line password and the local user database use different login forms.",
+      "takeaway": "Local authentication needs a valid username and secret already present. Keep console recovery available and test a fresh login before ending the working session.",
+      "syntax": [
+        {
+          "text": "login local",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d08",
+    "task": "The selected VTY lines currently permit Telnet and SSH. Allow SSH as their only incoming terminal transport.",
+    "mode": "R1(config-line)#",
+    "answer": "transport input ssh",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lines-console-aux-and-vty",
+      "hint": "Choose the permitted transport; do not change the login database.",
+      "takeaway": "This removes Telnet from the permitted incoming transports on these lines. Apply the intended policy to every actual VTY range, then test a new SSH session.",
+      "syntax": [
+        {
+          "text": "transport input ssh",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d13",
+    "task": "A new login succeeds, but the user reaches > instead of the intended # prompt. Report this session’s current privilege level.",
+    "mode": "R1>",
+    "answer": "show privilege",
+    "accept": [],
+    "teaching": {
+      "sectionId": "passwords-secrets-and-the-local-user-database",
+      "hint": "Inspect the authenticated session’s privilege, not SSH server status.",
+      "takeaway": "A level-1 result means authentication succeeded with lower privilege. Investigate the account and authorization settings separately from network reachability.",
+      "syntax": [
+        {
+          "text": "show privilege",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d10",
+    "task": "On the selected terminal lines, disconnect an idle EXEC session after five minutes and zero seconds.",
+    "mode": "R1(config-line)#",
+    "answer": "exec-timeout 5 0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "lines-console-aux-and-vty",
+      "hint": "The timeout takes minutes first, then seconds.",
+      "takeaway": "The setting applies to idle EXEC time, not a login-attempt timeout. Setting both values to zero would disable idle expiry.",
+      "syntax": [
+        {
+          "text": "exec-timeout",
+          "kind": "keyword"
+        },
+        {
+          "text": "5",
+          "kind": "argument"
+        },
+        {
+          "text": "0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d11",
+    "task": "Before testing a new login, display R1’s SSH server state and configured protocol version.",
+    "mode": "R1#",
+    "answer": "show ip ssh",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Inspect the SSH service rather than the table of logged-in users.",
+      "takeaway": "An enabled version-2 server is one prerequisite. Reachability, permitted VTY transport and valid credentials still need a fresh session test.",
+      "syntax": [
+        {
+          "text": "show ip ssh",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ios-essentials-d12",
+    "task": "An administrator has opened a new remote terminal session. Display the terminal-session table showing logged-in users and their lines.",
+    "mode": "R1#",
+    "answer": "show users",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Choose current sessions rather than the SSH server’s capabilities.",
+      "takeaway": "Match the user and line, and inspect the source location where shown. This is session evidence; it does not verify that every unused VTY line has the correct policy.",
+      "syntax": [
+        {
+          "text": "show users",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

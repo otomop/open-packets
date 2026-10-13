@@ -1,0 +1,64 @@
+[
+  {
+    "id": "dns-t01",
+    "title": "Website works but the mail exchanger name does not resolve",
+    "objectives": [
+      "v1:4.3",
+      "v2:4.4"
+    ],
+    "scenario": "You administer an isolated lab zone. Its web server at 10.1.1.80 works. The intended mail service at 10.1.1.25 also passes a direct service test, but senders using the domain’s MX record cannot resolve its exchanger. The following representative records are sufficient for a paper diagnosis; Packet Tracer need not implement MX administration.",
+    "exhibits": [
+      {
+        "title": "Current zone and queried data",
+        "text": "www.lab.example.  A 10.1.1.80\nlab.example.      MX 10 mail.lab.example.\nmail.lab.example. A query: NXDOMAIN"
+      },
+      {
+        "title": "Intended service inventory",
+        "text": "WEB1: 10.1.1.80; HTTP works by intended web name.\nMAIL1: 10.1.1.25; intended hostname mail.lab.example.\nDirect test of the intended mail service at 10.1.1.25 succeeds."
+      }
+    ],
+    "question": "Which repair addresses the broken DNS dependency while preserving the correct website data?",
+    "options": [
+      "Change the correct web A record to the intended mail address.",
+      "Add the exchanger's intended address record, then retest the MX chain.",
+      "Change the MX preference while keeping its absent target name.",
+      "Clear the client's cache while leaving the target name absent."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The MX target mail.lab.example has no name data, although the intended mail service works by address. Add its intended A record at 10.1.1.25, with AAAA only if a usable IPv6 service is intended. Changing the working web record breaks another service; changing preference or clearing a cache does not create the missing target. After correction, account for any cached negative answer and test the full mail chain.",
+    "fix": "In the lab zone worksheet, retain `lab.example. MX 10 mail.lab.example.` and add `mail.lab.example. A 10.1.1.25`. On a real lab service, perform the equivalent edit with that product’s supported zone editor.\n\nQuery the responsible service for `lab.example MX`, then query the returned exchanger’s A/AAAA as applicable. Repeat through the affected client’s resolver and test the intended mail service. If the earlier NXDOMAIN remains in cache, inspect its remaining negative lifetime or clear only the relevant lab cache using supported controls. Clearing a PC cache does not clear a remote resolver."
+  },
+  {
+    "id": "dns-t02",
+    "title": "The router reaches an address but will not resolve a fresh name",
+    "objectives": [
+      "v1:4.3",
+      "v2:4.4"
+    ],
+    "scenario": "R1 is an IOS router at 10.1.1.1/24. DNS1 is reachable at 10.1.1.53 and returns app.lab.example A 10.1.1.80 to another lab client. R1 successfully pings 10.1.1.80 but cannot resolve app.lab.example. Its host table contains no cached or static mapping for that exact name. All shown records are representative.",
+    "exhibits": [
+      {
+        "title": "Relevant R1 global configuration",
+        "text": "no ip domain-lookup\nip domain name lab.example\nip name-server 10.1.1.53\nip host localweb 10.1.1.80"
+      },
+      {
+        "title": "Independent checks",
+        "text": "R1 ping 10.1.1.53: successful\nR1 ping 10.1.1.80: successful\nPC explicit query to 10.1.1.53 for app.lab.example A: 10.1.1.80\nR1 show hosts: localweb is permanent; no entry for app.lab.example"
+      }
+    ],
+    "question": "What is the demonstrated router-side problem?",
+    "options": [
+      "R1 has no resolver address configured for its own lookups.",
+      "R1 has a conflicting static mapping for app.lab.example.",
+      "R1's no ip domain-lookup disables the uncached lookup.",
+      "R1 cannot route to either the resolver or the application address."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The explicit disabling command prevents the router’s DNS client lookup even though a resolver address is present. The full requested name has no matching local entry. DNS service success from another client supports the server data, and address pings support basic reachability, but the router’s own lookup setting still needs correction. A static entry for a different name does not disable a remote service. The resolver address is explicitly configured, no matching static entry exists, and both address pings succeeded. Those checks rule out the other proposed causes in this controlled incident.",
+    "fix": "Enable the router’s DNS client, then inspect settings and repeat the exact name test.\n\n```ios\nR1# configure terminal\nR1(config)# ip domain-lookup\nR1(config)# end\nR1# show hosts\nR1# ping app.lab.example\n```\n\nVerify that the selected address is 10.1.1.80. If name lookup still fails, inspect the actual request and response path rather than changing already-correct records without evidence. Save the correction after verifying service."
+  }
+]

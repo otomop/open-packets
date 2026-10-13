@@ -1,0 +1,203 @@
+[
+  {
+    "id": "stp-protection-d01",
+    "task": "On 2960-style IOS, the selected access port connects only to a PC and has no Layer 2 transit path. Make it a PortFast edge.",
+    "mode": "SW1(config-if)#",
+    "answer": "spanning-tree portfast",
+    "accept": [
+      "spanning-tree portfast edge"
+    ],
+    "teaching": {
+      "sectionId": "portfast-declaring-an-edge",
+      "hint": "Immediate edge forwarding is appropriate only for the stated endpoint role.",
+      "takeaway": "PortFast leaves STP active. It does not prevent a BPDU violation by itself; BPDU guard supplies the separate protection.",
+      "syntax": [
+        {
+          "text": "spanning-tree portfast",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d03",
+    "task": "All nontrunking ports on this lab switch are verified end-device links. Enable the global PortFast default for those ports.",
+    "mode": "SW1(config)#",
+    "answer": "spanning-tree portfast default",
+    "accept": [
+      "spanning-tree portfast edge default"
+    ],
+    "teaching": {
+      "sectionId": "portfast-declaring-an-edge",
+      "hint": "Choose the global nontrunking default, rather than a single-interface override.",
+      "takeaway": "The default targets nontrunking ports; it does not turn ordinary trunks into edges. Review actual endpoint roles before applying a blanket default.",
+      "syntax": [
+        {
+          "text": "spanning-tree portfast default",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d04",
+    "task": "The selected port must err-disable on any received BPDU, even if it is not operationally PortFast. Apply interface BPDU guard.",
+    "mode": "SW1(config-if)#",
+    "answer": "spanning-tree bpduguard enable",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bpdu-guard-a-bpdu-on-an-edge-port-is-a-violation",
+      "hint": "Use the interface setting whose behavior does not depend on edge status.",
+      "takeaway": "Any BPDU can trigger this guard; it need not advertise a superior root. Remove the prohibited BPDU source before recovering the port.",
+      "syntax": [
+        {
+          "text": "spanning-tree bpduguard enable",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d05",
+    "task": "Apply BPDU guard globally to ports that are operationally PortFast, without enabling unconditional guard on every interface.",
+    "mode": "SW1(config)#",
+    "answer": "spanning-tree portfast bpduguard default",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bpdu-guard-a-bpdu-on-an-edge-port-is-a-violation",
+      "hint": "The global default is tied to operational edge status.",
+      "takeaway": "This scope differs from interface BPDU guard. Inspect actual PortFast state when explaining why a global guard default did or did not apply.",
+      "syntax": [
+        {
+          "text": "spanning-tree portfast bpduguard default",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d08",
+    "task": "This designated downstream boundary may connect to another switch, but it must not accept a better root through that link. Configure the selected interface’s protection.",
+    "mode": "SW1(config-if)#",
+    "answer": "spanning-tree guard root",
+    "accept": [],
+    "teaching": {
+      "sectionId": "root-guard-the-root-stays-where-you-put-it",
+      "hint": "Receiving ordinary BPDUs is allowed; superior root information is the prohibited condition.",
+      "takeaway": "Root guard places the affected instance into root-inconsistent state when superior information arrives. It can recover when that condition disappears; it differs from BPDU-guard err-disable.",
+      "syntax": [
+        {
+          "text": "spanning-tree guard root",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d10",
+    "task": "This supported point-to-point uplink is a root/alternate path expected to receive BPDUs. Prevent missing BPDUs from letting it become designated and forward incorrectly.",
+    "mode": "SW3(config-if)#",
+    "answer": "spanning-tree guard loop",
+    "accept": [],
+    "teaching": {
+      "sectionId": "loop-guard-silence-is-not-consent",
+      "hint": "The risk is loss of expected control information, not a superior root advertisement.",
+      "takeaway": "Loop guard can hold an affected instance loop-inconsistent while expected BPDUs are absent. Correct the BPDU-loss condition rather than removing the protection.",
+      "syntax": [
+        {
+          "text": "spanning-tree guard loop",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d11",
+    "task": "A protected link remains physically up, but STP may be holding a VLAN root-inconsistent or loop-inconsistent. Display the affected interfaces and instances.",
+    "mode": "SW1#",
+    "answer": "show spanning-tree inconsistentports",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Inspect STP inconsistency rather than assuming the whole port is err-disabled.",
+      "takeaway": "Read the named inconsistency and VLAN. Root/loop inconsistency differs from BPDU guard’s whole-port err-disable, so recovery must follow the actual cause.",
+      "syntax": [
+        {
+          "text": "show spanning-tree inconsistentports",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "stp-protection-d12",
+    "task": "Check which global PortFast and BPDU-guard defaults are enabled before comparing them with an interface-specific override.",
+    "mode": "SW1#",
+    "answer": "show spanning-tree summary",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Inspect global STP feature defaults.",
+      "takeaway": "A global default is only part of the policy. Compare the relevant interface configuration and operational edge state before predicting whether guard applies.",
+      "syntax": [
+        {
+          "text": "show spanning-tree summary",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "stp-protection-d02",
+    "task": "The selected trunk connects to a verified end device using multiple VLANs, with no Layer 2 transit path. Enable PortFast for that trunk.",
+    "mode": "SW1(config-if)#",
+    "answer": "spanning-tree portfast trunk",
+    "accept": [
+      "spanning-tree portfast edge trunk"
+    ],
+    "teaching": {
+      "sectionId": "portfast-declaring-an-edge",
+      "hint": "A genuine edge can use tagged VLANs, but ordinary switch trunks are not edges.",
+      "takeaway": "The trunk form extends PortFast to this qualified endpoint link. Do not apply it to an interswitch transit link merely to reduce startup delay.",
+      "syntax": [
+        {
+          "text": "spanning-tree portfast trunk",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "supporting"
+    }
+  }
+]

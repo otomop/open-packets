@@ -1,0 +1,63 @@
+[
+  {
+    "id": "components-and-topologies-t01",
+    "title": "A third-floor switch loses its path when another floor reboots",
+    "objectives": [
+      "v1:1.2.a",
+      "v1:1.2"
+    ],
+    "scenario": "The building uses access switches and a collapsed distribution/core pair. Users on A3 can reach their local printer, but lose access to the server network whenever A2 is powered off. A cable inspection confirms the connections below. There are no unlisted links or wireless alternatives.",
+    "exhibits": [
+      {
+        "title": "Verified physical connection record",
+        "text": "A1 uplink 1 → CC1\nA1 uplink 2 → CC2\nA2 uplink 1 → CC1\nA2 uplink 2 → CC2\nA3 uplink 1 → A2\nA3 uplink 2 → no cable\nServer network → collapsed distribution/core layer"
+      },
+      {
+        "title": "Tests while A2 is powered off",
+        "text": "A3 user → printer attached to A3: succeeds\nA3 user → server network: fails\nA1 user → server network: succeeds"
+      }
+    ],
+    "question": "Which dependency explains A3's loss of server access?",
+    "options": [
+      "A3’s local printer needs a gateway for traffic within its LAN.",
+      "A3’s only path to the server network passes through A2.",
+      "A3 has two independent paths because its switch has two uplink ports.",
+      "The evidence shows CC1 and CC2 both lost power."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The verified cable record gives A3 only one uplink, and it leads through A2. Local traffic on A3 can continue, but traffic toward the server network loses its path while A2 is off. This is a specific single-path dependency; it does not establish that every access-switch chain is forbidden or that an unused port is administratively shut down.",
+    "fix": "Record A3's dependency in the diagram and restore A2 to recover the existing path. Verify local and server tests again. For a planned improvement, connect A3 to the intended distribution/core layer using a reviewed design that supplies appropriate independent paths and forwarding configuration. Do not create extra Layer 2 links casually: later switching chapters explain loop prevention. After an approved redesign, update the port records and test each intended failure separately; two cables alone do not prove resilience."
+  },
+  {
+    "id": "components-and-topologies-t02",
+    "title": "Two compatible phones receive no PoE power",
+    "objectives": [
+      "v1:1.1.h"
+    ],
+    "scenario": "Two compatible IEEE PoE phones remain dark on a supported PoE Catalyst switch. A controlled test confirms both phones power on through a known-good cable on another compatible port. The switch has sufficient remaining budget for both phones. The following excerpts are representative teaching evidence, not a claim of a completed hardware test.",
+    "exhibits": [
+      {
+        "title": "Selected running configuration",
+        "text": "interface GigabitEthernet1/0/7\n description Conference-phone-A\n power inline never\n!\ninterface GigabitEthernet1/0/8\n description Conference-phone-B\n power inline never"
+      },
+      {
+        "title": "Power allocation worksheet",
+        "text": "Remaining switch budget: 120 W\nRequired allocation for each phone: 15.4 W or less\nBoth selected ports support the required standard and allocation\nPoE administration on Gi1/0/7 and Gi1/0/8: disabled"
+      }
+    ],
+    "question": "Which finding directly explains why the switch is not supplying power on these ports?",
+    "options": [
+      "The phones’ combined allocations exhaust the remaining budget.",
+      "The selected interfaces await IP addresses before detecting power.",
+      "The selected ports are configured not to supply PoE power.",
+      "The working test proves every cable path to the phones is healthy."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The selected configuration explicitly disables power delivery. The supplied port compatibility and remaining budget meet the stated requirements, so those do not explain the failure here. A phone need not obtain an IP address before standards-based PoE can power it.",
+    "fix": "Record the disabled PoE setting and identify the two intended interfaces. On supported hardware, an authorized technician restores automatic power detection with power inline auto on each selected port, then inspects show power inline. Chapter 09 develops that configuration; this ticket assesses the device role and the evidence, not new syntax.\n\nVerify detection and an appropriate allocation for each phone, allow it to boot, and check its operation. The known-good test does not certify the original cable paths; inspect them separately if power still fails. This is supplied hardware evidence, not an executed Packet Tracer PoE test."
+  }
+]

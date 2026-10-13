@@ -1,0 +1,66 @@
+[
+  {
+    "id": "start-here-c32",
+    "front": "What does a successful ping to the other lab PC establish?",
+    "back": "That the source received ICMP replies from that destination during the test. It does not test every application or Internet access.",
+    "tags": [
+      "verification"
+    ]
+  },
+  {
+    "id": "start-here-c33",
+    "front": "Can two separate PCs use the same IPv4 address on this simple LAN?",
+    "back": "No. Give each PC its own address from the supplied plan; a different device name does not prevent an address conflict.",
+    "tags": [
+      "addressing"
+    ]
+  },
+  {
+    "id": "start-here-c07",
+    "front": "What do >, # and (config)# identify in IOS?",
+    "back": "User EXEC, privileged EXEC and global configuration. Read the prompt before entering a command.",
+    "tags": [
+      "ios"
+    ]
+  },
+  {
+    "id": "start-here-c09",
+    "front": "How do you save and verify a conventional IOS startup configuration?",
+    "back": "copy running-config startup-config saves it. After the copy completes, use show startup-config to check the required setting.",
+    "tags": [
+      "configuration"
+    ]
+  },
+  {
+    "id": "start-here-c10",
+    "front": "What is the operational difference between running and startup configuration?",
+    "back": "Running configuration is active now. Startup configuration contains the saved settings used for a normal boot.",
+    "tags": [
+      "configuration"
+    ]
+  },
+  {
+    "id": "start-here-c19",
+    "front": "What does `<cr>` mean in IOS context help?",
+    "back": "Enter can complete the command at this position. Displaying help has not executed it.",
+    "tags": [
+      "ios"
+    ]
+  },
+  {
+    "id": "start-here-c28",
+    "front": "Does the opening lab's switch need an IP address to carry frames between the two PCs?",
+    "back": "No. The PCs need their supplied addresses and masks for the ping exercise, but the switch can forward their local frames without its own management address.",
+    "tags": [
+      "switching"
+    ]
+  },
+  {
+    "id": "start-here-c31",
+    "front": "What three kinds of saved work should you distinguish in this course?",
+    "back": "Save the device’s startup configuration, the Packet Tracer .pkt project, and the app’s study-progress export separately.",
+    "tags": [
+      "workflow"
+    ]
+  }
+]

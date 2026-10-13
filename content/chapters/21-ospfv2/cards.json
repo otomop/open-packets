@@ -1,0 +1,210 @@
+[
+  {
+    "id": "ospfv2-c01",
+    "front": "Default Cisco IOS OSPF administrative distance?",
+    "back": "110. It is separate from the OSPF cost.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv2-c02",
+    "front": "OSPFv2 protocol number and multicast groups?",
+    "back": "IP protocol 89; 224.0.0.5 AllSPFRouters, 224.0.0.6 AllDRouters. No TCP/UDP port.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv2-c03",
+    "front": "How do DBD and LSU packets differ?",
+    "back": "A DBD summarizes database contents. An LSU carries the actual link-state advertisements being distributed.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c04",
+    "front": "How does IOS choose a RID when a process starts?",
+    "back": "Explicit router-id; otherwise highest eligible up IPv4 loopback, then highest eligible active IPv4 interface. Verify the active RID.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c05",
+    "front": "Normal IOS Hello/dead defaults for broadcast and point-to-point?",
+    "back": "10/40 seconds. An explicitly configured dead interval can differ; compare effective values on both ends.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv2-c06",
+    "front": "What do 2-Way and Full establish?",
+    "back": "2-Way confirms bidirectional Hello recognition. Full means database synchronization completed for that adjacency.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c07",
+    "front": "Which two timer values must agree on the intended OSPF neighbor link?",
+    "back": "The effective Hello and dead intervals. Compare interface output on both ends; do not infer the effective values from one command alone.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ospfv2-c08",
+    "front": "Repeated ExStart/Exchange: which common fault should you check?",
+    "back": "Compare interface MTUs and exchange errors. MTU mismatch is common, not the only cause; correct the mismatch before considering a bypass.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ospfv2-c09",
+    "front": "When is 2WAY/DROTHER normal?",
+    "back": "Between two DROTHERs on a broadcast segment, while each is Full with the DR and BDR.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c10",
+    "front": "What breaks a fresh DR election tie in interface priority?",
+    "back": "The higher router ID, among eligible routers. Existing DR/BDR roles require separate non-preemption reasoning.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv2-c11",
+    "front": "Broadcast versus point-to-point OSPF roles?",
+    "back": "Broadcast elects DR/BDR. Point-to-point has no DR/BDR and normally shows FULL/ -.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ospfv2-c12",
+    "front": "Configure OSPF point-to-point on a two-router Ethernet link?",
+    "back": "ip ospf network point-to-point under both interfaces. Ethernet framing stays Ethernet.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ospfv2-c13",
+    "front": "IOS automatic OSPF cost formula and default reference?",
+    "back": "Reference bandwidth / configured interface bandwidth, integer cost with minimum 1. Default reference 100 Mbps.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv2-c14",
+    "front": "Why can Fast Ethernet and Gigabit Ethernet both have automatic OSPF cost 1?",
+    "back": "With the default 100-Mbps reference, the computed integer cost has a minimum of 1. A higher consistent reference can distinguish faster links.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv2-c15",
+    "front": "Which interface costs make up a route metric?",
+    "back": "Outgoing costs from the calculating router to the destination, including the remote LAN interface; do not add receiving costs again.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c16",
+    "front": "Set an OSPF reference of 1 Gbps?",
+    "back": "auto-cost reference-bandwidth 1000 in router mode, consistently across the routing domain. Units are Mbps.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ospfv2-c17",
+    "front": "Two IOS ways to enable OSPFv2 on an interface?",
+    "back": "A matching network ADDRESS WILDCARD area statement, or ip ospf PROCESS area AREA directly on the interface.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ospfv2-c18",
+    "front": "What does a passive OSPF interface still advertise?",
+    "back": "Its enabled, up connected prefix, through other OSPF links. It does not form neighbors on that interface.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c20",
+    "front": "Must neighboring routers use the same OSPF process number?",
+    "back": "No. The process number is a local configuration label; the area must agree and router IDs must be unique.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv2-c21",
+    "front": "What does [110/11] in an IOS OSPF route mean?",
+    "back": "Administrative distance 110, total OSPF cost 11. Neither number is the prefix length.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c22",
+    "front": "Does OSPF priority 0 disable adjacency formation?",
+    "back": "No. It prevents DR/BDR election eligibility; the router can still form Full adjacencies with the elected routers.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c23",
+    "front": "A higher-priority OSPF router joins a healthy broadcast segment: must it become DR?",
+    "back": "No. Existing DR/BDR roles are non-preemptive.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c24",
+    "front": "Which wins: automatic OSPF cost or explicit ip ospf cost?",
+    "back": "The explicit interface cost overrides the automatic bandwidth calculation.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c25",
+    "front": "Does a host wildcard in an OSPF network command advertise a /32?",
+    "back": "No. It selects the interface by address. An ordinary Ethernet LAN is advertised using its actual interface prefix.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c26",
+    "front": "Does Full prove that every intended client LAN is advertised?",
+    "back": "No. Verify the remote LAN interface state, activation and its route separately.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv2-c27",
+    "front": "Can R1 and R3 calculate different costs over the same physical link?",
+    "back": "Yes. Each uses its own outgoing interface cost; reverse-direction configuration need not be equal.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

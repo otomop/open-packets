@@ -1,0 +1,170 @@
+[
+  {
+    "id": "client-os-troubleshooting-c20",
+    "front": "A disciplined client troubleshooting sequence?",
+    "back": "Identify the adapter/address family; compare address/prefix/routes/DNS/security; test local, routed, DNS and application paths; repair one demonstrated fault and repeat its test.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c04",
+    "front": "Windows command for detailed adapter IP, DHCP and DNS settings?",
+    "back": "`ipconfig /all`. Identify the intended adapter; DHCP-enabled addressing does not prove every DNS value came from DHCP.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c11",
+    "front": "Linux command for compact addresses and prefixes?",
+    "back": "`ip -br address`. Use full address output and network-manager/lease information when investigating acquisition; one route label does not prove every address came from DHCP.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c09",
+    "front": "macOS command for the default IPv4 route?",
+    "back": "`route -n get default`; `netstat -rn` gives broader route information. Check the actual interface and any more specific route for the destination.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c12",
+    "front": "In `default via 10.1.20.1 ... src 10.1.20.59`, which is the gateway?",
+    "back": "The next hop is 10.1.20.1 after `via`. `src` is the preferred local source address. Inspect other routes before applying the default to a destination.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c06",
+    "front": "How are competing Windows routes selected?",
+    "back": "Inspect `route print -4` or `-6`. Longest matching prefix comes first; for matching routes of equal prefix length, the lower effective metric is preferred.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c10",
+    "front": "What does scutil --dns add beyond a single macOS service’s settings?",
+    "back": "It reports current resolver configuration, including supplemental/domain-specific resolvers. Check which resolver actually handles the failing name.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c13",
+    "front": "Linux: why might resolv.conf show only 127.0.0.53?",
+    "back": "It can point to systemd-resolved's local DNS stub. Inspect `resolvectl status` for per-link upstream information, or the actual manager's tools such as `nmcli device show`.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c03",
+    "front": "Must Linux DHCP failure look the same on every distribution?",
+    "back": "No. Manager/profile settings can leave no usable IPv4 address, retain other configuration, or provide link-local fallback. Inspect actual configuration and manager evidence.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c02",
+    "front": "What does DHCP-enabled Windows autoconfiguration suggest?",
+    "back": "An Autoconfiguration IPv4 Address in 169.254/16 indicates link-local fallback rather than a usable intended lease. It does not identify the exact failed DHCP stage or device.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c05",
+    "front": "Does ipconfig /flushdns renew a Windows DHCP lease?",
+    "back": "No. It clears the DNS resolver cache. Lease renewal is a different operation; releasing a working lease can interrupt connectivity.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c07",
+    "front": "Does a gateway entry in the ARP cache prove the current path works?",
+    "back": "No. `arp -a` shows a stored mapping that may be stale/static/incorrect. Combine it with fresh traffic and link/route evidence.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c14",
+    "front": "Expected effect of an unused default gateway on a simple single-homed LAN?",
+    "back": "Local peers can remain reachable while traffic needing the default route fails. This assumes no alternate routes; verify the configured next hop and neighbor resolution.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c16",
+    "front": "How can a mask that is too wide break selected destinations?",
+    "back": "The client may consider a remote destination on-link and try direct ARP instead of its gateway. Proxy ARP can conceal this under some conditions; compute the actual prefix decision.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c15",
+    "front": "Numeric access works but a fresh name lookup times out: next check?",
+    "back": "Read the actual resolver choice and query result, then test its service/path and the record. Numeric success does not prove that every mask, route or application is correct.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c22",
+    "front": "The intended DNS resolver answers with an address that disagrees with the service plan. What comes next?",
+    "back": "Check the queried name/type and correct the relevant record or approved DNS view. Verify a fresh answer, then the actual application.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c21",
+    "front": "Does successful numeric IPv4 access verify an IPv6 path to the same named service?",
+    "back": "No. Identify the address family and destination actually tested, then inspect and test the other family separately.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c17",
+    "front": "Which WLAN profile values should you compare with the intended network?",
+    "back": "The intended case-sensitive SSID, security/authentication mode and required credential. A saved profile does not prove that the current connection uses it.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c18",
+    "front": "Why can WPA2 association exist before a wrong-key failure?",
+    "back": "Initial 802.11 association can precede the four-way key handshake. Failed key agreement prevents usable protected data; OS connection/error displays vary.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c19",
+    "front": "Connected Wi-Fi plus no usable DHCP lease: what should be checked?",
+    "back": "The current wireless/security state, intended WLAN-to-LAN/VLAN path, and DHCP request/reply evidence. A connection icon alone does not isolate a unique cause.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "client-os-troubleshooting-c23",
+    "front": "Why is a retained IPv4 address weak proof of a new Wi-Fi connection?",
+    "back": "It can belong to an earlier lease. Check the current connection/security event and fresh protected data traffic before treating the address as usable.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

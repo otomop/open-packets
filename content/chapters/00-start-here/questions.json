@@ -1,0 +1,185 @@
+[
+  {
+    "id": "start-here-q25",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "First LAN test record",
+      "text": "PC-A: 192.168.10.10, mask 255.255.255.0\nPC-B: 192.168.10.20, mask 255.255.255.0\nBoth PCs connect to the same switch.\nPC-A ping to 192.168.10.20: replies received"
+    },
+    "prompt": "What does the successful test establish?",
+    "options": [
+      "PC-A received ICMP replies from PC-B during this test.",
+      "PC-A can reach Internet destinations through the switch.",
+      "Every application on PC-B is available to PC-A.",
+      "The switch has saved the PCs’ addresses in startup configuration."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The result establishes the tested ICMP exchange between the two local addresses at that time. Other destinations, applications and saved configuration require their own checks.",
+    "whyWrong": {
+      "1": "No Internet destination or router path was tested.",
+      "2": "A ping tests ICMP, not every service on the destination.",
+      "3": "PC addressing is endpoint configuration; a ping does not verify any device’s saved configuration."
+    }
+  },
+  {
+    "id": "start-here-q17",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Context help",
+      "text": "S1# show ip interface brief ?\n  |     Output modifiers\n  <cr>"
+    },
+    "prompt": "What does `<cr>` in this context-help response mean?",
+    "options": [
+      "The command just completed successfully.",
+      "Another required argument must follow.",
+      "Enter can complete the command here.",
+      "Enter will display another page of output."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The `<cr>` marker represents a carriage return. It indicates that the command can be completed by pressing Enter; other listed choices may be optional continuations.",
+    "whyWrong": {
+      "0": "Context help lists valid choices; it has not executed the command.",
+      "1": "The completion marker means a required argument is not missing at this point.",
+      "3": "This is command help, not the --More-- output pager."
+    }
+  },
+  {
+    "id": "start-here-q07",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command saves the active configuration to the normal startup configuration?",
+    "options": [
+      "copy startup-config running-config",
+      "copy running-config startup-config",
+      "show startup-config",
+      "show running-config"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The copy command names the source first and destination second. Copy running configuration to startup configuration, accept the intended destination, and verify the saved setting.",
+    "whyWrong": {
+      "0": "The source and destination are reversed; this does not save the active configuration.",
+      "2": "This displays the saved configuration rather than updating it.",
+      "3": "This displays the active configuration rather than saving it."
+    }
+  },
+  {
+    "id": "start-here-q13",
+    "type": "multi",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On the classic IOS lab device, which two statements describe running and startup configuration? Choose two.",
+    "options": [
+      "Running configuration contains only changes since the last save.",
+      "Running configuration represents the currently active settings.",
+      "Startup configuration changes whenever you enter end.",
+      "Startup configuration supplies saved settings for a normal boot.",
+      "Displaying startup configuration copies it into running configuration."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "The active configuration and the saved startup configuration serve different purposes. Leaving configuration mode or displaying a configuration does not copy it. The Packet Tracer project is another separate item.",
+    "whyWrong": {
+      "0": "Running configuration represents the active configuration, not just the unsaved difference.",
+      "2": "end changes command mode; saving requires a separate action.",
+      "4": "A show command displays the saved settings without applying them."
+    }
+  },
+  {
+    "id": "start-here-q26",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Before the first ping",
+      "text": "Required PC-A: 192.168.10.10 / 255.255.255.0\nRequired PC-B: 192.168.10.20 / 255.255.255.0\nActual PC-A:   192.168.10.10 / 255.255.255.0\nActual PC-B:   192.168.10.10 / 255.255.255.0"
+    },
+    "prompt": "Both PCs share one switch LAN. Which correction matches the supplied plan?",
+    "options": [
+      "Keep both addresses because their subnet masks match.",
+      "Enter PC-A’s address as PC-B’s default gateway.",
+      "Change PC-B’s address to 192.168.10.20.",
+      "Rename PC-B’s workspace label without changing its address."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "PC-B repeats PC-A’s address instead of using its own assigned value. These separate hosts need distinct addresses on this LAN. Correct PC-B to the supplied value before interpreting a communication test.",
+    "whyWrong": {
+      "0": "Matching masks do not make a duplicate host address correct.",
+      "1": "A gateway setting would not remove the duplicate address, and this local test needs no gateway.",
+      "3": "A workspace name does not change the address configured on the endpoint."
+    }
+  },
+  {
+    "id": "start-here-q04",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative CLI excerpt",
+      "text": "Switch> show running-config\n             ^\n% Invalid input detected at '^' marker."
+    },
+    "prompt": "Why is this command rejected on a default lab switch?",
+    "options": [
+      "The display command belongs in global configuration.",
+      "The displayed command needs an interface selected first.",
+      "The command requires privileged EXEC on this device.",
+      "The hostname argument must follow running-config."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The > prompt indicates user EXEC. Enter enable to reach privileged EXEC, then run show running-config. Check the prompt before treating a parser error as a spelling problem.",
+    "whyWrong": {
+      "0": "Global configuration changes settings; this display is a privileged EXEC command on the lab switch.",
+      "1": "The whole running configuration is not selected through an interface context.",
+      "3": "The hostname is a setting inside the configuration, not an argument to this show command."
+    }
+  },
+  {
+    "id": "start-here-q24",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Separate device and project checks",
+      "text": "Workspace label: S1\nSaved project filename: 00-first-lan.pkt\nCurrent CLI prompt: S1#"
+    },
+    "prompt": "You need evidence that hostname S1 is in the switch’s startup configuration. Which additional check directly supplies it?",
+    "options": [
+      "Find S1 in the workspace device label.",
+      "Find S1 in show running-config.",
+      "Close and reopen the CLI tab to read its prompt.",
+      "Find hostname S1 in show startup-config."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Inspect startup configuration to verify the saved device setting. The prompt verifies the active name, while the file and workspace names describe the simulator project.",
+    "whyWrong": {
+      "0": "The workspace label is separate from the IOS configuration.",
+      "1": "Running configuration shows the active name, which may still be unsaved.",
+      "2": "Reopening the tab shows the currently active name, not whether it was saved."
+    }
+  }
+]

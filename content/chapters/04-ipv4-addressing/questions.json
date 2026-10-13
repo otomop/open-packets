@@ -1,0 +1,676 @@
+[
+  {
+    "id": "ipv4-addressing-q21",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement describes the structure of an IPv4 address?",
+    "options": [
+      "Four hexadecimal groups, each holding 16 bits.",
+      "Six decimal octets, each holding eight bits.",
+      "Four decimal octets, each holding 16 bits.",
+      "Four octets, each holding eight bits."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "An IPv4 address has four eight-bit octets: 32 bits altogether. Dotted-decimal notation writes each octet as a number from 0 to 255.",
+    "whyWrong": {
+      "0": "That grouping is not the structure of an IPv4 address.",
+      "1": "Six eight-bit groups would total 48 bits.",
+      "2": "Four 16-bit groups would total 64 bits."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does the /26 in an IPv4 address specify?",
+    "options": [
+      "The first 26 bits form the network prefix.",
+      "The address has 26 bits in total.",
+      "The last 26 bits identify the host.",
+      "The subnet supports exactly 26 hosts."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "IPv4 has 32 bits. A /26 fixes the first 26 as network bits and leaves six host bits. The prefix length is not a host count.",
+    "whyWrong": {
+      "1": "IPv4 addresses always have 32 bits.",
+      "2": "The host portion is the remaining six bits.",
+      "3": "Usable capacity comes from the host bits, not the prefix number."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q19",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On a basic workstation, what is the purpose of the default gateway?",
+    "options": [
+      "It supplies the workstation with its subnet mask.",
+      "It provides the usual next hop for remote destinations.",
+      "It answers every local host’s ARP requests itself.",
+      "It replaces the remote destination in each IP packet."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "When no more specific host route applies, an off-subnet packet is sent through the configured local router. Address assignment and name resolution are separate functions.",
+    "whyWrong": {
+      "0": "A gateway setting does not assign the mask; static configuration or an addressing service supplies it.",
+      "2": "Local hosts normally answer ARP for their own addresses.",
+      "3": "The IP destination stays the remote host; the local frame is sent to the next hop."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q20",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which description identifies an ordinary subnet’s directed-broadcast address?",
+    "options": [
+      "Every bit in the IPv4 address is zero.",
+      "Every network bit is zero and every host bit is one.",
+      "The network bits are unchanged and every host bit is one.",
+      "The network bits are unchanged and every host bit is zero."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Keep the subnet’s network bits and set its host bits to one. This produces that subnet’s directed broadcast, which differs from the all-ones limited broadcast.",
+    "whyWrong": {
+      "0": "All zeros do not describe a particular ordinary subnet’s broadcast.",
+      "1": "Clearing the network bits loses the subnet identity.",
+      "3": "All-zero host bits identify the network address."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q13",
+    "type": "multi",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two commands let you verify the configured mask on R1's Gi0/0? Choose two.",
+    "options": [
+      "show ip interface brief",
+      "show ip interface gigabitethernet0/0",
+      "show running-config",
+      "show ip arp",
+      "show cdp neighbors"
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "Detailed IP interface output identifies the address and prefix. The running configuration contains the interface's ip address command with its dotted mask.",
+    "whyWrong": {
+      "0": "The brief table omits the mask.",
+      "3": "ARP maps IPv4 addresses to MAC addresses; it does not record this interface's configured mask.",
+      "4": "CDP neighbor discovery is not a view of this interface's IPv4 mask."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q09",
+    "type": "multi",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements correctly describe /31 and /32 prefixes? Choose two.",
+    "options": [
+      "A /31 allocates two endpoints and an extra broadcast.",
+      "A /31 can use both addresses on a point-to-point link.",
+      "A /30 allocates four usable endpoint addresses.",
+      "A /32 identifies one address and is common on loopbacks.",
+      "A /32 reserves its only address as a subnet broadcast."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "RFC 3021 permits both addresses of a /31 on a supported point-to-point link. A /32 describes one address; it is commonly used for loopbacks or host routes, but not every loopback must use /32.",
+    "whyWrong": {
+      "0": "A /31 contains only two total addresses.",
+      "2": "A /30 contains four total addresses but only two ordinary usable addresses.",
+      "4": "A /32 is a single-address prefix, not an ordinary broadcast LAN."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q17",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Last-octet calculation",
+      "text": "Address: 10101101\nMask:    11000000\nAND:     ????????"
+    },
+    "prompt": "What decimal value results from the bitwise AND shown?",
+    "options": [
+      "173",
+      "192",
+      "128",
+      "64"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "AND retains a 1 only where both inputs have a 1. The result is 10000000, which is decimal 128 and forms the network's final octet in this /26 example.",
+    "whyWrong": {
+      "0": "173 is the original address octet, before host bits are cleared.",
+      "1": "192 is the mask octet, not the AND result.",
+      "3": "64 is the block increment, not the network octet for this address."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q12",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which prefix and block increment correspond to mask 255.255.254.0?",
+    "options": [
+      "/22; increment 4 in the third octet",
+      "/23; increment 2 in the third octet",
+      "/24; increment 1 in the third octet",
+      "/25; increment 128 in the fourth octet"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The mask contains 8 + 8 + 7 = 23 ones. Its partial third octet is 254, so the increment there is 256 − 254 = 2.",
+    "whyWrong": {
+      "0": "A /22 uses 252 in the third octet.",
+      "2": "A /24 has three complete 255 octets.",
+      "3": "A /25 uses 128 in the fourth octet."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "What is the network address containing 10.1.1.77/27?",
+    "options": [
+      "10.1.1.32",
+      "10.1.1.64",
+      "10.1.1.77",
+      "10.1.1.96"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A /27 mask is 255.255.255.224, giving an increment of 32 in the fourth octet. The address .77 lies in the .64–.95 block, whose network is 10.1.1.64.",
+    "whyWrong": {
+      "0": "The .32/27 block ends at .63.",
+      "2": "The host address contains nonzero host bits; clear them to obtain the network.",
+      "3": "The .96/27 block begins after this host."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "What is the broadcast address for 172.16.200.9/21?",
+    "options": [
+      "172.16.200.255",
+      "172.16.208.255",
+      "172.16.255.255",
+      "172.16.207.255"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The /21 mask is 255.255.248.0, with third-octet increments of 8. The network starts at 200 and the next one starts at 208, so setting all host bits gives 172.16.207.255.",
+    "whyWrong": {
+      "0": "This ends a /24, before the /21 block ends.",
+      "1": "Third-octet value 208 is in the next /21.",
+      "2": "This would end a /16 rather than the given /21."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q04",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which is a usable host address in 192.168.10.64/26?",
+    "options": [
+      "192.168.10.64",
+      "192.168.10.127",
+      "192.168.10.126",
+      "192.168.10.128"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The /26 block spans .64–.127. The network and broadcast are reserved, leaving .65–.126 for interfaces.",
+    "whyWrong": {
+      "0": "This is the network address.",
+      "1": "This is the subnet broadcast.",
+      "3": "This starts the next /26 subnet."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q10",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "How many addresses are usable by hosts in the ordinary subnet 10.8.0.0/22?",
+    "options": [
+      "510",
+      "1024",
+      "2046",
+      "1022"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A /22 leaves ten host bits, so there are 2^10 = 1,024 addresses. Removing network 10.8.0.0 and broadcast 10.8.3.255 leaves 1,022 usable addresses.",
+    "whyWrong": {
+      "0": "510 is the ordinary usable count for /23.",
+      "1": "1,024 is the total before subtracting the two reserved addresses.",
+      "2": "2,046 is the ordinary usable count for /21."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q03",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A LAN needs five workstations and one router interface, with no growth allowance. Which mask gives the smallest subnet that fits?",
+    "options": [
+      "255.255.255.248",
+      "255.255.255.252",
+      "255.255.255.240",
+      "255.255.255.224"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Six usable addresses are needed. A /29 provides eight total addresses, of which six are usable on this LAN.",
+    "whyWrong": {
+      "1": "A /30 has only two usable addresses.",
+      "2": "A /28 has 14 usable addresses and works, but is larger than required.",
+      "3": "A /27 has 30 usable addresses and is also larger than required."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q08",
+    "type": "multi",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A server is 172.20.77.210/20. Which two listed addresses are usable in the same subnet? Choose two.",
+    "options": [
+      "172.20.79.1",
+      "172.20.80.1",
+      "172.20.64.200",
+      "172.20.63.255",
+      "172.20.96.5"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The /20 network is 172.20.64.0 and the broadcast is 172.20.79.255. Both .79.1 and .64.200 are inside its usable range.",
+    "whyWrong": {
+      "1": "Third-octet value 80 starts the next /20.",
+      "3": "This is outside the subnet and is the previous block's broadcast.",
+      "4": "Third-octet value 96 starts a later /20."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q16",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative R1# show ip interface Gi0/1 excerpt",
+      "text": "GigabitEthernet0/1 is up, line protocol is up\n  Internet address is 10.55.128.1/18"
+    },
+    "prompt": "What is the last usable host address in the interface's subnet?",
+    "options": [
+      "10.55.191.254",
+      "10.55.191.255",
+      "10.55.255.254",
+      "10.55.128.254"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The /18 mask is 255.255.192.0. Third-octet values 128–191 belong to this block, ending at broadcast 10.55.191.255; the last usable address is one less.",
+    "whyWrong": {
+      "1": "This is the subnet broadcast.",
+      "2": "This extends beyond the /18's third-octet boundary.",
+      "3": "This is usable, but many addresses remain before the /18 ends."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Proposed interface configuration",
+      "text": "interface GigabitEthernet0/0\n ip address 172.16.5.64 255.255.255.192"
+    },
+    "prompt": "Why is the proposed address unsuitable for an ordinary routed LAN interface?",
+    "options": [
+      "The mask contains a zero between network bits.",
+      "The address is the network boundary of this /26.",
+      "The address is the broadcast of the lower /26.",
+      "The mask leaves too few addresses for any LAN."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A /26 has fourth-octet boundaries at 0, 64, 128, and 192. The proposed .64 address has all host bits zero; the first usable address is .65.",
+    "whyWrong": {
+      "0": "192 is binary 11000000, so this mask is contiguous.",
+      "2": "The lower block's broadcast is .63.",
+      "3": "A /26 provides 62 usable addresses and is a valid LAN size."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q07",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Existing configuration excerpt",
+      "text": "interface GigabitEthernet0/0\n ip address 10.0.0.1 255.255.255.128"
+    },
+    "prompt": "Gi0/0 serves the lower half of 10.0.0.0/24. Which command assigns Gi0/1 a usable address in the separate upper half?",
+    "options": [
+      "ip address 10.0.0.129 255.255.255.128",
+      "ip address 10.0.0.130 255.255.255.0",
+      "ip address 10.0.0.128 255.255.255.128",
+      "ip address 10.0.0.2 255.255.255.128"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The upper half is 10.0.0.128/25, with usable addresses .129–.254. Address .129 with mask 255.255.255.128 fits that subnet and does not overlap the lower /25.",
+    "whyWrong": {
+      "1": "A /24 would include the lower /25 already assigned to Gi0/0.",
+      "2": "Address .128 is the upper /25 network address.",
+      "3": "Address .2 belongs to Gi0/0's lower /25."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q14",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative R1# show ip interface brief excerpt",
+      "text": "Interface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0      192.168.44.129  YES manual up                    up\nGigabitEthernet0/1      192.168.44.193  YES manual administratively down down"
+    },
+    "prompt": "LAN-B uses Gi0/1. Which action directly addresses the condition shown?",
+    "options": [
+      "Enter no shutdown under Gi0/1.",
+      "Change Gi0/1 to a /24 mask.",
+      "Remove the IPv4 address from Gi0/1.",
+      "Change LAN-B's host gateway values."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Administratively down indicates that the interface is shut down in configuration. Enter no shutdown under Gi0/1, then verify the physical link and protocol become up.",
+    "whyWrong": {
+      "1": "This output does not show the mask and gives no reason to change it.",
+      "2": "Removing the address would not enable the interface.",
+      "3": "Host settings do not explain an administrative shutdown on R1."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q05",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative PC settings",
+      "text": "IPv4 address:    10.10.20.130\nSubnet mask:     255.255.255.128\nDefault gateway: 10.10.20.1"
+    },
+    "prompt": "The intended LAN is 10.10.20.128/25 and its router interface is 10.10.20.129/25. Which field in the PC record is inconsistent with that plan?",
+    "options": [
+      "Its .130 host address is outside the intended /25.",
+      "Its /25 mask is shorter than the intended mask.",
+      "Its .130 host address is the subnet broadcast.",
+      "Its .1 gateway is outside the intended subnet."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The PC's .130 address and /25 mask match 10.10.20.128/25. The intended local router is .129; .1 belongs to the other /25, so the gateway setting must be corrected.",
+    "whyWrong": {
+      "0": "The upper /25 has usable addresses .129–.254.",
+      "1": "The configured 255.255.255.128 is exactly /25.",
+      "2": "The broadcast is .255, not .130."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative diagnostic observations",
+      "text": "PC-A: 192.168.44.130/24; intended LAN: 192.168.44.128/26\nRemote host: 192.168.44.194/27, on R1's other LAN\nR1 has a connected route to that remote LAN.\nProxy ARP is enabled on R1's PC-A-facing interface.\nPC-A's ARP entry for .194 contains R1's local MAC."
+    },
+    "prompt": "PC-A incorrectly uses /24 on a /26 LAN. It reaches a host on R1's other LAN, and its ARP entry for that remote host contains R1's local MAC. What explains the observed behavior?",
+    "options": [
+      "PC-A resolved gateway .129 because its /24 classified .194 as remote.",
+      "The switch carried PC-A’s ARP broadcast across R1’s routed boundary.",
+      "R1 answered for .194 with its own local MAC, then routed the traffic.",
+      "An old mapping supplied the remote host’s own MAC for direct delivery."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The described mapping is consistent with proxy ARP: R1 answers with its own MAC and then routes the packet. The observation explains why a ping can work with a wrong mask; it does not make that mask correct.",
+    "whyWrong": {
+      "0": "With the incorrect /24, .194 is local according to PC-A; its recorded ARP entry is for .194, not .129.",
+      "1": "The two LANs are separated by a router, which does not ordinarily bridge that ARP broadcast.",
+      "3": "The observed mapping contains R1’s local MAC, not the remote host’s MAC."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q22",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two hosts on one isolated switch",
+      "text": "PC-A: 10.8.12.10/24, no gateway\nPC-B: 10.8.13.20/16, no gateway\nNo extra host routes are configured."
+    },
+    "prompt": "Before any packet is sent, how do these two hosts classify each other?",
+    "options": [
+      "Each treats the other as local because they share a switch.",
+      "A treats B as remote; B treats A as local.",
+      "A treats B as local; B treats A as remote.",
+      "Each treats the other as remote because their masks differ."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A’s /24 covers 10.8.12.0–10.8.12.255 and excludes B. B’s /16 covers 10.8.0.0–10.8.255.255 and includes A. Each host uses its own mask; physical attachment does not make the decisions agree. With no gateway, A lacks the ordinary next hop for its remote decision.",
+    "whyWrong": {
+      "0": "A switch connection does not replace each host’s IP subnet calculation.",
+      "2": "This reverses the ranges produced by the /24 and /16 masks.",
+      "3": "Different masks can produce different local/remote decisions; they do not automatically make both destinations remote."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q23",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Complete relevant change record",
+      "text": "Intended LAN: 192.168.60.192/27; gateway .193; client .194/27\nPrevious Gi0/0: 192.168.60.129/26\nAttempt: ip address 192.168.60.191 255.255.255.224\nIOS rejected the address. No other interface is addressed.\nAfter attempt: Gi0/0 up/up; Internet address 192.168.60.129/26"
+    },
+    "prompt": "The change was rejected and clients still cannot reach their intended gateway. Which correction fits the plan and the retained router configuration?",
+    "options": [
+      "Use 192.168.60.191/27 on the router again.",
+      "Change every client to use 192.168.60.129 as gateway.",
+      "Configure 192.168.60.193/27 on Gi0/0 and verify both sides.",
+      "Keep the router at .129/26 because its interface is up/up."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The intended subnet is .192/27, whose usable range is .193–.222. The rejected .191/27 belongs to the preceding block and is its broadcast. The old .129/26 is still configured; an operational link does not apply the intended address. Install .193/27, inspect the resulting prefix, and retest the already-correct clients.",
+    "whyWrong": {
+      "0": "Repeating the preceding subnet’s broadcast does not create a usable interface address.",
+      "1": "That gateway is outside the intended client /27 and abandons the approved plan.",
+      "3": "Up/up establishes interface state, not that the desired address change succeeded."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q24",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Address verification record",
+      "text": "Plan: router 192.168.44.129/26; PC 192.168.44.130/26\nRouter show ip interface brief: Gi0/0 192.168.44.129 up up\nPC ping 192.168.44.129: replies received\nPC address/mask/gateway fields have not yet been inspected."
+    },
+    "prompt": "Which conclusion is justified by the two checks, and what should be inspected next?",
+    "options": [
+      "Both masks must match the planned /26 because this ping received replies.",
+      "The PC’s configured gateway is confirmed by the successful local-router ping.",
+      "The router’s brief address entry proves its prefix is the planned /26.",
+      "This exchange works; inspect the actual PC and router masks next."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A reply establishes one successful exchange. The brief output does not display the router’s mask, and the PC’s mask has not been recorded. Read the PC’s configuration and detailed router interface or running configuration, then compare both with the planned /26. Do not infer missing fields from successful traffic.",
+    "whyWrong": {
+      "0": "Some exchanges can work despite a wrong mask; the actual masks were not recorded.",
+      "1": "A local-subnet ping does not exercise the workstation’s default-gateway selection.",
+      "2": "The brief entry displays the address but omits the mask; a matching address alone does not establish /26."
+    }
+  },
+  {
+    "id": "ipv4-addressing-q25",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Complete allocation record",
+      "text": "LAN: 192.168.60.8/29\nGateway .9; PC-A .10; PC-B .11; PC-C .12; printer .13\nAll existing assignments must remain. No other addresses are reserved."
+    },
+    "prompt": "Two new PCs need unique addresses without changing the subnet or existing assignments. Which assessment is correct?",
+    "options": [
+      "Only .14 is free and usable; both new PCs cannot be added under these constraints.",
+      "Use .14 and .15 because both are numerically inside the subnet.",
+      "Use .8 and .14 because the router already provides a gateway.",
+      "Use .14 twice because the new PCs connect to different switch ports."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The /29 spans .8–.15, with usable addresses .9–.14. Five usable addresses are already assigned, leaving only .14. A second additional PC needs more usable capacity or a released assignment; neither is allowed here.",
+    "whyWrong": {
+      "1": "Address .15 is the subnet broadcast.",
+      "2": "Address .8 is the network address.",
+      "3": "Distinct switch ports do not permit duplicate ordinary IPv4 host addresses."
+    }
+  }
+]

@@ -1,0 +1,162 @@
+[
+  {
+    "id": "wireless-principles-c01",
+    "front": "Nonoverlapping 2.4 GHz channels in the usual North American 20 MHz plan?",
+    "back": "1, 6 and 11. This is a reuse plan; the actual permitted channel list depends on the regulatory domain.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "wireless-principles-c02",
+    "front": "Why do neighboring 2.4 GHz channel numbers overlap?",
+    "back": "Centers are generally 5 MHz apart while the occupied channel is much wider, commonly 20 MHz (legacy DSSS about 22 MHz).",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-principles-c04",
+    "front": "What happens when 5 GHz 20 MHz channels are bonded to 80 MHz?",
+    "back": "It consumes the component channels, overlaps their spectrum and leaves fewer independent choices. A higher possible PHY rate is not guaranteed better application throughput.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-principles-c05",
+    "front": "What is DFS for?",
+    "back": "Protecting radar users on designated shared channels. Detection can force a channel change; exact channels and timing are location/platform dependent.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-principles-c06",
+    "front": "What must support a 6 GHz WLAN?",
+    "back": "The AP and client need suitable radio capability and local authorization; use the applicable WPA3 or Enhanced Open security design.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-principles-c08",
+    "front": "What does a +3 dB power change mean approximately?",
+    "back": "Twice the power. It does not mean twice the coverage distance or twice the application throughput.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "wireless-principles-c09",
+    "front": "dB versus dBm versus dBi?",
+    "back": "dB is a ratio; dBm is power relative to 1 mW; dBi is antenna gain relative to an isotropic reference.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-principles-c11",
+    "front": "How is SNR calculated from dBm readings?",
+    "back": "Signal minus noise at the same receiver and observation period, expressed in dB. −65 − (−92) = 27 dB.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "wireless-principles-c14",
+    "front": "What does Wi-Fi 6E add to compatible Wi-Fi 6 equipment?",
+    "back": "Operation in the 6 GHz band, subject to AP/client support and local authorization. A label or SSID setting does not add a radio band.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-principles-c15",
+    "front": "SSID versus BSSID?",
+    "back": "SSID is the WLAN name, up to 32 octets. BSSID is a 48-bit service-set identifier, not proof of a particular physical AP.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-principles-c16",
+    "front": "How do an infrastructure BSS and an ESS differ?",
+    "back": "A BSS is one AP service and its associated stations. An ESS connects infrastructure BSSs through a distribution system.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-principles-c17",
+    "front": "Co-channel versus adjacent-channel effects?",
+    "back": "Co-channel cells share airtime; overlapping occupied channels can interfere. Either situation can involve retries; there is no fixed throughput-halving rule.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-principles-c18",
+    "front": "What evidence identifies a non-Wi-Fi interferer?",
+    "back": "Correlate band, time, spectrum information and a controlled change. A nearby microwave or Bluetooth device is a candidate, not proof by itself.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-principles-c19",
+    "front": "Which protection pair does the WPA2-Personal lab use?",
+    "back": "A shared passphrase with AES-CCMP. WEP and original WPA/TKIP are legacy alternatives, not equivalent modern settings.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-principles-c20",
+    "front": "What changes with WPA3-Personal?",
+    "back": "SAE password authentication and required PMF. These do not prevent all disruption, protect every management frame or secure a compromised endpoint.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-principles-c21",
+    "front": "Shared Personal credentials versus Enterprise credentials?",
+    "back": "Ordinary shared-passphrase Personal access differs from individually managed 802.1X/EAP Enterprise authentication. Session enforcement remains a separate policy issue.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-principles-c22",
+    "front": "Omnidirectional and directional antenna patterns?",
+    "back": "Omni provides coverage around an axis; patch, Yagi and dish designs focus energy in chosen directions. Use actual beamwidth/gain specifications, not a universal ranking.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-principles-c23",
+    "front": "Does strong received signal prove usable application connectivity?",
+    "back": "No. Check airtime/noise, security, IP settings and the actual service; signal strength establishes only part of the link.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-principles-c24",
+    "front": "Why might increasing AP power fail to repair client uploads?",
+    "back": "It improves what the client hears, not what the AP hears from the client. Assess both directions and the actual application.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-principles-c25",
+    "front": "Do different SSIDs create separate airtime on the same channel?",
+    "back": "No. Nearby transmissions still share or interfere with the occupied spectrum; a network name is not a separate radio channel.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

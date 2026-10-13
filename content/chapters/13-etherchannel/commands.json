@@ -1,0 +1,159 @@
+[
+  {
+    "id": "etherchannel-d01",
+    "task": "The selected compatible, shut member interfaces must join local group 1 and initiate LACP negotiation. Configure their channel membership.",
+    "mode": "SW1(config-if-range)#",
+    "answer": "channel-group 1 mode active",
+    "accept": [],
+    "teaching": {
+      "sectionId": "negotiating-the-bundle-lacp-pagp-and-on",
+      "hint": "Choose LACP’s initiating mode, not static aggregation.",
+      "takeaway": "Active sends LACP negotiation. It can pair with active or passive, but the members and peer must still be compatible.",
+      "syntax": [
+        {
+          "text": "channel-group",
+          "kind": "keyword"
+        },
+        {
+          "text": "1",
+          "kind": "argument"
+        },
+        {
+          "text": "mode active",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "etherchannel-d02",
+    "task": "The selected compatible member interfaces must join group 1 and respond to LACP without initiating it. The peer is already configured active.",
+    "mode": "SW2(config-if-range)#",
+    "answer": "channel-group 1 mode passive",
+    "accept": [],
+    "teaching": {
+      "sectionId": "negotiating-the-bundle-lacp-pagp-and-on",
+      "hint": "A responding LACP mode works when the peer initiates.",
+      "takeaway": "Passive is a negotiation role, not a standby-only traffic link. Two passive peers cannot initiate formation.",
+      "syntax": [
+        {
+          "text": "channel-group",
+          "kind": "keyword"
+        },
+        {
+          "text": "1",
+          "kind": "argument"
+        },
+        {
+          "text": "mode passive",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "etherchannel-d05",
+    "task": "A ping crosses the link, but you must check whether both intended members actually joined LACP. Display bundle state and member flags.",
+    "mode": "SW1#",
+    "answer": "show etherchannel summary",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "Inspect the aggregate and each member, not just connectivity.",
+      "takeaway": "A port channel marked in use can have fewer active members than intended. Read the legend and count bundled members rather than stopping at the logical up state.",
+      "syntax": [
+        {
+          "text": "show etherchannel summary",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "etherchannel-d07",
+    "task": "Two intended member links may reach different devices. Display their learned LACP partner system and port information.",
+    "mode": "SW1#",
+    "answer": "show lacp neighbor",
+    "accept": [],
+    "teaching": {
+      "sectionId": "negotiating-the-bundle-lacp-pagp-and-on",
+      "hint": "Use protocol-partner evidence, not only local group numbers.",
+      "takeaway": "Both members should identify the intended common partner system, with the appropriate remote ports. Matching local channel-group numbers alone does not establish that relationship.",
+      "syntax": [
+        {
+          "text": "show lacp neighbor",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "etherchannel-d10",
+    "task": "Po1 is an existing Layer 2 bundle. Enter its logical interface configuration to apply a common trunk change.",
+    "mode": "SW1(config)#",
+    "answer": "interface port-channel 1",
+    "accept": [
+      "interface port-channel1"
+    ],
+    "teaching": {
+      "sectionId": "configuring-layer-2-and-layer-3-port-channels",
+      "hint": "Select the aggregate, rather than editing only one physical member.",
+      "takeaway": "Apply common VLAN changes through the logical port channel and verify the resulting member settings. A one-member change can create inconsistency.",
+      "syntax": [
+        {
+          "text": "interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "port-channel 1",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "etherchannel-d13",
+    "task": "On a multilayer switch supporting routed EtherChannel, Port-channel1 is selected. Convert that logical interface to Layer 3 before assigning its transit address.",
+    "mode": "D1(config-if)#",
+    "answer": "no switchport",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-layer-2-and-layer-3-port-channels",
+      "hint": "The bundle’s logical interface must have the same routed role as its members.",
+      "takeaway": "Put the transit IP address on the logical port channel. Physical members must be routed and should not each receive another address from that transit subnet.",
+      "syntax": [
+        {
+          "text": "no switchport",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "etherchannel-d12",
+    "task": "In the isolated lab, this shut physical interface belongs to group 1. Remove its channel membership before changing the aggregation method.",
+    "mode": "SW1(config-if)#",
+    "answer": "no channel-group",
+    "accept": [
+      "no channel-group 1"
+    ],
+    "teaching": {
+      "sectionId": "configuring-layer-2-and-layer-3-port-channels",
+      "hint": "Remove the membership on the physical interface, not the entire logical interface.",
+      "takeaway": "This detaches the selected member. Reapply the intended method with compatible settings and verify both ends before restoring traffic.",
+      "syntax": [
+        {
+          "text": "no channel-group",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

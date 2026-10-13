@@ -1,0 +1,170 @@
+[
+  {
+    "id": "inter-vlan-routing-c01",
+    "front": "When does a host use its default gateway?",
+    "back": "For a destination outside its local subnet, when the gateway is its selected next hop. It resolves the gateway's local MAC.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c02",
+    "front": "What changes when an IPv4 packet is routed between two Ethernet VLANs?",
+    "back": "The router builds a new Ethernet frame and reduces TTL, updating the IPv4 checksum. Source and destination IPs remain unchanged in ordinary routing without NAT.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c03",
+    "front": "Initial ARP destination when the gateway MAC is unknown?",
+    "back": "Broadcast ffff.ffff.ffff within the local VLAN, asking for the gateway's MAC. The later data frame uses the resolved gateway MAC.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c04",
+    "front": "What is router-on-a-stick?",
+    "back": "Multiple VLAN gateway subinterfaces share one physical router link to a switch trunk.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c05",
+    "front": "What binds Gi0/0.10 to VLAN 10?",
+    "back": "encapsulation dot1Q 10. The .10 suffix is a useful naming convention, not the VLAN binding.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c06",
+    "front": "An address was rejected because subinterface encapsulation was missing. Next step?",
+    "back": "Configure the correct encapsulation, then enter the IP address again. A rejected command is not saved for later.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c07",
+    "front": "How does a router subinterface explicitly handle untagged native VLAN 99?",
+    "back": "encapsulation dot1Q 99 native. Add an IP address only if that VLAN needs a routed service.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c08",
+    "front": "Why statically trunk the switch port toward ordinary router subinterfaces?",
+    "back": "Those router subinterfaces do not negotiate DTP. Configure compatible trunk, allowed and native settings directly.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c09",
+    "front": "Must the parent have an IP address in the lesson's router-on-a-stick design?",
+    "back": "No; its subinterfaces hold the gateway addresses. The parent must be enabled and physically operational.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c10",
+    "front": "What is an SVI?",
+    "back": "A switch virtual interface represents a VLAN at Layer 3, providing switch management addressing or a gateway on a routing switch.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c11",
+    "front": "What enables IPv4 forwarding between SVIs on a supporting switch?",
+    "back": "The global ip routing command. Operational SVIs alone do not prove that forwarding is enabled.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c12",
+    "front": "Ordinary SVI autostate prerequisites?",
+    "back": "The VLAN exists and is active; the SVI is enabled; at least one eligible Layer 2 member is linked and STP forwarding.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c13",
+    "front": "Does an SVI with line protocol down uniquely identify a missing VLAN?",
+    "back": "No. Check whether the VLAN is active, the SVI is enabled, and an eligible Layer 2 member is linked and forwarding.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c14",
+    "front": "How do you convert a supported physical switch port to Layer 3?",
+    "back": "Use no switchport, assign the IP address and mask, and enable the interface with no shutdown.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c15",
+    "front": "Does a routed Ethernet port still use MAC addresses and ARP?",
+    "back": "Yes. It has its own IP link but is not an access/trunk VLAN switchport. Verify Switchport: Disabled.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c16",
+    "front": "ip default-gateway versus routing-table routes?",
+    "back": "The gateway setting supports a non-routing switch's own remote traffic. With IP routing enabled, destination-matching routes apply; a default route is not always needed.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c17",
+    "front": "What do C and L represent in modern IOS routing output?",
+    "back": "C is a connected subnet; L is a local host route to the device's own address. Older images may omit separate IPv4 L entries.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c18",
+    "front": "Where should an IP address go when a physical port is still a Layer 2 switchport?",
+    "back": "Use the appropriate SVI, or first convert a supported port with no switchport if a physical routed link is intended.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c19",
+    "front": "Main connection trade-off: router-on-a-stick versus SVIs?",
+    "back": "Router-on-a-stick shares a separate router trunk across VLANs. SVIs route within a multilayer switch. Features and capacity depend on the platform.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c20",
+    "front": "What does one physical router interface per VLAN require?",
+    "back": "A separate addressed router interface and an access link for each VLAN. It consumes more ports than a shared router trunk.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "inter-vlan-routing-c21",
+    "front": "Does a successful ping to a local SVI prove that the switch forwards between VLANs?",
+    "back": "No. Local IP reachability and forwarding between subnets are separate tests; a management SVI can reply while IP routing is disabled.",
+    "tags": [
+      "verification"
+    ]
+  }
+]

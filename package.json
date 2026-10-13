@@ -1,0 +1,39 @@
+{
+  "name": "open-packets",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/otomop/open-packets.git"
+  },
+  "description": "A self-study companion for the Cisco CCNA 200-301 exam (v1.1 and v2.0 tracks): lessons, labs, practice questions, flashcards and trainers. Static site, progress stays in your browser.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "start": "npm run build && npm run preview",
+    "build": "npm run validate && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5173 --strictPort",
+    "validate": "node scripts/validate-content.mjs && node scripts/check-figures.mjs && node --test scripts/tests/command-content.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test scripts/test-course-assets.mjs scripts/test-rendering.mjs scripts/test-router.mjs scripts/tests/learning-state.test.mjs scripts/tests/subnet.test.mjs scripts/tests/subnet-ui.test.mjs scripts/tests/commands.test.mjs scripts/tests/command-content.test.mjs scripts/tests/command-ui.test.mjs",
+    "perf:bundle": "npm run build && node scripts/measure-bundle.mjs",
+    "perf:profile": "npm run build && node scripts/serve-profile.mjs dist 5173"
+  },
+  "dependencies": {
+    "marked": "^13.0.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "yaml": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.0"
+  }
+}

@@ -1,0 +1,562 @@
+[
+  {
+    "id": "ansible-terraform-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements describe the IOS CLI method used in this chapter? Choose two.",
+    "options": [
+      "Each IOS target must run an installed Ansible agent and a Python interpreter.",
+      "The network module executes on the control node and communicates with IOS.",
+      "The control node initiates an SSH session using its configured inventory data.",
+      "The `ansible.builtin.ping` module performs an ordinary ICMP test of an IOS target."
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "The network module and SSH support are controller-side components. The IOS device handles its native CLI; it does not execute the controller's Python module.",
+    "whyWrong": {
+      "0": "This network_cli method does not install an agent or require target Python.",
+      "3": "The Ansible ping module is not ICMP ping and is not the IOS network_cli test."
+    }
+  },
+  {
+    "id": "ansible-terraform-q06",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command checks the playbook's syntax and structure without executing its router tasks?",
+    "options": [
+      "ansible-playbook -i inventory.yml collect.yml --check",
+      "ansible-playbook -i inventory.yml collect.yml --diff",
+      "ansible-playbook -i inventory.yml collect.yml --syntax-check",
+      "ansible-playbook -i inventory.yml collect.yml --limit r1"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The syntax-check option validates the playbook without running its tasks. It cannot establish that a command exists on a particular IOS release.",
+    "whyWrong": {
+      "0": "Check mode depends on module behavior and may contact targets.",
+      "1": "Diff is a reporting option, not a no-execution guarantee.",
+      "3": "Limit narrows the target set but still executes the play."
+    }
+  },
+  {
+    "id": "ansible-terraform-q08",
+    "type": "single",
+    "objectives": [
+      "v1:6.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is Terraform state's principal role?",
+    "options": [
+      "Associate configuration resource addresses with managed objects and recorded attributes.",
+      "Replace every device's startup configuration with a centrally encrypted backup file.",
+      "Store only the source HCL so Terraform can reconstruct every platform without a provider.",
+      "Act as a DNS database translating resource names into management IP addresses."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "State preserves Terraform's associations and attributes for the objects it manages. This lets subsequent plans reason about existing resources.",
+    "whyWrong": {
+      "1": "State is not a device startup-configuration backup and is not inherently encrypted locally.",
+      "2": "State is distinct from source HCL; provider support is still required.",
+      "3": "Resource identity is not a DNS resolution service."
+    }
+  },
+  {
+    "id": "ansible-terraform-q09",
+    "type": "multi",
+    "objectives": [
+      "v1:6.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements about Terraform's normal workflow are correct? Choose two.",
+    "options": [
+      "A saved plan file is guaranteed to exclude sensitive values.",
+      "A provider implements operations for the resource types it supports.",
+      "Deleting state automatically rolls back the last infrastructure change.",
+      "A plan describes proposed actions before those actions are applied."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Providers implement platform interactions, and plans expose proposed resource actions for review. State and saved plans require appropriate protection.",
+    "whyWrong": {
+      "0": "Saved plans can include sensitive input and resource values.",
+      "2": "Deleting state loses associations; it does not undo the real infrastructure."
+    }
+  },
+  {
+    "id": "ansible-terraform-q10",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement about Ansible Vault is accurate?",
+    "options": [
+      "It grants privileged EXEC access even when the router rejects the enable credential.",
+      "It automatically removes secrets from every debug message and captured command result.",
+      "It encrypts stored data but cannot prevent a task from displaying decrypted values.",
+      "It replaces SSH encryption, so password-based network_cli connections become plaintext."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Vault protects stored data. Once a value is decrypted for use, task output and logging still need appropriate controls.",
+    "whyWrong": {
+      "0": "Vault decrypts data; the device decides authentication and authorization.",
+      "1": "Vault does not automatically sanitize all runtime output.",
+      "3": "Vault and SSH protect different stages; SSH still protects the connection."
+    }
+  },
+  {
+    "id": "ansible-terraform-q12",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An approved change must ensure one syslog configuration line exists on IOS. Which module is intended for managing configuration sections?",
+    "options": [
+      "ansible.builtin.debug",
+      "cisco.ios.ios_facts",
+      "cisco.ios.ios_command",
+      "cisco.ios.ios_config"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "ios_config manages configuration sections and can compare intended lines against running configuration. Appropriate privilege and post-change verification remain necessary.",
+    "whyWrong": {
+      "0": "Debug displays data; it does not configure the router.",
+      "1": "Facts collect platform information rather than enforce a configuration line.",
+      "2": "ios_command is for operational EXEC commands, not configuration-mode management."
+    }
+  },
+  {
+    "id": "ansible-terraform-q01",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative exercise exhibit",
+      "text": "cisco.ios.ios_config:\n  lines:\n    - ntp server 10.42.0.10\n\nr1 : ok=1 changed=1 unreachable=0 failed=0\nr2 : ok=1 changed=0 unreachable=0 failed=0"
+    },
+    "prompt": "The task uses ordinary `ios_config` line matching, with no custom change conditions. What is supported by the result?",
+    "options": [
+      "Both routers now have verified NTP synchronization with the specified server.",
+      "The task changed r1 and found no configuration change necessary on r2.",
+      "The zero change count means the task was skipped on r2 without logging in.",
+      "The task saved both startup configurations even though no save option is set."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The result describes the module's configuration comparison and work. It does not establish NTP synchronization or saving to startup configuration.",
+    "whyWrong": {
+      "0": "NTP needs separate operational verification; a configuration line is insufficient.",
+      "2": "The task is successful on r2. No change can be a normal idempotent result.",
+      "3": "No save behavior is requested in the displayed task."
+    }
+  },
+  {
+    "id": "ansible-terraform-q04",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative exercise exhibit",
+      "text": "ansible_connection: ansible.netcommon.network_cli\nansible_network_os: cisco.ios.ios\nansible_become: true\nansible_become_method: enable"
+    },
+    "prompt": "What do these settings request?",
+    "options": [
+      "Use the enable password as the SSH username before opening the connection.",
+      "Run Linux sudo on the router after copying a Python module to its filesystem.",
+      "Automatically replace the router's existing enable secret with a vaulted value.",
+      "Attempt IOS privilege escalation to enable mode when it is needed and supported."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "For IOS network_cli, become with the enable method requests an enable transition. The appropriate credential and device authorization are still required.",
+    "whyWrong": {
+      "0": "SSH login and enable authentication are separate stages.",
+      "1": "The enable method is a network privilege-escalation method, not sudo.",
+      "2": "The settings use existing access; they do not configure an enable secret."
+    }
+  },
+  {
+    "id": "ansible-terraform-q05",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative exercise exhibit",
+      "text": "cisco.ios.ios_command:\n  commands:\n    - show version\n    - show ip interface brief\n    - show ip route\nregister: result\n\nansible.builtin.debug:\n  var: result.stdout_lines[1]"
+    },
+    "prompt": "Which result does the debug task display?",
+    "options": [
+      "The second command's output split into a list of lines.",
+      "The first command's output with line number one removed.",
+      "A structured interface object with each column already parsed.",
+      "The third command's output because counting begins at one."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The index is zero-based. Entry 1 corresponds to `show ip interface brief`; stdout_lines divides that command's returned text into lines.",
+    "whyWrong": {
+      "1": "Index 1 selects the second command, not a line-removal operation.",
+      "2": "Splitting output into lines is not equivalent to parsing interface fields.",
+      "3": "The third command has index 2."
+    }
+  },
+  {
+    "id": "ansible-terraform-q07",
+    "type": "single",
+    "objectives": [
+      "v1:6.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative exercise exhibit",
+      "text": "+ resource \"terraform_data\" \"lab_intent\" {\n    input = { hostname = \"R1\", site = \"BR-01\" }\n  }\nPlan: 1 to add, 0 to change, 0 to destroy."
+    },
+    "prompt": "In a new local directory, the plan contains only the displayed terraform_data resource. What will approving `terraform apply` do?",
+    "options": [
+      "Configure the hostname and site on a router at the input address.",
+      "Create one local managed data resource and record it in state.",
+      "Create a new SSH inventory group containing the named router.",
+      "Create two resources because the input contains two attributes."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "terraform_data follows a resource lifecycle while storing data in Terraform state. It has no mechanism here to log into or configure the named router.",
+    "whyWrong": {
+      "0": "The hostname is just a string; no provider/device interaction is configured.",
+      "2": "Terraform does not create an Ansible inventory from this resource.",
+      "3": "Attributes are not separate resource instances."
+    }
+  },
+  {
+    "id": "ansible-terraform-q13",
+    "type": "single",
+    "objectives": [
+      "v1:6.6"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative exercise exhibit",
+      "text": "-/+ resource \"example_network\" \"branch\" {\n      name = \"new-branch\" # forces replacement\n    }\nPlan: 1 to add, 0 to change, 1 to destroy."
+    },
+    "prompt": "What does `-/+` mean for this resource?",
+    "options": [
+      "Terraform will read a data source without changing the resource.",
+      "Terraform will update only the displayed attribute in place.",
+      "Terraform plans to destroy the existing instance and create its replacement.",
+      "Terraform will ignore the resource because state and configuration already match."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The prefix describes a destroy-then-create replacement. Review why replacement is required and its service impact before applying it.",
+    "whyWrong": {
+      "0": "This is a resource replacement, not a data-source read.",
+      "1": "An in-place update uses the update action, not destroy/create.",
+      "3": "Matching state would not propose replacement."
+    }
+  },
+  {
+    "id": "ansible-terraform-q14",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative exercise exhibit",
+      "text": "fatal: [r2]: FAILED! => {\"changed\": false, \"msg\": \"Authentication failed\"}\nr2 : ok=0 changed=0 unreachable=0 failed=1"
+    },
+    "prompt": "What is the best supported next action?",
+    "options": [
+      "Compare the operational command spelling with the IOS command reference.",
+      "Compare the selected account and authentication path with the working login.",
+      "Compare the requested output index with the command-list ordering.",
+      "Compare the returned interface state with the intended device baseline."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The explicit authentication error is the useful evidence. Connection failures can be surfaced as task failures, so failed=1 alone does not establish a successful session.",
+    "whyWrong": {
+      "0": "The explicit error concerns authentication before a CLI command result.",
+      "2": "No registered command output is available to index yet.",
+      "3": "The failure does not supply an interface table to interpret."
+    }
+  },
+  {
+    "id": "ansible-terraform-q15",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which ad-hoc command runs `show clock` on the branch_routers inventory group and prompts for its SSH password?",
+    "options": [
+      "ansible branch_routers -i inventory.yml -m cisco.ios.ios_command -a 'commands=\"show clock\"' --ask-pass",
+      "ansible-playbook branch_routers -i inventory.yml -m cisco.ios.ios_command -a 'commands=\"show clock\"' --ask-pass",
+      "ansible branch_routers -i inventory.yml -m ansible.builtin.ping -a 'commands=\"show clock\"' --ask-pass",
+      "ansible branch_routers -i inventory.yml -m cisco.ios.ios_config -a 'commands=\"show clock\"' --ask-pass"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The ansible executable runs an ad-hoc module call against the host pattern. ios_command receives the operational command and --ask-pass prompts for SSH authentication.",
+    "whyWrong": {
+      "1": "ansible-playbook expects a playbook file rather than this ad-hoc module interface.",
+      "2": "The ping module does not run an IOS show command.",
+      "3": "ios_config is not the module for collecting operational show output."
+    }
+  },
+  {
+    "id": "ansible-terraform-q16",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative exercise exhibit",
+      "text": "branch_routers: r1, r2\ncore_routers: r3\nPlay: hosts: branch_routers\nRun: ansible-playbook -i inventory.yml collect.yml --limit r1"
+    },
+    "prompt": "Which hosts are eligible for this run?",
+    "options": [
+      "Only r3, because --limit overrides the play host group.",
+      "All three hosts, because they appear in the same inventory.",
+      "r1 and r2, because the group expands after the limit.",
+      "Only r1, because it matches both the play and the limit."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The play selects branch_routers; the limit narrows that selection. It does not add hosts outside the play.",
+    "whyWrong": {
+      "0": "A limit cannot replace the play target with an unrelated host.",
+      "1": "Inventory membership alone does not select a host for every play.",
+      "2": "The limit narrows the branch group to r1."
+    }
+  },
+  {
+    "id": "ansible-terraform-q17",
+    "type": "multi",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A previously trusted router now presents a different SSH host key. Which two actions are appropriate? Choose two.",
+    "options": [
+      "Globally disable checking so all remaining devices can be reached immediately.",
+      "Pause and verify the router's identity and any legitimate key replacement.",
+      "Investigate whether the target address or inventory now identifies another device.",
+      "Accept every new key automatically because the account password is unchanged."
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "The changed key can reflect a legitimate rebuild or a different/untrusted endpoint. Verify identity through trusted evidence before replacing the specific stale record.",
+    "whyWrong": {
+      "0": "Disabling checking removes the identity boundary rather than explaining the change.",
+      "3": "Knowing an account password does not prove the identity of the remote server."
+    }
+  },
+  {
+    "id": "ansible-terraform-q18",
+    "type": "multi",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two entries correctly complete the collection task? Choose two.",
+    "options": [
+      "Module: cisco.ios.ios_command",
+      "Module: cisco.ios.ios_config",
+      "Result expression: result.stdout_lines[0]",
+      "Result expression: result.stdout_lines[1]",
+      "Result expression: result.stdout_lines[2]"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "ios_command collects operational output. The second listed command has zero-based index 1.",
+    "whyWrong": {
+      "1": "Configuration management is not the requested operational collection.",
+      "2": "Entry 0 is the clock output.",
+      "4": "Only two command results exist."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Complete a read-only task",
+      "text": "Requirement: read show clock, then show ip route; display only route output.\nThe task registers its result as result.\nNo configuration changes are authorized."
+    }
+  },
+  {
+    "id": "ansible-terraform-q19",
+    "type": "single",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "prompt": "How many hosts can this play execute against?",
+    "options": [
+      "One: r1, because --limit adds it to the group.",
+      "Two: r2 and r3, because the play ignores --limit.",
+      "Zero: r1 is outside the play-selected group.",
+      "Three: the inventory union is always selected."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Eligible hosts must be in the play selection and the limit. The intersection is empty; changing commands cannot fix that target mismatch.",
+    "whyWrong": {
+      "0": "Limit restricts rather than adds hosts.",
+      "1": "The limit is not ignored.",
+      "3": "A play does not automatically target every inventory host."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "An empty target intersection",
+      "text": "Inventory: branch_routers = r2, r3; lab_routers = r1.\nPlay: hosts: branch_routers\nRun option: --limit r1"
+    }
+  },
+  {
+    "id": "ansible-terraform-q20",
+    "type": "single",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "prompt": "What does this successful run establish?",
+    "options": [
+      "Ansible connected to the device named R1 and ran IOS commands.",
+      "Ansible executed a local debug task without testing IOS access.",
+      "The network_cli SSH settings were accepted by every target.",
+      "The route output was retrieved but suppressed by debug."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The play uses localhost and a debug message. A hostname inside that message does not turn it into remote execution.",
+    "whyWrong": {
+      "0": "Neither an IOS module nor a remote target appears.",
+      "2": "No network_cli connection was requested.",
+      "3": "No command collected any route output."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Local runtime smoke test",
+      "text": "hosts: localhost\nconnection: local\ngather_facts: false\ntasks:\n  - ansible.builtin.debug:\n      msg: \"R1 collection ready\"\nRecap: localhost ok=1 changed=0 failed=0"
+    }
+  },
+  {
+    "id": "ansible-terraform-q21",
+    "type": "single",
+    "objectives": [
+      "v2:5.5"
+    ],
+    "difficulty": 2,
+    "prompt": "Which interpretation should guide the repair?",
+    "options": [
+      "The syntax checker should have rejected the unknown IOS word.",
+      "The failed task proves no earlier listed command executed.",
+      "The invalid-command message proves the SSH password was rejected.",
+      "The device processed the bad command; restore its supported spelling."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "YAML validation cannot establish IOS command support. A returned device parser error places this fault after a CLI session was reached; earlier commands may already have run.",
+    "whyWrong": {
+      "0": "Syntax checking does not consult the remote IOS parser.",
+      "1": "The first command can complete before a later command fails.",
+      "2": "This is command-parser evidence, not an authentication rejection."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "A valid playbook fails on a command",
+      "text": "commands:\n  - show version\n  - show ccna-invalid-command\n--syntax-check: passed\nRun: device returns \"% Invalid input detected at ^ marker.\"\nNormal error handling; the following debug task is not run."
+    }
+  },
+  {
+    "id": "ansible-terraform-q23",
+    "type": "single",
+    "objectives": [
+      "v1:6.6"
+    ],
+    "difficulty": 2,
+    "prompt": "What does the reviewed saved plan contain after the file edit?",
+    "options": [
+      "The original BR-01 action recorded when that plan was generated.",
+      "The new BR-02 action because apply rereads every changed argument.",
+      "Both site values because saved plans merge later configuration edits.",
+      "No action because modifying source files automatically empties a plan."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A saved plan contains its planned actions. Generate and review a new plan for the changed intent; do not assume applying the older file incorporates the edit.",
+    "whyWrong": {
+      "1": "Applying a saved plan is not a fresh planning operation.",
+      "2": "Saved plans do not merge later desired values.",
+      "3": "An edit does not automatically rewrite the saved plan file."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "A saved plan and a later edit",
+      "text": "An empty local terraform_data project was planned with site = \"BR-01\".\nThe reviewed plan was saved as site.tfplan; no apply has occurred.\nmain.tf is edited to site = \"BR-02\".\nProposed command: terraform apply site.tfplan"
+    }
+  }
+]

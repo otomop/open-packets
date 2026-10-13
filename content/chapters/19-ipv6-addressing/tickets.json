@@ -1,0 +1,64 @@
+[
+  {
+    "id": "ipv6-addressing-t01",
+    "title": "Automatic clients have only link-local addresses",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "scenario": "A fresh LAN has one R1 router and several SLAAC-capable PCs. All physical links are up. R1 answers a manually configured PC at its global-form interface address. Automatic PCs receive no usable global prefix or default router. There is no other router and no DHCPv6 server. Excerpts are representative.",
+    "exhibits": [
+      {
+        "title": "Complete relevant R1 configuration",
+        "text": "no ipv6 unicast-routing\ninterface GigabitEthernet0/0\n ipv6 address 2001:db8:acad:1::1/64\n ipv6 address fe80::1 link-local\n no shutdown\nNo RA-suppression configuration."
+      },
+      {
+        "title": "PC observations",
+        "text": "Manual PC 2001:db8:acad:1::10/64 can ping 2001:db8:acad:1::1.\nAutomatic PCs show only link-local addresses; no RA is observed."
+      }
+    ],
+    "question": "Which correction addresses the shown missing prerequisite?",
+    "options": [
+      "Enable ipv6 unicast-routing globally on R1.",
+      "Add ipv6 enable to the already IPv6-addressed interface.",
+      "Replace its manual global address with an EUI-64-derived address.",
+      "Set the RA managed flag without changing global forwarding."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The complete configuration lacks global IPv6 router operation. Interface addressing already enables local IPv6 processing; EUI-64 is an address-generation choice, and the managed flag describes DHCPv6 behavior. None supplies the missing forwarding/advertising prerequisite.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# ipv6 unicast-routing\nR1(config)# end\nR1# show ipv6 interface gigabitethernet0/0\n```\nConfirm the /64 and RA settings. Allow clients to receive a new RA, or refresh Automatic mode if supported. Verify their actual prefix and learned gateway, then test numeric-address connectivity. A DHCPv6 address server is not required for this SLAAC exercise."
+  },
+  {
+    "id": "ipv6-addressing-t02",
+    "title": "The documented gateway was never assigned",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "scenario": "On an isolated LAN, PCs use 2001:db8:acad:2::1 as their manual gateway. The router interface is up and its current configuration uses EUI-64. A PC can ping the actual derived address but cannot resolve the documented ::1 address. No other device owns ::1.",
+    "exhibits": [
+      {
+        "title": "Complete Gi0/1 address settings",
+        "text": "ipv6 address 2001:db8:acad:2::/64 eui-64\nipv6 address fe80::1 link-local"
+      },
+      {
+        "title": "Representative address display",
+        "text": "GigabitEthernet0/1 [up/up]\n FE80::1\n 2001:DB8:ACAD:2:21A:2BFF:FE3C:4D5E"
+      }
+    ],
+    "question": "Which diagnosis matches the evidence?",
+    "options": [
+      "EUI-64 also created ::1; refreshing the neighbor cache is the only required repair.",
+      "The PC prefix must be widened until it includes every router address.",
+      "The expected manual gateway is absent; the derived address has a different suffix.",
+      "The router link-local address must have the same suffix as its derived global address."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The complete address display contains the derived address but not ::1. A working ping to the actual address supports local connectivity. Cache refresh or a wider prefix cannot assign the missing address, and manually assigned link-local and derived global suffixes can differ.",
+    "fix": "Choose and document a consistent addressing plan. To retain the intended ::1 gateway in this isolated lab, add it explicitly:\n```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# ipv6 address 2001:db8:acad:2::1/64\nR1(config-if)# end\nR1# show ipv6 interface gigabitethernet0/1\n```\nThis adds the manual address alongside the existing derived address; it does not remove it. Verify no duplicate is reported and test the configured gateway. Alternatively, update the manual PC gateway to the correctly scoped fe80::1, then verify that chosen design before saving."
+  }
+]

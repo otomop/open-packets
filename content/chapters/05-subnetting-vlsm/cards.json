@@ -1,0 +1,194 @@
+[
+  {
+    "id": "subnetting-vlsm-c01",
+    "front": "Which three blocks are RFC 1918 private space?",
+    "back": "10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c02",
+    "front": "What is the last address inside RFC 1918 block 172.16.0.0/12?",
+    "back": "172.31.255.255. An address beginning 172.32 is outside that private block.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c05",
+    "front": "How do /20, /26, and octet-aligned /24 boundaries differ?",
+    "back": "/20 varies within the third octet; /26 within the fourth. /24 has three full network octets and one full host octet.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c06",
+    "front": "How do you count equal-size child subnets and usable addresses?",
+    "back": "Parent /p to child /q: 2^(q−p) subnets. Each ordinary child through /30: 2^(32−q) − 2 usable addresses.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c11",
+    "front": "What checks make a VLSM allocation valid?",
+    "back": "Enough capacity, correct boundary, containment in the parent, and no overlap. Allocate larger blocks first in empty space.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c12",
+    "front": "How do you find a single containing summary?",
+    "back": "Find the shared leading bits of the full address range. Use them as the prefix and clear the remaining bits; check extra covered space.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c13",
+    "front": "Why can’t 10.44.9.0/24 through 10.44.12.0/24 form one exact /22?",
+    "back": "They straddle the /22 boundary between third-octet values 11 and 12. The smallest containing /21 also covers extra /24s.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c14",
+    "front": "What does an automatically assigned 169.254.x.x address suggest?",
+    "back": "IPv4 link-local fallback. Investigate why normal DHCP configuration was not obtained; the address alone does not identify the cause.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c21",
+    "front": "Do modern subnet counts exclude subnet zero and the all-ones subnet?",
+    "back": "No. All 2^s subnet numbers are available after adding s prefix bits. Do not confuse this with reserving host network/broadcast addresses.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c16",
+    "front": "Which IPv4 blocks identify loopback and multicast addresses?",
+    "back": "127.0.0.0/8 is loopback; 224.0.0.0/4 is multicast. Neither is ordinary unicast addressing for a workstation LAN.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c17",
+    "front": "How do 0.0.0.0, 0.0.0.0/0, and 255.255.255.255 differ?",
+    "back": "0.0.0.0 can mean unspecified; 0.0.0.0/0 is the default-route prefix. 255.255.255.255 is the limited broadcast.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c18",
+    "front": "How do invalid host addresses differ from overlapping allocations?",
+    "back": "Network/broadcast selection makes the host address unsuitable. Overlap means two proposed routed subnet ranges share addresses; inspect the relevant masks.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c19",
+    "front": "What should you verify when local pings work but remote pings fail?",
+    "back": "Both endpoints' masks and gateways, followed by router routes. A too-wide mask can make remote addresses appear local.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c20",
+    "front": "Can nonoverlapping RFC 1918 LANs communicate through ordinary internal routing?",
+    "back": "Yes. Appropriate routes and usable paths can connect them without NAT; private addressing does not itself block forwarding.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c22",
+    "front": "What distinguishes FLSM from VLSM?",
+    "back": "FLSM uses one child-subnet size; VLSM uses different sizes to suit separate requirements. Both still require valid, nonoverlapping allocations.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c23",
+    "front": "What must an addressed-interface requirement include before you choose a subnet size?",
+    "back": "Count end devices, router interfaces and any stated growth or reservations. Do not add a gateway twice when the given total already includes it.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c24",
+    "front": "How do you choose the smallest ordinary subnet for a usable-address requirement?",
+    "back": "Choose the fewest host bits h for which 2^h − 2 meets the requirement, then use prefix 32 − h. Check placement separately.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c25",
+    "front": "What happens to capacity when a prefix grows from /26 to /27?",
+    "back": "The address block halves from 64 to 32 total addresses; ordinary usable capacity drops from 62 to 30. A longer prefix cannot fix a capacity shortage.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c26",
+    "front": "Why can 128 free addresses still fail to provide a /26?",
+    "back": "The addresses may be split into gaps. A /26 requires one aligned, contiguous 64-address block with no occupied addresses inside.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c27",
+    "front": "What proves that a proposed subnet is contained in its approved parent?",
+    "back": "Its entire network-to-broadcast range lies within the parent. Checking only the gateway or the first few octets is insufficient.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c28",
+    "front": "How do you choose gateway and test-host addresses after allocating a LAN?",
+    "back": "Choose distinct usable addresses in that subnet, reserve the router’s address, and give each host the matching mask and actual local gateway.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c29",
+    "front": "Does changing a router interface’s address or mask update static PC settings?",
+    "back": "No. Update and verify the affected PCs separately against the new allocation. Check their address, mask and gateway.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c30",
+    "front": "When does allocating largest first simplify VLSM placement?",
+    "back": "In an empty contiguous parent. Existing assignments still require checking the actual free intervals; sorting requirements does not remove fragmentation.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "subnetting-vlsm-c31",
+    "front": "What should a small subnet-renumbering verification record include?",
+    "back": "The new router prefix, each changed PC’s settings, local gateway tests and both directions to unchanged LANs. Test the new addresses, not the retired ones.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

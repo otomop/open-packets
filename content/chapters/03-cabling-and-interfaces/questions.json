@@ -1,0 +1,516 @@
+[
+  {
+    "id": "cabling-and-interfaces-q09",
+    "type": "single",
+    "objectives": [
+      "v1:1.3.a",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which comparison of single-mode and multimode fiber is accurate?",
+    "options": [
+      "Multimode supports longer links because it has a larger core.",
+      "Either fiber type is interchangeable when the connector is LC.",
+      "Single-mode has a smaller core and is common on longer links.",
+      "Jacket color alone proves the installed fiber's speed and reach."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Single-mode fiber has a smaller core and is commonly used by longer-distance optical systems. Reach depends on the compatible module-and-fiber design, not the core description alone.",
+    "whyWrong": {
+      "0": "A larger core does not mean longer reach; multimode light paths can limit supported distance.",
+      "1": "Matching connectors do not establish fiber and optical-standard compatibility.",
+      "3": "Use cable markings and verified specifications; color alone is insufficient."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q14",
+    "type": "single",
+    "objectives": [
+      "v1:1.3",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An office plans 90 m of installed cable plus 10 m of patch leads for supported 10GBASE-T switch ports. Which category supports that full 100 m channel?",
+    "options": [
+      "Cat6A",
+      "Cat6 for an unspecified installation",
+      "Cat5 rated for 100BASE-TX",
+      "Cat5e rated for 1000BASE-T"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Cat6A supports a 100 m 10GBASE-T channel on suitable interfaces. The permanent link and patch leads together consume the channel distance, and actual module reach must still be checked.",
+    "whyWrong": {
+      "1": "Cat6 does not guarantee the same full 100 m 10GBASE-T channel requirement.",
+      "2": "A category sufficient for 100BASE-TX is not the specified full-distance 10GBASE-T choice.",
+      "3": "Cat5e is a normal 1 Gbps choice but does not meet this full-distance 10 Gbps requirement."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.3",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A conventional 10/100 Ethernet crossover exchanges the transmit and receive pairs. Which pin mapping describes that exchange?",
+    "options": [
+      "Pins 1↔8, 2↔7, 3↔6 and 4↔5",
+      "Pins 1↔2 and 3↔6, without moving pairs",
+      "Pins 1↔3 and 2↔6 between the ends",
+      "Pins 1↔1 through 8↔8 between the ends"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A conventional 10/100 crossover swaps the pair using pins 1–2 with the pair using pins 3–6. This connects the intended transmit and receive arrangements where crossover wiring is required.",
+    "whyWrong": {
+      "0": "Reversing all pins describes a rollover arrangement used by some serial console cables.",
+      "1": "Exchanging conductors within each pair is not the required transmit/receive pair crossover.",
+      "3": "Keeping each pin number unchanged describes a straight-through cable."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q07",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which Cisco switch command provides a compact table of port status, VLAN, duplex, speed and media type?",
+    "options": [
+      "show ip route",
+      "show running-config",
+      "show power inline",
+      "show interfaces status"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The switch's `show interfaces status` command provides the compact port overview. Use the detailed interface command for the named port's counters or physical and line-protocol state.",
+    "whyWrong": {
+      "0": "The routing table does not provide the requested switch-port status columns.",
+      "1": "The running configuration shows configured commands rather than this operational table.",
+      "2": "PoE status describes electrical power allocation rather than the requested Ethernet state."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q16",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does a late collision on a half-duplex 10/100 Ethernet link mean?",
+    "options": [
+      "A frame waited in the output queue beyond its allowed time.",
+      "A receive frame failed the Ethernet FCS check.",
+      "The peer advertised an unsupported link speed during negotiation.",
+      "A collision occurred beyond the permitted collision window."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A late collision occurs later than the allowed collision-detection window. Investigate duplex agreement and physical or hardware conditions; it does not independently prove one specific defect.",
+    "whyWrong": {
+      "0": "Egress queuing and collision timing describe different mechanisms.",
+      "1": "An FCS failure is received-frame corruption, not the definition of a late collision.",
+      "2": "Autonegotiation capabilities do not define this collision counter."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q11",
+    "type": "multi",
+    "objectives": [
+      "v1:1.3",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Assume traditional 10/100 MDI/MDI-X ports with no auto-MDIX. Which two connections require a crossover cable? (Choose two.)",
+    "options": [
+      "PC to switch",
+      "Switch to switch",
+      "Router Ethernet port to switch",
+      "PC to router Ethernet port",
+      "Server Ethernet port to switch"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Two switch MDI-X ports need a crossover, as do a PC and router whose ports both use MDI. PC, server and router connections to a switch use unlike arrangements and therefore straight-through wiring in this stated case.",
+    "whyWrong": {
+      "0": "A PC-to-switch connection pairs MDI with MDI-X, so straight-through is appropriate.",
+      "2": "A router-to-switch connection pairs MDI with MDI-X.",
+      "4": "A server-to-switch connection uses straight-through under the stated assumptions."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q03",
+    "type": "single",
+    "objectives": [
+      "v1:1.3.b",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "diagram",
+      "spec": {
+        "type": "topology",
+        "title": "One switch and a shared hub segment",
+        "caption": "PC-C and PC-D share the hub segment; all switch ports belong to VLAN 1.",
+        "nodes": [
+          {
+            "id": "S",
+            "kind": "switch",
+            "label": "SW1",
+            "x": 5,
+            "y": 3
+          },
+          {
+            "id": "A",
+            "kind": "pc",
+            "label": "PC-A",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "B",
+            "kind": "pc",
+            "label": "PC-B",
+            "x": 1,
+            "y": 5
+          },
+          {
+            "id": "H",
+            "kind": "hub",
+            "label": "HUB1",
+            "x": 8,
+            "y": 3
+          },
+          {
+            "id": "C",
+            "kind": "pc",
+            "label": "PC-C",
+            "x": 11,
+            "y": 1
+          },
+          {
+            "id": "D",
+            "kind": "pc",
+            "label": "PC-D",
+            "x": 11,
+            "y": 5
+          }
+        ],
+        "links": [
+          {
+            "from": "S",
+            "to": "A"
+          },
+          {
+            "from": "S",
+            "to": "B"
+          },
+          {
+            "from": "S",
+            "to": "H"
+          },
+          {
+            "from": "H",
+            "to": "C"
+          },
+          {
+            "from": "H",
+            "to": "D"
+          }
+        ]
+      }
+    },
+    "prompt": "All switch ports are in VLAN 1, and there are no routers or additional links. How many Ethernet collision domains and broadcast domains are represented?",
+    "options": [
+      "One collision domain and three broadcast domains",
+      "Four collision domains and one broadcast domain",
+      "Three collision domains and three broadcast domains",
+      "Three collision domains and one broadcast domain"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Each of the switch's three connected ports separates an Ethernet segment, giving three collision domains. The two PCs behind HUB1 share one of those segments, and all devices remain in one VLAN and therefore one broadcast domain.",
+    "whyWrong": {
+      "0": "The switch separates the segments; one VLAN does not create three broadcast domains.",
+      "1": "The two PCs attached to the hub share one collision domain rather than having one each.",
+      "2": "Switch ports do not create separate broadcast domains when they share the same VLAN."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.3.a",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A 350 m path will use 10GBASE-SR modules. The supported reaches are 300 m on OM3 and 400 m on OM4. Which choice meets the stated distance?",
+    "options": [
+      "OM4 multimode fiber within the specified SR design",
+      "OM3 multimode fiber because both ends use SR",
+      "Single-mode fiber because its core is smaller",
+      "Cat6A copper because the connectors can be adapted"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The 350 m path exceeds the supplied OM3 reach but is within the 400 m OM4 specification. Module compatibility and the actual fiber path still need verification.",
+    "whyWrong": {
+      "1": "Matching modules do not extend OM3 beyond the stated 300 m reach.",
+      "2": "SR is specified here for multimode fiber; a different fiber type is not automatically supported.",
+      "3": "SR is optical, and this distance exceeds the normal copper channel limit."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q17",
+    "type": "single",
+    "objectives": [
+      "v1:1.3.a",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A duplex fiber patch connects Switch A Tx to Switch B Tx and Switch A Rx to Switch B Rx. Both modules are otherwise compatible. What should be corrected first?",
+    "options": [
+      "Connect each transmitter to the far receiver.",
+      "Leave the mapping and replace one module with a different optical standard.",
+      "Leave the mapping and clean both connectors before any other change.",
+      "Loop each transmitter to its own receiver instead of the far device."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A duplex optical link requires each transmitter to connect to the other end's receiver. The documented arrangement is a polarity fault; correct the physical path, then verify light levels and link state.",
+    "whyWrong": {
+      "1": "The modules are stated to be compatible; substituting a different standard does not correct the strand mapping.",
+      "2": "Cleaning is useful maintenance but does not correct a documented Tx-to-Tx connection.",
+      "3": "A local loopback does not establish communication between the two switches."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q08",
+    "type": "single",
+    "objectives": [
+      "v1:1.3.a",
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied optical measurements — teaching example",
+      "text": "Receive power: -16.0 dBm\nAcceptable range for this exercise: -12.0 to -1.0 dBm\nLink state: down"
+    },
+    "prompt": "The optical receiver's supplied acceptable range is −12 through −1 dBm. What conclusion is supported by a receive reading of −16 dBm?",
+    "options": [
+      "The signal exceeds the receiver's upper power limit.",
+      "The receive power is below the supplied lower limit.",
+      "The fiber polarity is definitely the only fault.",
+      "Both transmit modules are confirmed healthy."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "−16 dBm is less received power than the −12 dBm lower limit. Investigate the optical path and far-end transmitter; the receive value alone does not isolate the cause.",
+    "whyWrong": {
+      "0": "A value above −1 dBm would exceed the supplied upper limit.",
+      "2": "Polarity, distance, connectors, incompatible modules or a transmitter fault can contribute.",
+      "3": "A receive reading at one end does not establish the health of both transmitters."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q12",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two ends of one physical cable — representative state",
+      "text": "SW1 FastEthernet0/24: administratively down, protocol down\nSW2 FastEthernet0/24: down, protocol down\nSW1 interface configuration: shutdown\nSW2 interface configuration: no shutdown"
+    },
+    "prompt": "The cable directly connects the two listed ports. The intended design enables both. What does the evidence establish?",
+    "options": [
+      "Both switches are administratively shut down because both links are down.",
+      "SW2 must have a cable defect because its port is administratively enabled.",
+      "SW2 should also be shut down to match SW1 before testing traffic.",
+      "SW1 is administratively disabled; SW2’s down state does not identify a separate fault."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "SW1’s configuration and administrative state identify the local shutdown. SW2 loses its link when its peer is disabled, even though SW2 remains administratively enabled. Restore the intended SW1 setting and retest before claiming an additional failure.",
+    "whyWrong": {
+      "0": "Only SW1 has the shutdown setting in the supplied configuration.",
+      "1": "A down far end is consistent with SW1’s shutdown; it does not prove a separate cable defect.",
+      "2": "The intended working design enables both ports; disabling the other end would not restore communication."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative: SW1# show interfaces status",
+      "text": "Port      Name          Status       Vlan       Duplex  Speed Type\nFa0/3     Appliance     connected    1          a-half  a-100 10/100BaseTX"
+    },
+    "prompt": "The appliance is manually set to 100 Mbps full duplex. Its connected switch port is automatic and shows the following state. What has been established?",
+    "options": [
+      "The link reports a matching speed but an undetermined duplex.",
+      "The two ends report matching speed but opposing duplex.",
+      "The a- prefix means the switch follows the forced full-duplex setting.",
+      "The connected state establishes matching speed and duplex."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The appliance is full duplex while the switch displays half duplex, so their operational settings disagree. In this 10/100 case, an automatic end can detect the forced end's speed without learning its duplex.",
+    "whyWrong": {
+      "0": "The switch explicitly reports half duplex; its duplex is not unknown in this output.",
+      "2": "The a-half value says half duplex was selected automatically; it does not mean full duplex.",
+      "3": "A link can remain connected despite a duplex mismatch."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "On the half-duplex end of a 10/100 duplex mismatch, which two observations are consistent with its collision-handling behavior? (Choose two.)",
+    "options": [
+      "The collision count increases during simultaneous traffic.",
+      "The late-collision count increases during the test.",
+      "The CRC count identifies the exact damaged cable segment.",
+      "The output-drop count measures collisions at the far receiver.",
+      "The collision count must fall when the duplex setting is repaired."
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "The half-duplex end applies collision handling while the full-duplex peer does not. Collisions and late collisions can result; compare the two duplex settings because counters alone do not exclude cable or hardware faults.",
+    "whyWrong": {
+      "2": "A CRC counter records received-frame corruption; it does not locate a particular cable segment.",
+      "3": "Output drops commonly relate to egress queuing, not a remote collision count.",
+      "4": "Repair stops a cause; historical totals do not automatically decrease."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A 10/100 link has a forced 100/full endpoint and an automatic switch port operating at 100/half. Both support autonegotiation. What is the preferred starting repair?",
+    "options": [
+      "Leave the current settings and inspect only the next IP hop.",
+      "Return both ends to auto and verify speed, duplex and traffic.",
+      "Return only the forced end’s speed to auto but leave its duplex forced.",
+      "Clear the counters on both ends without changing their settings."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Returning both supported ends to automatic settings lets them agree on compatible speed and duplex. Verify the result and traffic afterward; matching manual settings at both ends are another deliberate option where required.",
+    "whyWrong": {
+      "0": "The confirmed interface-setting disagreement still requires correction.",
+      "2": "Restoring only one attribute can leave inconsistent duplex behavior; use a coordinated configuration.",
+      "3": "Clearing counters does not correct the opposing operational duplex settings."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Printer port before and after an authorized correction",
+      "text": "Before: administratively down, protocol down\nChange applied: no shutdown\nAfter: up, protocol up\nPrinter address and mask: match the documented plan"
+    },
+    "prompt": "The printer was unreachable before its port was enabled. Which verification best establishes that the required service is restored?",
+    "options": [
+      "Read the interface again and stop because up/up establishes printing.",
+      "Save the configuration immediately because no shutdown was accepted.",
+      "Retest reachability and a new print request, then record the result.",
+      "Clear all interface counters so the display begins with zero errors."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The port is operational again, but the intended outcome is communication with a working printer. Retest reachability and the actual service from the affected client, then preserve the verified configuration.",
+    "whyWrong": {
+      "0": "Link state is necessary evidence but does not test a printer’s application.",
+      "1": "Command acceptance and saving do not establish that the service is available.",
+      "3": "Resetting counters neither tests nor repairs application service."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q05",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative counter comparison — same interface",
+      "text": "Start of test: 4 input errors, 4 CRC\nEnd of test:   89 input errors, 89 CRC\nBoth ends: 1000 Mbps, full duplex"
+    },
+    "prompt": "Both ends of a copper link show 1 Gbps full duplex. During a controlled transfer, received CRC errors increase on the switch. What is the best next action?",
+    "options": [
+      "Clear the counters and conclude the physical path is repaired.",
+      "Replace the cable immediately without collecting another reading.",
+      "Test the cable path and compare the far-end error readings.",
+      "Treat matching duplex as proof that these errors are harmless."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Rising CRC errors establish that received frames are failing their error check. With the documented speed and duplex agreement, investigate the physical path and endpoint hardware while collecting far-end evidence; the counter does not identify one unique failed component.",
+    "whyWrong": {
+      "0": "Clearing a total removes evidence without correcting whatever caused the errors.",
+      "1": "A cable fault is possible, but the displayed counter does not prove that one component is the cause.",
+      "3": "Full-duplex agreement does not make received-frame corruption acceptable."
+    }
+  }
+]

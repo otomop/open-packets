@@ -1,0 +1,162 @@
+[
+  {
+    "id": "static-routing-ipv6-c01",
+    "front": "Which command enables IPv6 forwarding on a basic IOS router?",
+    "back": "Global `ipv6 unicast-routing`. Addressed interfaces alone can answer local traffic without providing inter-interface forwarding.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c02",
+    "front": "Why does a link-local next hop need scope?",
+    "back": "The same address can exist on different links. Its useful neighbor identity includes the local exit interface.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c03",
+    "front": "Required IPv6 static-route form for a link-local next hop?",
+    "back": "`ipv6 route destination/prefix-length exit-interface link-local-next-hop`. Substitute the actual prefix, interface and neighbor values.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c05",
+    "front": "IPv6 default-route prefix?",
+    "back": "::/0. It matches all IPv6 addresses but is used only when no longer installed prefix matches.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c06",
+    "front": "IPv6 host-route prefix length?",
+    "back": "/128. All address bits are specified, so the route matches one destination.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c07",
+    "front": "Ordinary static route distance, and unusable distance?",
+    "back": "Default static distance 1; distance 255 is not usable for installation.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c08",
+    "front": "How does an IPv6 floating static become selected?",
+    "back": "It has higher distance than the preferred candidate to the same prefix. It can install after primary withdrawal if the backup path remains usable.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c09",
+    "front": "Read [5/0] in an IPv6 static route.",
+    "back": "Administrative distance 5, metric 0. The values do not mean five hops and zero packet loss.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c10",
+    "front": "What does fully specified mean for an IPv6 static route?",
+    "back": "Both exit interface and next hop are supplied. Ethernet still needs Neighbor Discovery to resolve the next hop's MAC.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c11",
+    "front": "Problem with an Ethernet interface-only route to a remote IPv6 LAN?",
+    "back": "It treats remote destinations as on-link and can attempt ND for them on the transit segment. Name the adjacent router rather than relying on unconfigured proxy behavior.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c12",
+    "front": "What does a non-link-local next-hop-only route need?",
+    "back": "A usable resolving route to that next hop without self-dependency. A connected transit prefix provides this in the lab; do not assume default-based recursion is enabled.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c13",
+    "front": "What do C, L and S mean in the IPv6 route table?",
+    "back": "C: connected prefix. L: local interface address, usually /128. S: static route. A remote static /128 is different from a local L /128.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c15",
+    "front": "Which command shows IPv6 neighbor bindings?",
+    "back": "`show ipv6 neighbors`. Entries include interface scope; the cache is not an inventory of all peer addresses.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c16",
+    "front": "Does a stale IPv6 neighbor entry prove failure?",
+    "back": "No. It lacks recent reachability confirmation. Incomplete means resolution has not completed and can be temporary; persistent failures justify further checks.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c17",
+    "front": "Why can IOS ask for Output Interface during a link-local ping?",
+    "back": "The destination is meaningful only on one link. Supply the local exit interface. Prompt availability and wording can vary by simulator image.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c19",
+    "front": "How is an IPv6 route destination written?",
+    "back": "As prefix/length, such as 2001:db8:20::/64. Do not append an IPv4 dotted mask.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c20",
+    "front": "Does lower distance make /64 beat an installed /128?",
+    "back": "No. A matching /128 wins forwarding because it is longer. Distance selects candidates for the same prefix before forwarding compares installed entries.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c21",
+    "front": "Does an ordinary floating static detect every failure beyond its next hop?",
+    "back": "No. It takes over when the preferred route becomes ineligible; a remote service failure may leave that route installed.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c22",
+    "front": "Does failed ND for an installed /128 automatically make a matching /64 the forwarding choice?",
+    "back": "No. While the /128 remains installed, its longer match still selects it. Investigate its scoped next hop.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "static-routing-ipv6-c23",
+    "front": "Why can a router-sourced ping work while a client-sourced ping fails?",
+    "back": "The peer may know the router transit source but lack a return route to the client prefix. Compare actual sources and reverse lookups.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

@@ -1,0 +1,638 @@
+[
+  {
+    "id": "etherchannel-q01",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1# show etherchannel summary",
+      "text": "Group  Port-channel  Protocol  Ports\n1      Po1(SU)       LACP      Fa0/23(P) Fa0/24(P)"
+    },
+    "prompt": "Which statement is fully supported by the summary?",
+    "options": [
+      "Po1 is routed and both members are passive.",
+      "Po1 is Layer 2 and in use; both listed members are bundled.",
+      "Po1 carries every VLAN on the switch.",
+      "One flow can necessarily use the sum of both member speeds."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "S means Layer 2, U means in use, and P on each member means bundled. The summary establishes formation, not VLAN service correctness or single-flow throughput.",
+    "whyWrong": {
+      "0": "R would identify a routed bundle; the member P flag means bundled, not passive mode.",
+      "2": "The allowed and forwarding VLAN lists require separate trunk/STP checks.",
+      "3": "Hash-based distribution normally selects one member for the same traffic inputs."
+    }
+  },
+  {
+    "id": "etherchannel-q02",
+    "type": "multi",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Assuming compatible links and supported LACP implementations, which two mode pairs can initiate an LACP bundle? Choose two.",
+    "options": [
+      "active / active",
+      "passive / passive",
+      "desirable / auto",
+      "active / passive"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "LACP needs an active initiator. Active/active and active/passive meet that requirement. Mode names also identify the protocol; a successful PAgP pair is not an LACP pair.",
+    "whyWrong": {
+      "1": "Neither passive endpoint initiates LACP.",
+      "2": "Desirable/auto is PAgP, not LACP."
+    }
+  },
+  {
+    "id": "etherchannel-q08",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How does STP treat a correctly formed Layer 2 EtherChannel for a VLAN?",
+    "options": [
+      "As one logical STP interface that can still be blocked when required.",
+      "As separate competing STP ports for every active member.",
+      "As an instruction to disable STP for the entire VLAN.",
+      "As a routed interface that never carries Layer 2 frames."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The port channel is the STP interface. Bundling avoids treating its members as independent parallel paths, but it does not remove STP’s responsibility to prevent loops elsewhere in the topology.",
+    "whyWrong": {
+      "1": "Bundled members are represented by the logical port channel for this purpose.",
+      "2": "EtherChannel does not disable STP throughout the VLAN.",
+      "3": "A Layer 2 EtherChannel remains a switched interface; R identifies the separate routed bundle type."
+    }
+  },
+  {
+    "id": "etherchannel-q09",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative D1# show etherchannel summary",
+      "text": "Group  Port-channel  Protocol  Ports\n1      Po1(RU)       LACP      Fa0/1(P) Fa0/2(P)"
+    },
+    "prompt": "What does RU mean in this summary?",
+    "options": [
+      "Layer 2 and in use.",
+      "Layer 3 and down.",
+      "Layer 2 and suspended.",
+      "Layer 3 and in use."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "R means Layer 3 and U means in use. The physical P flags establish that both listed members have joined the routed bundle. Check IP addressing and connected routes separately.",
+    "whyWrong": {
+      "0": "S identifies Layer 2; this summary uses R.",
+      "1": "U means in use, not down.",
+      "2": "The logical flags are R and U; a lowercase member s would identify suspension."
+    }
+  },
+  {
+    "id": "etherchannel-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two conditions must be compatible among members of this ordinary Layer 2 EtherChannel? Choose two.",
+    "options": [
+      "Every local group number must equal the group number at the far end.",
+      "Member speed and duplex.",
+      "Member trunk/access mode and relevant VLAN settings.",
+      "Every member must have a different IPv4 subnet."
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "Members need supported compatible physical characteristics and consistent Layer 2 treatment. For trunks, inspect native and allowed VLAN settings as well as mode. A group number identifies the local bundle.",
+    "whyWrong": {
+      "0": "Matching group numbers between devices is a naming convenience, not an LACP requirement.",
+      "3": "Layer 2 members are not individually addressed routed links."
+    }
+  },
+  {
+    "id": "etherchannel-q12",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement correctly compares PAgP with LACP?",
+    "options": [
+      "PAgP uses desirable and auto; LACP uses active and passive.",
+      "PAgP uses active and passive; LACP uses desirable and auto.",
+      "PAgP auto and LACP passive negotiate directly with each other.",
+      "Static on is the initiating mode of both protocols."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "PAgP is Cisco’s aggregation protocol and uses desirable/auto. LACP uses active/passive. An initiating mode is needed for each dynamic protocol, and the endpoints must use compatible protocols.",
+    "whyWrong": {
+      "1": "The mode pairs have been reversed.",
+      "2": "They are different protocols, and both listed modes are responders rather than initiators.",
+      "3": "on disables aggregation-protocol negotiation; it is not an initiating dynamic mode."
+    }
+  },
+  {
+    "id": "etherchannel-q15",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command on a supporting IOS image displays the LACP partner information learned for bundle members?",
+    "options": [
+      "show lacp neighbor",
+      "show ip route",
+      "show interfaces trunk",
+      "show vlan brief"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "show lacp neighbor displays partner information such as system and port identifiers, with fields depending on the image. Compare intended partner identity across members; do not memorize a single hexadecimal state as universally healthy.",
+    "whyWrong": {
+      "1": "The route table identifies IP forwarding routes, not LACP partners.",
+      "2": "Trunk output helps verify VLAN service but does not replace LACP partner inspection.",
+      "3": "The VLAN database does not show LACP partner state."
+    }
+  },
+  {
+    "id": "etherchannel-q26",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does passive mean for an LACP endpoint after a compatible bundle forms?",
+    "options": [
+      "It keeps all its members as backup-only data links.",
+      "It responds to negotiation; its bundled members can still forward data.",
+      "It switches the bundle to PAgP after the active peer is found.",
+      "It transmits data only if the active endpoint's links fail."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Active and passive describe negotiation behavior, not primary/standby data forwarding. A formed bundle can use its compatible bundled members in either traffic direction.",
+    "whyWrong": {
+      "0": "Responding to negotiation does not make every member standby-only.",
+      "2": "LACP does not turn into PAgP after formation.",
+      "3": "Normal outbound member selection is not conditional on failure of the active peer's links."
+    }
+  },
+  {
+    "id": "etherchannel-q03",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Both intended LACP members on each switch are configured mode passive. Physical links and VLAN settings are correct, but a new bundle does not form. Which targeted change addresses the cause?",
+    "options": [
+      "Change only the remote channel-group number to match the local number.",
+      "Change both trunk native VLANs from 99 to 1.",
+      "Configure the intended members on at least one endpoint as LACP active.",
+      "Change one endpoint to mode on while leaving the other passive."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "At least one endpoint must initiate LACP. An active/passive pair can negotiate when the member settings and partner design are valid.",
+    "whyWrong": {
+      "0": "Channel-group numbers are locally significant and need not match between endpoints.",
+      "1": "Changing already-compatible native VLANs does not create an LACP initiator.",
+      "3": "Static on does not negotiate LACP and is incompatible with the remaining LACP endpoint."
+    }
+  },
+  {
+    "id": "etherchannel-q04",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Four 1-Gbps members form a healthy EtherChannel. The selected algorithm consistently hashes one large TCP flow to one member. What is its member-link capacity ceiling before protocol overhead?",
+    "options": [
+      "1 Gbps",
+      "2 Gbps",
+      "4 Gbps",
+      "8 Gbps"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The flow is assigned to one 1-Gbps member. Four members can provide up to 4 Gbps aggregate link capacity per direction across suitably distributed traffic; that is not a promise for one transfer.",
+    "whyWrong": {
+      "1": "The stated hash result does not split this flow across two members.",
+      "2": "4 Gbps is the aggregate capacity of four members in one direction, not this flow’s selected link.",
+      "3": "Adding both full-duplex directions does not give one unidirectional flow 8 Gbps."
+    }
+  },
+  {
+    "id": "etherchannel-q05",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which plan correctly creates a routed Layer 3 EtherChannel between two supporting multilayer switches?",
+    "options": [
+      "Give every member the same IPv4 address and leave the port channel unnumbered.",
+      "Configure Po1 as an 802.1Q trunk and put the peer-link address on each member.",
+      "Assign a different subnet to every member; LACP combines the routes.",
+      "Create routed, addressed Po1 first; then add unnumbered routed members."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The logical routed interface owns the IP configuration. Its physical members carry the aggregate’s traffic and are not separate addressed routed links. The referenced 3560 procedure creates the routed port channel before adding its members.",
+    "whyWrong": {
+      "0": "Repeating the logical link address on physical members is not the routed port-channel design.",
+      "1": "A Layer 2 trunk and individually addressed members do not form the requested Layer 3 bundle.",
+      "2": "LACP aggregates links, not unrelated routed subnets."
+    }
+  },
+  {
+    "id": "etherchannel-q06",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative failure evidence",
+      "text": "Po1(SU) LACP Fa0/23(P) Fa0/24(s)\nRecorded log reason: vlan mask is different"
+    },
+    "prompt": "The recorded configuration on this switch shows Po1 and Fa0/23 allow VLANs 10,99, but Fa0/24 allows 10,20,99. The log cites incompatible VLAN masks. What should you investigate first?",
+    "options": [
+      "The trunk allowed list only at the remote end.",
+      "Local trunk-setting consistency between Po1 and both physical members.",
+      "Whether the local and remote channel-group numbers are identical.",
+      "Whether passive mode is forbidden as an LACP response mode."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The local consistency failure is explicitly identified by the configuration and log. Restore the intended allowed VLAN list across the logical interface and members, then check the far end and actual VLAN forwarding.",
+    "whyWrong": {
+      "0": "The log and local configuration identify a local member mismatch first; far-end service verification follows that repair.",
+      "2": "Local group numbers can differ across the link.",
+      "3": "Passive can respond to active; it is not inherently an invalid member mode."
+    }
+  },
+  {
+    "id": "etherchannel-q17",
+    "type": "single",
+    "objectives": [
+      "v2:2.2.d",
+      "v2:2.2.e"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A virtualized server needs a two-link LACP connection to a switch. Which requirement must be confirmed before configuring the switch bundle?",
+    "options": [
+      "The server has two NICs, which guarantees LACP support.",
+      "Each NIC reaches a different independent switch; that always creates one LACP partner.",
+      "The endpoint supports and uses LACP with compatible VLAN and partner configuration.",
+      "The host uses any teaming mode, because all teaming modes exchange LACP."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Endpoint support and its selected mode matter. LACP is one teaming design; static and switch-independent approaches have different requirements. Links must terminate on the intended supported aggregation partner, not arbitrary independent switches.",
+    "whyWrong": {
+      "0": "NIC count alone says nothing about operating-system, virtual-switch, licensing, or configured LACP support.",
+      "1": "Separate independent switches do not automatically present one logical LACP system.",
+      "3": "Switch-independent teaming and static aggregation are not synonyms for LACP."
+    }
+  },
+  {
+    "id": "etherchannel-q13",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "SW1 members use mode on while SW2 members use mode active. The cables and VLAN settings match. Which statement is correct?",
+    "options": [
+      "They form LACP after both sides choose the same group number.",
+      "SW1’s on mode cannot provide the LACP negotiation expected by SW2; use a compatible mode pair.",
+      "The pairing is identical to active/passive.",
+      "Both sides are guaranteed to continue forwarding safely through independent links."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Static aggregation does not answer LACP. Use a supported matching design such as active/active. The mismatched design can cause loss or loops; exact forwarding behavior is platform dependent.",
+    "whyWrong": {
+      "0": "Group numbers do not make static aggregation speak LACP.",
+      "2": "Passive is an LACP response mode; on is static aggregation.",
+      "3": "Failed or asymmetric aggregation does not guarantee safe standalone forwarding."
+    }
+  },
+  {
+    "id": "etherchannel-q14",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Recorded device and traffic observations",
+      "text": "Configured hash method: src-mac\nMost transmitted frames: source MAC 0011.2233.4455\nBoth members: bundled (P)"
+    },
+    "prompt": "Traffic crosses a port channel with source-MAC hashing. Most frames entering that bundle have the same source MAC: the upstream router’s interface. Why may one member carry most of that traffic?",
+    "options": [
+      "The switch assigns each successive frame to the next member.",
+      "LACP requires the active side to use only one member.",
+      "The native VLAN automatically chooses the first member.",
+      "The repeated source-MAC hash input can repeatedly select the same member."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Hashing is deterministic for the selected inputs. Many IP sessions can still present one source MAC at this hop, so this algorithm may not spread them evenly. Inspect supported alternative inputs and actual traffic before choosing a different method.",
+    "whyWrong": {
+      "0": "Round-robin per-packet distribution is not the stated hash method.",
+      "1": "Active describes negotiation, not an exclusive forwarding member.",
+      "2": "Native VLAN selection does not explain repeated source-MAC hash results."
+    }
+  },
+  {
+    "id": "etherchannel-q16",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "SW1 uses channel-group 1 and SW2 uses channel-group 5. Both ends use active, all member settings are compatible, and both links join the same intended partner. What should you expect?",
+    "options": [
+      "The mismatch prevents LACP negotiation.",
+      "The group numbers must be changed before any traffic can pass.",
+      "The bundle can form; the numbers identify the local port channels.",
+      "Only the link with the lower physical interface number can join."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Channel-group numbers have local significance. SW1 Po1 and SW2 Po5 can be the two logical ends of the same aggregate when the actual partner and member requirements are satisfied.",
+    "whyWrong": {
+      "0": "LACP does not require matching local administrative group numbers across the link.",
+      "1": "Renumbering is not necessary for the stated compatible design.",
+      "3": "Local group-number differences do not select a single physical member."
+    }
+  },
+  {
+    "id": "etherchannel-q21",
+    "type": "multi",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A four-member bundle loses one 1-Gbps member. Three remain bundled, no minimum-links policy removes the channel, and a stable flow uses one surviving member. Which two capacity statements are correct before overhead? Choose two.",
+    "options": [
+      "Aggregate capacity remains 4 Gbps per direction.",
+      "Aggregate capacity is up to 3 Gbps per direction.",
+      "The selected flow's member-link ceiling becomes 3 Gbps.",
+      "The selected flow's member-link ceiling remains 1 Gbps.",
+      "The two full-duplex directions give that one flow 6 Gbps."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Three surviving 1-Gbps members provide up to 3 Gbps per direction across suitably distributed traffic. The one stable flow still uses a single 1-Gbps member; neither outcome is a measured application throughput.",
+    "whyWrong": {
+      "0": "The failed member no longer contributes capacity.",
+      "2": "The stated flow does not span all surviving members.",
+      "4": "Adding opposite directions does not increase one unidirectional flow's selected link rate."
+    }
+  },
+  {
+    "id": "etherchannel-q22",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied acceptance checks",
+      "text": "Both switches: Po1(SU), LACP, both intended members P\nBoth VLAN databases: VLANs 10,20,99 active\nBoth endpoint pairs: correct access VLANs and same-subnet IP settings\nSW1 Po1: native 99, allowed/active/forwarding 10,20,99\nSW2 Po1: native 99, allowed/active/forwarding 10,99"
+    },
+    "prompt": "VLAN 10 clients work, but the correctly addressed VLAN 20 pair does not. Which targeted repair follows from the evidence?",
+    "options": [
+      "Re-create Po1 with static on at both ends.",
+      "Set VLAN 20 as native on both port channels.",
+      "Allow VLAN 20 on SW2 Po1; check its members.",
+      "Move the VLAN 20 clients into VLAN 10."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The bundle is formed, but SW2's logical trunk excludes the required VLAN. Add that VLAN without replacing existing service settings, check the members and both forwarding sets, then retest the VLAN 20 pair.",
+    "whyWrong": {
+      "0": "The working LACP formation is not the cause and need not be replaced.",
+      "1": "The existing native agreement is valid; changing it does not supply the omitted permission.",
+      "3": "The requirement is to provide VLAN 20, not move its clients into another broadcast domain."
+    }
+  },
+  {
+    "id": "etherchannel-q24",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied routed-bundle acceptance evidence",
+      "text": "Plan: D1 10.13.12.1/30, D2 10.13.12.2/30\nD1: Po1(RU), both members P; Po1 IP 10.13.12.1/30\nD2: Po1(RU), both members P; Po1 IP 10.13.12.6/30\nPhysical members are routed and unnumbered; no traffic filters"
+    },
+    "prompt": "LACP is formed, but the directly connected peer ping fails. Which address change matches the approved /30 link plan?",
+    "options": [
+      "Set D1's physical members to 10.13.12.1/30.",
+      "Set D2 Port-channel1 to 10.13.12.2/30.",
+      "Put 10.13.12.6/30 on D1 as a second member address.",
+      "Set both Port-channel1 interfaces to 10.13.12.1/30."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "10.13.12.1/30 belongs to 10.13.12.0/30, whose usable peers are .1 and .2. The configured .6 belongs to 10.13.12.4/30. Correct the logical peer address, then verify the connected route and both pings.",
+    "whyWrong": {
+      "0": "The logical interface owns the link address; addressing the members is not this design.",
+      "2": "That abandons the approved logical /30 and wrongly addresses a physical member.",
+      "3": "The two ends need distinct usable addresses, not a duplicate."
+    }
+  },
+  {
+    "id": "etherchannel-q25",
+    "type": "multi",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Before enabling a new third routed member on each end, which two checks preserve the existing Layer 3 design? Choose two.",
+    "options": [
+      "The new members use no switchport and have no individual IP addresses.",
+      "Each new physical member receives the existing Po1 address.",
+      "Both new cables terminate on the same intended aggregation partner.",
+      "The new members become access ports in VLAN 1.",
+      "Both Po1 addresses are removed so the member can inherit them."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Keep the new member routed and unnumbered, and connect it to the same intended partner with compatible LACP settings. The existing logical addresses continue to identify the routed link.",
+    "whyWrong": {
+      "1": "The port-channel address stays on the logical interface.",
+      "3": "An access port is Layer 2 and is inconsistent with the routed members.",
+      "4": "The logical routed link still requires its address."
+    }
+  },
+  {
+    "id": "etherchannel-q28",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Both endpoints report healthy LACP formation but use different supported hash inputs for outbound traffic. What should be concluded?",
+    "options": [
+      "The hash methods must match before any member can join.",
+      "One endpoint must be using static aggregation despite the LACP records.",
+      "The passive endpoint must copy the active endpoint's hash result for each packet.",
+      "Different outbound selections are permitted; inspect distribution if it fails service requirements."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Each endpoint selects its own outgoing member using its supported method. Matching hash algorithms are not a formation prerequisite; separately evaluate traffic distribution and the actual service requirements.",
+    "whyWrong": {
+      "0": "The stated LACP formation is compatible despite independent outbound selection.",
+      "1": "A different selection algorithm does not imply a different aggregation protocol.",
+      "2": "Negotiation roles do not impose a shared per-packet hash result."
+    }
+  },
+  {
+    "id": "etherchannel-q23",
+    "type": "single",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied partner and inventory records",
+      "text": "SW1 Gi0/1 learned partner system 0011.1111.1111, port Gi0/1\nSW1 Gi0/2 learned partner system 0022.2222.2222, port Gi0/1\nVerified inventory: first system is SW2; second is SW3\nSW2 and SW3 are independent switches, not a supported common logical system\nBoth local ports configured as intended group 1 members"
+    },
+    "prompt": "The approved design is one ordinary two-link bundle between SW1 and SW2. Which investigation follows from these records?",
+    "options": [
+      "Compare physical connections with the plan and trace the member that reaches SW3.",
+      "Force both SW1 members to static on to hide the partner difference.",
+      "Rename both remote port channels to match SW1's group number.",
+      "Change the local hash method until the two system IDs match."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The records identify different independent partner systems on the intended members. Trace and correct the physical/partner design; removing negotiation or renaming local groups cannot make SW3 part of SW2's logical system.",
+    "whyWrong": {
+      "1": "Static aggregation removes the check without correcting the unintended partner.",
+      "2": "Local group numbers do not determine the partner's system identity.",
+      "3": "Outbound traffic hashing does not change which device is cabled to a member."
+    }
+  },
+  {
+    "id": "etherchannel-q27",
+    "type": "multi",
+    "objectives": [
+      "v1:2.4",
+      "v2:2.1.c"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied partial rollout evidence",
+      "text": "SW1 Po1(SU): Gi0/1(P), Gi0/2(D)\nSW1 Gi0/2: administratively down; correct retained LACP/trunk settings\nCable inspection: Gi0/2 reaches intended SW2 peer, enabled and configured correctly\nBoth databases: VLANs 10,20,99 active; endpoint VLAN/IP settings verified\nSW1 Po1 allows 10,20,99; SW2 Po1 allows 10,99; both native 99\nVLAN 10 traffic passes; VLAN 20 does not"
+    },
+    "prompt": "The acceptance requirement is two participating members and working VLANs 10 and 20. Which two corrections address the separate failures shown? Choose two.",
+    "options": [
+      "Enable SW1 Gi0/2 after confirming its intended peer and retained settings.",
+      "Replace LACP with static aggregation at both ends.",
+      "Add VLAN 20 to SW2 Po1's existing allowed list and verify its members.",
+      "Change both native VLANs to 20.",
+      "Rename the far-end group number to 1."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "One local physical member is shut down, reducing the bundle to one link. Separately, the remote trunk excludes VLAN 20. Correct both and verify two P members plus the existing VLAN 10 and new VLAN 20 traffic; a single successful ping would not establish both requirements.",
+    "whyWrong": {
+      "1": "The existing member already negotiates correctly; replacing the protocol solves neither targeted cause.",
+      "3": "The agreed native VLAN is valid and does not explain either failure.",
+      "4": "Local group names do not restore a shut member or permit an omitted VLAN."
+    }
+  }
+]

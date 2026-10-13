@@ -1,0 +1,65 @@
+[
+  {
+    "id": "exam-readiness-t01",
+    "title": "Small transit pings work but OSPF will not reach FULL",
+    "objectives": [
+      "v1:3.4.a",
+      "v2:3.3.a",
+      "v2:2.4"
+    ],
+    "scenario": "On an isolated Ethernet lab, R1 and R2 previously reached FULL. R1 was changed to ip mtu 1400 without a design requirement. Both NICs and the direct link support the approved 1500-byte IPv4 MTU. The router IDs are unique, area/timers match, and no mtu-ignore override is configured. Small transit pings still succeed.",
+    "exhibits": [
+      {
+        "title": "Representative neighbor and IP interface state",
+        "text": "R1 neighbor 2.2.2.2: EXSTART\nR1 Gi0/0/1 IP MTU: 1400\nR2 Gi0/0/0 IP MTU: 1500"
+      },
+      {
+        "title": "Authored packet observation",
+        "text": "R2 database-description packet advertises interface MTU 1500.\nR1 rejects that DBD under its 1400-byte interface-MTU check.\nApproved direct-link IP MTU: 1500 on both routers."
+      }
+    ],
+    "question": "Which correction addresses the demonstrated failure while retaining MTU validation?",
+    "options": [
+      "Reduce the OSPF hello interval only on R1",
+      "Enable ip ospf mtu-ignore at both ends",
+      "Restore R1 to the approved 1500-byte IP MTU",
+      "Give R1 the same router ID as R2"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The mismatched MTU and rejection observation establish this particular database-exchange failure. A small ping does not test the same condition, and EXSTART by itself would not identify a unique cause.",
+    "fix": "Restore the documented value in this isolated lab:\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/0/1\nR1(config-if)# ip mtu 1500\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/0/1\nR1# show ip ospf neighbor\nR1# show ip route\n```\n\nVerify the peer, required routes and application return path after convergence. On an actual constrained path, determine a mutually supported MTU from evidence rather than raising it blindly or bypassing the check. After confirming both route directions, repeat the permitted USERS/PC-A HTTP request to SRV and retain the intended STAFF/PC-B HTTP denial. Record fresh requests rather than relying on an old page."
+  },
+  {
+    "id": "exam-readiness-t02",
+    "title": "Clients cannot renew after a switch security change",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.a"
+    ],
+    "scenario": "After DHCP snooping is enabled for VLAN 20, client renewal fails while static clients still communicate. The approved DHCP server is reachable only through SW2 Gi0/1. The collected evidence explicitly identifies a legitimate server OFFER arriving there and being discarded; endpoint ports should remain untrusted.",
+    "exhibits": [
+      {
+        "title": "Representative configuration",
+        "text": "ip dhcp snooping\nip dhcp snooping vlan 20\ninterface GigabitEthernet0/1\n switchport mode trunk\n ! no ip dhcp snooping trust configured"
+      },
+      {
+        "title": "Authored observation record",
+        "text": "Snooping operational VLANs: 20\nClient DISCOVER: leaves Gi0/1 toward approved server\nLegitimate DHCPOFFER: received on Gi0/1\nDrop reason: DHCP server message on untrusted ingress port"
+      }
+    ],
+    "question": "Which correction matches the evidence without trusting clients?",
+    "options": [
+      "Disable snooping globally on every switch",
+      "Trust the verified server-facing Gi0/1 ingress",
+      "Trust every VLAN 20 client access port",
+      "Change the working client gateway to the server"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The observed OFFER is rejected on the verified server-facing ingress because it remains untrusted. The server has already responded, so an unproven claim that option 82 prevented every response does not explain this observation.",
+    "fix": "After confirming Gi0/1’s physical and logical path to the approved server, configure that interface:\n\n```ios\nSW2# configure terminal\nSW2(config)# interface gigabitethernet0/1\nSW2(config-if)# ip dhcp snooping trust\nSW2(config-if)# end\nSW2# show ip dhcp snooping\nSW2# show ip dhcp snooping binding\n```\n\nRenew the client and verify the OFFER/ACK path, correct lease and learned binding. Keep endpoint ports untrusted. Do not add an arbitrary low DHCP rate limit during recovery; size such limits for the actual client traffic and platform. Confirm gateway reachability and the original application test from the renewed client. The binding and the end-to-end result answer different questions."
+  }
+]

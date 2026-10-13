@@ -1,0 +1,70 @@
+[
+  {
+    "id": "ethernet-switching-t01",
+    "title": "Unicast still fails after a dynamic clear",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.b",
+      "v1:1.13.d"
+    ],
+    "scenario": "In VLAN 1, PC-A is directly attached to S1 Fa0/1. PC-B, MAC 00bb.bbbb.bbbb, is attached to S2; S1 reaches S2 through Fa0/24. Both links are forwarding. A can ping another host behind S2 but cannot ping B. The table was inspected after clearing dynamic entries and before new source traffic.",
+    "exhibits": [
+      {
+        "title": "Representative S1# show mac address-table",
+        "text": "Vlan    Mac Address       Type        Ports\n   1    00bb.bbbb.bbbb    STATIC      Fa0/1"
+      },
+      {
+        "title": "S1 configuration excerpt",
+        "text": "mac address-table static 00bb.bbbb.bbbb vlan 1 interface FastEthernet0/1"
+      }
+    ],
+    "question": "What explains the failed ping and persistence after a dynamic clear?",
+    "options": [
+      "The static entry directs B’s traffic toward A’s port and survives the dynamic clear.",
+      "The previous dynamic location remains authoritative until its aging timer expires.",
+      "The table is correct because B’s frame destination is used to relearn its location.",
+      "The retained host ARP mapping forces the switch to transmit through the old port."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The configured B entry points to Fa0/1 rather than the actual path through Fa0/24. B-destined unicast from A therefore encounters same-port filtering, and the static entry survives a dynamic clear. This is not an old dynamic timer, destination-based learning or a host-ARP decision; remove the exact static configuration and verify the newly learned path.",
+    "fix": "```ios S1\nS1# configure terminal\nS1(config)# no mac address-table static 00bb.bbbb.bbbb vlan 1 interface fastethernet0/1\nS1(config)# end\nS1# clear mac address-table dynamic\n```\nPing B from A, then run `show mac address-table` on S1. Confirm B is learned dynamically on Fa0/24 and connectivity returns before saving. On a different topology, substitute the actual host MAC and configured interface rather than copying this example blindly."
+  },
+  {
+    "id": "ethernet-switching-t02",
+    "title": "A third PC receives the first unicast copy",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.c",
+      "v1:1.13.d"
+    ],
+    "scenario": "A, B, and C use S1 Fa0/1, Fa0/2, and Fa0/3 respectively. All three ports are forwarding in VLAN 1 with no filtering policy. A retains B’s ARP mapping, but a technician clears only S1’s dynamic MAC entries. In Simulation mode, the first ICMP request for B reaches both B and C; later requests reach B alone.",
+    "exhibits": [
+      {
+        "title": "PC-A ARP mapping before the test",
+        "text": "192.168.90.20 -> 00bb.bbbb.bbbb (PC-B)"
+      },
+      {
+        "title": "Representative first ICMP Ethernet header",
+        "text": "Source MAC: 00aa.aaaa.aaaa (PC-A)\nDestination MAC: 00bb.bbbb.bbbb (PC-B)\nIngress: Fa0/1\nCopies: Fa0/2 and Fa0/3"
+      },
+      {
+        "title": "Representative learned host rows after B replies",
+        "text": "Vlan    Mac Address       Type        Ports\n   1    00aa.aaaa.aaaa    DYNAMIC     Fa0/1\n   1    00bb.bbbb.bbbb    DYNAMIC     Fa0/2"
+      }
+    ],
+    "question": "Which explanation fits this sequence?",
+    "options": [
+      "A changed the destination to Ethernet broadcast when it sent the first ICMP request.",
+      "The switch learned B’s destination address from A before selecting both output ports.",
+      "Clearing S1’s table also deleted A’s ARP mapping and forced a new broadcast request.",
+      "The first destination was unknown to S1; B’s source reply then established its port."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A knows B’s MAC, so it can send an ordinary unicast frame immediately. S1 lacks B’s entry and floods within the eligible VLAN ports while learning A from the request. B’s reply teaches B on Fa0/2, so later requests use known-unicast forwarding; the frame never needs a broadcast destination.",
+    "fix": "No repair is required for this controlled clear/relearn behavior. Confirm the destination MAC stays unicast, observe B’s reply creating the Fa0/2 entry, and verify subsequent requests use that port. If flooding continues unexpectedly, investigate why source learning is not retained rather than assuming the host ARP table and switch MAC table are the same."
+  }
+]

@@ -1,0 +1,578 @@
+[
+  {
+    "id": "file-management-q01",
+    "type": "single",
+    "objectives": [
+      "v1:4.9",
+      "v2:4.2"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative show file systems excerpt",
+      "text": "      Size(b)      Free(b)     Type  Flags  Prefixes\n*   256000000     180000000     disk     rw  flash0: flash:\n       262144        240000    nvram     rw  nvram:\n            -             -  network    rw  tftp:"
+    },
+    "prompt": "Which statement is supported by this file-system inventory?",
+    "options": [
+      "The two flash prefixes refer to the same listed local storage",
+      "The TFTP prefix is a local disk containing 180 MB of free space",
+      "The 256,000,000-byte value is the free capacity available now",
+      "The startup configuration occupies the complete flash file system"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The prefixes flash0: and flash: share one row, identifying aliases in this example. The Free column, not Size, reports available bytes.",
+    "whyWrong": {
+      "1": "Type network describes remote transfer access, not local storage capacity.",
+      "2": "Size reports total capacity; Free is 180,000,000 bytes.",
+      "3": "The inventory distinguishes flash storage from nvram; it does not show configuration contents."
+    }
+  },
+  {
+    "id": "file-management-q02",
+    "type": "single",
+    "objectives": [
+      "v1:4.9"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How does base TFTP start a file transfer?",
+    "options": [
+      "A UDP request targets port 69, which also carries every server data reply",
+      "A UDP request targets server port 69, then selected UDP transfer ports are used",
+      "A TCP control session targets port 21, followed by a separate data session",
+      "An SSH session targets port 22, then requests the file-transfer subsystem"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The initial TFTP request targets UDP 69. The server selects a transfer identifier/UDP port for the exchange; retransmitted requests can again target 69.",
+    "whyWrong": {
+      "0": "The server normally selects another transfer port; filtering only the initial service port can miss the actual exchange.",
+      "2": "This is FTP’s control/data model, not TFTP.",
+      "3": "This describes an SSH-based protocol such as SFTP, not TFTP."
+    }
+  },
+  {
+    "id": "file-management-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:4.9"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements describe classic FTP? Choose two.",
+    "options": [
+      "The server initiates the active-mode data connection toward the client",
+      "Passive mode sends file contents inside the control connection",
+      "The normal control connection uses server TCP port 21",
+      "A username/password login encrypts the subsequent file contents",
+      "Passive mode requires every data connection to use server port 20"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "FTP has a control connection and a separate data connection. Active/passive describes who initiates the data connection. Classic FTP does not provide encryption.",
+    "whyWrong": {
+      "1": "Directory listings and files use the separate data connection in passive mode too.",
+      "3": "Authentication and encryption are different; classic FTP sends credentials/data in cleartext.",
+      "4": "In passive mode the server advertises a data endpoint; it is not fixed to port 20."
+    }
+  },
+  {
+    "id": "file-management-q08",
+    "type": "multi",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "SSH already works on the cited IOS XE device. Which two additional conditions belong to its classic SCP server setup? Choose two.",
+    "options": [
+      "The VTY transport must accept Telnet instead of SSH",
+      "FTP client credentials are stored with `ip ftp username`",
+      "The SFTP server subsystem must be enabled on this device",
+      "SCP server functionality is enabled with `ip scp server enable`",
+      "AAA EXEC authorization permits the user's required access"
+    ],
+    "answer": [
+      3,
+      4
+    ],
+    "explanation": "The Cisco SCP server requires its server feature and appropriate authentication/authorization. The lab uses local AAA and an authorized privilege-15 account; successful SSH authentication alone does not prove all file access is permitted.",
+    "whyWrong": {
+      "0": "SCP relies on SSH, not Telnet.",
+      "1": "These credentials apply to the router acting as an FTP client.",
+      "2": "Classic SCP does not require an SFTP server; the cited implementation is SFTP-client-only."
+    }
+  },
+  {
+    "id": "file-management-q11",
+    "type": "single",
+    "objectives": [
+      "v1:4.9"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What do `ip ftp username filelab` and `ip ftp password ...` configure on the IOS device?",
+    "options": [
+      "The username and password needed by a TFTP transfer",
+      "An encrypted login service for incoming FTP users",
+      "Credentials used by the device's FTP client operations",
+      "A local authorization list for access to every stored file"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The device uses these settings when acting as an FTP client. Stored credentials may appear in configuration backups; keeping them out of a URL does not make those backups nonsensitive.",
+    "whyWrong": {
+      "0": "Base TFTP has no username/password exchange.",
+      "1": "These commands do not create an encrypted FTP server.",
+      "3": "Remote client credentials are not a local file authorization policy."
+    }
+  },
+  {
+    "id": "file-management-q15",
+    "type": "single",
+    "objectives": [
+      "v1:4.9",
+      "v2:4.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "After `copy running-config tftp:` completes, what does it establish about startup-config?",
+    "options": [
+      "Startup-config must be read first because running-config cannot be transferred",
+      "Startup-config now holds the active configuration because every backup saves it",
+      "Startup-config now holds the file received from the remote TFTP server",
+      "Startup-config is unchanged by this copy because it is neither destination nor source"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The source is running-config and the destination is the remote TFTP file. Updating startup-config requires its own explicit operation.",
+    "whyWrong": {
+      "0": "IOS can transfer running-config directly; a startup copy is not required first.",
+      "1": "An off-device backup does not also save the local startup file.",
+      "2": "This direction sends a file to the server; it does not download into startup-config."
+    }
+  },
+  {
+    "id": "file-management-q04",
+    "type": "single",
+    "objectives": [
+      "v1:4.9",
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative console extract",
+      "text": "R1-TEMP# copy flash:R1-before.cfg running-config\nDestination filename [running-config]?\n[OK]\nR1# show ip interface brief\nLoopback29       unassigned      YES unset  up  up"
+    },
+    "prompt": "R1-before.cfg contains `hostname R1` but no reference to Loopback29. The shown copy restored the hostname but left that interface. Why?",
+    "options": [
+      "The active hostname changed, but interface changes require a reload",
+      "The copy merged its commands without removing the extra interface",
+      "The file was staged in flash but none of its commands were applied",
+      "The copy replaced startup-config while preserving the current session"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Copying into running-config merges the file’s commands. Its hostname command takes effect, but the older file contains no command removing Loopback29. Explicit no commands could remove settings during a merge.",
+    "whyWrong": {
+      "0": "The issue is the absence of a removal command, not a requirement to reload for interface changes.",
+      "2": "The returned hostname demonstrates that a command was applied, and the destination is running-config.",
+      "3": "The explicit destination is running-config, not startup-config."
+    }
+  },
+  {
+    "id": "file-management-q05",
+    "type": "single",
+    "objectives": [
+      "v1:4.9",
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A verified backup is copied into startup-config. No other operation is performed. What changes immediately?",
+    "options": [
+      "The booted IOS image changes to the one named in the backup",
+      "The active configuration becomes identical to the backup",
+      "The device erases all extra interfaces from running-config",
+      "The saved startup file changes; the active configuration does not"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The destination is the saved startup configuration. Applying it to the running system is a separate decision. A later normal startup may load it, subject to platform boot settings.",
+    "whyWrong": {
+      "0": "Copying a configuration file does not load a new running image.",
+      "1": "The active configuration is not applied by this copy alone.",
+      "2": "This destination is not running-config."
+    }
+  },
+  {
+    "id": "file-management-q09",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An OpenSSH 9 client authenticates successfully to a verified classic-SCP-only IOS server, but its default `scp` command fails at SFTP subsystem negotiation. Which client option addresses that known mismatch?",
+    "options": [
+      "`-O`, to select classic SCP instead of the SFTP default",
+      "`-P 21`, to move the secure operation to FTP's control port",
+      "`-p`, to preserve timestamps while changing the protocol",
+      "`-r`, to recursively copy the configuration directory"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "OpenSSH 9 changed scp's default transfer protocol to SFTP. Uppercase -O selects classic SCP, still over SSH. The premise establishes a protocol mismatch rather than an unknown login fault.",
+    "whyWrong": {
+      "1": "The server is an SSH/SCP service, not an FTP control service.",
+      "2": "Preserving file times does not select the SCP protocol.",
+      "3": "Recursive copying does not change the transfer protocol."
+    }
+  },
+  {
+    "id": "file-management-q10",
+    "type": "single",
+    "objectives": [
+      "v1:4.9",
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Verification worksheet",
+      "text": "Cisco download metadata: SHA-512 value A\nLocal staged candidate: SHA-512 value B\nA and B differ\nCurrent running image remains unchanged"
+    },
+    "prompt": "The computed SHA-512 for a staged image differs from the value recorded from Cisco's trusted download page. What is the appropriate next action?",
+    "options": [
+      "Retry activation to let the boot process settle the conflicting hashes",
+      "Stop and recheck the exact file, trusted metadata and stored bytes",
+      "Compare the saved configuration because it controls the file hash",
+      "Accept the file if its byte count and advertised release are correct"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The differing hashes prevent acceptance as the intended candidate. Preserve the running software while checking the expected filename, trusted comparison and transferred bytes.",
+    "whyWrong": {
+      "0": "Activation is not an appropriate validation test for an unverified file.",
+      "2": "The candidate’s stored bytes, not the running configuration, determine this file hash.",
+      "3": "Matching size and name do not override a mismatch with the trusted hash."
+    }
+  },
+  {
+    "id": "file-management-q12",
+    "type": "single",
+    "objectives": [
+      "v1:4.9"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two tests",
+      "text": "R1# ping 10.29.0.100\nSuccess rate is 100 percent (5/5)\n\nR1# copy running-config tftp:\n%Error opening tftp://10.29.0.100/R1-before.cfg (Timed out)"
+    },
+    "prompt": "R1 can ping its TFTP server, but a write request times out. What is the best next investigation supported by those results?",
+    "options": [
+      "Repeat ICMP with larger payloads before checking whether the file was created",
+      "Change the gateway before inspecting a service that uses a different transport",
+      "Save startup-config again because TFTP reads only the saved configuration",
+      "Check TFTP requests, replies, service state and write permission at the server"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A successful ICMP test does not establish that the TFTP service accepts a write or that its UDP exchange completes. Inspect the failed operation and the destination evidence before changing working network settings.",
+    "whyWrong": {
+      "0": "Larger ICMP probes may be useful for a demonstrated size problem, but none is established here; first inspect this transfer.",
+      "1": "The result does not demonstrate a wrong gateway; the service-specific traffic supplies a more discriminating next check.",
+      "2": "The command explicitly reads running-config. Saving another store does not enable server writes."
+    }
+  },
+  {
+    "id": "file-management-q13",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Platform capability sheet — supplied facts",
+      "text": "S1 on the cited IOS XE release:\nSSH server: supported\nSCP server: supported after configuration\nSFTP client: supported\nSFTP server: not supported"
+    },
+    "prompt": "A Linux workstation needs to retrieve a named file from S1. Which plan is consistent with this capability sheet?",
+    "options": [
+      "Enable SFTP client on S1, then use Linux SFTP to request its file",
+      "Use passive FTP over TCP 22 because the SSH server is supported",
+      "Use Linux classic SCP to S1 after its SCP server prerequisites are met",
+      "Request SFTP first; an SSH server must accept every SSH subsystem"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The requested operation is initiated by Linux against a listening Cisco service. S1 supports the required classic SCP server role. SFTP client support on S1 does not supply an SFTP server for Linux to contact.",
+    "whyWrong": {
+      "0": "SFTP client capability permits S1 to initiate transfers to another server; it does not reverse the role.",
+      "1": "FTP and SSH-based transfer protocols are different; moving a port does not convert one into another.",
+      "3": "SSH transport support does not imply every application subsystem is implemented."
+    }
+  },
+  {
+    "id": "file-management-q14",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Candidate acceptance record",
+      "text": "Download: third-party file mirror\nSHA-512: matches the value posted by that same mirror\nFilename: matches the desired release\nCisco download metadata: not yet compared"
+    },
+    "prompt": "The transfer is intact relative to the mirror’s value. What evidence is still needed before accepting it as the intended Cisco software?",
+    "options": [
+      "Compare against trusted Cisco metadata for the exact compatible image",
+      "Run the same local hash twice to establish the publisher’s identity",
+      "Copy the file through SSH again so its contents become Cisco-approved",
+      "Compare only its filename with the release named in the change plan"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A matching value from the same untrusted source establishes agreement with that source, not trusted provenance. Compare the exact image against Cisco’s authenticated download/release information and applicable authenticity checks; a secure transport does not certify the publisher.",
+    "whyWrong": {
+      "1": "Repeated local results demonstrate consistency, not the trustworthiness of the comparison source.",
+      "2": "SSH protects this transport and authenticates its endpoint; it does not turn an untrusted file into an approved release.",
+      "3": "Filenames can be copied or changed and do not establish trusted origin or byte integrity."
+    }
+  },
+  {
+    "id": "file-management-q16",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A device reports 180,000,000 free bytes. The approved file is 70,000,000 bytes. What conclusion is justified from these two numbers alone?",
+    "options": [
+      "It meets the upgrade requirements because file size is below free capacity",
+      "It leaves 110,000,000 bytes of RAM available for the installation process",
+      "It fits in reported storage, but compatibility and installation needs remain separate",
+      "It will become the boot candidate because the transfer destination has enough room"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The subtraction gives 110,000,000 bytes of storage headroom. It does not describe RAM, expanded packages, compatibility, saved boot intent or activation.",
+    "whyWrong": {
+      "0": "Fitting the compressed/staged file does not establish all installation or compatibility requirements.",
+      "1": "These values concern persistent storage, not RAM.",
+      "3": "Storage availability does not set the boot candidate."
+    }
+  },
+  {
+    "id": "file-management-q17",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A verified remote backup must be downloaded for inspection without changing either active or startup configuration. The device lists flash: as writable. Which destination serves that requirement?",
+    "options": [
+      "flash:R1-review.cfg, a new named file on local storage",
+      "running-config, because inspection requires merging the file",
+      "tftp:, because the remote source must also be the destination",
+      "startup-config, because the active system remains unchanged"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A new named local file stages the bytes for inspection. Neither running-config nor startup-config is the destination.",
+    "whyWrong": {
+      "1": "Merging applies commands; reading a file does not require that change.",
+      "2": "The requirement is to retrieve the remote file into local storage, not write back to the remote service.",
+      "3": "Although running-config would remain unchanged, this would overwrite the saved configuration, contrary to the requirement."
+    }
+  },
+  {
+    "id": "file-management-q18",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An SSH client reports that S1’s host key differs from its previously verified key. No approved replacement is recorded. What should precede sending credentials or configuration files?",
+    "options": [
+      "Remove the known-host entry and accept the new key as the current value",
+      "Verify the current key through trusted console/change records and reconcile the mismatch",
+      "Retry with a longer timeout because key comparison depends on link latency",
+      "Select a different filename because only the destination file changed"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A key mismatch could follow a legitimate replacement or an unintended endpoint. Resolve identity through a trusted independent path before proceeding; it is not evidence that the password is wrong.",
+    "whyWrong": {
+      "0": "Deleting the trusted comparison without verification discards the protection that detected the change.",
+      "2": "A completed key comparison is not repaired by waiting longer.",
+      "3": "The warning concerns the SSH server identity before file-path handling."
+    }
+  },
+  {
+    "id": "file-management-q19",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "The SSH server accepted the account, and its SFTP log reports “No such file” for /home/ccnafile/ccna-files/Probe.txt. The trusted directory listing shows only probe.txt. What is the narrow next correction?",
+    "options": [
+      "Change the SSH user password, then repeat the same case-sensitive path",
+      "Use the existing source path with matching case, then verify the received file",
+      "Enable an FTP data port to carry the SFTP file after authentication",
+      "Replace the client’s gateway because a remote filename was not found"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Authentication and access to the server worked. The supplied source name differs in case from the actual file; use the verified path and retest.",
+    "whyWrong": {
+      "0": "The account was accepted; changing its password does not correct a path.",
+      "2": "SFTP does not use FTP’s separate data connection.",
+      "3": "The server processed the request and returned a file-path error; no gateway error is demonstrated."
+    }
+  },
+  {
+    "id": "file-management-q20",
+    "type": "multi",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Linux shell",
+      "text": "scp -O labbackup@10.29.0.1:flash:S1-before.cfg ~/ccna-received/S1-before.cfg"
+    },
+    "prompt": "Which two interpretations of the command are correct? Choose two.",
+    "options": [
+      "The -O option disables SSH encryption for this transfer",
+      "S1 downloads the named file from a Linux SCP server",
+      "The final path overwrites S1’s active running configuration",
+      "The remote source is S1’s flash:S1-before.cfg file",
+      "Linux initiates the connection to S1 as an SCP client"
+    ],
+    "answer": [
+      3,
+      4
+    ],
+    "explanation": "OpenSSH scp reads source then destination. The remote user@host:path source is on S1; the local ~/ccna-received path is on Linux. -O selects classic SCP while keeping SSH.",
+    "whyWrong": {
+      "0": "The protocol changes from SFTP to classic SCP; the SSH protection remains.",
+      "1": "The command is executed on Linux and contacts S1; the source is remote, not local.",
+      "2": "The destination is a local workstation file, not a Cisco configuration store."
+    }
+  },
+  {
+    "id": "file-management-q21",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Change requirements",
+      "text": "running-config: approved new routing changes\nstartup-config: older recovery checkpoint to retain\nServer: separate protected storage; SCP verified\nDo not apply or activate anything"
+    },
+    "prompt": "The engineer needs a protected off-device copy of the current active configuration and must preserve the older startup checkpoint. Which completion record satisfies the whole requirement?",
+    "options": [
+      "Copied running-config by SCP; verified remote contents; left startup-config unchanged",
+      "Copied running-config to local flash; verified it; left startup-config unchanged",
+      "Copied running-config by FTP; verified contents; left startup-config unchanged",
+      "Copied startup-config by SCP; verified contents; then saved running-config locally"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Backing up running-config by SCP meets the requested current source, protected transport, off-device destination and preservation of the older startup checkpoint. Saving running-config to startup-config would replace that checkpoint; a same-device flash copy would not be an off-device backup, and classic FTP would not protect the transfer.",
+    "whyWrong": {
+      "1": "The copy is still on the device and therefore does not meet the off-device requirement.",
+      "2": "Classic FTP does not provide the required encrypted transport.",
+      "3": "This backs up the older saved configuration rather than the requested current active configuration; a subsequent local save does not repair the wrong off-device source."
+    }
+  },
+  {
+    "id": "file-management-q22",
+    "type": "single",
+    "objectives": [
+      "v1:4.9"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored FTP client/capture observations",
+      "text": "Control: TCP 21 connected; login accepted\nPASV reply: data endpoint 10.29.0.100:50010\nLIST requested\nClient sends repeated SYNs to 10.29.0.100:50010; no SYN-ACK observed\nDirectory listing times out"
+    },
+    "prompt": "Which failure stage is demonstrated most directly by these FTP observations?",
+    "options": [
+      "The username was rejected before the control session became usable",
+      "The transferred file was rejected because its SHA-512 differed",
+      "The client successfully received the complete requested directory listing",
+      "The separate passive data connection is not completing its TCP handshake"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Login and PASV responses demonstrate a working control exchange. The captured SYN retries toward the advertised passive endpoint show the data connection has not established. They do not uniquely identify which device or rule caused the absence of a reply.",
+    "whyWrong": {
+      "0": "The successful login and PASV reply contradict a rejected control-session login.",
+      "1": "No completed file or hash comparison is shown.",
+      "2": "The data connection required for the listing has not established."
+    }
+  },
+  {
+    "id": "file-management-q23",
+    "type": "single",
+    "objectives": [
+      "v2:4.2"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied isolated IOS XE/server evidence",
+      "text": "Gi1/0/1: 10.29.0.1/24, up/up\nLoopback29: 10.29.29.2/32, up/up\nip ssh source-interface Loopback29\nRouting is working bidirectionally for both addresses.\nServer policy permits SSH only from 10.29.0.1.\nServer log: denied TCP 22 connection from 10.29.29.2."
+    },
+    "prompt": "What best explains why this SFTP transfer is refused even though S1 can ping the server?",
+    "options": [
+      "The saved configuration lacks an IP address because the ping was local",
+      "The source file is missing because authentication has not yet occurred",
+      "The client selected a source address not allowed by the server’s stated policy",
+      "The server requires an FTP data port for files larger than the probe"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The SSH source-interface selection and the server log agree on 10.29.29.2, while the policy permits only 10.29.0.1. Correct the source to the intended authorized interface and retest server identity, login and transfer. ICMP success does not override an SSH access rule.",
+    "whyWrong": {
+      "0": "The actual source is present in both current configuration and the server’s received connection.",
+      "1": "The connection is refused before the file request; no filename result is available.",
+      "3": "This is an SSH/SFTP connection, not FTP with a separate data port."
+    }
+  }
+]

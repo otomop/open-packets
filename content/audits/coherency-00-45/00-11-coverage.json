@@ -1,0 +1,594 @@
+[
+  {
+    "number": 0,
+    "chapterId": "start-here",
+    "entry": [],
+    "introduced": [
+      {
+        "skill": "First LAN, supplied addressing and ping",
+        "sectionId": "install-packet-tracer-and-learn-its-workspace"
+      },
+      {
+        "skill": "IOS modes/help and saving",
+        "sectionId": "the-command-line-modes-help-and-the-pager"
+      }
+    ],
+    "practiceDemands": [
+      "Build and save a two-PC LAN; use supplied addresses; identify IOS prompts; verify running versus startup"
+    ],
+    "laterDependents": [
+      "network-models",
+      "ios-essentials"
+    ],
+    "findings": [
+      "Defined LAN, Ethernet/frame roles, IP/mask/gateway/DNS and ICMP at first setup use. Reworded c28 to avoid testing an OSI layer label before Chapter01. Added first handoff."
+    ],
+    "filesRead": [
+      "content/chapters/00-start-here/chapter.md",
+      "content/chapters/00-start-here/lab.md",
+      "content/chapters/00-start-here/questions.json",
+      "content/chapters/00-start-here/cards.json",
+      "content/chapters/00-start-here/commands.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 1,
+    "chapterId": "network-models",
+    "entry": [
+      {
+        "skill": "IOS and simulator workflow",
+        "chapterId": "start-here",
+        "sectionId": "the-command-line-modes-help-and-the-pager"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "OSI/TCP-IP, bits/octets and MAC notation",
+        "sectionId": "seven-layers-four-layers-five-pdus"
+      },
+      {
+        "skill": "ARP, local versus remote delivery and minimal VLAN scope",
+        "sectionId": "local-or-remote-the-host-s-first-decision"
+      },
+      {
+        "skill": "Packet walk and return path",
+        "sectionId": "the-packet-walk-pc-a-to-server-b-and-back"
+      },
+      {
+        "skill": "Connected/local route output",
+        "sectionId": "where-the-layers-live-devices-and-commands"
+      }
+    ],
+    "practiceDemands": [
+      "Trace ARP and routed echo exchanges; interpret the three different tables; repair a supplied gateway fault"
+    ],
+    "laterDependents": [
+      "components-and-topologies",
+      "ipv4-addressing",
+      "ethernet-switching",
+      "inter-vlan-routing"
+    ],
+    "findings": [
+      "Added protocol/application roles and notation before use. Added worked C/L route evidence before lab Step6 and later connected-route exercises. Routing selection stays17."
+    ],
+    "filesRead": [
+      "content/chapters/01-network-models/chapter.md",
+      "content/chapters/01-network-models/lab.md",
+      "content/chapters/01-network-models/questions.json",
+      "content/chapters/01-network-models/cards.json",
+      "content/chapters/01-network-models/commands.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 2,
+    "chapterId": "components-and-topologies",
+    "entry": [
+      {
+        "skill": "Packet and device-layer roles",
+        "chapterId": "network-models",
+        "sectionId": "where-the-layers-live-devices-and-commands"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Device functions",
+        "sectionId": "routers-switches-endpoints-and-servers"
+      },
+      {
+        "skill": "PoE allocation",
+        "sectionId": "power-over-ethernet"
+      },
+      {
+        "skill": "Campus/spine-leaf/WAN/SOHO/cloud design",
+        "sectionId": "campus-designs-two-tier-three-tier-and-spine-leaf"
+      }
+    ],
+    "practiceDemands": [
+      "Separate ping and HTTP service evidence; identify expansion roles and path dependencies; calculate supplied power allocation"
+    ],
+    "laterDependents": [
+      "cabling-and-interfaces",
+      "vlans-and-access-ports"
+    ],
+    "findings": [
+      "Expanded DHCP at its initial SOHO use. Supplied HTTP service setup is guided before its fault. No need to move design comparison after routing."
+    ],
+    "filesRead": [
+      "content/chapters/02-components-and-topologies/chapter.md",
+      "content/chapters/02-components-and-topologies/lab.md",
+      "content/chapters/02-components-and-topologies/questions.json",
+      "content/chapters/02-components-and-topologies/cards.json",
+      "content/chapters/02-components-and-topologies/commands.json",
+      "content/chapters/02-components-and-topologies/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 3,
+    "chapterId": "cabling-and-interfaces",
+    "entry": [
+      {
+        "skill": "CLI status and ping",
+        "chapterId": "network-models",
+        "sectionId": "where-the-layers-live-devices-and-commands"
+      },
+      {
+        "skill": "Device links and PoE",
+        "chapterId": "components-and-topologies",
+        "sectionId": "power-over-ethernet"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Copper and rate units",
+        "sectionId": "copper-standards-categories-and-pinouts"
+      },
+      {
+        "skill": "Fiber and optics",
+        "sectionId": "fiber-single-mode-multimode-and-optics"
+      },
+      {
+        "skill": "Duplex/autonegotiation and fault evidence",
+        "sectionId": "autonegotiation-and-the-mismatch"
+      }
+    ],
+    "practiceDemands": [
+      "Select a medium; compare both ends; observe shutdown and mismatch separately; use counter deltas without claiming a unique cause"
+    ],
+    "laterDependents": [
+      "ipv4-addressing",
+      "ethernet-switching"
+    ],
+    "findings": [
+      "Added components prerequisite, rate-unit explanation and physical-to-addressing handoff. All commands already taught; supplied faults remain observed before repair."
+    ],
+    "filesRead": [
+      "content/chapters/03-cabling-and-interfaces/chapter.md",
+      "content/chapters/03-cabling-and-interfaces/lab.md",
+      "content/chapters/03-cabling-and-interfaces/questions.json",
+      "content/chapters/03-cabling-and-interfaces/cards.json",
+      "content/chapters/03-cabling-and-interfaces/commands.json",
+      "content/chapters/03-cabling-and-interfaces/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 4,
+    "chapterId": "ipv4-addressing",
+    "entry": [
+      {
+        "skill": "Local/remote delivery",
+        "chapterId": "network-models",
+        "sectionId": "local-or-remote-the-host-s-first-decision"
+      },
+      {
+        "skill": "Physical/interface verification",
+        "chapterId": "cabling-and-interfaces",
+        "sectionId": "reading-the-output"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Binary and masks",
+        "sectionId": "binary-and-the-32-bit-address"
+      },
+      {
+        "skill": "Network/host/broadcast capacity",
+        "sectionId": "network-broadcast-and-usable-hosts"
+      },
+      {
+        "skill": "Address configuration and removal",
+        "sectionId": "configuring-addresses-on-ios"
+      }
+    ],
+    "practiceDemands": [
+      "Derive /21 and /24 ranges; configure supplied and independently changed addressing; inspect rejected input and wrong gateway"
+    ],
+    "laterDependents": [
+      "subnetting-vlsm",
+      "tcp-udp-ports",
+      "ipv6-addressing"
+    ],
+    "findings": [
+      "Added physical prerequisite and exponent/loopback definitions. Taught no ip address before d10; distinguished running state from saved configuration."
+    ],
+    "filesRead": [
+      "content/chapters/04-ipv4-addressing/chapter.md",
+      "content/chapters/04-ipv4-addressing/lab.md",
+      "content/chapters/04-ipv4-addressing/questions.json",
+      "content/chapters/04-ipv4-addressing/cards.json",
+      "content/chapters/04-ipv4-addressing/commands.json",
+      "content/chapters/04-ipv4-addressing/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 5,
+    "chapterId": "subnetting-vlsm",
+    "entry": [
+      {
+        "skill": "Mask and capacity calculations",
+        "chapterId": "ipv4-addressing",
+        "sectionId": "network-broadcast-and-usable-hosts"
+      },
+      {
+        "skill": "Connected-prefix interpretation",
+        "chapterId": "network-models",
+        "sectionId": "where-the-layers-live-devices-and-commands"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Largest-first allocation and overlap",
+        "sectionId": "vlsm-allocate-largest-first"
+      },
+      {
+        "skill": "Summary boundaries",
+        "sectionId": "summarisation-keep-the-shared-bits"
+      },
+      {
+        "skill": "Private and special ranges",
+        "sectionId": "private-public-and-special-purpose-ranges"
+      }
+    ],
+    "practiceDemands": [
+      "Plan nonoverlapping subnets; test a growth requirement against boundaries; renumber hosts/gateway consistently"
+    ],
+    "laterDependents": [
+      "routing-table",
+      "static-routing-ipv4",
+      "nat-pat"
+    ],
+    "findings": [
+      "Added multicast/loopback distinctions, DHCP lease meaning and NAT/PAT/proxy vocabulary at first use. Full service mechanics remain24/26; ports follow06."
+    ],
+    "filesRead": [
+      "content/chapters/05-subnetting-vlsm/chapter.md",
+      "content/chapters/05-subnetting-vlsm/lab.md",
+      "content/chapters/05-subnetting-vlsm/questions.json",
+      "content/chapters/05-subnetting-vlsm/cards.json",
+      "content/chapters/05-subnetting-vlsm/commands.json",
+      "content/chapters/05-subnetting-vlsm/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 6,
+    "chapterId": "tcp-udp-ports",
+    "entry": [
+      {
+        "skill": "IP and host setup",
+        "chapterId": "ipv4-addressing",
+        "sectionId": "configuring-addresses-on-ios"
+      },
+      {
+        "skill": "Service versus network availability",
+        "chapterId": "components-and-topologies",
+        "sectionId": "reading-the-output"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Ports and sockets",
+        "sectionId": "ports-sockets-and-multiplexing"
+      },
+      {
+        "skill": "TCP setup, sequence and windows",
+        "sectionId": "opening-and-closing-a-connection"
+      },
+      {
+        "skill": "Application transports and minimal DNS setup",
+        "sectionId": "which-application-uses-which-transport-and-why"
+      }
+    ],
+    "practiceDemands": [
+      "Inspect TCP and UDP independently; interpret ACK/sequence data; set supplied resolver/A record; isolate HTTP service fault"
+    ],
+    "laterDependents": [
+      "ios-essentials",
+      "dns",
+      "nat-pat",
+      "qos"
+    ],
+    "findings": [
+      "Added actual prerequisites, TLS and ISN definitions, AAA/monitoring-service roles and DNS A-record setup explanation before lab."
+    ],
+    "filesRead": [
+      "content/chapters/06-tcp-udp-ports/chapter.md",
+      "content/chapters/06-tcp-udp-ports/lab.md",
+      "content/chapters/06-tcp-udp-ports/questions.json",
+      "content/chapters/06-tcp-udp-ports/cards.json",
+      "content/chapters/06-tcp-udp-ports/commands.json",
+      "content/chapters/06-tcp-udp-ports/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 7,
+    "chapterId": "ethernet-switching",
+    "entry": [
+      {
+        "skill": "Frames/ARP and hexadecimal notation",
+        "chapterId": "network-models",
+        "sectionId": "seven-layers-four-layers-five-pdus"
+      },
+      {
+        "skill": "Duplex and collisions",
+        "chapterId": "cabling-and-interfaces",
+        "sectionId": "shared-media-point-to-point-and-duplex"
+      },
+      {
+        "skill": "Transport retry versus frame checking",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "two-headers-two-philosophies"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Frame sizes and FCS",
+        "sectionId": "anatomy-of-an-ethernet-frame"
+      },
+      {
+        "skill": "MAC groups and multicast assumptions",
+        "sectionId": "mac-addresses-oui-unicast-multicast-broadcast"
+      },
+      {
+        "skill": "Learning/forwarding and aging/static state",
+        "sectionId": "learn-forward-filter-flood"
+      }
+    ],
+    "practiceDemands": [
+      "Trace source learning separately from destination lookup; distinguish ARP/MAC tables; observe unknown unicast and wrong static entry"
+    ],
+    "laterDependents": [
+      "ios-essentials",
+      "vlans-and-access-ports",
+      "spanning-tree"
+    ],
+    "findings": [
+      "Corrected prerequisites. Added 0x notation, binary group-bit example and scoped multicast flooding rule before q16. Exit accurately previews router management08 and switch SVI11."
+    ],
+    "filesRead": [
+      "content/chapters/07-ethernet-switching/chapter.md",
+      "content/chapters/07-ethernet-switching/lab.md",
+      "content/chapters/07-ethernet-switching/questions.json",
+      "content/chapters/07-ethernet-switching/cards.json",
+      "content/chapters/07-ethernet-switching/commands.json",
+      "content/chapters/07-ethernet-switching/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 8,
+    "chapterId": "ios-essentials",
+    "entry": [
+      {
+        "skill": "IOS prompts and saves",
+        "chapterId": "start-here",
+        "sectionId": "the-command-line-modes-help-and-the-pager"
+      },
+      {
+        "skill": "Ports/TLS and service tests",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "which-application-uses-which-transport-and-why"
+      },
+      {
+        "skill": "Transit switching",
+        "chapterId": "ethernet-switching",
+        "sectionId": "learn-forward-filter-flood"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Local authentication, privilege and stored verifiers",
+        "sectionId": "passwords-secrets-and-the-local-user-database"
+      },
+      {
+        "skill": "Terminal policy and timeout",
+        "sectionId": "lines-console-aux-and-vty"
+      },
+      {
+        "skill": "SSH configuration and host identity",
+        "sectionId": "configure-ssh-step-by-step"
+      }
+    ],
+    "practiceDemands": [
+      "Build named-user SSH; test new privilege-specific sessions; isolate transport fault; verify persisted policy"
+    ],
+    "laterDependents": [
+      "vlans-and-access-ports",
+      "file-management",
+      "aaa-tacacs-radius"
+    ],
+    "findings": [
+      "Added hash/host-key explanation and timeout-zero meaning before cards. Added scoped legacy1.99 interpretation before q08; no crypto-algorithm implementation required."
+    ],
+    "filesRead": [
+      "content/chapters/08-ios-essentials/chapter.md",
+      "content/chapters/08-ios-essentials/lab.md",
+      "content/chapters/08-ios-essentials/questions.json",
+      "content/chapters/08-ios-essentials/cards.json",
+      "content/chapters/08-ios-essentials/commands.json",
+      "content/chapters/08-ios-essentials/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 9,
+    "chapterId": "vlans-and-access-ports",
+    "entry": [
+      {
+        "skill": "MAC forwarding by VLAN",
+        "chapterId": "ethernet-switching",
+        "sectionId": "learn-forward-filter-flood"
+      },
+      {
+        "skill": "Management versus transit",
+        "chapterId": "ios-essentials",
+        "sectionId": "configure-ssh-step-by-step"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "VLAN database and access membership",
+        "sectionId": "vlan-numbers-names-and-where-they-live"
+      },
+      {
+        "skill": "Tagged voice and discovery-role preview",
+        "sectionId": "voice-vlan-two-vlans-on-one-access-port"
+      },
+      {
+        "skill": "Endpoint traffic requirements and power",
+        "sectionId": "one-template-per-endpoint"
+      }
+    ],
+    "practiceDemands": [
+      "Build data/voice access ports; observe missing versus wrong VLAN; check power allocation; choose access/trunk from supplied tagging"
+    ],
+    "laterDependents": [
+      "trunks-dtp",
+      "cdp-lldp",
+      "etherchannel"
+    ],
+    "findings": [
+      "Added minimal tags, CDP/LLDP-MED, tunnel, virtual-host and LACP meanings for endpoint selection. Removed premature native-VLAN recall from q13/c03; native behavior is taught10."
+    ],
+    "filesRead": [
+      "content/chapters/09-vlans-and-access-ports/chapter.md",
+      "content/chapters/09-vlans-and-access-ports/lab.md",
+      "content/chapters/09-vlans-and-access-ports/questions.json",
+      "content/chapters/09-vlans-and-access-ports/cards.json",
+      "content/chapters/09-vlans-and-access-ports/commands.json",
+      "content/chapters/09-vlans-and-access-ports/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 10,
+    "chapterId": "trunks-dtp",
+    "entry": [
+      {
+        "skill": "VLAN access/voice membership",
+        "chapterId": "vlans-and-access-ports",
+        "sectionId": "access-ports-how-an-untagged-frame-gets-a-vlan"
+      },
+      {
+        "skill": "Frame/FCS structure",
+        "chapterId": "ethernet-switching",
+        "sectionId": "anatomy-of-an-ethernet-frame"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "802.1Q and native treatment",
+        "sectionId": "the-802-1q-tag"
+      },
+      {
+        "skill": "Allowed lists and static trunks",
+        "sectionId": "the-allowed-vlan-list"
+      },
+      {
+        "skill": "DTP and peer requirements",
+        "sectionId": "dtp-how-a-port-decides-to-trunk"
+      }
+    ],
+    "practiceDemands": [
+      "Build both trunk ends; diagnose allowed/native differences; prepare disconnected AP port from supplied requirements; add VLAN preserving existing services"
+    ],
+    "laterDependents": [
+      "inter-vlan-routing",
+      "etherchannel",
+      "wireless-architecture"
+    ],
+    "findings": [
+      "Added SSID/WLAN meanings, explicit static-trunk/DTP auto interaction for q04, pruning meaning and two-ended forwarding-set example for q21."
+    ],
+    "filesRead": [
+      "content/chapters/10-trunks-dtp/chapter.md",
+      "content/chapters/10-trunks-dtp/lab.md",
+      "content/chapters/10-trunks-dtp/questions.json",
+      "content/chapters/10-trunks-dtp/cards.json",
+      "content/chapters/10-trunks-dtp/commands.json",
+      "content/chapters/10-trunks-dtp/tickets.json"
+    ],
+    "status": "reviewed"
+  },
+  {
+    "number": 11,
+    "chapterId": "inter-vlan-routing",
+    "entry": [
+      {
+        "skill": "Tagged trunk transport",
+        "chapterId": "trunks-dtp",
+        "sectionId": "configuring-trunks-on-2960-3560-and-9200"
+      },
+      {
+        "skill": "Off-subnet forwarding and ARP",
+        "chapterId": "network-models",
+        "sectionId": "the-packet-walk-pc-a-to-server-b-and-back"
+      },
+      {
+        "skill": "Address/mask calculations",
+        "chapterId": "ipv4-addressing",
+        "sectionId": "network-broadcast-and-usable-hosts"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Subinterfaces and tags",
+        "sectionId": "router-on-a-stick"
+      },
+      {
+        "skill": "SVIs and host-mode management",
+        "sectionId": "svis-on-a-multilayer-switch"
+      },
+      {
+        "skill": "Routed ports and verification",
+        "sectionId": "routed-ports-and-the-four-designs-compared"
+      }
+    ],
+    "practiceDemands": [
+      "Build separate router/SVI designs; observe tag and autostate faults; distinguish neighbor ping from complete return routing"
+    ],
+    "laterDependents": [
+      "cdp-lldp",
+      "etherchannel",
+      "fhrp-hsrp-vrrp",
+      "dhcp"
+    ],
+    "findings": [
+      "Full two-file lab and all banks reviewed; setup order is sound. Taught detailed SVI and connected-only route commands before d09/d10. Added handoff to neighbor mapping12."
+    ],
+    "filesRead": [
+      "content/chapters/11-inter-vlan-routing/chapter.md",
+      "content/chapters/11-inter-vlan-routing/lab.md",
+      "content/chapters/11-inter-vlan-routing/questions.json",
+      "content/chapters/11-inter-vlan-routing/cards.json",
+      "content/chapters/11-inter-vlan-routing/commands.json",
+      "content/chapters/11-inter-vlan-routing/tickets.json"
+    ],
+    "status": "reviewed"
+  }
+]

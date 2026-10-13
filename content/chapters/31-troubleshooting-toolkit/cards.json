@@ -1,0 +1,114 @@
+[
+  {
+    "id": "troubleshooting-toolkit-c03",
+    "front": "Does an initial .!!!! prove an ARP delay?",
+    "back": "No. ARP delay is possible, but the timeout itself does not identify a cause. Repeat and correlate current ARP/capture evidence.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c04",
+    "front": "How is a period different from an unreachable result?",
+    "back": "A period reports no timely usable reply. An unreachable result reports an error; inspect its source/code rather than assume one missing route.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c06",
+    "front": "What changes when you select a router ping source?",
+    "back": "The reply destination and possibly policy handling change. It helps test return reachability but does not reproduce the PC’s full ingress path.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c08",
+    "front": "Why can IOS traceroute and Windows tracert encounter different policies?",
+    "back": "Conventional IOS uses UDP probes; Windows uses ICMP echo. Both use increasing TTL, but their source and transport treatment can differ.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c11",
+    "front": "What does a traceroute star report?",
+    "back": "No usable response for that probe within its wait. It does not prove the probe stopped at the last responding router.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c13",
+    "front": "What do routed Ethernet administrative down and down/down suggest?",
+    "back": "Administrative down identifies local shutdown state. Down/down directs investigation toward link/media/peer availability; it is not a unique cable diagnosis.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c14",
+    "front": "How do err-disabled and inactive guide switch diagnosis?",
+    "back": "Find the recorded error/protection cause for err-disabled. Inspect intended VLAN availability for inactive; recover only after correcting the demonstrated cause.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c15",
+    "front": "What directly establishes a duplex mismatch?",
+    "back": "Different operational duplex settings at the two ends. Late collisions can support the diagnosis; compare both ends and fresh increments.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c16",
+    "front": "Does a rising CRC counter identify one exact physical fault?",
+    "back": "No. It reports new received corruption; compare both endpoints and the medium before selecting a cause.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c21",
+    "front": "Does a matching TCP reset prove the server application sent it?",
+    "back": "No. It is an active response, potentially from an endpoint or intermediary. Correlate server-side evidence; unanswered SYNs leave both directions uncertain.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c22",
+    "front": "What should a useful troubleshooting note preserve?",
+    "back": "Affected flow/source, time and clock confidence, original evidence, hypothesis, focused change, and the final client/application retest.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c23",
+    "front": "What context must accompany a packet capture?",
+    "back": "Capture point, direction, filter, time interval and capture loss. Missing traffic there is not proof it was absent everywhere.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c24",
+    "front": "How do two counter snapshots distinguish current activity from history?",
+    "back": "Compare their delta over a known interval, checking for a clear, wrap or restart. Preserve the original observations.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c25",
+    "front": "Can two device timestamps alone establish event order?",
+    "back": "Only with adequate clock confidence. Unknown offsets, adjustments and collector delays can make apparent order misleading.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

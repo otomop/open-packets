@@ -1,0 +1,319 @@
+[
+  {
+    "id": "client-os-troubleshooting-d01",
+    "task": "On Windows, inspect adapter addresses, subnet masks, DHCP information and DNS settings before diagnosing a client connectivity report.",
+    "mode": "Command Prompt",
+    "answer": "ipconfig /all",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-windows",
+      "hint": "Start with the detailed adapter configuration, then identify which adapter the failing connection uses.",
+      "takeaway": "Read the intended adapter rather than treating every disconnected entry as a fault. DHCP enabled does not prove every displayed setting came from the lease; DNS can be manually overridden.",
+      "syntax": [
+        {
+          "text": "ipconfig",
+          "kind": "keyword"
+        },
+        {
+          "text": "/all",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d02",
+    "task": "The DHCP settings were repaired in an isolated Windows lab. Request a lease update only for the adapter named Ethernet.",
+    "mode": "Command Prompt",
+    "answer": "ipconfig /renew \"Ethernet\"",
+    "accept": [
+      "ipconfig /renew Ethernet"
+    ],
+    "teaching": {
+      "sectionId": "reading-windows",
+      "hint": "Target the affected adapter instead of disrupting every connection.",
+      "takeaway": "Renewal requests updated lease information for this adapter. It does not guarantee a particular address or prove that the gateway, resolver and application now work; inspect and retest them.",
+      "syntax": [
+        {
+          "text": "ipconfig",
+          "kind": "keyword"
+        },
+        {
+          "text": "/renew",
+          "kind": "argument"
+        },
+        {
+          "text": "\"Ethernet\"",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d03",
+    "task": "A Windows PC has both wired and VPN adapters. Display its IPv4 routing table so you can determine which path covers the failing destination.",
+    "mode": "Command Prompt",
+    "answer": "route print -4",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-windows",
+      "hint": "The configured gateway is only one route; a more-specific route can override a default.",
+      "takeaway": "Apply longest prefix match before comparing metrics among eligible paths. A wired connection does not automatically win merely because it is Ethernet.",
+      "syntax": [
+        {
+          "text": "route print",
+          "kind": "keyword"
+        },
+        {
+          "text": "-4",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d04",
+    "task": "A Windows laptop reports a wireless failure. Display its current wireless interface connection details, including SSID and authentication/cipher where available.",
+    "mode": "Command Prompt",
+    "answer": "netsh wlan show interfaces",
+    "accept": [],
+    "teaching": {
+      "sectionId": "wireless-clients-three-settings-that-must-match",
+      "hint": "A saved profile is not proof of the current connection.",
+      "takeaway": "Compare current connection details with the intended WLAN and security method. Driver/privacy limitations can hide fields, and a connected label alone does not establish DHCP or application service.",
+      "syntax": [
+        {
+          "text": "netsh wlan show interfaces",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d15",
+    "task": "The active macOS interface has been identified as en0. Display its addresses, netmask and interface state.",
+    "mode": "macOS Terminal",
+    "answer": "ifconfig en0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-macos-and-linux",
+      "hint": "Inspect the identified interface rather than assuming its friendly Wi-Fi or Ethernet service name is the command argument.",
+      "takeaway": "macOS may display an IPv4 netmask in hexadecimal: 0xffffff00 is /24. Use the actual interface name from inventory; en0 is the stated example, not a universal adapter name.",
+      "syntax": [
+        {
+          "text": "ifconfig",
+          "kind": "keyword"
+        },
+        {
+          "text": "en0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d06",
+    "task": "On macOS, identify the current IPv4 default next hop and the interface it uses without relying on a friendly network-service name.",
+    "mode": "macOS Terminal",
+    "answer": "route -n get default",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-macos-and-linux",
+      "hint": "Request the default route with numeric output.",
+      "takeaway": "This reports the default path, not every route that could match the failing destination. A more-specific VPN route can still change the actual forwarding decision.",
+      "syntax": [
+        {
+          "text": "route",
+          "kind": "keyword"
+        },
+        {
+          "text": "-n",
+          "kind": "argument"
+        },
+        {
+          "text": "get",
+          "kind": "keyword"
+        },
+        {
+          "text": "default",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d07",
+    "task": "A macOS VPN may supply a resolver for only selected domains. Display current resolver configuration including supplemental domain-specific settings.",
+    "mode": "macOS Terminal",
+    "answer": "scutil --dns",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-macos-and-linux",
+      "hint": "A single generic resolver file may omit the scoped configuration.",
+      "takeaway": "Read domain and interface scope before assuming the first displayed server handles every name. Configuration presence or a reachable flag is not a completed DNS query.",
+      "syntax": [
+        {
+          "text": "scutil",
+          "kind": "keyword"
+        },
+        {
+          "text": "--dns",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d08",
+    "task": "On Linux, list interfaces and their assigned addresses with prefix lengths in the brief ip display.",
+    "mode": "Linux shell",
+    "answer": "ip -br address",
+    "accept": [
+      "ip -br addr",
+      "ip -br a"
+    ],
+    "teaching": {
+      "sectionId": "reading-macos-and-linux",
+      "hint": "Read actual interface names; do not assume this host uses eth0.",
+      "takeaway": "The address prefix establishes its subnet, while the routing table separately identifies gateways. An address on an unused interface does not describe the affected connection.",
+      "syntax": [
+        {
+          "text": "ip",
+          "kind": "keyword"
+        },
+        {
+          "text": "-br",
+          "kind": "argument"
+        },
+        {
+          "text": "address",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d09",
+    "task": "On Linux, display the current IPv4 routes so you can identify the connected prefixes and default next hop.",
+    "mode": "Linux shell",
+    "answer": "ip route",
+    "accept": [
+      "ip route show",
+      "ip -4 route",
+      "ip -4 route show"
+    ],
+    "teaching": {
+      "sectionId": "reading-macos-and-linux",
+      "hint": "Ask the routing tool for IPv4 routes, not only interface addresses.",
+      "takeaway": "The via address is a next hop; src is a preferred source address. A route marked proto dhcp does not by itself establish how every interface address was assigned.",
+      "syntax": [
+        {
+          "text": "ip route",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d10",
+    "task": "This Linux host uses systemd-resolved. Display its current per-link resolver configuration to identify the upstream DNS servers.",
+    "mode": "Linux shell",
+    "answer": "resolvectl status",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-macos-and-linux",
+      "hint": "The local stub address in resolv.conf may not be the upstream resolver.",
+      "takeaway": "An entry such as 127.0.0.53 can name the local stub. Use per-link configuration to identify the intended upstream server, then perform a query to test the service.",
+      "syntax": [
+        {
+          "text": "resolvectl",
+          "kind": "keyword"
+        },
+        {
+          "text": "status",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d12",
+    "task": "This Linux host is managed by NetworkManager. Display detailed current device settings, including its IP gateway and DNS servers.",
+    "mode": "Linux shell",
+    "answer": "nmcli device show",
+    "accept": [
+      "nmcli dev show"
+    ],
+    "teaching": {
+      "sectionId": "reading-macos-and-linux",
+      "hint": "Use the active network manager's device view for this platform.",
+      "takeaway": "NetworkManager and systemd-resolved are not universal on Linux. Select the tool that actually manages this host; an unavailable command is not evidence that its network is broken.",
+      "syntax": [
+        {
+          "text": "nmcli",
+          "kind": "keyword"
+        },
+        {
+          "text": "device show",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-d14",
+    "task": "On Windows PowerShell, test a TCP connection to numeric server 192.168.50.20 on port 443, avoiding DNS as a variable.",
+    "mode": "PowerShell",
+    "answer": "Test-NetConnection 192.168.50.20 -Port 443",
+    "accept": [
+      "Test-NetConnection -ComputerName 192.168.50.20 -Port 443"
+    ],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot-the-ladder",
+      "hint": "An ICMP echo test cannot establish that the required TCP port accepts a connection.",
+      "takeaway": "A successful TCP connection narrows the transport question. It does not prove TLS negotiation, certificate validity, HTTP behavior or application authorization.",
+      "syntax": [
+        {
+          "text": "Test-NetConnection",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.50.20",
+          "kind": "argument"
+        },
+        {
+          "text": "-Port",
+          "kind": "argument"
+        },
+        {
+          "text": "443",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

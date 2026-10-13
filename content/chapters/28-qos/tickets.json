@@ -1,0 +1,66 @@
+[
+  {
+    "id": "qos-t01",
+    "title": "Voice misses the downstream priority class",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "scenario": "On a legacy Catalyst 2960 running the cited IOS QoS model, standard QoS was enabled with other settings left at defaults. A managed phone connects directly to Fa0/1; no PC is connected through it. The approved design says to preserve this phone's received IP DSCP. R1's downstream priority class matches EF. The following observations concern the same voice stream during a busy period; they are representative exhibits.",
+    "exhibits": [
+      {
+        "title": "Packet observations on either side of SW1",
+        "text": "Phone → SW1 Fa0/1: IPv4 DSCP 46\nSW1 uplink → R1: same stream, IPv4 DSCP 0"
+      },
+      {
+        "title": "SW1 configuration excerpt",
+        "text": "mls qos\ninterface FastEthernet0/1\n switchport mode access\n! No explicit QoS trust or marking policy on this port."
+      },
+      {
+        "title": "R1 class definition",
+        "text": "class-map match-all VOICE\n match dscp ef"
+      }
+    ],
+    "question": "Which change addresses the demonstrated marking fault?",
+    "options": [
+      "Increase the downstream priority allowance without changing classification.",
+      "Preserve received DSCP on the approved phone’s specific ingress port.",
+      "Trust received CoS with the unchanged legacy default mapping instead.",
+      "Mark every packet on the shared uplink EF before it reaches R1."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The same stream changes from EF to 0 at SW1, consistent with untrusted classification on this stated legacy platform. Preserve IP DSCP on the approved ingress port. A larger priority allowance cannot make DSCP 0 match EF; trusting a different field is not equivalent, and marking the shared uplink would grant preferred treatment to unrelated traffic.",
+    "fix": "On this isolated, approved legacy port only:\n\n```ios SW1\nSW1# configure terminal\nSW1(config)# interface fastethernet0/1\nSW1(config-if)# mls qos trust dscp\nSW1(config-if)# end\nSW1# show mls qos interface fastethernet0/1\n```\nRepeat matched packet observations across the switch and inspect the downstream EF counter during the test. Then assess voice delay/loss under real load; preserving the mark alone does not prove end-to-end quality. Different switch families use different trust mechanisms."
+  },
+  {
+    "id": "qos-t02",
+    "title": "Short bursts are dropped on a lightly used handoff",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "scenario": "A branch has a 1 Gb/s physical handoff and a 20 Mb/s provider service. An engineer placed a local outbound policer on all traffic. Average demand is 14 Mb/s, but measured short bursts exceed the configured token allowance. The local policer's drop counter grows during those bursts. The requirement is to smooth bursts before the provider while allowing short waits for file traffic.",
+    "exhibits": [
+      {
+        "title": "Local policy excerpt",
+        "text": "policy-map WAN-OUT\n class class-default\n  police 20000000 conform-action transmit exceed-action drop"
+      },
+      {
+        "title": "Two observations of the same local counter",
+        "text": "10:00:00 — exceeded packets dropped: 200\n10:01:00 — exceeded packets dropped: 920\nPhysical interface speed: 1000 Mb/s"
+      }
+    ],
+    "question": "Which treatment best addresses the stated burst-smoothing requirement?",
+    "options": [
+      "Enlarge the normal output queue while retaining the same drop policer.",
+      "Raise the policer above the provider allowance without regulating departures.",
+      "Use an outbound shaper compatible with the provider’s rate and burst allowance.",
+      "Reserve a larger minimum share while retaining the same class-wide policer."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The 720 additional drops belong to the local policer. Shaping can hold a short burst for later transmission; a larger queue elsewhere or a minimum share does not change the policer’s drop action. Raising the rate above the contract can move loss downstream instead of satisfying the service allowance.",
+    "fix": "Plan an outbound shaper compatible with the provider's rate, burst and overhead accounting, with suitable class scheduling for voice and data. On a supporting IOS lab image the shaping action is `shape average 20000000`, normally under a policy's class. Do not attach an incomplete hierarchy copied from another platform. Verify the full policy, counters, queue depth and downstream loss in a controlled test. Sustained demand above 20 Mb/s still requires application backoff, less demand or more service capacity; an unlimited buffer is not a solution."
+  }
+]

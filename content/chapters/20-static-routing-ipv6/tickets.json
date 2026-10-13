@@ -1,0 +1,74 @@
+[
+  {
+    "id": "static-routing-ipv6-t01",
+    "title": "The selected backup has the wrong link-local neighbor",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "scenario": "R1's directly cabled primary failed and its distance-5 backup was selected. Both backup ports remain up. R2's onward LAN and its return route to R1's LAN work. Repeated endpoint pings fail. No ND proxy is configured. Excerpts are representative.",
+    "exhibits": [
+      {
+        "title": "R1 route and neighbor observation",
+        "text": "S 2001:DB8:20::/64 [5/0]\n via FE80::2, GigabitEthernet0/1\nRepeated resolution for FE80::2 on Gi0/1 does not complete."
+      },
+      {
+        "title": "R2 actual interface addresses",
+        "text": "Gi0/0 primary: FE80::2; link down\nGi0/1 backup: FE80::3; up/up\nGi0/2 LAN: 2001:DB8:20::1/64; up/up"
+      },
+      {
+        "title": "R1 configured backup",
+        "text": "ipv6 route 2001:db8:20::/64 GigabitEthernet0/1 FE80::2 5"
+      }
+    ],
+    "question": "Which targeted repair matches the evidence?",
+    "options": [
+      "Change the backup next hop to FE80::3 while retaining Gi0/1 and distance 5.",
+      "Lower the existing backup distance to 1 while retaining its current neighbor.",
+      "Use FE80::2 without an interface so IOS can choose a reachable link.",
+      "Change the exit interface to Gi0/0 while leaving that failed link down."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The live backup peer is FE80::3 on Gi0/1. Lowering distance cannot resolve the wrong neighbor, omitting scope is invalid for a link-local next hop, and selecting the still-down primary interface abandons the working backup link.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::2 5\nR1(config)# ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::3 5\nR1(config)# end\nR1# show ipv6 route static\nR1# show ipv6 neighbors\n```\nKeep the primary down long enough to test the repaired backup with endpoint pings. The route should identify FE80::3 on Gi0/1 and neighbor resolution should work. Restore the primary separately, verify preferred-route recovery, then save."
+  },
+  {
+    "id": "static-routing-ipv6-t03",
+    "title": "A transit-sourced test succeeds but the client cannot get a reply",
+    "objectives": [
+      "v1:3.3",
+      "v1:3.3.b",
+      "v2:3.2",
+      "v2:3.2.b"
+    ],
+    "scenario": "R1 and R2 connect over Gi0/0 on 2001:db8:12::/64. R1 uses ::1 and FE80::1; R2 uses ::2 and FE80::2. R1 LAN is 2001:db8:10::/64; R2 LAN is 2001:db8:20::/64. Both PCs have the correct /64 and their own router as gateway. IPv6 forwarding is enabled on both routers; there are no filters. Compare these authored observations before changing the configuration.",
+    "exhibits": [
+      {
+        "title": "R1 installed remote route",
+        "text": "S 2001:DB8:20::/64 [1/0]\n  via FE80::2, GigabitEthernet0/0"
+      },
+      {
+        "title": "R2 complete nonlocal route coverage",
+        "text": "Connected: 2001:DB8:12::/64, 2001:DB8:20::/64\nLocal /128s for R2 own addresses only.\nNo static, learned, or default route covers 2001:DB8:10::/64."
+      },
+      {
+        "title": "Source-dependent test observations",
+        "text": "R1 probe to 2001:db8:20::12 with verified source 2001:db8:12::1: succeeds.\nPC-A 2001:db8:10::11 to 2001:db8:20::12: fails.\nBoth PCs can reach their own local gateway."
+      }
+    ],
+    "question": "Which minimal change fixes the demonstrated missing route?",
+    "options": [
+      "Add a second R1 route to LAN 20 through the same next hop.",
+      "Change PC-A gateway to R2 remote LAN address.",
+      "Replace both /64 LAN masks with a common /48.",
+      "Add R2 route to 2001:db8:10::/64 through Gi0/0 FE80::1."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "R2 can return to the R1 transit source using its connected /64, but it cannot return to PC-A LAN. The missing reverse route is on R2. Duplicating R1 outbound route does not supply it; a remote host gateway is not on-link; overlapping /48 LANs abandon the stated plan.",
+    "fix": "On R2, confirm the missing prefix before adding the scoped return route.\n```ios R2\nR2# show ipv6 route\nR2# configure terminal\nR2(config)# ipv6 route 2001:db8:10::/64 gigabitethernet0/0 fe80::1\nR2(config)# end\nR2# show ipv6 route static\nR2# show ipv6 neighbors\n```\nRetest PC-A to PC-B and PC-B to PC-A, retaining each source address in the notes. A successful endpoint test verifies more of this path than the earlier transit-sourced router test. Save R2 only after the intended route and both endpoint results are confirmed."
+  }
+]

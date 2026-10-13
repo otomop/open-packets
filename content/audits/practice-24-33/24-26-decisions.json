@@ -1,0 +1,1360 @@
+[
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q01",
+    "action": "revise",
+    "reason": "Replace unrelated DNS distractor with mistaken interpretations of link-local and diagnostic certainty."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q02",
+    "action": "revise",
+    "reason": "Use plausible initial-versus-renewal source and destination alternatives."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q03",
+    "action": "keep",
+    "reason": "Retain In the initial Discover–Offer–Request–ACK exchange, which two messages are sent by the client? Select two."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q04",
+    "action": "revise",
+    "reason": "Apply relay placement to the explicitly named client and server interfaces."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q05",
+    "action": "revise",
+    "reason": "Keep the direct misplaced-helper repair while testing plausible pool, option and target confusions."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q06",
+    "action": "revise",
+    "reason": "Compare subnet matching with server-interface, capacity and direct-client misconceptions."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q08",
+    "action": "retire",
+    "reason": "Retire bracketed route-distance reading: it repeats routing-table interpretation and does not assess a distinct DHCP service decision."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q09",
+    "action": "revise",
+    "reason": "Retain A client has a 12-hour lease. The server supplies no alternate renewal or rebinding timers. What does the standard default T1 behavior call for? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q10",
+    "action": "revise",
+    "reason": "Replace implausible protocol distractors with inclusive-range and active-allocation errors."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q11",
+    "action": "revise",
+    "reason": "Treat the explicitly sent Offer and absent client receipt as direct return-delivery-stage application; contradicted alternatives do not make it advanced analysis."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q12",
+    "action": "revise",
+    "reason": "Use actual configuration operations with distinct service scopes."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q13",
+    "action": "revise",
+    "reason": "Make conflict responses credible but distinguish investigation from disruptive or ineffective resets."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q14",
+    "action": "revise",
+    "reason": "Use genuine pool-selection confusions rather than arbitrary pool-name and protocol limitations."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q15",
+    "action": "revise",
+    "reason": "Retain A client moves to another subnet and requests reuse of its previous address. A DHCP server determines from authoritative subnet information that the requested address is invalid on the new subnet. Which response tells the client to abandon that configuration? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q16",
+    "action": "revise",
+    "reason": "Keep DNS-option repair and refresh as one direct application; alternatives distinguish server, client and cache scope."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q17",
+    "action": "revise",
+    "reason": "Replace unrelated multicast/TCP alternatives with the actual DHCP reply-delivery branches."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q21",
+    "action": "add",
+    "reason": "Add distinct practice: A client receives a DHCPOFFER during initial allocation. What has that message established?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q22",
+    "action": "add",
+    "reason": "Add distinct practice: A leased IPv4 address reaches its expiry time without a successful renewal or rebinding. What must the client do?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q23",
+    "action": "add",
+    "reason": "Add distinct practice: The only intended dynamic candidates are 10.8.0.10–10.8.0.29 in 10.8.0.0/27. Which pair of inclusive exclusions produces that range?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q24",
+    "action": "add",
+    "reason": "Add distinct practice: A client has passed T2 without receiving renewal replies, but its lease has not expired. Which DHCP behavior matches this rebinding stage?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q25",
+    "action": "add",
+    "reason": "Add distinct practice: An IOS server excludes 10.8.0.20 from a dynamic pool. A printer is intended to always use .20. What does the exclusion accomplish by itself?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q26",
+    "action": "add",
+    "reason": "Add distinct practice: A server table lists an active binding for the test client's identifier. Which additional check best establishes that the client actually received and is using the intended configuration?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q30",
+    "action": "add",
+    "reason": "Add distinct practice: A new client receives 10.50.0.60/24, gateway 10.50.0.99 and the intended DNS resolver. The approved gateway is 10.50.0.1; .99 is unused. Local-subnet tests work but routed services fail. What is the narrow repair?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q27",
+    "action": "add",
+    "reason": "Add distinct practice: Which missing dependency explains the fresh client's failure after the server prepares an Offer?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q28",
+    "action": "add",
+    "reason": "Add distinct practice: The new guest VLAN must receive leases while the existing users continue working. Which two changes address the missing dependencies? Select two."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "questions",
+    "id": "dhcp-q29",
+    "action": "add",
+    "reason": "Add distinct practice: Which next test best separates a current DHCP allocation failure from continued use of earlier configuration?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c01",
+    "action": "keep",
+    "reason": "Retain What is the purpose of each message in initial DORA?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c02",
+    "action": "keep",
+    "reason": "Retain What IP addresses do an initial Discover and a selecting client’s Request normally use?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c03",
+    "action": "keep",
+    "reason": "Retain Which UDP ports belong to DHCPv4 clients and servers?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c04",
+    "action": "keep",
+    "reason": "Retain Why is the selecting DHCPREQUEST broadcast?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c05",
+    "action": "revise",
+    "reason": "Narrow the card to the related renewal/rebinding comparison; expiry gets its own retrieval cue."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c06",
+    "action": "retire",
+    "reason": "Retire platform-default lease-duration recall; explicit lease interpretation and renewal states are the useful outcomes."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c07",
+    "action": "keep",
+    "reason": "Retain What does a Windows 169.254/16 address tell you after an attempted DHCP setup?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c08",
+    "action": "keep",
+    "reason": "Retain How do you exclude 10.10.10.1 through 10.10.10.49 on IOS?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c09",
+    "action": "revise",
+    "reason": "Replace a three-command list with the two easily confused client option roles."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c10",
+    "action": "keep",
+    "reason": "Retain How do you make an IOS routed Ethernet interface a DHCPv4 client?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c11",
+    "action": "keep",
+    "reason": "Retain Where is ip helper-address placed for ordinary DHCP relay?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c12",
+    "action": "keep",
+    "reason": "Retain What does nonzero giaddr do in an ordinary relayed DHCP request?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c15",
+    "action": "keep",
+    "reason": "Retain What does no service dhcp disable on the documented IOS implementation?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c16",
+    "action": "revise",
+    "reason": "Narrow a command catalog to interpreting the main allocation evidence."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c17",
+    "action": "keep",
+    "reason": "Retain How do you verify which interface carries a helper?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c18",
+    "action": "keep",
+    "reason": "Retain What should happen before clearing a DHCP conflict entry?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c19",
+    "action": "keep",
+    "reason": "Retain Do increasing Discover counters with no successful allocation identify one exact DHCP fault?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c20",
+    "action": "revise",
+    "reason": "Keep the meaningful server/client rejection comparison and remove the four-message catalog."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c21",
+    "action": "keep",
+    "reason": "Retain Are initial DHCP Offers and ACKs always broadcasts?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c22",
+    "action": "revise",
+    "reason": "Remove advanced trust-setting recall already owned by DHCP snooping; retain the field distinction."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c23",
+    "action": "add",
+    "reason": "Add one retrieval outcome: What must a client do when its DHCP lease expires?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c24",
+    "action": "add",
+    "reason": "Add one retrieval outcome: Does an old client's working connection prove new DHCP allocation works?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c25",
+    "action": "add",
+    "reason": "Add one retrieval outcome: Does a DHCP exclusion assign an address to a particular device?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "cards",
+    "id": "dhcp-c26",
+    "action": "add",
+    "reason": "Add one retrieval outcome: Does editing a pool option instantly change existing clients?"
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d01",
+    "action": "keep",
+    "reason": "Retain Exclude 10.10.10.1 through 10.10.10.49 from dynamic allocation."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d02",
+    "action": "keep",
+    "reason": "Retain Create or enter the DHCP pool named USERS."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d03",
+    "action": "keep",
+    "reason": "Retain Set the USERS pool network to 10.10.10.0/24, using dotted-decimal mask syntax."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d04",
+    "action": "keep",
+    "reason": "Retain Supply 10.10.10.1 as the clients’ default gateway."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d05",
+    "action": "keep",
+    "reason": "Retain Supply 10.10.20.53 as the resolver for this pool."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d06",
+    "action": "keep",
+    "reason": "Retain Set a lease of zero days, eight hours, zero minutes."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d07",
+    "action": "keep",
+    "reason": "Retain Relay DHCP for clients arriving on this client-facing interface to 10.10.20.2."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d08",
+    "action": "keep",
+    "reason": "Retain Make this routed Ethernet interface obtain its IPv4 configuration with DHCP."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d09",
+    "action": "keep",
+    "reason": "Retain Display the server’s current DHCP address bindings."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d10",
+    "action": "keep",
+    "reason": "Retain Display DHCP pools and their address usage."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d11",
+    "action": "keep",
+    "reason": "Retain Display addresses withheld because of detected DHCP conflicts."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d12",
+    "action": "retire",
+    "reason": "Retire debug syntax as required recall; the lab can collect controlled evidence with non-debug verification."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "commands",
+    "id": "dhcp-d13",
+    "action": "add",
+    "reason": "Add the non-debug message-statistics command used to compare acquisition stages."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "tickets",
+    "id": "dhcp-t01",
+    "action": "revise",
+    "reason": "Retain the evidenced helper incident and replace non-diagnostic statements with real competing DHCP faults."
+  },
+  {
+    "chapterId": "dhcp",
+    "bank": "tickets",
+    "id": "dhcp-t02",
+    "action": "revise",
+    "reason": "Require the learner to infer exhaustion from ranges/bindings instead of reading the diagnosis verbatim; keep narrow capacity repair."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q01",
+    "action": "revise",
+    "reason": "Scope this NXDOMAIN case to an explicitly absent CNAME chain, so the queried-name conclusion is unambiguous; preserve the resolution-versus-service outcome."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q02",
+    "action": "revise",
+    "reason": "Use credible confusions among authority, root, DHCP-provided resolver and stub roles."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q03",
+    "action": "keep",
+    "reason": "Retain Which two statements describe ordinary CNAME records correctly? Select two."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q04",
+    "action": "revise",
+    "reason": "Retain The intended mail server is running at 10.1.1.25, and direct service testing to that address succeeds. Which record repair addresses the demonstrated failure? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q05",
+    "action": "revise",
+    "reason": "Retain Which IOS global command tells the router to query the DNS resolver at 10.1.1.53 for its own name lookups? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q06",
+    "action": "revise",
+    "reason": "Replace remote-record deletion and DHCP distractors with distinct router-local scopes."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q07",
+    "action": "revise",
+    "reason": "Classify direct transport-fact retrieval honestly; retain TCP and UDP distinctions."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q08",
+    "action": "revise",
+    "reason": "Use relevant record alternatives for the requested address family."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q09",
+    "action": "revise",
+    "reason": "Apply IPv4 reverse-label construction rather than call the transformed example pure recall."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q10",
+    "action": "revise",
+    "reason": "Use plausible preference-order mistakes instead of invalid-record and arbitrary-IP distractors."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q11",
+    "action": "revise",
+    "reason": "Keep the static-versus-fresh lookup distinction with realistic IOS name-service alternatives."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q12",
+    "action": "revise",
+    "reason": "Retain A resolver cached an A record with TTL 86,400 seconds exactly one hour ago. It has not refreshed that entry and uses the normal TTL countdown. The authority changes the address now. For how much longer can this existing cached copy remain valid? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q13",
+    "action": "revise",
+    "reason": "Make the approved .80 inventory explicit; distinguish correction of the conflicting local hosts entry from changes to correct resolver data."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q14",
+    "action": "revise",
+    "reason": "Contrast the four taught response classes without unsupported cable certainty."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q15",
+    "action": "revise",
+    "reason": "Use nearby DNS response misunderstandings, not unrelated DHCP terminology."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q16",
+    "action": "revise",
+    "reason": "Require a delegation-scope repair and distinguish cache clearing from fixing authority data."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q21",
+    "action": "add",
+    "reason": "Add distinct practice: A conventional DNS A record contains which kind of data?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q25",
+    "action": "add",
+    "reason": "Add distinct practice: How does an NS record differ from a client's DNS resolver setting?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q22",
+    "action": "add",
+    "reason": "Add distinct practice: The approved forward name is app.lab.example at 10.1.1.80. Forward A lookup works, but the reverse query returns no PTR data. What data must be added to support that requested reverse lookup?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q24",
+    "action": "add",
+    "reason": "Add distinct practice: An address lookup follows these supplied records. Which defect prevents this alias chain from reaching an address?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q27",
+    "action": "add",
+    "reason": "Add distinct practice: An explicit A query returns the approved server address. A controlled HTTP request to that address fails too. What is the next justified focus?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q29",
+    "action": "add",
+    "reason": "Add distinct practice: A DNS UDP reply sets TC=1. The resolver retries the same query over TCP, but its SYN attempts receive no replies. Which additional path needs investigation?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q23",
+    "action": "add",
+    "reason": "Add distinct practice: Which DNS repair preserves both the new service and the still-required old service?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q26",
+    "action": "add",
+    "reason": "Add distinct practice: Which explanation fits the difference, and what should be checked before editing records?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q28",
+    "action": "add",
+    "reason": "Add direct application of a still-valid recursive cache after an approved authoritative change; classify the supplied known cache state as level 2."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "questions",
+    "id": "dns-q30",
+    "action": "add",
+    "reason": "Add distinct practice: Which two checks distinguish the remaining plausible causes without changing already verified public data? Select two."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c01",
+    "action": "keep",
+    "reason": "Retain Which ports does conventional DNS use?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c02",
+    "action": "retire",
+    "reason": "Retire the 512-byte/EDNS limit as a separate recall card; TCP retry remains practiced without making historical message sizing a memorization target."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c03",
+    "action": "keep",
+    "reason": "Retain How do stub resolver, recursive resolver, and authoritative server roles differ?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c04",
+    "action": "keep",
+    "reason": "Retain How can a resolver follow the DNS hierarchy with no relevant cache and no forwarding service?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c06",
+    "action": "keep",
+    "reason": "Retain How does a recursive query differ from an iterative query?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c07",
+    "action": "keep",
+    "reason": "Retain How do A and AAAA records differ?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c08",
+    "action": "revise",
+    "reason": "Narrow the alias card to the chain-completion skill."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c09",
+    "action": "revise",
+    "reason": "Narrow MX retrieval to its related fields and preference meaning."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c10",
+    "action": "keep",
+    "reason": "Retain What does an NS record identify, and what does it not configure?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c11",
+    "action": "revise",
+    "reason": "Remove unrelated IPv6 reverse-construction detail from the IPv4 cue."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c13",
+    "action": "keep",
+    "reason": "Retain What does a DNS record’s TTL control?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c14",
+    "action": "revise",
+    "reason": "Split the four-status catalog and correctly allow NXDOMAIN to refer to the final CNAME target; distinguish completed NODATA at the resolved name."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c15",
+    "action": "keep",
+    "reason": "Retain Does Non-authoritative answer in nslookup mean the returned address is wrong?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c16",
+    "action": "keep",
+    "reason": "Retain Which IOS command configures the resolver for the router’s own lookups?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c17",
+    "action": "revise",
+    "reason": "Prioritize the command's operating scope rather than default-state trivia."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c18",
+    "action": "revise",
+    "reason": "Narrow a three-operation catalog to the cache-versus-configuration distinction."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c19",
+    "action": "retire",
+    "reason": "Retire combined IOS domain-list precedence and local-cache catalog; the documented reference remains in the lesson, while the lab uses one explicit suffix."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c20",
+    "action": "keep",
+    "reason": "Retain Why can an application or ping disagree with an explicit nslookup query?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c21",
+    "action": "revise",
+    "reason": "Keep one useful cross-service dependency without rerequiring the option-number catalog."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c22",
+    "action": "keep",
+    "reason": "Retain How can you query the MX for lab.example specifically from 10.1.1.53?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c24",
+    "action": "add",
+    "reason": "Add one retrieval outcome: What must an MX exchanger hostname provide?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c25",
+    "action": "add",
+    "reason": "Add one retrieval outcome: Does a correct A answer prove a matching PTR exists?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c23",
+    "action": "add",
+    "reason": "Add one retrieval outcome: How do SERVFAIL and a DNS query timeout differ?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c26",
+    "action": "add",
+    "reason": "Add one retrieval outcome: What does TC in a DNS UDP reply tell you?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "cards",
+    "id": "dns-c27",
+    "action": "add",
+    "reason": "Add one retrieval outcome: What should identify every DNS test in your evidence?"
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d01",
+    "action": "keep",
+    "reason": "Retain Configure 10.1.1.53 as the resolver for this router’s own DNS lookups."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d02",
+    "action": "retire",
+    "reason": "Retire a second-resolver variant of the same ip name-server syntax; one configuration drill plus explicit-query evidence is sufficient."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d03",
+    "action": "keep",
+    "reason": "Retain With no domain search list configured, set lab.example as the default suffix for unqualified names."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d04",
+    "action": "keep",
+    "reason": "Retain Disable the router’s DNS client lookup function."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d05",
+    "action": "keep",
+    "reason": "Retain Enable the router’s DNS client lookup function."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d06",
+    "action": "keep",
+    "reason": "Retain Create a static local mapping from web to 10.1.1.80."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d07",
+    "action": "retire",
+    "reason": "Retire optional IOS search-list configuration recall; general DNS diagnosis does not require this extra suffix mechanism."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d08",
+    "action": "keep",
+    "reason": "Retain Display the router’s name-service settings and host table."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d09",
+    "action": "revise",
+    "reason": "Replace blanket cache clearing with the same-topic targeted operation used in the lab."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d10",
+    "action": "keep",
+    "reason": "Retain Resolve app.lab.example as part of an ICMP reachability test from the router."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d11",
+    "action": "add",
+    "reason": "Add an explicit name/server diagnostic query, with honest simulator fallback."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d12",
+    "action": "add",
+    "reason": "Add an explicit MX record diagnostic query, with honest simulator fallback."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "commands",
+    "id": "dns-d13",
+    "action": "add",
+    "reason": "Add an explicit PTR reverse-record diagnostic query, with honest simulator fallback."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "tickets",
+    "id": "dns-t01",
+    "action": "revise",
+    "reason": "Retain mail-chain diagnosis with plausible preference/cache repairs that fail to supply the missing target."
+  },
+  {
+    "chapterId": "dns",
+    "bank": "tickets",
+    "id": "dns-t02",
+    "action": "revise",
+    "reason": "Use distinct router setting, local override and path alternatives, all resolved by the supplied evidence."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q01",
+    "action": "revise",
+    "reason": "Read the explicitly labeled inside-global field without calling field recognition analysis."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q02",
+    "action": "revise",
+    "reason": "Apply address viewpoint despite both local and global values being private space."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q03",
+    "action": "revise",
+    "reason": "Correct explicitly reversed interface roles as direct configuration application."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q04",
+    "action": "revise",
+    "reason": "Retrieve the component roles of the taught pool configuration."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q05",
+    "action": "revise",
+    "reason": "Replace refcount and timeout trivia with capacity, selector and address-range interpretations."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q06",
+    "action": "retire",
+    "reason": "Retire seconds-to-hours arithmetic around a platform-scoped NAT timeout; it adds no NAT configuration or diagnostic decision."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q07",
+    "action": "revise",
+    "reason": "Retain The configured rule is interface overload, and the excerpt shows three active translation records. Which statement accurately reads the displayed addresses and ports? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q08",
+    "action": "keep",
+    "reason": "Retain An office will share the address already assigned to outside interface GigabitEthernet0/0/1. ACL 1 selects its LAN; no pool is configured. Which command selects that interface address for PAT?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q09",
+    "action": "revise",
+    "reason": "Apply the stated outbound/no-reply evidence to possible return-path causes; contradicting distractors make this direct application, not advanced analysis."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q10",
+    "action": "revise",
+    "reason": "Retain ACL 1 contains permit 10.20.30.0 0.0.0.255 and is used only by the sole NAT rule. Host 10.20.40.7 arrives on an inside interface. A valid outside route exists and no other feature drops or translates the packet. What happens? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q11",
+    "action": "keep",
+    "reason": "Retain PC-B sends TCP from port 51000 to server port 80. The configured PAT mapping preserves source port 51000 for this test. Which source and destination are carried on the EDGE–ISP link?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q12",
+    "action": "revise",
+    "reason": "Retain In an isolated IOS lab with dynamic PAT state and a configured static NAT mapping, what is the intended effect of clear ip nat translation *? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q13",
+    "action": "revise",
+    "reason": "Recognize the ICMP query identifier's PAT role as a protocol fact."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q14",
+    "action": "revise",
+    "reason": "The missing Inside interfaces field directly identifies the missing role; do not label it advanced diagnosis."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q15",
+    "action": "revise",
+    "reason": "Shorten the correct option and distinguish return-tuple selection from guessed host selection."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q16",
+    "action": "revise",
+    "reason": "Retain Which route on ISP provides the missing return path for both pool addresses? Adjust answer position with feedback attached to its option."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q21",
+    "action": "add",
+    "reason": "Add distinct practice: Which property distinguishes ordinary dynamic NAT without overload from PAT?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q23",
+    "action": "add",
+    "reason": "Add distinct practice: A static NAT mapping exists for an inside server. Which additional requirement is separate from that translation?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q22",
+    "action": "add",
+    "reason": "Add distinct practice: A reply arrives from 203.0.113.10 to global address 198.51.100.17. Which address pair leaves EDGE toward the inside host under the shown static mapping?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q24",
+    "action": "add",
+    "reason": "Add distinct practice: Five inside hosts require simultaneous one-to-one dynamic mappings with no overload. Pool P contains 198.51.100.20 through 198.51.100.23. No other mappings or conflicts exist. What is its capacity shortfall?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q29",
+    "action": "add",
+    "reason": "Add distinct practice: An idle dynamic translation disappears from the table, but the configured rule and routes are unchanged. What should a new eligible client request normally do?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q25",
+    "action": "add",
+    "reason": "Add distinct practice: Which two observations would strengthen verification beyond the new translation row? Select two."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q26",
+    "action": "add",
+    "reason": "Add direct repair of an explicitly unmatched new client subnet while preserving the working source permit; level 2 matches the comparable source-authorization task."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q27",
+    "action": "add",
+    "reason": "Add the stale /32 return-route case and classify selecting from the complete supplied routes as direct longest-prefix application."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "questions",
+    "id": "nat-pat-q28",
+    "action": "add",
+    "reason": "Add distinct practice: Which change meets the stated service requirement while preserving the existing client rule?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c01",
+    "action": "keep",
+    "reason": "Retain Inside local address?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c02",
+    "action": "keep",
+    "reason": "Retain Inside global address?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c03",
+    "action": "keep",
+    "reason": "Retain Outside global vs outside local?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c04",
+    "action": "retire",
+    "reason": "Retire repeated RFC1918 range recall; address classification is established before NAT and global/local viewpoint is separately assessed."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c05",
+    "action": "keep",
+    "reason": "Retain Command for static NAT (and the order of the addresses)?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c06",
+    "action": "keep",
+    "reason": "Retain Command to define a NAT pool?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c07",
+    "action": "keep",
+    "reason": "Retain Command that ties an ACL to a pool for dynamic NAT?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c08",
+    "action": "keep",
+    "reason": "Retain Command for PAT using the outside interface's address?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c09",
+    "action": "keep",
+    "reason": "Retain Command for PAT sharing a pool's addresses?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c10",
+    "action": "keep",
+    "reason": "Retain Which interface roles does classic inside/outside NAT use?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c11",
+    "action": "retire",
+    "reason": "Retire literal general timeout recall; interpreting actual state lifetime remains taught."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c12",
+    "action": "retire",
+    "reason": "Retire the platform-specific timeout catalog; it is reference material, not a required recall set."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c13",
+    "action": "keep",
+    "reason": "Retain What does `clear ip nat translation *` remove?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c14",
+    "action": "revise",
+    "reason": "Remove debug from the required command-retrieval card while keeping complementary verification."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c15",
+    "action": "revise",
+    "reason": "Prioritize interpretation of an address-only row rather than memorizing display-column order."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c16",
+    "action": "keep",
+    "reason": "Retain What does a `deny` in a NAT selection ACL do to a packet?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c17",
+    "action": "keep",
+    "reason": "Retain Hits vs Misses in `show ip nat statistics`?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c18",
+    "action": "keep",
+    "reason": "Retain NAT order of operations, inside→outside and outside→inside?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c19",
+    "action": "keep",
+    "reason": "Retain How does PAT separate two hosts' ICMP echo flows?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c20",
+    "action": "keep",
+    "reason": "Retain Command to forward only TCP port 80 on 198.51.100.17 to inside server 10.20.30.50?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c21",
+    "action": "add",
+    "reason": "Add one retrieval outcome: What limits an ordinary dynamic pool without overload?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c22",
+    "action": "add",
+    "reason": "Add one retrieval outcome: Does configuring a NAT pool install its upstream return route?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c23",
+    "action": "add",
+    "reason": "Add one retrieval outcome: Does a translation row prove the application succeeded?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "cards",
+    "id": "nat-pat-c24",
+    "action": "add",
+    "reason": "Add one retrieval outcome: Does PAT identify every connection using the port number alone?"
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d01",
+    "action": "keep",
+    "reason": "Retain Mark this LAN-facing interface as the NAT inside interface."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d02",
+    "action": "keep",
+    "reason": "Retain Mark this WAN-facing interface as the NAT outside interface."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d03",
+    "action": "keep",
+    "reason": "Retain Create a static one-to-one mapping so inside host 10.20.30.10 is always seen as 198.51.100.17."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d04",
+    "action": "keep",
+    "reason": "Retain Create standard access list 1 that selects the whole 10.20.30.0/24 subnet for translation."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d05",
+    "action": "keep",
+    "reason": "Retain Define a NAT pool named PUBPOOL holding 198.51.100.20 through 198.51.100.21 in a /28 block."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d06",
+    "action": "keep",
+    "reason": "Retain Configure dynamic NAT (no overload) that translates sources matched by access list 1 using pool PUBPOOL."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d07",
+    "action": "keep",
+    "reason": "Retain Configure PAT so every host matched by access list 1 shares the address of the outside interface GigabitEthernet0/0/1."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d08",
+    "action": "keep",
+    "reason": "Retain Configure PAT so hosts matched by access list 1 share the addresses in pool PUBPOOL."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d09",
+    "action": "keep",
+    "reason": "Retain Display the NAT translation table."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d10",
+    "action": "keep",
+    "reason": "Retain Display the NAT interfaces, hit/miss counters and pool allocation."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d11",
+    "action": "keep",
+    "reason": "Retain In an isolated lab with stopped test traffic, clear all dynamic NAT translation state."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "commands",
+    "id": "nat-pat-d12",
+    "action": "keep",
+    "reason": "Retain Forward only TCP port 80 of public address 198.51.100.17 to inside web server 10.20.30.50 port 80 (static PAT)."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "tickets",
+    "id": "nat-pat-t01",
+    "action": "revise",
+    "reason": "Use actual role, selector, interface-address and forwarding alternatives that the supplied records distinguish. Use a neutral symptom title so it does not disclose the diagnosis before the exhibits."
+  },
+  {
+    "chapterId": "nat-pat",
+    "bank": "tickets",
+    "id": "nat-pat-t02",
+    "action": "revise",
+    "reason": "Replace port-range and pool-sharing trivia with real route, selector and outside-address interpretations. Use a neutral symptom title so it does not disclose the diagnosis before the exhibits."
+  }
+]

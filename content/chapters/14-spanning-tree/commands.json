@@ -1,0 +1,226 @@
+[
+  {
+    "id": "spanning-tree-d05",
+    "task": "Determine VLAN 10’s root and this switch’s interface roles and states. Display the spanning-tree view for that VLAN.",
+    "mode": "SW1#",
+    "answer": "show spanning-tree vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "Choose the instance whose traffic you are investigating.",
+      "takeaway": "Compare Root ID with Bridge ID, then read root cost and roles/states together. A healthy alternate port can be discarding; that is not an administrative shutdown.",
+      "syntax": [
+        {
+          "text": "show spanning-tree vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "spanning-tree-d07",
+    "task": "Before calculating a topology, display the switch’s spanning-tree mode and global feature defaults.",
+    "mode": "SW1#",
+    "answer": "show spanning-tree summary",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-rapid-pvst",
+      "hint": "Use the spanning-tree summary rather than an individual VLAN’s port table.",
+      "takeaway": "Confirm the actual operating mode. Do not infer it from the switch model or assume a configured edge default proves every interface is operationally an edge.",
+      "syntax": [
+        {
+          "text": "show spanning-tree summary",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "spanning-tree-d01",
+    "task": "The design requires Rapid PVST+ on this switch. Select that spanning-tree mode.",
+    "mode": "SW1(config)#",
+    "answer": "spanning-tree mode rapid-pvst",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-rapid-pvst",
+      "hint": "Choose the rapid per-VLAN implementation.",
+      "takeaway": "Verify the operational mode afterward. Rapid PVST+ maintains a separate rapid spanning-tree instance for each VLAN; enabling it does not by itself select your intended root.",
+      "syntax": [
+        {
+          "text": "spanning-tree mode rapid-pvst",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "spanning-tree-d02",
+    "task": "The lab design selects SW2 as VLAN 10’s preferred root. Apply the root-primary macro for that VLAN.",
+    "mode": "SW2(config)#",
+    "answer": "spanning-tree vlan 10 root primary",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bridge-ids-and-the-root-election",
+      "hint": "Choose the per-VLAN root preference, not an interface role.",
+      "takeaway": "The macro sets a bridge priority based on the current root. It does not reserve the role permanently; verify the resulting Root ID and local priority.",
+      "syntax": [
+        {
+          "text": "spanning-tree vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        },
+        {
+          "text": "root primary",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "spanning-tree-d03",
+    "task": "VLAN 10’s primary uses priority 24576 and other switches use 32768. Apply the root-secondary macro on SW3 for the intended backup preference.",
+    "mode": "SW3(config)#",
+    "answer": "spanning-tree vlan 10 root secondary",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bridge-ids-and-the-root-election",
+      "hint": "Choose the secondary root macro for the same VLAN.",
+      "takeaway": "The macro sets priority 28672. That is the desired order under these priorities, not a guarantee of second place against every future switch.",
+      "syntax": [
+        {
+          "text": "spanning-tree vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        },
+        {
+          "text": "root secondary",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "spanning-tree-d04",
+    "task": "Set SW1’s configurable bridge priority for VLAN 20 to the lowest legal value above zero.",
+    "mode": "SW1(config)#",
+    "answer": "spanning-tree vlan 20 priority 4096",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bridge-ids-and-the-root-election",
+      "hint": "Configurable bridge priority changes in blocks of 4096.",
+      "takeaway": "Use 4096, not the displayed priority including the VLAN ID. Within one VLAN, priority is compared before the bridge MAC address.",
+      "syntax": [
+        {
+          "text": "spanning-tree vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "20",
+          "kind": "argument"
+        },
+        {
+          "text": "priority",
+          "kind": "keyword"
+        },
+        {
+          "text": "4096",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "spanning-tree-d08",
+    "task": "On the selected interface, set the local receiving path cost for VLAN 10 to 8 as specified by the topology plan.",
+    "mode": "SW1(config-if)#",
+    "answer": "spanning-tree vlan 10 cost 8",
+    "accept": [],
+    "teaching": {
+      "sectionId": "port-roles-root-designated-alternate-backup",
+      "hint": "This is a per-interface, per-VLAN cost override.",
+      "takeaway": "The value changes STP’s path comparison, not the interface’s physical speed. Recalculate the total root cost and inspect the new role before calling the path correct.",
+      "syntax": [
+        {
+          "text": "spanning-tree vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        },
+        {
+          "text": "cost",
+          "kind": "keyword"
+        },
+        {
+          "text": "8",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "spanning-tree-d10",
+    "task": "The VLAN summary does not explain Gi0/1’s BPDU activity. Display detailed spanning-tree information for that interface.",
+    "mode": "SW1#",
+    "answer": "show spanning-tree interface gigabitethernet0/1 detail",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "Narrow the STP display to the interface and request detail.",
+      "takeaway": "Inspect the role, designated information and sent/received BPDU counters in their VLAN context. Counters need a time comparison to show current activity.",
+      "syntax": [
+        {
+          "text": "show spanning-tree interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/1",
+          "kind": "interface"
+        },
+        {
+          "text": "detail",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

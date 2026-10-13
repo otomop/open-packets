@@ -1,0 +1,122 @@
+[
+  {
+    "id": "virtualization-c01",
+    "front": "What distinguishes a Type 1 hypervisor?",
+    "back": "It supplies virtualization directly over physical hardware rather than through a general-purpose host OS.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c02",
+    "front": "What distinguishes a Type 2 hypervisor?",
+    "back": "It operates through a general-purpose host operating system.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c03",
+    "front": "How do a VM and an ordinary process-isolated container differ?",
+    "back": "The VM has its own guest kernel; the container shares its host environment's kernel.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c04",
+    "front": "Container image versus running container?",
+    "back": "The image packages files/dependencies; a container is an instance with processes and a writable layer.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "virtualization-c07",
+    "front": "Why do containers often have less startup overhead than VMs?",
+    "back": "Ordinary containers start processes without booting a separate guest OS; actual timing varies.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c08",
+    "front": "What does a virtual switch connect?",
+    "back": "VM vNICs to other virtual ports and configured physical uplinks.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "virtualization-c09",
+    "front": "When does a physical host uplink need a trunk?",
+    "back": "When its design carries multiple tagged VLANs; match allowed VLANs and untagged/native handling.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "virtualization-c10",
+    "front": "Do several stable MACs on a host port prove virtualization?",
+    "back": "No. They are consistent with a virtual switch but also with other bridged arrangements.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "virtualization-c11",
+    "front": "What does a VRF separate?",
+    "back": "Layer 3 routing/forwarding contexts and their interface membership; not encryption keys.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "virtualization-c12",
+    "front": "VLAN versus VRF?",
+    "back": "VLAN: Layer 2 broadcast domain. VRF: Layer 3 routing context. An SVI can belong to a VRF.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c15",
+    "front": "What happens when an addressed IOS interface changes VRF?",
+    "back": "Its IP address is removed; configure the VRF first and then restore the intended address.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "virtualization-c16",
+    "front": "View BLUE's IPv4 routing table?",
+    "back": "show ip route vrf BLUE; plain show ip route examines the global table.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "virtualization-c20",
+    "front": "For rented IaaS VMs, who normally manages the guest operating system?",
+    "back": "The customer; the provider supplies the underlying infrastructure resources.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c21",
+    "front": "Do VMs in different VLANs communicate just because they share one host?",
+    "back": "No. They still need an appropriate Layer 3 path between their VLANs.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c22",
+    "front": "What failure remains shared by redundant VMs on one host?",
+    "back": "Loss of that host can affect both; independent guest instances do not remove the shared physical dependency.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

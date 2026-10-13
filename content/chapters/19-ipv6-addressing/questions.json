@@ -1,0 +1,783 @@
+[
+  {
+    "id": "ipv6-addressing-q17",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 1,
+    "prompt": "What does /64 describe in an IPv6 address?",
+    "options": [
+      "The first 64 bits identify the prefix.",
+      "The final 64 bits identify the prefix.",
+      "The subnet contains exactly 64 addresses.",
+      "The address contains a total of 64 bits."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A prefix length counts the retained leading bits; 128 minus that length gives the remaining bits.",
+    "whyWrong": {
+      "1": "The prefix consists of the leading bits.",
+      "2": "A prefix length is a bit count, not an address count.",
+      "3": "The complete address still contains 128 bits."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q07",
+    "type": "single",
+    "objectives": [
+      "v1:1.9.a",
+      "v2:1.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is true of fd12:3456:789a:1::a1/64?",
+    "options": [
+      "It is multicast because it begins with f.",
+      "It is a unique local address for routed private connectivity.",
+      "It is link-local and can never cross a router.",
+      "It is global unicast intended for normal public Internet allocation."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "fd falls inside the locally generated half of ULA fc00::/7. ULA can be routed within suitable private networks but is not intended for global Internet routing.",
+    "whyWrong": {
+      "0": "Multicast begins ff, not fd.",
+      "2": "Link-local belongs to fe80::/10.",
+      "3": "The fd prefix identifies locally generated ULA, not globally allocated Internet space."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:1.9.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which TWO groups identify all IPv6 nodes and all IPv6 routers, respectively, on the local link?",
+    "options": [
+      "ff02::1",
+      "ff02::2",
+      "ff05::2",
+      "ff02::1:ff00:1"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "ff02::1 is all-nodes and ff02::2 is all-routers, both with link-local multicast scope.",
+    "whyWrong": {
+      "2": "ff05::2 has site scope, not the requested link scope.",
+      "3": "This is a solicited-node group, not the all-nodes group."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.9.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "The same unicast-format service address is assigned to instances in several locations and routing sends each packet to one preferred instance. What is this?",
+    "options": [
+      "Broadcast to all locations",
+      "Multicast, requiring the address to start ff",
+      "Anycast; selection follows the routing system's preferred path",
+      "A duplicate that is forbidden even across separate routed links"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Anycast uses one shared address at multiple locations with routing choosing an instance. Its text has no unique anycast prefix.",
+    "whyWrong": {
+      "0": "IPv6 has no broadcast addressing type.",
+      "1": "Multicast is group delivery and uses multicast-format addresses; this scenario is anycast.",
+      "3": "Deliberate anycast across locations is a defined use, not an ordinary same-link unicast conflict."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q16",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v1:1.9.d",
+      "v2:1.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "The same MAC is available, but an automatically addressed host does not contain ff:fe in its identifier. Which conclusion is justified?",
+    "options": [
+      "IPv6 cannot operate without a modified EUI-64 identifier.",
+      "Another valid identifier method may be in use.",
+      "The host must have obtained its address from stateful DHCPv6.",
+      "The absence of ff:fe proves Duplicate Address Detection failed."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SLAAC can use stable opaque or other supported identifiers; not all IIDs embed the MAC. Address appearance alone does not establish a fault.",
+    "whyWrong": {
+      "0": "Modified EUI-64 is one method, not a universal requirement.",
+      "2": "SLAAC can use identifiers that do not embed the MAC, so the suffix does not establish DHCPv6 use.",
+      "3": "DAD tests local uniqueness; it does not require a particular identifier pattern."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q11",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A host obtains an address and DNS information from stateful DHCPv6. It has no manual routes. What ordinarily supplies its default router?",
+    "options": [
+      "A Router Advertisement with a usable nonzero router lifetime",
+      "The DHCPv6 address lease always includes the default-router option.",
+      "The host uses its DHCPv6-provided DNS server as the router.",
+      "The prefix L flag identifies the router by itself."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The host learns a default router from RA, independently of how DHCPv6 supplied its address and DNS.",
+    "whyWrong": {
+      "1": "Ordinary DHCPv6 address assignment does not supply the IPv6 default router; that normally comes from RA.",
+      "2": "DNS configuration identifies a name server, not the default router.",
+      "3": "L provides on-link prefix information; the RA source and router lifetime determine default-router information."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:1.9.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which TWO Neighbor Discovery statements are correct?",
+    "options": [
+      "Address-resolution NS messages can target a solicited-node multicast group.",
+      "Every NS is broadcast to ff:ff:ff:ff:ff:ff.",
+      "A unicast NS can be used to verify a known neighbor's reachability.",
+      "Every stale neighbor entry proves a failed device."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "ND distinguishes initial address resolution from reachability confirmation. NS can be multicast or unicast depending on the operation.",
+    "whyWrong": {
+      "1": "IPv6 has no IP broadcast; ordinary IPv6 multicast uses multicast delivery.",
+      "3": "Stale means reachability is not recently confirmed, not that failure is proven."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A fresh IOS interface has no configured IPv6 address. Which single interface command enables IPv6 processing and an automatic link-local address without adding a global prefix?",
+    "options": [
+      "ipv6 unicast-routing",
+      "ipv6 enable",
+      "ipv6 address 2001:db8:1::1/64",
+      "ip address 192.0.2.1 255.255.255.0"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "ipv6 enable provides the requested interface behavior without supplying a global prefix.",
+    "whyWrong": {
+      "0": "That is a global forwarding command, not this interface-addressing instruction.",
+      "2": "This also configures a global-form address, contrary to the requested result.",
+      "3": "This configures IPv4."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which is the canonical spelling of 2001:0db8:0000:0000:0001:0000:0000:000a?",
+    "options": [
+      "2001:db8::1::a",
+      "2001:db8:0:0:1::a",
+      "2001:db8::10:0:a",
+      "2001:db8::1:0:0:a"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Each zero run has two groups. Canonical spelling compresses the leftmost tied run and removes leading zeros within the remaining groups.",
+    "whyWrong": {
+      "0": "Two double-colon sequences make expansion ambiguous.",
+      "1": "This is valid but compresses the rightmost of two equal zero runs.",
+      "2": "Moving a zero into the 1 group changes the bits."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which is the canonical representation of 2001:0db8:0000:0000:0000:0a00:0000:0001?",
+    "options": [
+      "2001:db8::a00:0:1",
+      "2001:db8::a:0:1",
+      "2001:db8::a00::1",
+      "2001:db8:0:0:0:a00:0:1"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Remove leading zeros and compress the longest run of three zero groups. The trailing zeros in a00 remain significant.",
+    "whyWrong": {
+      "1": "Changing a00 to a changes its numeric value.",
+      "2": "Two double-colon sequences are invalid.",
+      "3": "This is valid but does not use the canonical compression of the longest zero run."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q08",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An example allocation is 2001:db8:5c00::/56. How many /64s fit, and which is the last?",
+    "options": [
+      "16; 2001:db8:5c00:f::/64",
+      "256; 2001:db8:5cff::/64",
+      "256; 2001:db8:5c00:ff::/64",
+      "65,536; 2001:db8:5c00:ffff::/64"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "64−56 leaves 8 subnet bits: 256 choices. They occupy the low byte of the fourth group, from 00 through ff.",
+    "whyWrong": {
+      "0": "16 choices correspond to four extra bits, as with /60 to /64.",
+      "1": "This changes retained bits in the third group.",
+      "3": "The /56 fixes the upper byte of the fourth group; all 16 bits are not available."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q19",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "A site has 2001:db8:1200:3400::/56. Which proposed /64 is outside that allocation?",
+    "options": [
+      "2001:db8:1200:34ff::/64",
+      "2001:db8:1200:34ab::/64",
+      "2001:db8:1200:3500::/64",
+      "2001:db8:1200:3400::/64"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The /56 retains 34 in the high byte of the fourth group. The /64 choices run from 3400 through 34ff; 3500 changes a retained bit.",
+    "whyWrong": {
+      "0": "This is the last /64 in the allocation.",
+      "1": "The fixed first byte of the fourth group is 34.",
+      "3": "This is the first /64 in the allocation."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "What is the prefix containing 2001:db8:5:c7f2::1/60?",
+    "options": [
+      "2001:db8:5:c7f0::/60",
+      "2001:db8:5:c700::/60",
+      "2001:db8:5:c7f2::/60",
+      "2001:db8:5::/60"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A /60 retains the first three groups and the first three hex digits of the fourth. Zero the last digit and all following bits.",
+    "whyWrong": {
+      "1": "c700 discards retained prefix bits.",
+      "2": "The low fourth-group digit is outside /60 and must be zero in the network address.",
+      "3": "This removes the entire retained c7f part."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q20",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "What /61 prefix contains 2001:db8:7:ab3d::25/61?",
+    "options": [
+      "2001:db8:7:ab3d::/61",
+      "2001:db8:7:ab3c::/61",
+      "2001:db8:7:ab30::/61",
+      "2001:db8:7:ab38::/61"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "After the first 60 bits, /61 retains one bit of the final hex digit. Hex d is binary 1101: retain its first bit and clear the last three, obtaining 1000, or 8. The block covers ab38 through ab3f.",
+    "whyWrong": {
+      "0": "This leaves nonzero bits outside the prefix.",
+      "1": "A /61 boundary must clear the final three bits of the fourth group.",
+      "2": "That clears a bit which /61 retains; it covers ab30 through ab37."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q29",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "An isolated site needs 20 distinct /64 LANs. Which smallest allocation from this list can contain them?",
+    "options": [
+      "/61, providing 8 distinct /64 prefixes",
+      "/64, providing one distinct /64 prefix",
+      "/60, providing 16 distinct /64 prefixes",
+      "/59, providing 32 distinct /64 prefixes"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Five additional subnet bits provide 2^5 = 32 choices. A /59 is therefore the longest prefix, and smallest block, among these sufficient choices.",
+    "whyWrong": {
+      "0": "Eight is fewer than twenty.",
+      "1": "One LAN prefix cannot meet twenty distinct /64 allocations.",
+      "2": "Sixteen is fewer than twenty."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q03",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v1:1.9.d",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "MAC 00:1a:2b:3c:4d:5e uses modified EUI-64 on 2001:db8:10:1::/64. Which address results?",
+    "options": [
+      "2001:db8:10:1:1a:2bff:fe3c:4d5e",
+      "2001:db8:10:1:21a:2b3c:fffe:4d5e",
+      "2001:db8:10:1:21a:2bff:fe3c:4d5e",
+      "2001:db8:10:1::1"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Insert ff:fe after the first three MAC bytes and invert the first byte's U/L bit, changing 00 to 02. Regrouping yields 021a:2bff:fe3c:4d5e.",
+    "whyWrong": {
+      "0": "The first byte's U/L bit was not inverted.",
+      "1": "The inserted bytes are in the wrong position.",
+      "3": "EUI-64 does not assign the convenient suffix ::1."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q21",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v1:1.9.d",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Derive the modified EUI-64 identifier from MAC 02:aa:bb:cc:dd:ee.",
+    "options": [
+      "04aa:bbff:fecc:ddee",
+      "00aa:bbcc:fffe:ddee",
+      "02aa:bbff:fecc:ddee",
+      "00aa:bbff:fecc:ddee"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "02 XOR 02 is 00. Insert ff:fe between bb and cc, then regroup the eight bytes into four groups.",
+    "whyWrong": {
+      "0": "Invert the U/L bit with XOR 02; do not always add 2.",
+      "1": "Insert ff:fe after the first three MAC bytes, not after the fourth.",
+      "2": "This inserts ff:fe but fails to invert the U/L bit."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q22",
+    "type": "single",
+    "objectives": [
+      "v1:1.9.c"
+    ],
+    "difficulty": 2,
+    "prompt": "Which solicited-node multicast group corresponds to 2001:db8:4::ab12:3456?",
+    "options": [
+      "ff02::ab12:3456",
+      "ff02::1:ff12:3456",
+      "ff02::1:ff00:3456",
+      "ff02::1:ffab:1234"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The last 24 bits are 12:3456. Combine those bits with the solicited-node multicast prefix.",
+    "whyWrong": {
+      "0": "The low 24 bits belong after the fixed ff02::1:ff00:0/104 prefix.",
+      "2": "This discards the upper byte of the final 24 bits.",
+      "3": "This takes the wrong 24 bits."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q23",
+    "type": "multi",
+    "objectives": [
+      "v1:1.9.a",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "R1 has FE80::1 on Gi0/0 and on Gi0/1, which connect to separate isolated LANs. Which two statements are correct? Choose two.",
+    "options": [
+      "A diagnostic targeting FE80::1 must identify the intended link.",
+      "DAD on Gi0/0 checks for the duplicate on Gi0/1.",
+      "R1 must forward packets addressed to FE80::1 between those LANs.",
+      "The two identical address texts can be valid because the links differ.",
+      "A link-local address must be globally unique across the whole enterprise."
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Scope includes the link. Text alone cannot distinguish repeated link-local addresses on separate interfaces.",
+    "whyWrong": {
+      "1": "DAD checks the local link, not other routed links.",
+      "2": "Routers do not forward link-local-addressed traffic onto another link.",
+      "4": "Its required uniqueness is within its link."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q12",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v1:1.9.d",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which interface command explicitly creates an EUI-64-derived address in 2001:db8:acad:2::/64?",
+    "options": [
+      "ipv6 address 2001:db8:acad:2::1/64",
+      "ipv6 address 2001:db8:acad:2::/64 eui-64",
+      "ipv6 address fe80::1 link-local",
+      "ipv6 enable"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The eui-64 keyword instructs IOS to build the interface identifier from the interface MAC.",
+    "whyWrong": {
+      "0": "This manually sets ::1 rather than deriving an identifier.",
+      "2": "This sets a link-local address.",
+      "3": "This enables processing and link-local addressing without the requested global prefix."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q05",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or observation",
+      "text": "RA source: fe80::1; Router Lifetime: 1800 seconds\nHeader: M=0, O=1\nPrefix: 2001:db8:acad:1::/64; A=1, L=1\nNo RA DNS option. A working stateless DHCPv6 server supplies DNS."
+    },
+    "prompt": "A client supports SLAAC and stateless DHCPv6, with no manual DNS settings. What behavior is supported by the shown RA and available server?",
+    "options": [
+      "DHCPv6 must provide the default router.",
+      "A=1 forces the host to derive its identifier from its MAC.",
+      "The host cannot form an address without M=1.",
+      "SLAAC address, DHCPv6 DNS, and RA-learned default router."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The A-enabled /64 permits SLAAC. O indicates other DHCPv6 information, supplied here by a server. The nonzero RA lifetime permits the advertised router as default.",
+    "whyWrong": {
+      "0": "Ordinary default-router discovery uses RA, not DHCPv6.",
+      "1": "SLAAC does not require the EUI-64 identifier method.",
+      "2": "M is not required for SLAAC."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or observation",
+      "text": "Complete relevant R1 settings:\nno ipv6 unicast-routing\ninterface GigabitEthernet0/0\n ipv6 address 2001:db8:acad:1::1/64\n no shutdown\nInterface up/up; no other advertising router exists."
+    },
+    "prompt": "Automatic PCs receive only link-local addresses. The router answers a manually addressed PC on the local LAN. What missing prerequisite is directly shown?",
+    "options": [
+      "IPv6 forwarding/router operation has not been enabled globally.",
+      "IPv6 processing has not been enabled on the addressed interface.",
+      "The manual global address must first be replaced by an EUI-64 address.",
+      "The RA managed-address flag must be set for all SLAAC clients."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The displayed no ipv6 unicast-routing setting leaves the router acting as an IPv6 endpoint instead of the advertising/forwarding router needed here.",
+    "whyWrong": {
+      "1": "The configured IPv6 address and successful local ping show interface IPv6 processing is present.",
+      "2": "The manual /64 address is valid; its derivation method does not enable global router operation.",
+      "3": "SLAAC does not require the managed-address flag; that flag describes DHCPv6 address configuration."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q09",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or observation",
+      "text": "PC-A: 2001:db8:acad:1::10/64\nPC-A gateway: 2001:db8:acad:10::1\nR1 Gi0/0 up/up:\n FE80::1\n 2001:DB8:ACAD:1::1\nNo router owns 2001:db8:acad:10::1."
+    },
+    "prompt": "PC-A's manually configured gateway does not answer. Which evidenced mismatch should be corrected?",
+    "options": [
+      "The PC must obtain its gateway from DHCPv6 instead of using the documented manual address.",
+      "The PC should widen its prefix to /48 while retaining the gateway text.",
+      "The PC cannot use a manually configured global-form gateway.",
+      "The PC names acad:10::1, but the actual router address is acad:1::1."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The displayed gateway has fourth group 10 rather than 1 and does not match the configured router address. Verify the intended gateway rather than assuming every failure is caused by routing.",
+    "whyWrong": {
+      "0": "Ordinary DHCPv6 does not supply the default router, and a correct on-link manual gateway can be valid.",
+      "1": "Widening a prefix cannot make the router own the mistyped gateway address.",
+      "2": "A manually configured on-link global unicast gateway can be valid; the fault is the specific incorrect address."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q14",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative configuration or observation",
+      "text": "Complete Gi0/1 address configuration:\n ipv6 address 2001:db8:acad:2::/64 eui-64\n ipv6 address fe80::1 link-local\nDisplayed addresses:\n FE80::1\n 2001:DB8:ACAD:2:21A:2BFF:FE3C:4D5E"
+    },
+    "prompt": "Hosts use 2001:db8:acad:2::1 as a manual gateway. What does this excerpt establish?",
+    "options": [
+      "The eui-64 keyword guarantees ::1 also exists.",
+      "The manual link-local address also creates a global address with the same ::1 suffix.",
+      "Clearing the PC neighbor cache will create the missing ::1 address on R1.",
+      "The derived address exists, but the expected ::1 is absent."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The listed global address is not ::1. Repair the addressing plan or gateway expectation; do not assume EUI-64 creates both addresses.",
+    "whyWrong": {
+      "0": "EUI-64 supplies the derived suffix, not an additional ::1.",
+      "1": "A manual link-local address does not assign a matching global address.",
+      "2": "Cache refresh cannot assign an address absent from the router configuration."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q27",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "What action is justified by a duplicate-address indication on a newly assigned host address?",
+    "options": [
+      "Clear the router neighbor cache and assume the address is unique.",
+      "Investigate which device on this link already uses that address before assigning it.",
+      "Change the address from uppercase to lowercase.",
+      "Disable DAD so both hosts can use the planned address."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DAD is a local uniqueness check. Preserve the evidence and correct the conflicting assignment, rather than hiding it.",
+    "whyWrong": {
+      "0": "Clearing cached bindings does not remove another device using the address.",
+      "2": "Case changes the spelling, not the address bits.",
+      "3": "Bypassing the conflict check does not resolve the ordinary same-link unicast conflict."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q24",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "What explains the host having an address but no automatically learned default router?",
+    "options": [
+      "The prefix can supply an address; router lifetime zero offers no default router.",
+      "The host must use the DNS server as its default router.",
+      "A=1 means the host must ignore the router-lifetime field.",
+      "A /64 address forces the RA sender to be installed as a default router."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The address may be formed from the autonomous prefix with its usable lifetime. A router lifetime of zero does not offer the RA sender as a default router.",
+    "whyWrong": {
+      "1": "DNS server information does not designate the router.",
+      "2": "A is a prefix option flag and does not override the RA router lifetime.",
+      "3": "Address assignment and default-router selection use different RA information."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "RA address and router lifetimes (exercise)",
+      "text": "Fresh host; no static gateway and no other RA sender.\nRA source FE80::1, router lifetime 0\nPrefix 2001:db8:24::/64, A=1, L=1, usable prefix lifetimes\nHost has 2001:db8:24::25/64; default-router list is empty."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q25",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which conclusion follows from this addressing evidence?",
+    "options": [
+      "L=0 invalidates the /64 and prevents any address from being formed.",
+      "SLAAC can form the address, but this PIO does not assert that the prefix is on-link.",
+      "A=1 also implies L=1, so the host must resolve every same-prefix destination directly.",
+      "The host must replace its prefix length with /128 because L=0."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Address assignment and on-link determination are separate. Other valid on-link information could exist, but this particular PIO does not supply it.",
+    "whyWrong": {
+      "0": "L describes on-link information; A permits autonomous address formation.",
+      "2": "The autonomous and on-link flags are independent.",
+      "3": "The flag does not rewrite the autonomous address prefix length."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Independent A and L flags (exercise)",
+      "text": "RA source FE80::1, router lifetime 1800\nPrefix information: 2001:db8:25::/64, A=1, L=0\nPrefix lifetimes are usable; no other on-link information is supplied."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q26",
+    "type": "single",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which is the smallest addressing repair consistent with the plan and evidence?",
+    "options": [
+      "Change PC-B gateway to R1 LAN 1 global address.",
+      "Change both router LANs to /48 to make the mistaken host prefix fit.",
+      "Change PC-B to 2001:db8:26:2::20/64 and keep its link-local gateway.",
+      "Replace the gateway with ::1 because it always means the local router."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The link and router gateway are present on LAN 2. The PC global prefix belongs to the other LAN, so correct that field without widening both subnets.",
+    "whyWrong": {
+      "0": "That address is not an on-link gateway for PC-B LAN 2.",
+      "1": "This overlaps the separate routed LANs and abandons the /64 plan.",
+      "3": "::1 is the host itself, not its default router."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Approved and configured LAN prefixes (exercise)",
+      "text": "Plan: LAN 1 = 2001:db8:26:1::/64; LAN 2 = 2001:db8:26:2::/64\nR1 LAN 2: 2001:db8:26:2::1/64, FE80::1, up/up\nPC-B on LAN 2: 2001:db8:26:1::20/64, gateway FE80::1\nPC-B reaches FE80::1 locally; remote hosts have the intended two LAN prefixes."
+    }
+  },
+  {
+    "id": "ipv6-addressing-q28",
+    "type": "multi",
+    "objectives": [
+      "v1:1.8",
+      "v2:1.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two conclusions are supported, without claiming the router knows the cause of every failed test? Choose two.",
+    "options": [
+      "A static route to either directly connected /64 is the missing prerequisite.",
+      "Successful local ping proves that R1 forwards between the LANs.",
+      "The LAN 1 host can resolve and reach its router as an endpoint.",
+      "The failure proves that the LAN 2 host has a duplicate IPv6 address.",
+      "IPv6 forwarding is missing even though both connected interfaces have addresses."
+    ],
+    "answer": [
+      2,
+      4
+    ],
+    "explanation": "Local success and addressed interfaces establish less than transit success. The complete relevant configuration identifies the disabled forwarding prerequisite; no invented duplicate diagnosis is needed.",
+    "whyWrong": {
+      "0": "The prefixes are already connected; the explicit global forwarding setting is the missing prerequisite.",
+      "1": "An endpoint reply is different from transit forwarding.",
+      "3": "No DAD or duplicate evidence is supplied."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Local replies without transit forwarding (exercise)",
+      "text": "R1 Gi0/0: 2001:db8:28:1::1/64 up/up\nR1 Gi0/1: 2001:db8:28:2::1/64 up/up\nGlobal: no ipv6 unicast-routing; no filters\nPCs have the matching /64 and their own on-link R1 gateway.\nEach PC can ping its own R1 interface; PC-to-PC ping fails."
+    }
+  }
+]

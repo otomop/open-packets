@@ -1,0 +1,294 @@
+[
+  {
+    "id": "ospfv2-d01",
+    "task": "R1 has addressed interfaces. Create or enter its local OSPFv2 process 10 before choosing the router ID and participating interfaces.",
+    "mode": "R1(config)#",
+    "answer": "router ospf 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "router-id-and-process-id",
+      "hint": "The process number selects a local configuration context.",
+      "takeaway": "Process 10 is locally significant; a neighbor may use another process number. Neighbors must still agree on the area assigned to their shared link.",
+      "syntax": [
+        {
+          "text": "router ospf",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d02",
+    "task": "You are configuring a new OSPFv2 process before its interfaces are activated. Set the explicitly planned router ID to 1.1.1.1.",
+    "mode": "R1(config-router)#",
+    "answer": "router-id 1.1.1.1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "router-id-and-process-id",
+      "hint": "The identifier is a 32-bit dotted-decimal value, separate from the local process number.",
+      "takeaway": "Use a unique router ID within the routing domain. On a running process, editing the configured value may not change the active ID until restart; avoid unnecessary adjacency resets.",
+      "syntax": [
+        {
+          "text": "router-id",
+          "kind": "keyword"
+        },
+        {
+          "text": "1.1.1.1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d03",
+    "task": "R1's OSPF process must include local interface addresses in 10.0.13.0/30. Use a network statement to select that range for area 0.",
+    "mode": "R1(config-router)#",
+    "answer": "network 10.0.13.0 0.0.0.3 area 0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-single-area-ospfv2",
+      "hint": "This statement uses a wildcard mask, not the interface's subnet mask.",
+      "takeaway": "The wildcard selects matching local interfaces; it does not manufacture a remote route. The selected interface advertises its actual prefix, which is separate from the wildcard used to select it.",
+      "syntax": [
+        {
+          "text": "network",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.13.0",
+          "kind": "argument"
+        },
+        {
+          "text": "0.0.0.3",
+          "kind": "argument"
+        },
+        {
+          "text": "area",
+          "kind": "keyword"
+        },
+        {
+          "text": "0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d04",
+    "task": "You are configuring an addressed R1 interface. Activate OSPFv2 process 10 in area 0 directly on this interface, without a network statement.",
+    "mode": "R1(config-if)#",
+    "answer": "ip ospf 10 area 0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-single-area-ospfv2",
+      "hint": "This activation method belongs in interface configuration.",
+      "takeaway": "Direct interface activation and a matching network statement are alternative ways to enable participation. Neither guarantees a neighbor if the peer, area, timers or passive settings disagree.",
+      "syntax": [
+        {
+          "text": "ip ospf",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        },
+        {
+          "text": "area",
+          "kind": "keyword"
+        },
+        {
+          "text": "0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d05",
+    "task": "For this OSPF process, suppress neighbor formation on every participating interface by default. Transit links will receive explicit exceptions afterward.",
+    "mode": "R1(config-router)#",
+    "answer": "passive-interface default",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-single-area-ospfv2",
+      "hint": "Start with a passive default, then open only the intended neighbor links.",
+      "takeaway": "Passive interfaces do not exchange OSPF Hellos, but their activated connected prefixes can still be advertised. The default also covers interfaces enabled later.",
+      "syntax": [
+        {
+          "text": "passive-interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "default",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d06",
+    "task": "OSPF is already activated on GigabitEthernet0/0, but passive-interface default prevents neighbors. Permit neighbor formation on this transit interface only.",
+    "mode": "R1(config-router)#",
+    "answer": "no passive-interface gigabitethernet0/0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-single-area-ospfv2",
+      "hint": "Remove the passive restriction for this interface without undoing the process-wide default.",
+      "takeaway": "The exception permits Hellos on the transit link. It does not activate OSPF by itself, so the process/area configuration must already include the interface.",
+      "syntax": [
+        {
+          "text": "no passive-interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d07",
+    "task": "On this OSPF broadcast interface, prevent R1 from becoming DR or BDR while allowing it to participate as a DROTHER.",
+    "mode": "R1(config-if)#",
+    "answer": "ip ospf priority 0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "network-types-dr-and-bdr",
+      "hint": "Election eligibility is controlled by interface priority, not path cost.",
+      "takeaway": "Priority 0 makes the interface ineligible for DR/BDR. It does not prevent ordinary OSPF participation or mean that a higher-priority arrival preempts a healthy existing DR.",
+      "syntax": [
+        {
+          "text": "ip ospf priority",
+          "kind": "keyword"
+        },
+        {
+          "text": "0",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d08",
+    "task": "This Ethernet segment connects exactly two OSPF routers. Configure R1's interface for OSPF point-to-point operation; the peer will use the same type.",
+    "mode": "R1(config-if)#",
+    "answer": "ip ospf network point-to-point",
+    "accept": [],
+    "teaching": {
+      "sectionId": "network-types-dr-and-bdr",
+      "hint": "Change OSPF's network treatment, not the Ethernet framing or IP address.",
+      "takeaway": "Point-to-point OSPF has no DR/BDR election and normally shows FULL/- for the adjacency. Use the type consistently on both peers; it is not a repair for a shared multiaccess design.",
+      "syntax": [
+        {
+          "text": "ip ospf network",
+          "kind": "keyword"
+        },
+        {
+          "text": "point-to-point",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d11",
+    "task": "Interfaces are addressed and OSPF is activated. Display current OSPFv2 neighbor IDs, adjacency states and local interfaces before assuming routes were exchanged.",
+    "mode": "R1#",
+    "answer": "show ip ospf neighbor",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "A route-table filter does not show the neighbor relationship.",
+      "takeaway": "Full is expected for synchronized adjacencies, but two DROTHERs on one broadcast segment can normally remain 2-Way. Interpret the state using the network type and local role.",
+      "syntax": [
+        {
+          "text": "show ip ospf neighbor",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d13",
+    "task": "OSPF neighbors are Full, but you need to verify which IPv4 prefixes actually won installation. Display only installed OSPF routes.",
+    "mode": "R1#",
+    "answer": "show ip route ospf",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Neighbor synchronization and routing-table installation are different checks.",
+      "takeaway": "A Full neighbor does not guarantee a route for an inactive remote LAN. A more-preferred connected or static candidate can also keep an OSPF candidate out of the installed table.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "ospf",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d14",
+    "task": "The OSPF adjacency on R1 GigabitEthernet0/1 failed after a link-setting change. Inspect its effective network type, area, Hello/dead timers and cost.",
+    "mode": "R1#",
+    "answer": "show ip ospf interface gigabitethernet0/1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Use the detailed OSPF interface display rather than the ordinary address summary.",
+      "takeaway": "Compare the actual settings with the peer before choosing a repair. A neighbor table shows the relationship, while this display provides the interface parameters that may prevent it.",
+      "syntax": [
+        {
+          "text": "show ip ospf interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/1",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ospfv2-d15",
+    "task": "The approved OSPF path calculation requires an explicit outgoing cost of 7 on this interface. Apply that cost without changing the physical link speed.",
+    "mode": "R1(config-if)#",
+    "answer": "ip ospf cost 7",
+    "accept": [],
+    "teaching": {
+      "sectionId": "cost-and-the-best-path",
+      "hint": "An interface metric override changes OSPF calculation, not Ethernet speed.",
+      "takeaway": "The explicit cost overrides automatic bandwidth-based calculation for this interface. Add outgoing costs in the direction being evaluated; changing R1's cost does not automatically change the reverse path.",
+      "syntax": [
+        {
+          "text": "ip ospf cost",
+          "kind": "keyword"
+        },
+        {
+          "text": "7",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

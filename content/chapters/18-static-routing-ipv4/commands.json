@@ -1,0 +1,273 @@
+[
+  {
+    "id": "static-routing-ipv4-d01",
+    "task": "R1 can reach neighbor 10.0.12.2. Add a next-hop-only route for the entire remote 192.168.20.0/24 LAN through that neighbor.",
+    "mode": "R1(config)#",
+    "answer": "ip route 192.168.20.0 255.255.255.0 10.0.12.2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ip-route-command",
+      "hint": "The destination field names the remote network; the final address names the next router.",
+      "takeaway": "Use the network address with its destination mask. The next hop is the peer, not R1's own interface address, and this command does not install a return route on the peer.",
+      "syntax": [
+        {
+          "text": "ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.20.0",
+          "kind": "argument"
+        },
+        {
+          "text": "255.255.255.0",
+          "kind": "argument"
+        },
+        {
+          "text": "10.0.12.2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d02",
+    "task": "R1 reaches peer 10.0.12.2 on GigabitEthernet0/0. Add a route for 192.168.30.0/24 that explicitly names both this Ethernet interface and its next hop.",
+    "mode": "R1(config)#",
+    "answer": "ip route 192.168.30.0 255.255.255.0 gigabitethernet0/0 10.0.12.2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "next-hop-exit-interface-or-both",
+      "hint": "An Ethernet exit interface alone can cause address resolution for remote destinations.",
+      "takeaway": "A fully specified Ethernet route identifies the exit interface and adjacent next hop. It still needs ARP for that next hop; naming the interface does not prove remote delivery.",
+      "syntax": [
+        {
+          "text": "ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.30.0 255.255.255.0",
+          "kind": "argument"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        },
+        {
+          "text": "10.0.12.2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d03",
+    "task": "Only 192.168.20.99 must use next hop 10.0.13.2. Add a next-hop-only host route without changing the route for the rest of 192.168.20.0/24.",
+    "mode": "R1(config)#",
+    "answer": "ip route 192.168.20.99 255.255.255.255 10.0.13.2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-ip-route-command",
+      "hint": "A host exception matches every bit of one IPv4 destination.",
+      "takeaway": "The /32 mask limits this route to one address. Once installed, it wins for that host over a matching /24 regardless of the /24's administrative distance.",
+      "syntax": [
+        {
+          "text": "ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.20.99",
+          "kind": "argument"
+        },
+        {
+          "text": "255.255.255.255",
+          "kind": "argument"
+        },
+        {
+          "text": "10.0.13.2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d04",
+    "task": "Add a next-hop-only route through 10.0.12.2 for destinations with no more-specific installed IPv4 match.",
+    "mode": "R1(config)#",
+    "answer": "ip route 0.0.0.0 0.0.0.0 10.0.12.2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "default-routes",
+      "hint": "The least-specific IPv4 prefix has no fixed destination bits.",
+      "takeaway": "The all-zero destination and mask identify /0. A default route does not create upstream reachability and cannot override a more-specific installed route.",
+      "syntax": [
+        {
+          "text": "ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "0.0.0.0",
+          "kind": "argument"
+        },
+        {
+          "text": "0.0.0.0",
+          "kind": "argument"
+        },
+        {
+          "text": "10.0.12.2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d05",
+    "task": "The primary route to 192.168.20.0/24 uses distance 1. Add a next-hop-only standby through 10.0.13.2 at distance 5, leaving the primary preferred.",
+    "mode": "R1(config)#",
+    "answer": "ip route 192.168.20.0 255.255.255.0 10.0.13.2 5",
+    "accept": [],
+    "teaching": {
+      "sectionId": "floating-static-routes",
+      "hint": "The backup must describe the same prefix and have a less-preferred distance.",
+      "takeaway": "Distance 5 follows distance 1 for this same prefix. A backup with a longer prefix could attract traffic immediately; a configured backup need not appear in the installed table while the primary works.",
+      "syntax": [
+        {
+          "text": "ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.20.0 255.255.255.0",
+          "kind": "argument"
+        },
+        {
+          "text": "10.0.13.2",
+          "kind": "argument"
+        },
+        {
+          "text": "5",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d07",
+    "task": "Running configuration contains a next-hop-only backup to 192.168.20.0/24 through 10.0.13.2 at distance 5. Remove exactly that candidate and preserve the primary.",
+    "mode": "R1(config)#",
+    "answer": "no ip route 192.168.20.0 255.255.255.0 10.0.13.2 5",
+    "accept": [],
+    "teaching": {
+      "sectionId": "floating-static-routes",
+      "hint": "Negate the identified configuration line, including its nondefault distance.",
+      "takeaway": "A precise removal preserves unrelated candidates. Check both configuration and installed routes afterward; removing an unused backup may leave the current forwarding path unchanged.",
+      "syntax": [
+        {
+          "text": "no ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.20.0 255.255.255.0",
+          "kind": "argument"
+        },
+        {
+          "text": "10.0.13.2",
+          "kind": "argument"
+        },
+        {
+          "text": "5",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d08",
+    "task": "R1 has primary and floating static candidates configured. Display only the IPv4 static routes currently selected for its routing table.",
+    "mode": "R1#",
+    "answer": "show ip route static",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Configured candidates and installed routes are different evidence.",
+      "takeaway": "This filter shows installed static routes. An unused floating candidate can be absent here while remaining valid configuration; inspect running-config before calling it missing.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "static",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d09",
+    "task": "An expected floating route is absent from R1's installed table. Filter running configuration to lines containing ip route so you can inspect the configured candidates.",
+    "mode": "R1#",
+    "answer": "show running-config | include ip route",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Inspect configuration rather than repeating an installed-route query.",
+      "takeaway": "Read destination, mask, next hop and distance in each candidate. Configuration presence proves intent, while interface/next-hop eligibility and preference determine installation.",
+      "syntax": [
+        {
+          "text": "show running-config",
+          "kind": "keyword"
+        },
+        {
+          "text": "| include",
+          "kind": "keyword"
+        },
+        {
+          "text": "ip route",
+          "kind": "argument"
+        }
+      ],
+      "focus": "supporting"
+    }
+  },
+  {
+    "id": "static-routing-ipv4-d11",
+    "task": "R1 owns LAN address 192.168.10.1. On IOS supporting inline source selection, ping remote host 192.168.20.12 using that LAN address to test the return path to it.",
+    "mode": "R1#",
+    "answer": "ping 192.168.20.12 source 192.168.10.1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-return-path-and-how-to-test-it",
+      "hint": "An ordinary router ping may use a transit source that the far router already knows.",
+      "takeaway": "Selecting the LAN source tests a different return prefix from a transit-sourced ping. The source must belong to R1; this still does not replace testing the actual client and its gateway.",
+      "syntax": [
+        {
+          "text": "ping",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.20.12",
+          "kind": "argument"
+        },
+        {
+          "text": "source",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.10.1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

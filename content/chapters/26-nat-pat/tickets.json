@@ -1,0 +1,72 @@
+[
+  {
+    "id": "nat-pat-t01",
+    "title": "A new client request creates no translation",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "scenario": "An isolated branch exercise uses EDGE with the displayed interface-overload rule and no other NAT rules or interface filters. Fresh LAN traffic from 10.20.30.0/24 can reach gateway 10.20.30.1 but cannot complete outside requests. The provider has a return path to EDGE’s outside address, but no route to the untranslated LAN. The excerpts below are representative. The next hop 198.51.100.2 answers EDGE's direct ping during the same test interval.",
+    "exhibits": [
+      {
+        "title": "EDGE# show ip interface brief | exclude unassigned",
+        "text": "Interface                  IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0         10.20.30.1      YES manual up                    up\nGigabitEthernet0/1         198.51.100.1    YES manual up                    up"
+      },
+      {
+        "title": "EDGE# show running-config | include ip nat|access-list|ip route",
+        "text": " ip nat inside\n ip nat outside\nip nat inside source list 1 interface GigabitEthernet0/1 overload\nip route 0.0.0.0 0.0.0.0 198.51.100.2\naccess-list 1 permit 10.20.3.0 0.0.0.255"
+      },
+      {
+        "title": "EDGE# show ip nat statistics",
+        "text": "Total active translations: 0 (0 static, 0 dynamic; 0 extended)\nOutside interfaces:\n  GigabitEthernet0/1\nInside interfaces:\n  GigabitEthernet0/0\nHits: 0  Misses: 0\nExpired translations: 0\nDynamic mappings:\n-- Inside Source\n[Id: 1] access-list 1 interface GigabitEthernet0/1 refcount 0"
+      }
+    ],
+    "question": "What is the root cause?",
+    "options": [
+      "The LAN and provider interface roles are reversed.",
+      "The selector matches 10.20.3.0/24 instead of the actual LAN.",
+      "The outside interface has no address for the overload rule.",
+      "The default route points to an unreachable on-link next hop."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The NAT interface lists match the intended LAN and outside paths. ACL 1 instead selects 10.20.3.0/24, so fresh 10.20.30.x sources do not match it. The explicit mismatch establishes the error; zero counters alone would not. Untranslated traffic lacks the stated return route. The outside address is present and the confirmed reachable next hop rules out the other proposed forwarding cause.",
+    "fix": "Because this lab confirms ACL 1 is used only by NAT, replace its incorrect selector.\n\n```ios\nEDGE# configure terminal\nEDGE(config)# no access-list 1\nEDGE(config)# access-list 1 permit 10.20.30.0 0.0.0.255\nEDGE(config)# end\nEDGE# show access-lists 1\n```\n\nGenerate a fresh request from a LAN client, then run `show ip nat translations`. Verify that its global address is 198.51.100.1 and that the actual application receives its expected response before saving."
+  },
+  {
+    "id": "nat-pat-t02",
+    "title": "Client connections fail after a pool change",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "scenario": "EDGE now uses pool overload with global addresses 198.51.100.20–198.51.100.23 in an isolated routed exercise. Its neighbor CORE receives replies from test server 203.0.113.10 for those global addresses. A packet capture confirms the replies arrive on CORE’s upstream interface. CORE has no policy routing or filtering; the representative excerpts show the relevant destination routes. The CORE–EDGE link is 198.51.100.0/30, with EDGE at .1.",
+    "exhibits": [
+      {
+        "title": "EDGE# show ip nat translations",
+        "text": "Pro Inside global      Inside local       Outside local      Outside global\ntcp 198.51.100.20:52110 10.20.30.10:52110 203.0.113.10:443   203.0.113.10:443\ntcp 198.51.100.20:52111 10.20.30.10:52111 203.0.113.10:443   203.0.113.10:443\ntcp 198.51.100.20:49302 10.20.30.11:49302 203.0.113.10:443   203.0.113.10:443"
+      },
+      {
+        "title": "EDGE# debug ip nat (excerpt)",
+        "text": "NAT: s=10.20.30.10->198.51.100.20, d=203.0.113.10 [101]\nNAT: s=10.20.30.10->198.51.100.20, d=203.0.113.10 [102]\nNAT: s=10.20.30.11->198.51.100.20, d=203.0.113.10 [55]\nNAT: s=10.20.30.10->198.51.100.20, d=203.0.113.10 [103]"
+      },
+      {
+        "title": "CORE# show ip route | begin Gateway",
+        "text": "Gateway of last resort is 192.0.2.1 to network 0.0.0.0\n\nS*    0.0.0.0/0 [1/0] via 192.0.2.1\n      192.0.2.0/30 is subnetted, 1 subnets\nC        192.0.2.0 is directly connected, GigabitEthernet0/1\n      198.51.100.0/30 is subnetted, 1 subnets\nC        198.51.100.0 is directly connected, GigabitEthernet0/0"
+      }
+    ],
+    "question": "What is the root cause?",
+    "options": [
+      "EDGE has no configured outside interface address for pool overload.",
+      "The source selector excluded the requests with displayed fresh mappings.",
+      "CORE's default sends replies upstream instead of toward EDGE's pool.",
+      "The pool lies inside CORE's connected /30 and needs no other route."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The pool addresses are outside the connected .0/30. Without a more specific route, CORE selects its upstream default for the confirmed arriving replies, sending them away from EDGE. The capture and routing evidence establish that forwarding error; one-sided NAT debug alone would not prove it. The supplied outside /30 identifies EDGE's address, and fresh mappings contradict selector exclusion. The /30 covers .0–.3, so it does not include .20–.23.",
+    "fix": "Install the route to the pool block through the directly connected EDGE address.\n\n```ios\nCORE# configure terminal\nCORE(config)# ip route 198.51.100.16 255.255.255.240 198.51.100.1\nCORE(config)# end\nCORE# show ip route 198.51.100.20\n```\n\nRepeat the same client request. Verify CORE now selects the /28 toward EDGE, the reply is reverse-translated, and the application succeeds. Save after verification. No counter or debug line by itself substitutes for these observations."
+  }
+]

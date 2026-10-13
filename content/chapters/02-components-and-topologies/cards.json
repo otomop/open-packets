@@ -1,0 +1,122 @@
+[
+  {
+    "id": "components-and-topologies-c26",
+    "front": "Can a server also be an endpoint?",
+    "back": "Yes. An endpoint originates or receives traffic; a server is an endpoint supplying a service such as HTTP to clients.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c01",
+    "front": "What addresses guide Layer 2 switching and IP routing?",
+    "back": "Layer 2 switching uses destination MAC addresses within a VLAN. Routing uses the destination IP address and a routing table.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c02",
+    "front": "What makes a switch a Layer 3 switch?",
+    "back": "It supports IP routing as well as Ethernet switching. Routing must be configured; a management IP alone does not establish a forwarding role.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c27",
+    "front": "Which functions can one SOHO wireless router combine?",
+    "back": "Ethernet switching, wireless access, IP routing and security functions. Diagnose the failed function rather than treating the whole enclosure as one role.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c22",
+    "front": "How do Catalyst Center and a wireless LAN controller differ?",
+    "back": "Catalyst Center manages and monitors supported campus devices. A WLC coordinates supported APs and their wireless operation.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c09",
+    "front": "What does a next-generation firewall add to stateful filtering?",
+    "back": "Capabilities such as application-aware policy and intrusion prevention. Inspectable traffic and enforcement depend on configuration and visibility.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c10",
+    "front": "How do IDS and inline IPS differ?",
+    "back": "IDS detects and reports suspicious activity. An inline IPS can block traffic as it passes, according to policy; detection is not a guarantee against every attack.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c07",
+    "front": "In standards-based PoE, what are PSE and PD?",
+    "back": "PSE supplies power; PD receives it. Detection checks for a compatible powered device before supplying normal operating power.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c21",
+    "front": "What two power limits must a PoE design satisfy?",
+    "back": "The port must support the required allocation, and all allocations must fit the switch’s available total power budget.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c12",
+    "front": "Campus access, distribution and core: primary roles?",
+    "back": "Access attaches endpoints; distribution aggregates access and often supplies routing/policy boundaries; core interconnects distribution blocks.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c13",
+    "front": "Two-tier versus three-tier campus design?",
+    "back": "Two-tier combines distribution and core functions. Three-tier separates access, distribution and core; device count alone does not define the tiers.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c23",
+    "front": "Why do two physical uplinks not automatically guarantee redundancy?",
+    "back": "They may share a failed device or other dependency. Trace both complete paths and verify that the design can use the surviving path.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c15",
+    "front": "What connects to what in a basic spine-leaf design?",
+    "back": "Endpoints normally attach to leaves. Each leaf connects to every spine. This is the basic reference pattern, not a universal rule for every fabric variant.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c25",
+    "front": "What distinguishes a WAN from a local LAN?",
+    "back": "A WAN connects networks across a wider geographic area, often through provider services. Local switching can remain operational when the WAN path fails.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "components-and-topologies-c28",
+    "front": "How do on-premises hosting and cloud services differ?",
+    "back": "On-premises names a location. Cloud names a service model with on-demand resources and elasticity; a private cloud can be on premises.",
+    "tags": [
+      "compare"
+    ]
+  }
+]

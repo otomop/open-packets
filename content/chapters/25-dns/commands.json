@@ -1,0 +1,103 @@
+[
+  {
+    "id": "dns-d11",
+    "task": "The configured client resolver is in doubt. From Windows, use nslookup to query app.lab.example directly at the intended DNS server 10.1.1.53.",
+    "mode": "Windows Command Prompt",
+    "answer": "nslookup app.lab.example 10.1.1.53",
+    "accept": [],
+    "teaching": {
+      "sectionId": "diagnosing-by-symptom",
+      "hint": "Specify both the name and the server so the test does not depend on the default resolver choice.",
+      "takeaway": "Record which server answered and the returned data. A correct DNS answer is separate from a working application; a timeout differs from a returned negative answer.",
+      "syntax": [
+        {
+          "text": "nslookup",
+          "kind": "keyword"
+        },
+        {
+          "text": "app.lab.example",
+          "kind": "argument"
+        },
+        {
+          "text": "10.1.1.53",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dns-d12",
+    "task": "Mail delivery for lab.example fails although its website resolves. Use nslookup's -type option to ask 10.1.1.53 for the domain's mail-exchanger records.",
+    "mode": "Windows Command Prompt",
+    "answer": "nslookup -type=MX lab.example 10.1.1.53",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-record-types-and-their-rules",
+      "hint": "A web address record does not identify the server that receives the domain's mail.",
+      "takeaway": "An MX answer names an exchanger, not its IP address. Resolve that hostname next and test the intended mail service; smaller MX preference values are preferred.",
+      "syntax": [
+        {
+          "text": "nslookup",
+          "kind": "keyword"
+        },
+        {
+          "text": "-type=MX",
+          "kind": "argument"
+        },
+        {
+          "text": "lab.example",
+          "kind": "argument"
+        },
+        {
+          "text": "10.1.1.53",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "dns-d13",
+    "task": "Forward lookup for 10.1.1.80's application works, but its reverse name is missing. Use nslookup's -type=PTR option to query its IPv4 reverse name at 10.1.1.53.",
+    "mode": "Windows Command Prompt",
+    "answer": "nslookup -type=PTR 80.1.1.10.in-addr.arpa 10.1.1.53",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-record-types-and-their-rules",
+      "hint": "Reverse the IPv4 octets under in-addr.arpa; forward and reverse records are separate data.",
+      "takeaway": "The owner is 80.1.1.10.in-addr.arpa. A correct A record does not create the PTR automatically, and repairing reverse data does not supply a missing forward record.",
+      "syntax": [
+        {
+          "text": "nslookup",
+          "kind": "keyword"
+        },
+        {
+          "text": "-type=PTR",
+          "kind": "argument"
+        },
+        {
+          "text": "80.1.1.10.in-addr.arpa",
+          "kind": "argument"
+        },
+        {
+          "text": "10.1.1.53",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

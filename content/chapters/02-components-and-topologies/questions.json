@@ -1,0 +1,386 @@
+[
+  {
+    "id": "components-and-topologies-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.f",
+      "v1:1.1.g"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A computer supplies web pages to other computers on the network. Which description is most accurate?",
+    "options": [
+      "It performs a transit role because several clients use it.",
+      "It performs a client role while returning the requested pages.",
+      "It performs a switching role when it receives Ethernet frames.",
+      "It performs a server role while remaining a network endpoint."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A server supplies a service such as HTTP to clients and is also an endpoint on the network. Server and endpoint describe compatible roles, not mutually exclusive hardware categories.",
+    "whyWrong": {
+      "0": "Supplying an application is different from forwarding other hosts’ traffic as transit.",
+      "1": "For this exchange, the computer supplies rather than requests the web content.",
+      "2": "Receiving its own frames does not mean it switches transit frames between ports."
+    }
+  },
+  {
+    "id": "components-and-topologies-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.a",
+      "v1:1.1.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A PC must send an IP packet to a different IP network. Which function selects the next hop using the destination IP address?",
+    "options": [
+      "A Layer 2 switch forwarding within one VLAN",
+      "An access point accepting a wireless association",
+      "A router consulting its IP routing table",
+      "A hub repeating the received electrical signal"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Routing selects an outgoing path using the destination IP network and the routing table. A router or a Layer 3 switch with routing configured can supply this function.",
+    "whyWrong": {
+      "0": "Layer 2 forwarding uses MAC addresses within the local VLAN rather than selecting an IP next hop.",
+      "1": "Wireless association establishes a client's connection to an AP; it does not by itself choose routes between IP networks.",
+      "3": "A hub repeats signals and does not inspect an IP routing table."
+    }
+  },
+  {
+    "id": "components-and-topologies-q16",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.e"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A company wants a consistent wireless configuration across many access points. What is the main role of a wireless LAN controller?",
+    "options": [
+      "Coordinate the configuration and operation of supported APs.",
+      "Provide each wireless client’s physical radio attachment itself.",
+      "Supply power allocation independently of the AP’s PoE switch.",
+      "Choose every client’s IP next hop as the campus core."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A wireless LAN controller provides centralized coordination for supported APs, including configuration and monitoring. The traffic-forwarding path depends on the wireless deployment; controller management does not mean every data frame follows the same path.",
+    "whyWrong": {
+      "1": "The AP supplies the client’s radio attachment; the controller coordinates AP operation.",
+      "2": "The actual power source still needs sufficient per-port capability and total budget.",
+      "3": "Controller coordination is not the same function as campus routing; forwarding depends on the deployment."
+    }
+  },
+  {
+    "id": "components-and-topologies-q09",
+    "type": "single",
+    "objectives": [
+      "v1:1.2.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the main purpose of the core in a three-tier campus design?",
+    "options": [
+      "Connect individual users and APs to the campus.",
+      "Provide transport between distribution blocks.",
+      "Combine the roles of distribution and access.",
+      "Connect each leaf to every other leaf directly."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The core interconnects distribution blocks and provides a reliable transport path across the campus. Access connects endpoints; distribution aggregates access and commonly provides routing or policy boundaries.",
+    "whyWrong": {
+      "0": "Direct endpoint attachment is the access layer’s main function.",
+      "2": "A separate core interconnects distribution blocks; it is not the combined access/distribution layer described here.",
+      "3": "That is not the core’s role in the stated hierarchical campus design."
+    }
+  },
+  {
+    "id": "components-and-topologies-q14",
+    "type": "single",
+    "objectives": [
+      "v1:1.2.f"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A hosted application automatically adds capacity as demand grows and releases it when demand falls. Which cloud characteristic does this illustrate?",
+    "options": [
+      "Rapid elasticity",
+      "Resource pooling",
+      "Broad network access",
+      "Measured service"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Rapid elasticity is the ability to expand and reduce provisioned resources in response to demand. It differs from simply hosting a server in someone else's building.",
+    "whyWrong": {
+      "1": "Resource pooling concerns shared provider resources; the described change is capacity expanding and contracting.",
+      "2": "Network access describes how the service can be reached, not this adjustment to demand.",
+      "3": "Measured service concerns metering usage, which is different from changing provisioned capacity."
+    }
+  },
+  {
+    "id": "components-and-topologies-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:1.1.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements accurately describe a next-generation firewall and an inline IPS? (Choose two.)",
+    "options": [
+      "An NGFW can apply policy using identified applications.",
+      "An inline IPS can drop traffic according to its threat policy.",
+      "A stateful firewall uses only the destination IP, ignoring connection state.",
+      "An inline IPS inspects only an out-of-path traffic copy.",
+      "An NGFW’s encrypted-payload visibility is independent of decryption."
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "An NGFW combines traffic-policy enforcement with capabilities such as application visibility and intrusion prevention. An inline IPS sits in the traffic path and can block a detected threat, subject to its configuration and inspection capability.",
+    "whyWrong": {
+      "2": "Stateful inspection also uses connection-state information; this option describes too narrow a function.",
+      "3": "Inline placement puts the IPS in the traffic path; an out-of-path copy describes a different inspection arrangement.",
+      "4": "Encrypted content visibility depends on the traffic and available decryption, not just the NGFW label."
+    }
+  },
+  {
+    "id": "components-and-topologies-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.a",
+      "v1:1.1.b"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Documented forwarding behavior — teaching evidence, not CLI output",
+      "text": "SW3 forwards frames between local ports in each VLAN.\nSW3 is configured with IP routing and serves as gateway for two IP networks.\nTraffic between those networks is routed by SW3."
+    },
+    "prompt": "Which device role best matches the documented behavior of SW3?",
+    "options": [
+      "A Layer 2 switch providing management access",
+      "A wireless controller managing radio settings",
+      "A hub connecting a shared Ethernet segment",
+      "A Layer 3 switch performing routing and switching"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "SW3 both forwards Ethernet frames within each LAN and routes between the IP networks. Those documented functions justify identifying a Layer 3 switching role; the label on a diagram alone would not establish that routing is configured.",
+    "whyWrong": {
+      "0": "A management IP address alone would not provide the documented forwarding between networks.",
+      "1": "The evidence describes wired switching and IP routing, not AP management.",
+      "2": "A hub neither learns destination MAC forwarding entries nor makes IP routing decisions."
+    }
+  },
+  {
+    "id": "components-and-topologies-q05",
+    "type": "multi",
+    "objectives": [
+      "v1:1.1.d",
+      "v1:1.1.e",
+      "v1:1.1.h"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An office adds compatible controller-managed access points on PoE switch ports. Which two statements describe the design correctly? (Choose two.)",
+    "options": [
+      "The AP uses its wired uplink only for power, with no Ethernet data.",
+      "The AP connects wireless clients to the wired network through its uplink.",
+      "The controller’s budget replaces the switch’s PoE power budget.",
+      "The switch can supply power and Ethernet connectivity on the AP’s cable.",
+      "Controller management means client forwarding always bypasses the AP’s site."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "The AP supplies wireless access, while a compatible PoE switch can supply both its wired connection and electrical power. A controller coordinates AP operation, but forwarding and power requirements still depend on the chosen design.",
+    "whyWrong": {
+      "0": "The compatible uplink carries Ethernet as well as supplying power in the stated design.",
+      "2": "The switch’s actual source budget governs the power available on its PoE ports.",
+      "4": "Management and forwarding are different roles; some designs switch client traffic locally."
+    }
+  },
+  {
+    "id": "components-and-topologies-q08",
+    "type": "single",
+    "objectives": [
+      "v1:1.2.a",
+      "v1:1.2.b"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Campus design notes",
+      "text": "Access switches connect users and APs.\nTheir uplinks reach a redundant pair of switches.\nThat pair performs both distribution and core functions.\nThere is no separate core layer."
+    },
+    "prompt": "Which campus architecture matches the described design?",
+    "options": [
+      "A two-tier campus with a collapsed distribution/core layer",
+      "A three-tier campus because the upper layer has two switches",
+      "A spine-leaf fabric because every access switch has two uplinks",
+      "A single access layer because all switches share one site"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A two-tier campus combines distribution and core functions into a collapsed layer above access. Redundant devices can exist within that layer without turning the architecture into three tiers.",
+    "whyWrong": {
+      "1": "Tier count follows functional layers, not the number of redundant devices.",
+      "2": "Two uplinks alone do not establish the endpoint/leaf/spine roles of that architecture.",
+      "3": "A site can contain several functional layers; the description explicitly gives access and combined distribution/core roles."
+    }
+  },
+  {
+    "id": "components-and-topologies-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:1.2.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Basic spine-leaf plan",
+      "text": "Spines: S1, S2\nLeaves: L1, L2, L3\nEach leaf connects to S1 and S2.\nServers attach to leaf ports."
+    },
+    "prompt": "Which two additions fit the basic spine-leaf connection pattern in the plan? Choose two.",
+    "options": [
+      "Add L4 with one link to S1 and one to S2.",
+      "Connect a new server to S1 instead of a leaf.",
+      "Attach a new server to an available L2 port.",
+      "Connect L4 only to L3, using L3 as its transit leaf.",
+      "Replace L2’s two spine links with one L1–L2 link."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "A new leaf needs connectivity to each spine in the stated basic pattern, and endpoint attachment belongs on a leaf. These choices describe the physical pattern; forwarding capacity and configuration still need to be checked.",
+    "whyWrong": {
+      "1": "The reference pattern places endpoints on leaves, rather than directly on spines.",
+      "3": "The new leaf would depend on another leaf instead of connecting to every spine.",
+      "4": "Replacing the spine connections with a leaf-to-leaf path changes the stated topology."
+    }
+  },
+  {
+    "id": "components-and-topologies-q07",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.h"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "PoE allocation worksheet — supplied values",
+      "text": "Available budget: 120 W\nExisting allocations: 90 W\nRemaining budget: 30 W\nEach proposed AP allocation: 30 W"
+    },
+    "prompt": "Each additional AP needs a 30 W allocation, and each selected port supports it. Based on the stated total budget, how many more such APs can the switch support?",
+    "options": [
+      "Three additional APs",
+      "Two additional APs",
+      "No additional APs",
+      "One additional AP"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The remaining allocation budget is 120 − 90 = 30 W, enough for one more 30 W AP. Per-port capability and aggregate available power must both be sufficient.",
+    "whyWrong": {
+      "0": "Three APs would require 90 W of additional available budget.",
+      "1": "Two APs would require 60 W, more than the stated remainder.",
+      "2": "The given 30 W remainder does fit one compatible 30 W allocation."
+    }
+  },
+  {
+    "id": "components-and-topologies-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.2.e",
+      "v1:1.1.d"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "On a home device combining routing, switching and an AP, wired clients still reach the Internet. Nearby wireless clients cannot find the configured network name. Which function should be investigated first?",
+    "options": [
+      "The WAN routing function that the wired clients are using",
+      "The wireless access-point function and its radio configuration",
+      "The Ethernet switching function serving the wired clients",
+      "The remote Internet server used by both kinds of client"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The symptom is failure to discover the wireless network, while the wired forwarding path works. Start with the AP's radio, network-name settings and wireless environment before changing a working wired path.",
+    "whyWrong": {
+      "0": "Successful wired Internet use is evidence that the WAN path is working for those clients.",
+      "2": "The failed step is wireless discovery rather than the wired clients' Ethernet attachment.",
+      "3": "Clients must first discover and join the local wireless network before reaching a remote server."
+    }
+  },
+  {
+    "id": "components-and-topologies-q17",
+    "type": "single",
+    "objectives": [
+      "v1:1.2.d"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Three branches reach headquarters through separate WAN links. Each branch's only path to the others passes through headquarters. What is the effect of losing the headquarters transit function?",
+    "options": [
+      "Branch-A loses local switching as well as its WAN path.",
+      "The branches retain communication through their local gateways alone.",
+      "Communication between branches loses its only designed path.",
+      "Only requests addressed to HQ itself are affected."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "In this hub-and-spoke design, interbranch communication depends on the hub's transit role. A failure there removes that path even if each branch's local LAN continues operating.",
+    "whyWrong": {
+      "0": "An HQ transit failure does not by itself stop switching within Branch-A.",
+      "1": "The local gateways do not create an alternative interbranch connection.",
+      "3": "Traffic using HQ as transit is affected even when HQ is not its final destination."
+    }
+  },
+  {
+    "id": "components-and-topologies-q19",
+    "type": "single",
+    "objectives": [
+      "v1:1.1.b",
+      "v1:1.1.g"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Office test record — supplied evidence",
+      "text": "PC-A and Server-A: same local subnet, different addresses\nPC-A → Server-A ping: replies received\nPC-A → Server-A new HTTP request: no service response\nServer-A Services → HTTP: Off"
+    },
+    "prompt": "Which change directly addresses the confirmed cause while preserving the working path?",
+    "options": [
+      "Assign a management IP address to the switch.",
+      "Enable HTTP on Server-A, then repeat the fresh request.",
+      "Give PC-A a default gateway for this local destination.",
+      "Move Server-A to a different subnet before testing."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The actual server setting shows that HTTP is stopped. Enabling the service and retesting addresses that confirmed cause; ping already provides evidence that the same client can exchange ICMP with the server.",
+    "whyWrong": {
+      "0": "Local switching and the working ping do not require a switch management address.",
+      "2": "The server is in the client’s connected subnet, so a default gateway is not needed for this exchange.",
+      "3": "Changing the subnet adds a different requirement without starting the stopped service."
+    }
+  }
+]

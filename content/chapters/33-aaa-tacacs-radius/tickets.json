@@ -1,0 +1,68 @@
+[
+  {
+    "id": "aaa-tacacs-radius-t01",
+    "title": "New SSH sign-ins fail after an authentication change",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "scenario": "BR1 is reachable by SSH and a privileged console session remains open. A change selected local AAA for the VTY lines, but the complete relevant configuration contains no local username. These are representative records.",
+    "exhibits": [
+      {
+        "title": "Current authentication",
+        "text": "aaa new-model\naaa authentication login default local\nline vty 0 4\n login authentication default\n transport input ssh\nNo username entries"
+      },
+      {
+        "title": "Observed test",
+        "text": "Fresh SSH reaches authentication and no submitted local account is accepted."
+      }
+    ],
+    "question": "Which missing dependency explains the selected method’s failure?",
+    "options": [
+      "Add a central server even though the selected method is local.",
+      "Create a valid account for the explicitly selected local method.",
+      "Change only the line password while continuing to select local usernames.",
+      "Add EXEC accounting and expect it to supply the missing login identity."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The line selects the local username method and the complete configuration contains no such account. A server definition, line password or accounting list does not populate that database. Correct the local identity through the retained console, then test a new VTY session and console recovery before saving.",
+    "fix": "In the disposable lab, from the retained privileged console:\n```ios\nBR1# configure terminal\nBR1(config)# username recovery privilege 15 secret Lab-Recovery-2026!\nBR1(config)# aaa authentication login CONSOLE local\nBR1(config)# line console 0\nBR1(config-line)# login authentication CONSOLE\nBR1(config-line)# end\n```\nTest a fresh recovery SSH login. Keep it open while verifying a fresh console login, then inspect every VTY range and save the intended configuration. Replace public examples with approved unique secrets outside a disposable lab."
+  },
+  {
+    "id": "aaa-tacacs-radius-t02",
+    "title": "The central service sees no requests during SSH sign-ins",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "scenario": "R2 has one TACACS+ server TAC1 in MGMT-TAC. A controlled new SSH login uses a local account instantly. The central service sees no request and the device’s request counter does not increase. The complete VTY configuration for this test is shown.",
+    "exhibits": [
+      {
+        "title": "Definitions and methods",
+        "text": "tacacs server TAC1\n address ipv4 10.0.0.100\n key [omitted]\naaa group server tacacs+ MGMT-TAC\n server name TAC1\naaa authentication login default local\naaa authentication login VTY-AUTH group MGMT-TAC local"
+      },
+      {
+        "title": "Actual selected VTY configuration",
+        "text": "line vty 0 4\n login authentication default\n transport input ssh"
+      },
+      {
+        "title": "Fresh-attempt counter comparison",
+        "text": "TACACS+ authentication requests before: 0; after: 0"
+      }
+    ],
+    "question": "Which configuration change selects the intended central-first login policy?",
+    "options": [
+      "Bind login authentication VTY-AUTH to the intended VTY range.",
+      "Change the central account password before selecting its method list.",
+      "Add the same reachable server to a second unused group.",
+      "Change only the default list while assuming the explicitly named VTY list is already selected."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The VTY explicitly selects default, which is local-only. The central-first VTY-AUTH list exists but does not participate. Binding that intended list preserves the separate local default and console policy; changing credentials or an unused group would not select it. Replacing the default list would change the scope of other users of default rather than implement the specified named binding.",
+    "fix": "Keep the tested local console session open:\n```ios\nR2# configure terminal\nR2(config)# line vty 0 4\nR2(config-line)# login authentication VTY-AUTH\nR2(config-line)# end\n```\nApply the intended binding to any additional existing VTY ranges. Test a fresh central success, explicit rejection, and controlled ERROR fallback while keeping console recovery. Save only after those results match policy."
+  }
+]

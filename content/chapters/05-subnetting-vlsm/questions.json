@@ -1,0 +1,778 @@
+[
+  {
+    "id": "subnetting-vlsm-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How does VLSM differ from fixed-length subnetting?",
+    "options": [
+      "VLSM permits overlapping routed subnets inside one parent.",
+      "VLSM assigns different prefix lengths to different subnets.",
+      "VLSM removes the network and broadcast reservations from every LAN.",
+      "VLSM makes private addresses globally unique."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VLSM allows each subnet to use a size suited to its requirements. The allocations still need enough capacity, valid alignment, containment and no overlap.",
+    "whyWrong": {
+      "0": "Different sizes do not permit overlapping ordinary routed subnets.",
+      "2": "Ordinary LAN host-address reservations still apply.",
+      "3": "Address sizing does not change private-address uniqueness."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q19",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "When counting modern equal-size child subnets, what is the role of the all-zero and all-one subnet numbers?",
+    "options": [
+      "Both must be removed from the child-subnet count.",
+      "Only the all-zero subnet number remains available.",
+      "Both remain available in modern subnetting.",
+      "Only the all-one subnet number remains available."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Adding s prefix bits provides all 2^s subnet numbers. Do not subtract two from that count. Ordinary network and broadcast addresses are still excluded when calculating usable hosts within each LAN.",
+    "whyWrong": {
+      "0": "This applies an obsolete subnet-count subtraction.",
+      "1": "The all-one child-subnet number is also usable.",
+      "3": "The all-zero child-subnet number is also usable."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q09",
+    "type": "multi",
+    "objectives": [
+      "v1:1.7",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two addresses are within RFC 1918 private space? Choose two.",
+    "options": [
+      "172.32.5.10",
+      "172.31.200.1",
+      "100.64.1.1",
+      "10.255.255.254",
+      "192.169.1.1"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "The 172.16.0.0/12 private block ends at 172.31.255.255, and all of 10.0.0.0/8 is private. Thus the listed .31 address and 10 address qualify.",
+    "whyWrong": {
+      "0": "172.32 is beyond the RFC 1918 172 range.",
+      "2": "100.64.0.0/10 is shared address space, a separate designation.",
+      "4": "The private block is 192.168.0.0/16, not 192.169.0.0/16."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q16",
+    "type": "single",
+    "objectives": [
+      "v1:1.7",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement correctly describes RFC 1918 addresses?",
+    "options": [
+      "They require translation between every pair of internal LANs.",
+      "They can be routed internally but are not globally unique public space.",
+      "They become globally unique whenever assigned by DHCP.",
+      "They provide firewall protection through their private designation."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Private addresses can be routed within an organization's network. Separate organizations may reuse the same ranges, so they are not globally unique public allocations.",
+    "whyWrong": {
+      "0": "Ordinary routing between nonoverlapping private LANs does not require NAT.",
+      "2": "DHCP assigns configuration; it does not change the address range's designation.",
+      "3": "The private designation does not enforce a security policy."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which network and broadcast contain 172.16.77.210/20?",
+    "options": [
+      "172.16.77.0/20; broadcast 172.16.77.255",
+      "172.16.72.0/20; broadcast 172.16.87.255",
+      "172.16.64.0/20; broadcast 172.16.79.255",
+      "172.16.80.0/20; broadcast 172.16.95.255"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The /20 mask has third-octet increment 16. The containing aligned block is 64–79, with the entire fourth octet available as host bits.",
+    "whyWrong": {
+      "0": "This treats the address like a /24 and does not start on a /20 boundary.",
+      "1": "72 is not a multiple of 16 and is not a /20 network boundary.",
+      "3": "The block beginning at 80 does not contain third-octet value 77."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A LAN needs 70 workstations and one gateway. Which prefix gives the smallest suitable subnet?",
+    "options": [
+      "/26, providing 62 usable addresses",
+      "/25, providing 126 usable addresses",
+      "/27, providing 30 usable addresses",
+      "/24, providing 254 usable addresses"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The requirement is 71 usable addresses. A /26 is too small, while /25 is the smallest ordinary subnet with enough usable addresses.",
+    "whyWrong": {
+      "0": "62 is less than 71.",
+      "2": "A /27 supplies only 30 usable addresses, fewer than the required 71.",
+      "3": "A /24 fits but consumes more space than necessary."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q03",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "172.16.0.0/16 is divided into equal /23 subnets. How many subnets result, and how many ordinary usable addresses does each provide?",
+    "options": [
+      "256 subnets; 254 usable each",
+      "64 subnets; 1022 usable each",
+      "128 subnets; 512 usable each",
+      "128 subnets; 510 usable each"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The new prefix adds seven bits: 2^7 = 128 subnets. Each /23 has nine host bits, giving 512 total addresses and 510 usable addresses.",
+    "whyWrong": {
+      "0": "These values describe dividing /16 into /24s.",
+      "1": "These values describe dividing /16 into /22s.",
+      "2": "512 is the total per /23, before removing network and broadcast."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q04",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A host keeps 10.4.200.77, but its prefix changes from /20 to /23. Which comparison of its calculated local range is correct?",
+    "options": [
+      "The range changes from 10.4.192.0–10.4.207.255 to 10.4.200.0–10.4.201.255.",
+      "The range stays 10.4.192.0–10.4.207.255 because the address did not change.",
+      "The range changes from 10.4.192.0–10.4.207.255 to 10.4.200.0–10.4.207.255.",
+      "The range changes from 10.4.200.0–10.4.200.255 to 10.4.200.0–10.4.223.255."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The /20 increments by 16 in the third octet, so 200 belongs to 192–207. A /23 increments by two, making the new range 200–201. More network bits narrow the host’s calculated local range even though its address stays the same.",
+    "whyWrong": {
+      "1": "The mask participates in the calculation; changing it can change the range.",
+      "2": "A /23 contains two third-octet values, not eight.",
+      "3": "Neither proposed range follows the stated /20 and /23 boundaries."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q05",
+    "type": "multi",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Allocate from the bottom of an empty 192.168.40.0/24, largest first. Requirements are 120, 55, and 25 total usable addresses including gateways, plus two /30 links. Which two placements are correct?",
+    "options": [
+      "25-address LAN: 192.168.40.192/27",
+      "25-address LAN: 192.168.40.160/27",
+      "55-address LAN: 192.168.40.128/26",
+      "First router link: 192.168.40.192/30",
+      "Second router link: 192.168.40.224/30"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The /25 occupies .0–.127, then the /26 occupies .128–.191, and the /27 occupies .192–.223. The two /30 links follow at .224/30 and .228/30.",
+    "whyWrong": {
+      "1": "This overlaps the 55-address LAN.",
+      "3": "This overlaps the 25-address LAN.",
+      "4": "This is the first link's allocation; the second starts at .228."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Three LANs require 100, 100, and 50 total usable addresses. Can all three fit in one /24 using ordinary subnets?",
+    "options": [
+      "Yes; the host totals are below 256.",
+      "Yes; allocate the /26 before the /25s.",
+      "No; the required blocks total 320 addresses.",
+      "Yes; a summary removes duplicate space."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The two 100-address LANs each require /25, and the 50-address LAN requires /26. Their blocks consume 128 + 128 + 64 = 320 addresses, exceeding a /24's 256.",
+    "whyWrong": {
+      "0": "Allocation includes the power-of-two block sizes, not just the requested usable-address totals.",
+      "1": "Changing the order cannot increase the parent's capacity.",
+      "3": "A summary changes route representation; it does not free allocated addresses."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q07",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Networks to summarize",
+      "text": "10.44.8.0/24\n10.44.9.0/24\n10.44.10.0/24\n10.44.11.0/24"
+    },
+    "prompt": "Which one prefix covers exactly the four listed /24 networks?",
+    "options": [
+      "10.44.8.0/23",
+      "10.44.0.0/22",
+      "10.44.8.0/21",
+      "10.44.8.0/22"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The networks cover third-octet values 8–11, an aligned group of four. A /22 covers that exact 1,024-address range.",
+    "whyWrong": {
+      "0": "A /23 at .8 covers only .8 and .9.",
+      "1": "This covers .0 through .3, not the listed networks.",
+      "2": "This also includes .12 through .15."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q10",
+    "type": "single",
+    "objectives": [
+      "v1:1.7",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Recorded workstation configuration",
+      "text": "Address configuration: automatic\nIPv4 address:           169.254.42.18\nSubnet mask:            255.255.0.0\nDefault gateway:        none"
+    },
+    "prompt": "This workstation is set to obtain an address automatically. Which is the most appropriate next investigation?",
+    "options": [
+      "Check why normal DHCP configuration was not obtained.",
+      "Add NAT so this RFC 1918 address becomes public.",
+      "Use the provider's shared-space gateway for this address.",
+      "Change the mask to /24 without checking the LAN plan."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The record is consistent with IPv4 link-local fallback rather than a normal DHCP lease for the intended LAN. Check connectivity, VLAN membership, and DHCP availability; this snapshot alone does not identify the exact failure.",
+    "whyWrong": {
+      "1": "169.254.0.0/16 is link-local, not RFC 1918 space.",
+      "2": "Provider shared space is 100.64.0.0/10, not this range.",
+      "3": "An arbitrary mask change does not restore the intended DHCP configuration."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Recorded PC-DEV settings",
+      "text": "IPv4 address:    10.44.8.200\nSubnet mask:     255.255.255.224\nDefault gateway: 10.44.8.129"
+    },
+    "prompt": "PC-DEV belongs on 10.44.8.192/27 and R1's LAN interface is .193. Which change brings the shown PC settings into line with the plan?",
+    "options": [
+      "Change the mask to 255.255.255.192.",
+      "Change the default gateway to 10.44.8.193.",
+      "Change the host address to 10.44.8.223.",
+      "Change the host address to 10.44.8.193."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The host .200 and /27 mask match the intended LAN, but gateway .129 does not. Use the actual local router interface .193.",
+    "whyWrong": {
+      "0": "This changes the planned subnet without correcting the gateway value.",
+      "2": "Address .223 is this /27's broadcast.",
+      "3": "Address .193 is already used by the router, creating a duplicate address."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Divide 192.168.5.0/24 into at least 12 equal subnets, maximizing the usable capacity of each. Which choice meets both requirements?",
+    "options": [
+      "255.255.255.240; 16 subnets of 14 usable",
+      "255.255.255.224; 8 subnets of 30 usable",
+      "255.255.255.248; 32 subnets of 6 usable",
+      "255.255.255.192; 4 subnets of 62 usable"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Four extra prefix bits produce 16 subnets, so /28 is the first prefix that meets the minimum of 12. Its four host bits provide 16 total and 14 usable addresses per subnet.",
+    "whyWrong": {
+      "1": "Eight subnets do not meet the required 12.",
+      "2": "This meets the subnet count but reduces capacity unnecessarily.",
+      "3": "Four subnets do not meet the required 12."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q20",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Divide 10.50.6.0/23 into /27s. Number the child subnets 1, 2, 3 and so on from the lowest address. What is subnet 10?",
+    "options": [
+      "10.50.6.224/27",
+      "10.50.7.0/27",
+      "10.50.7.64/27",
+      "10.50.7.32/27"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Eight /27s fit inside the first /24, starting at .6.0 through .6.224. Subnet 9 starts at .7.0; subnet 10 starts at .7.32. Advancing through the parent must carry into the third octet.",
+    "whyWrong": {
+      "0": "That is subnet 8.",
+      "1": "That is subnet 9.",
+      "2": "That is subnet 11."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q21",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An ordinary /27 LAN has one gateway, eight fixed-address devices and four additional usable addresses reserved for future equipment. How many other PCs can be assigned now?",
+    "options": [
+      "17",
+      "19",
+      "21",
+      "30"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A /27 has 30 usable addresses. Subtract the gateway, eight assigned devices and four reserved usable addresses: 30 − 1 − 8 − 4 = 17. The reserved addresses are unavailable for the present PC plan.",
+    "whyWrong": {
+      "1": "This starts from 32 total addresses without first removing network and broadcast.",
+      "2": "This fails to preserve the four requested future addresses.",
+      "3": "This ignores the existing and reserved usable addresses."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q22",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "The reserved router link is 10.44.8.224/30. Which pair assigns its two ordinary usable endpoint addresses?",
+    "options": [
+      "10.44.8.224/30 and 10.44.8.225/30",
+      "10.44.8.225/30 and 10.44.8.226/30",
+      "10.44.8.226/30 and 10.44.8.227/30",
+      "10.44.8.225/30 and 10.44.8.229/30"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The block is .224–.227. Network .224 and broadcast .227 leave .225 and .226 as the two usable endpoints. Both endpoints must belong to the same link subnet.",
+    "whyWrong": {
+      "0": "This assigns the network address to an endpoint.",
+      "2": "This assigns the broadcast address to an endpoint.",
+      "3": "Address .229 belongs to the next /30, beginning at .228."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q23",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Five separate LANs each require 30 usable addresses, including their gateways. What is the smallest aligned empty parent block that can contain their minimum-size subnets?",
+    "options": [
+      "A /26 parent containing 64 addresses",
+      "A /25 parent containing 128 addresses",
+      "A /24 parent containing 256 addresses",
+      "A /23 parent containing 512 addresses"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Each LAN needs /27, a 32-address block. Five blocks consume 160 addresses. A /25 has only 128; /24 is the smallest power-of-two parent that fits. The remaining space is not a sixth requirement.",
+    "whyWrong": {
+      "0": "64 addresses fit only two of the required /27 blocks.",
+      "1": "128 addresses fit only four /27 blocks.",
+      "3": "This fits but is larger than necessary."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q24",
+    "type": "multi",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Complete allocations inside 10.66.0.0/24",
+      "text": "Users: 10.66.0.0/25\nOperations: 10.66.0.128/26\nDevices: 10.66.0.192/28\nNo other assignments or reservations."
+    },
+    "prompt": "Which two prefixes describe exactly the still-unallocated interval? Choose two.",
+    "options": [
+      "10.66.0.208/28",
+      "10.66.0.192/27",
+      "10.66.0.224/27",
+      "10.66.0.240/28",
+      "10.66.0.208/27"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The allocations occupy .0–.207. The remaining .208–.255 is exactly .208/28 (.208–.223) plus .224/27 (.224–.255). The 48 remaining addresses are not one power-of-two aligned subnet.",
+    "whyWrong": {
+      "1": "This includes assigned .192–.207 addresses.",
+      "3": "This covers only half of the free .224–.255 range, so it cannot replace .224/27 in a complete two-prefix answer.",
+      "4": "208 is not a /27 boundary; the containing /27 begins at .192."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q25",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "The plan chooses the last usable address as the gateway for 172.18.12.96/27. Which interface command implements that choice?",
+    "options": [
+      "ip address 172.18.12.97 255.255.255.224",
+      "ip address 172.18.12.127 255.255.255.224",
+      "ip address 172.18.12.126 255.255.255.192",
+      "ip address 172.18.12.126 255.255.255.224"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The /27 covers .96–.127, so .126 is its last usable address and 255.255.255.224 is its mask. A gateway need not use the first usable address; it must follow the approved, unique-address plan.",
+    "whyWrong": {
+      "0": "This is the first usable address, not the chosen last usable address.",
+      "1": "This is the subnet broadcast.",
+      "2": "The /26 mask changes the intended subnet to .64–.127."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q08",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which is the smallest single containing prefix for 10.44.9.0/24 through 10.44.12.0/24?",
+    "options": [
+      "10.44.12.0/22",
+      "10.44.8.0/21",
+      "10.44.8.0/22",
+      "10.44.0.0/20"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The four /24s cross a /22 boundary. Their smallest single containing prefix is 10.44.8.0/21, covering .8 through .15 and therefore including additional networks.",
+    "whyWrong": {
+      "0": "This covers .12–.15 and misses .9–.11.",
+      "2": "This covers .8–.11 and misses .12.",
+      "3": "This contains the range but is larger than the required /21."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q11",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Existing and proposed configuration",
+      "text": "Existing Gi0/0: ip address 10.44.8.1 255.255.255.128\nProposed Gi0/1: ip address 10.44.8.140 255.255.255.0"
+    },
+    "prompt": "Which interpretation explains the overlap between the existing and proposed interface subnets?",
+    "options": [
+      "Both host addresses lie inside the lower /25, so only .140 needs changing.",
+      "The different host addresses create separate subnets regardless of their masks.",
+      "The proposed /24 covers only the upper half because its address is .140.",
+      "The proposed /24 covers .0–.255 and includes the existing lower /25."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Gi0/0 occupies 10.44.8.0–10.44.8.127. Gi0/1's proposed /24 covers .0–.255, so the two routed interface subnets would overlap.",
+    "whyWrong": {
+      "0": "The lower /25 ends at .127; .140 is outside it, but its proposed /24 still overlaps it.",
+      "1": "Distinct host addresses do not establish separate subnet ranges.",
+      "2": "A /24 retains the first three octets and covers the full fourth octet; .140 does not shift its boundary."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q12",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Recorded router interfaces",
+      "text": "Gi0/1: 10.44.8.129/26, connected to PC-OPS\nGi0/2: 10.44.8.193/27, connected to host 10.44.8.200"
+    },
+    "prompt": "PC-OPS uses 10.44.8.140/25, but its intended LAN is the /26 shown. How does that wrong mask affect its initial decision for destination 10.44.8.200?",
+    "options": [
+      "It treats gateway .129 as remote and ARPs for the default gateway elsewhere.",
+      "It treats .200 as remote and resolves .129, just as the intended /26 would.",
+      "It treats .200 as local and tries ARP for .200.",
+      "It keeps the correct /26 decision because R1’s interface controls the PC’s mask."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The PC's /25 says .128–.255 is local, so .200 appears local and is an ARP target. With the intended /26, .200 is remote and should be sent through the gateway.",
+    "whyWrong": {
+      "0": "The mistaken /25 still contains gateway .129 and the PC itself.",
+      "1": "This is the intended /26 behavior; the configured /25 extends through .255.",
+      "3": "The PC applies its own configured mask; R1’s mask does not override it."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q29",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Post-change verification",
+      "text": "New Operations allocation: 10.44.9.0/25; gateway .1; test PC .10\nR1 Gi0/1: 10.44.9.1/25, up/up\nPC-OPS: 10.44.9.140/25, gateway 10.44.9.1\nUsers and Devices remain reachable from R1. No other device uses 10.44.9.10."
+    },
+    "prompt": "The Operations router interface was renumbered correctly. Which host correction completes the approved change?",
+    "options": [
+      "Keep .140 and widen the host mask to /24.",
+      "Change the host gateway to .129 in the new /24.",
+      "Return the router to the old subnet without checking the new plan.",
+      "Set the PC to 10.44.9.10/25 with gateway 10.44.9.1."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The new lower /25 contains .9.0–.9.127. The PC’s carried-over host value .140 lies in the upper /25 even though its first three octets match the gateway. Use the approved .10 address and verify local and cross-LAN tests in both directions. A router address change does not update a statically addressed PC.",
+    "whyWrong": {
+      "0": "This abandons the approved /25 and hides the mismatch with a broader host view.",
+      "1": "Gateway .129 is in the upper /25 and no router owns it in this design.",
+      "2": "The router already follows the newly approved allocation; the evidence identifies the host error."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q17",
+    "type": "multi",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": null,
+    "prompt": "Which two existing subnets overlap a proposed 10.20.4.0/22 allocation? Choose two.",
+    "options": [
+      "10.20.6.128/25",
+      "10.20.8.0/24",
+      "10.20.0.0/21",
+      "10.20.3.0/24",
+      "10.20.12.0/22"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The proposed /22 spans 10.20.4.0–10.20.7.255. The .6.128/25 is contained inside it, while .0.0/21 contains the entire proposed block.",
+    "whyWrong": {
+      "1": "This begins after the proposed block.",
+      "3": "This ends before the proposed block.",
+      "4": "This is a separate /22 covering third-octet values 12–15."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q26",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Fixed allocations inside 192.168.80.0/24",
+      "text": "Occupied: .32/27, .96/27, .160/27, .224/27\nFree: .0–.31, .64–.95, .128–.159, .192–.223\nAll prefixes use 192.168.80 as their first three octets."
+    },
+    "prompt": "A new LAN needs 50 usable addresses and all existing allocations must remain. Can it fit in this parent without changing them?",
+    "options": [
+      "No; each free interval has 32 addresses and no free aligned /26 exists.",
+      "Yes; there are 128 free addresses, so a /25 is available.",
+      "Yes; join the first two free intervals into one /26 while keeping the block between them.",
+      "No; a 50-address LAN always requires an entire /24."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The LAN needs /26, which requires 64 contiguous, correctly aligned addresses. There are 128 free addresses in total, but four occupied /27s split them into separate 32-address gaps. Count and placement are separate constraints; keeping all allocations prevents this addition.",
+    "whyWrong": {
+      "1": "Total free count does not establish a contiguous aligned /25.",
+      "2": "A subnet cannot skip the occupied addresses between free intervals.",
+      "3": "A /26 normally supplies enough capacity; the obstacle here is fragmentation."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q27",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Current approved plan inside 10.22.4.0/24",
+      "text": "Users: .0/26; Operations: .64/26, gateway .65; Devices: .128/27\nUsers and Devices must retain their assignments."
+    },
+    "prompt": "Operations grows to 70 total addressed interfaces. An engineer proposes keeping gateway .65 and using /25. Which assessment accounts for both capacity and placement?",
+    "options": [
+      "The /25 is too small because it has only 62 usable addresses.",
+      "The /25 has enough capacity, but it covers .0–.127 and overlaps Users.",
+      "The /25 fits only Operations because the gateway ends in .65.",
+      "The /25 fits if the Devices subnet is changed from /27 to /28."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Seventy usable addresses require /25 or larger. However, .65/25 belongs to the lower half .0–.127, including Users .0–.63. Increasing capacity does not preserve the old subnet boundary. Changing Devices does not remove that overlap; the plan needs different available space or an explicitly redesigned allocation.",
+    "whyWrong": {
+      "0": "A /25 provides 126 usable addresses.",
+      "2": "The mask sets the boundary; the gateway’s old subnet does not remain a separate /26 inside this new interface prefix.",
+      "3": "The conflict is with Users, so changing Devices does not fix it."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q28",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Allocation requirements",
+      "text": "Empty parent assigned to this site: 172.18.40.0/23\nRequired total usable addresses: A 200; B 50; C 20\nUse minimum suitable sizes, remain inside the parent, and avoid overlap."
+    },
+    "prompt": "Which proposed plan satisfies every stated constraint?",
+    "options": [
+      "A: 172.18.40.0/24; B: 172.18.41.0/26; C: 172.18.41.32/27",
+      "A: 172.18.40.0/24; B: 172.18.42.0/26; C: 172.18.41.64/27",
+      "A: 172.18.40.0/24; B: 172.18.41.0/26; C: 172.18.41.64/27",
+      "A: 172.18.40.0/25; B: 172.18.41.0/26; C: 172.18.41.64/27"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The approved /23 spans 172.18.40.0–172.18.41.255. A needs /24 (254 usable), B /26 (62), and C /27 (30). The correct plan is aligned, contained, nonoverlapping, and meets all three capacities. Checking only one of those conditions would miss the other proposals’ errors.",
+    "whyWrong": {
+      "0": "B’s .41.0/26 extends through .41.63 and overlaps C’s .41.32/27.",
+      "1": "The .42.0/26 allocation falls outside the approved parent.",
+      "3": "A’s /25 has 126 usable addresses and cannot support 200."
+    }
+  }
+]

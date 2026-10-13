@@ -1,0 +1,232 @@
+[
+  {
+    "id": "vlans-and-access-ports-d01",
+    "task": "VLAN 10 is missing from this switch. Create it and enter its VLAN configuration context.",
+    "mode": "SW1(config)#",
+    "answer": "vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "vlan-numbers-names-and-where-they-live",
+      "hint": "The VLAN database is separate from an interface’s access assignment.",
+      "takeaway": "Creating the VLAN establishes the local Layer 2 object. It does not automatically move a host port into it or provide a gateway.",
+      "syntax": [
+        {
+          "text": "vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d02",
+    "task": "You are configuring VLAN 10. Give it the administrative name USERS.",
+    "mode": "SW1(config-vlan)#",
+    "answer": "name USERS",
+    "accept": [],
+    "teaching": {
+      "sectionId": "vlan-numbers-names-and-where-they-live",
+      "hint": "The numeric VLAN ID already exists; now set its label.",
+      "takeaway": "USERS is a readable label. The VLAN number, rather than the spelling of this name, identifies tagged traffic across links.",
+      "syntax": [
+        {
+          "text": "name",
+          "kind": "keyword"
+        },
+        {
+          "text": "USERS",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d03",
+    "task": "The selected switch port connects to an ordinary PC sending one untagged network. Fix the port in access mode.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport mode access",
+    "accept": [],
+    "teaching": {
+      "sectionId": "access-ports-how-an-untagged-frame-gets-a-vlan",
+      "hint": "Choose the host-facing mode independently of its VLAN number.",
+      "takeaway": "Static access mode removes trunk-negotiation ambiguity for this PC port. Its data VLAN must still be assigned separately.",
+      "syntax": [
+        {
+          "text": "switchport mode access",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d04",
+    "task": "The selected port is already in access mode. Move its untagged data traffic into the existing VLAN 10.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport access vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "access-ports-how-an-untagged-frame-gets-a-vlan",
+      "hint": "Change the port’s data VLAN, not the VLAN database name.",
+      "takeaway": "Verify the access VLAN is active and generate fresh host traffic. A correct VLAN assignment does not correct the host’s IP address or mask.",
+      "syntax": [
+        {
+          "text": "switchport access vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d05",
+    "task": "Fa0/1 serves an IP phone with a PC behind it. Data must stay in access VLAN 10; put the phone’s tagged voice traffic in existing VLAN 30.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport voice vlan 30",
+    "accept": [],
+    "teaching": {
+      "sectionId": "voice-vlan-two-vlans-on-one-access-port",
+      "hint": "Add the voice policy without replacing the data VLAN.",
+      "takeaway": "The port remains an access port with a voice VLAN. Voice addressing and registration need their own services; this command alone does not establish a phone call.",
+      "syntax": [
+        {
+          "text": "switchport voice vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "30",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d06",
+    "task": "Display the local VLAN database summary, including VLAN status and ordinary access-port membership.",
+    "mode": "SW1#",
+    "answer": "show vlan brief",
+    "accept": [
+      "show vlan"
+    ],
+    "teaching": {
+      "sectionId": "vlan-numbers-names-and-where-they-live",
+      "hint": "Inspect the defined VLANs before changing a connected endpoint’s address.",
+      "takeaway": "Check that the intended VLAN exists and is active. A port can retain an assigned VLAN number after that VLAN is deleted, without normal data forwarding.",
+      "syntax": [
+        {
+          "text": "show vlan brief",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d07",
+    "task": "A phone’s attached PC works, but you need to verify Fa0/1’s actual data and voice VLAN settings and port mode. Display the detailed switchport view.",
+    "mode": "SW1#",
+    "answer": "show interfaces fastethernet0/1 switchport",
+    "accept": [
+      "show interface fastethernet0/1 switchport"
+    ],
+    "teaching": {
+      "sectionId": "voice-vlan-two-vlans-on-one-access-port",
+      "hint": "The VLAN summary does not show every operational switchport setting.",
+      "takeaway": "Read administrative mode, operational mode, access VLAN and voice VLAN separately. PC connectivity does not establish that the phone has the intended voice policy.",
+      "syntax": [
+        {
+          "text": "show interfaces",
+          "kind": "keyword"
+        },
+        {
+          "text": "fastethernet0/1",
+          "kind": "interface"
+        },
+        {
+          "text": "switchport",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d10",
+    "task": "On a supported PoE switch, an AP has no power. Display the shared power budget and per-port power state before changing its VLAN.",
+    "mode": "SW2#",
+    "answer": "show power inline",
+    "accept": [],
+    "teaching": {
+      "sectionId": "poe-power-as-a-negotiated-budget",
+      "hint": "Inspect the power-sourcing function first.",
+      "takeaway": "Separate a disabled power setting from allocation denial. Check the endpoint’s requirement against both per-port capability and remaining switch budget.",
+      "syntax": [
+        {
+          "text": "show power inline",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d14",
+    "task": "A workstation was moved to SW1 Fa0/2. After it transmits, display MAC entries for that port to check the VLAN in which it was learned.",
+    "mode": "SW1#",
+    "answer": "show mac address-table interface fastethernet0/2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "access-ports-how-an-untagged-frame-gets-a-vlan",
+      "hint": "Filter by the new local access port.",
+      "takeaway": "Compare the learned VLAN with the workstation’s approved network. A MAC learned on the wrong VLAN points to a membership problem even when the cable is connected.",
+      "syntax": [
+        {
+          "text": "show mac address-table interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "fastethernet0/2",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "vlans-and-access-ports-d15",
+    "task": "The selected supported PoE port is configured never to supply power. Its attached AP is compatible and the budget is sufficient. Restore normal detection and allocation.",
+    "mode": "SW2(config-if)#",
+    "answer": "power inline auto",
+    "accept": [],
+    "teaching": {
+      "sectionId": "poe-power-as-a-negotiated-budget",
+      "hint": "Use automatic detection rather than forcing an arbitrary wattage.",
+      "takeaway": "Automatic PoE allows compatible-device detection and allocation. Verify the resulting power state; it does not guarantee that the AP’s VLAN or IP service is correct.",
+      "syntax": [
+        {
+          "text": "power inline auto",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

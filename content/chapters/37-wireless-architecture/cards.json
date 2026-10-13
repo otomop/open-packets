@@ -1,0 +1,124 @@
+[
+  {
+    "id": "wireless-architecture-c05",
+    "front": "What does a wireless controller coordinate across APs?",
+    "back": "Shared WLAN policy and operational client/radio state; APs still perform local radio work.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c04",
+    "front": "Why do wireless acknowledgements stay at a lightweight AP?",
+    "back": "Their radio timing requires local handling; the AP does not wait for a controller round trip.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c09",
+    "front": "Where can a controller function run?",
+    "back": "In an appliance, supported VM, or documented embedded deployment. EWC-on-AP is a legacy product, not a universal new-design recommendation.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c11",
+    "front": "Cloud-based controller versus cloud-managed AP?",
+    "back": "A cloud-based WLC runs controller software remotely; cloud-managed identifies the manager's location. Determine client forwarding from the configured SSID mode.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c12",
+    "front": "Port for a centrally switched AP with only untagged management in VLAN 10?",
+    "back": "An access port in VLAN 10 is sufficient; client traffic reaches its VLAN at the controller.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c13",
+    "front": "Port for untagged management 10 and tagged local client VLANs 20/30?",
+    "back": "Trunk with native VLAN 10 and allowed VLANs 10,20,30, matching the AP's actual tagging configuration.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c01",
+    "front": "CAPWAP control port and protection?",
+    "back": "UDP 5246. Discovery precedes DTLS; established Cisco AP control traffic uses DTLS.",
+    "tags": [
+      "number",
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c02",
+    "front": "CAPWAP data port and protection?",
+    "back": "UDP 5247. Data DTLS is a separate policy; WPA2/WPA3 radio protection does not automatically encrypt this wired path.",
+    "tags": [
+      "number",
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c07",
+    "front": "What DNS name can a Cisco AP use for controller discovery?",
+    "back": "`CISCO-CAPWAP-CONTROLLER` in the relevant DNS domain, with working DNS and IP connectivity.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c14",
+    "front": "Which physical controller connections might a model provide?",
+    "back": "Distribution, console, service-management and redundancy connections; presence and purpose vary by model.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c15",
+    "front": "What are AireOS dynamic and management interfaces for?",
+    "back": "Dynamic interfaces map client VLANs; management provides controller access and, on common platforms, AP-manager functions.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c18",
+    "front": "Sniffer mode versus monitor mode?",
+    "back": "Sniffer exports heard frames on a selected channel; monitor dedicates radio resources to monitoring rather than ordinary client service.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c21",
+    "front": "What determines FlexConnect service during controller loss?",
+    "back": "Local switching, authentication/standalone support and service reachability. Existing clients and new joins can have different outcomes.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c22",
+    "front": "A powered AP has reduced radio capability: what power evidence matters?",
+    "back": "Compare the model's requirements with negotiated PoE, power-source capability and the switch's remaining budget.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c24",
+    "front": "Does AP registration establish wireless client service?",
+    "back": "No. Verify a fresh client's security, IP settings and intended application separately.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

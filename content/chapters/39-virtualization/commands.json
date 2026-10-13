@@ -1,0 +1,25 @@
+[
+  {
+    "id": "virtualization-d11",
+    "task": "A hypervisor uses one physical uplink for guest frames tagged with VLANs 10 and 20. Its separate management NIC is outside this task. Select the Layer 2 mode on the guest-facing switch port; native and allowed settings follow separately.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport mode trunk",
+    "accept": [],
+    "teaching": {
+      "sectionId": "virtual-switches-vnics-and-the-trunk-to-the-host",
+      "hint": "Choose from the frames on this uplink, not from the number of physical servers.",
+      "takeaway": "A trunk carries the two tagged guest VLANs. The host’s working management NIC proves nothing about this separate guest uplink, and the trunk does not provide inter-VLAN routing.",
+      "syntax": [
+        {
+          "text": "switchport mode trunk",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

@@ -1,0 +1,273 @@
+[
+  {
+    "id": "aaa-tacacs-radius-d01",
+    "task": "Local recovery and fresh console access have been tested on this isolated router. Enable the IOS AAA framework before defining its explicit login lists.",
+    "mode": "R1(config)#",
+    "answer": "aaa new-model",
+    "accept": [],
+    "teaching": {
+      "sectionId": "aaa-new-model-and-staying-out-of-the-lock-out",
+      "hint": "Enable AAA processing, then define which methods each line should use.",
+      "takeaway": "Enabling the framework changes available authentication behavior. Test fresh sessions through the intended lists; an already open console does not prove that the next login will succeed.",
+      "syntax": [
+        {
+          "text": "aaa new-model",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d02",
+    "task": "On IOS supporting named server objects, begin defining TACACS+ server TAC1. Its address and shared key will be entered in the resulting server mode.",
+    "mode": "R1(config)#",
+    "answer": "tacacs server TAC1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "servers-and-server-groups",
+      "hint": "A server object describes a destination; it does not yet select that server for logins.",
+      "takeaway": "The object must later belong to the group referenced by a login method list. Creating TAC1 alone does not change the authentication method selected on a VTY line.",
+      "syntax": [
+        {
+          "text": "tacacs server",
+          "kind": "keyword"
+        },
+        {
+          "text": "TAC1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d03",
+    "task": "You are editing TAC1. R1 sends AAA requests from 10.0.0.1; the TACACS+ service listens on 10.0.0.100. Set the remote server address.",
+    "mode": "R1(config-server-tacacs)#",
+    "answer": "address ipv4 10.0.0.100",
+    "accept": [],
+    "teaching": {
+      "sectionId": "servers-and-server-groups",
+      "hint": "Choose the AAA service destination, not the router’s NAS/client address.",
+      "takeaway": "The server object points to 10.0.0.100. Separately, the service must recognize R1’s request source as an authorized AAA client; confusing these two addresses breaks the exchange.",
+      "syntax": [
+        {
+          "text": "address ipv4",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.0.100",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d04",
+    "task": "You are editing RADIUS server RAD1. The service at 10.0.0.100 is confirmed to listen on UDP 1812 for authentication and 1813 for accounting. Configure its destination and both ports explicitly.",
+    "mode": "R1(config-radius-server)#",
+    "answer": "address ipv4 10.0.0.100 auth-port 1812 acct-port 1813",
+    "accept": [],
+    "teaching": {
+      "sectionId": "servers-and-server-groups",
+      "hint": "The configured client ports must match the actual service listeners.",
+      "takeaway": "An authentication response requires matching the server’s port as well as its address and key. Defining an accounting port does not enable an accounting policy or prove that records are being sent.",
+      "syntax": [
+        {
+          "text": "address ipv4",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.0.0.100",
+          "kind": "argument"
+        },
+        {
+          "text": "auth-port",
+          "kind": "keyword"
+        },
+        {
+          "text": "1812",
+          "kind": "argument"
+        },
+        {
+          "text": "acct-port",
+          "kind": "keyword"
+        },
+        {
+          "text": "1813",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d05",
+    "task": "TAC1 already exists. Create the named TACACS+ group MGMT-TAC that the remote-login policy will reference; membership will be added next.",
+    "mode": "R1(config)#",
+    "answer": "aaa group server tacacs+ MGMT-TAC",
+    "accept": [],
+    "teaching": {
+      "sectionId": "servers-and-server-groups",
+      "hint": "The login policy references a group, while the group selects server objects.",
+      "takeaway": "A group with no eligible members cannot use TAC1 merely because TAC1 exists elsewhere. The next configuration step must associate the intended server with this group.",
+      "syntax": [
+        {
+          "text": "aaa group server tacacs+",
+          "kind": "keyword"
+        },
+        {
+          "text": "MGMT-TAC",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d06",
+    "task": "You are inside group MGMT-TAC. The server object TAC1 is already fully defined but is not yet a member. Add that object to the group.",
+    "mode": "R1(config-sg-tacacs+)#",
+    "answer": "server name TAC1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "servers-and-server-groups",
+      "hint": "Refer to the existing server object by name.",
+      "takeaway": "The group-to-server link completes one part of the selection chain. A correct group still needs a login method list and a line binding before a fresh VTY login will use it.",
+      "syntax": [
+        {
+          "text": "server name",
+          "kind": "keyword"
+        },
+        {
+          "text": "TAC1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d07",
+    "task": "Create login list VTY-AUTH: try the existing MGMT-TAC group first, then use local credentials only if that method cannot complete authentication. A central rejection must remain a denial.",
+    "mode": "R1(config)#",
+    "answer": "aaa authentication login VTY-AUTH group MGMT-TAC local",
+    "accept": [],
+    "teaching": {
+      "sectionId": "method-lists-authentication-authorization-accounting",
+      "hint": "Method order expresses the fallback policy; a rejection is not an outage.",
+      "takeaway": "Local is tried after method ERROR, not after FAIL. A healthy central server can reject a locally valid recovery account; the separately configured console recovery path must remain available.",
+      "syntax": [
+        {
+          "text": "aaa authentication login",
+          "kind": "keyword"
+        },
+        {
+          "text": "VTY-AUTH",
+          "kind": "argument"
+        },
+        {
+          "text": "group",
+          "kind": "keyword"
+        },
+        {
+          "text": "MGMT-TAC",
+          "kind": "argument"
+        },
+        {
+          "text": "local",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d08",
+    "task": "Remote logins will depend on TACACS+. Create a separate login list named CONSOLE that authenticates only against the tested local database.",
+    "mode": "R1(config)#",
+    "answer": "aaa authentication login CONSOLE local",
+    "accept": [],
+    "teaching": {
+      "sectionId": "method-lists-authentication-authorization-accounting",
+      "hint": "The recovery list should have no dependency on a central server.",
+      "takeaway": "A separate local-only list preserves a deliberate recovery path when the central service rejects users or becomes unavailable. It takes effect on the console only after that line selects it.",
+      "syntax": [
+        {
+          "text": "aaa authentication login",
+          "kind": "keyword"
+        },
+        {
+          "text": "CONSOLE",
+          "kind": "argument"
+        },
+        {
+          "text": "local",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-d09",
+    "task": "You have selected line console 0. The local-only CONSOLE list exists, but this line still selects another list. Bind the console to CONSOLE without changing VTY authentication.",
+    "mode": "R1(config-line)#",
+    "answer": "login authentication CONSOLE",
+    "accept": [],
+    "teaching": {
+      "sectionId": "method-lists-authentication-authorization-accounting",
+      "hint": "Change the selected list on this line, not the methods in the remote list.",
+      "takeaway": "A named list is not applied just by defining it. Verify a new console login while retaining another tested session so a mistaken binding can be corrected.",
+      "syntax": [
+        {
+          "text": "login authentication",
+          "kind": "keyword"
+        },
+        {
+          "text": "CONSOLE",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

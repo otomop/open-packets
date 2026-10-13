@@ -1,0 +1,201 @@
+[
+  {
+    "id": "ipv6-addressing-d01",
+    "task": "R1 already has IPv6 interface addresses, but global IPv6 forwarding is disabled. Enable forwarding between its interfaces.",
+    "mode": "R1(config)#",
+    "answer": "ipv6 unicast-routing",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ipv6-on-ios",
+      "hint": "Answering traffic to the router itself is different from routing between links.",
+      "takeaway": "Interface addressing does not by itself enable global IPv6 forwarding. In the lab, a local router ping can succeed while cross-LAN traffic fails until forwarding is enabled.",
+      "syntax": [
+        {
+          "text": "ipv6 unicast-routing",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d02",
+    "task": "You are configuring R1 Gi0/0. Assign its planned address 2001:db8:acad:1::1 with a 64-bit prefix.",
+    "mode": "R1(config-if)#",
+    "answer": "ipv6 address 2001:db8:acad:1::1/64",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ipv6-on-ios",
+      "hint": "IPv6 interface syntax carries the prefix length after the address.",
+      "takeaway": "The command uses an interface address plus /64, not the bare network prefix. A configured address is separate from link state and router-wide forwarding.",
+      "syntax": [
+        {
+          "text": "ipv6 address",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:acad:1::1/64",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d03",
+    "task": "You are configuring R1 Gi0/0. Set its link-local address explicitly to fe80::1.",
+    "mode": "R1(config-if)#",
+    "answer": "ipv6 address fe80::1 link-local",
+    "accept": [],
+    "teaching": {
+      "sectionId": "address-types",
+      "hint": "This address identifies the router only on this interface's local link.",
+      "takeaway": "The link-local qualifier distinguishes this address from a global-prefix assignment. The same value can be used on separate links, but ordinary peers on one link must not duplicate it.",
+      "syntax": [
+        {
+          "text": "ipv6 address",
+          "kind": "keyword"
+        },
+        {
+          "text": "fe80::1",
+          "kind": "argument"
+        },
+        {
+          "text": "link-local",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d04",
+    "task": "You are configuring R1 Gi0/1. Use its MAC to derive the interface identifier beneath 2001:db8:acad:2::/64.",
+    "mode": "R1(config-if)#",
+    "answer": "ipv6 address 2001:db8:acad:2::/64 eui-64",
+    "accept": [],
+    "teaching": {
+      "sectionId": "modified-eui-64",
+      "hint": "Select the identifier-generation method; do not invent a convenient ::1 suffix.",
+      "takeaway": "Modified EUI-64 inserts ff:fe and flips the universal/local bit. Calculate from the actual interface MAC and compare the resulting address; this setting does not dictate a client PC's identifier method.",
+      "syntax": [
+        {
+          "text": "ipv6 address",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:acad:2::/64",
+          "kind": "argument"
+        },
+        {
+          "text": "eui-64",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d09",
+    "task": "Before troubleshooting IPv6 reachability, display R1's interface addresses and basic operational states in a compact summary.",
+    "mode": "R1#",
+    "answer": "show ipv6 interface brief",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Choose the IPv6 summary; an IPv4-only display cannot establish these addresses.",
+      "takeaway": "Read the actual global and link-local addresses alongside interface state. A familiar-looking suffix is not a substitute for the configured address, particularly with EUI-64.",
+      "syntax": [
+        {
+          "text": "show ipv6 interface brief",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d10",
+    "task": "A client on R1 Gi0/0 has only a link-local address. Inspect that interface's detailed IPv6 prefixes and Neighbor Discovery settings.",
+    "mode": "R1#",
+    "answer": "show ipv6 interface gigabitethernet0/0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "The brief address view omits the advertisement details needed for this question.",
+      "takeaway": "Check the advertised prefix and autoconfiguration information along with forwarding and link state. A client using SLAAC does not require a DHCPv6 server simply to form an address.",
+      "syntax": [
+        {
+          "text": "show ipv6 interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d11",
+    "task": "After a local IPv6 test, inspect R1's learned neighbor addresses, link-layer mappings and associated interfaces.",
+    "mode": "R1#",
+    "answer": "show ipv6 neighbors",
+    "accept": [],
+    "teaching": {
+      "sectionId": "neighbor-discovery-and-getting-an-address",
+      "hint": "IPv6 uses Neighbor Discovery rather than the IPv4 ARP table.",
+      "takeaway": "Compare both neighbor address and interface. Stale is not automatically a fault; persistent incomplete resolution during repeated failed tests is stronger evidence of a local-link problem.",
+      "syntax": [
+        {
+          "text": "show ipv6 neighbors",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d12",
+    "task": "Both IPv6 LANs are addressed on R1. Display its complete installed IPv6 routing table to distinguish connected prefixes from local interface addresses.",
+    "mode": "R1#",
+    "answer": "show ipv6 route",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "The local host entry and connected LAN entry describe different destinations.",
+      "takeaway": "A connected /64 identifies the attached LAN; a local /128 identifies R1's own address. No static route is needed for another directly connected LAN with working forwarding.",
+      "syntax": [
+        {
+          "text": "show ipv6 route",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d14",
+    "task": "R1 Gi0/0 has its normal address plus temporary 2001:db8:acad:1::99/64. Remove only that temporary address while preserving IPv6 processing and the normal address.",
+    "mode": "R1(config-if)#",
+    "answer": "no ipv6 address 2001:db8:acad:1::99/64",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ipv6-on-ios",
+      "hint": "Remove the named address, not all IPv6 configuration on the interface.",
+      "takeaway": "IPv6 interfaces can legitimately hold several addresses. Negating the exact temporary assignment preserves the other addresses and avoids turning a narrow correction into a wider outage.",
+      "syntax": [
+        {
+          "text": "no ipv6 address",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:acad:1::99/64",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

@@ -1,0 +1,480 @@
+[
+  {
+    "id": "vpns-ipsec-q20",
+    "type": "multi",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two pairings correctly describe IPsec protection services? Choose two.",
+    "options": [
+      "Confidentiality: prevent unauthorized reading of protected content",
+      "Integrity: guarantee delivery of every packet",
+      "Anti-replay: reject duplicate protected packets using receive sequence processing",
+      "Data-origin authentication: grant every authenticated peer unlimited application rights",
+      "Encryption: hide all outer addresses and traffic timing"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Confidentiality protects the content from unauthorized reading. Anti-replay processing helps reject duplicates and packets outside the acceptable receive window. These services do not imply availability, authorization or the concealment of all metadata.",
+    "whyWrong": {
+      "1": "Integrity detects unauthorized modification; it does not guarantee delivery.",
+      "3": "Origin authentication and application authorization are different functions.",
+      "4": "Outer routing information and timing remain observable."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q08",
+    "type": "multi",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements describe remote-access IPsec correctly? Choose two.",
+    "options": [
+      "The user device can be an IPsec endpoint",
+      "The hotel router must terminate the corporate IPsec tunnel",
+      "Successful VPN authentication also grants all application permissions",
+      "The configured policy may authenticate the device, user, or both",
+      "A VPN client product name identifies the negotiated transport"
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Remote access protects a connection involving the remote device and a gateway. Authentication and authorization are policy-dependent; the client product name alone does not determine whether it uses IPsec or TLS.",
+    "whyWrong": {
+      "1": "In remote access the user device can terminate IPsec through the hotel NAT/PAT device.",
+      "2": "Network and application authorization remain separate policy decisions.",
+      "4": "The same client product can support different configured VPN transports."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q07",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which service is absent from AH even when AH uses tunnel mode?",
+    "options": [
+      "Integrity checking of protected content",
+      "Confidentiality through payload encryption",
+      "Data-origin authentication using the agreed key",
+      "Anti-replay support through sequence processing"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "AH authenticates protected information and supports replay checking, but it does not encrypt. Adding a tunnel-mode outer header does not turn AH into an encryption protocol.",
+    "whyWrong": {
+      "0": "Integrity is an AH service.",
+      "2": "AH supports data-origin authentication.",
+      "3": "AH includes sequence-number mechanisms for anti-replay processing."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two protocol identifiers are correct for the ordinary IPsec arrangements in this chapter? Choose two.",
+    "options": [
+      "AH is UDP destination port 51",
+      "Native ESP is IP protocol 50",
+      "IKE commonly starts on UDP destination port 500",
+      "UDP NAT-T encapsulates ESP using TCP port 4500",
+      "Plain GRE is IP protocol 50"
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "Native ESP is identified in the IP Protocol field by 50. IKE commonly begins over UDP 500. AH is protocol 51; standard UDP NAT-T uses UDP 4500.",
+    "whyWrong": {
+      "0": "51 is an IP protocol number for AH, not a UDP port.",
+      "3": "The UDP encapsulation specified here uses UDP 4500, not TCP.",
+      "4": "GRE is IP protocol 47 and does not itself provide encryption."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q17",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement correctly separates IKEv2 from IPsec user-data protection?",
+    "options": [
+      "IKEv2 status alone verifies the protected application's response",
+      "IKEv2 encrypts application packets within the negotiation messages",
+      "IKEv2 installs the same bidirectional SA for negotiation and user data",
+      "IKEv2 authenticates and negotiates; CHILD_SAs supply the IPsec data SAs"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "IKEv2 establishes an authenticated negotiation relationship and negotiates CHILD_SAs for IPsec data protection. That control-plane result must be checked separately from data forwarding and application access.",
+    "whyWrong": {
+      "0": "Application verification requires its own traffic and result.",
+      "1": "Protected user packets normally use ESP data SAs rather than IKE messages.",
+      "2": "The negotiation relationship and directional data SAs are distinct."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q01",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A branch needs protected access to headquarters for its LAN hosts, without installing VPN software on each host. Which arrangement fits?",
+    "options": [
+      "A site-to-site IPsec VPN between the two gateways",
+      "A remote-access VPN client installed on every computer",
+      "An HTTPS application portal used separately by each person",
+      "A plain GRE tunnel with no cryptographic protection"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A site-to-site VPN lets the gateways protect selected traffic on behalf of their LANs. Hosts send ordinary traffic to their default gateways; they need no client for this gateway-to-gateway protection.",
+    "whyWrong": {
+      "1": "This makes each user device a VPN endpoint and violates the stated setup requirement.",
+      "2": "An application portal is not the requested LAN-to-LAN IPsec arrangement.",
+      "3": "Plain GRE encapsulates but does not encrypt."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q02",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative counter comparison",
+      "text": "Before: #pkts encaps 1180, #pkts decaps 100\nAfter:  #pkts encaps 1184, #pkts decaps 100\nFresh client test: no reply received"
+    },
+    "prompt": "These deltas were measured for the same IPsec SA during a fresh host test. Which conclusion is supported?",
+    "options": [
+      "No packet matched the local selector during the interval",
+      "Outbound protection increased; successful inbound decapsulation did not",
+      "The pre-shared keys are definitely different at the peers",
+      "The remote LAN default gateway is definitely missing"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The outgoing counter increased while incoming decapsulation did not. Check the far peer, WAN path, receive errors, remote host delivery and return path. The counters do not uniquely distinguish those possible causes.",
+    "whyWrong": {
+      "0": "An increase in encapsulation shows additional traffic was selected and protected locally.",
+      "2": "The counter pattern does not prove an authentication mismatch; existing data SAs can also outlive a separate IKE event.",
+      "3": "A missing return gateway is one possible fault, but no host configuration evidence identifies it here."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q04",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An IKEv2/IPsec client connects through a hotel PAT device using UDP encapsulation. What carries the protected ESP data through PAT?",
+    "options": [
+      "NAT-T changes native ESP into TCP using port 50",
+      "The PAT device decrypts ESP before translating each inner flow",
+      "NAT-T carries ESP inside UDP using port 4500",
+      "AH supplies UDP ports while retaining the same encryption"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "UDP NAT traversal supplies a UDP flow that the NAT/PAT device can handle while the ESP protection remains inside. IKEv2 includes NAT detection and supports this encapsulation.",
+    "whyWrong": {
+      "0": "Native ESP is protocol 50, and the described NAT-T wrapper is UDP 4500.",
+      "1": "The intermediate PAT device does not need the VPN traffic keys; it translates the outer UDP flow.",
+      "3": "AH neither supplies UDP encapsulation nor payload encryption."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q05",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Simplified layout, not readable captured ciphertext",
+      "text": "Outer IP: 198.51.100.1 -> 203.0.113.1\nESP header: SPI and sequence\nEncrypted: original IP 10.1.1.10 -> 10.2.2.20, TCP header, data, ESP trailer\nAuthentication data"
+    },
+    "prompt": "The packet layout is a teaching diagram of an ESP VPN with confidentiality enabled. Which mode is shown?",
+    "options": [
+      "Transport mode, because ESP follows an IP header",
+      "Transport mode, because the inner packet uses TCP",
+      "Tunnel mode: the gateways use a newly added outer IP header",
+      "Tunnel mode, because the SPI specifies a GRE tunnel"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "IPsec has added an outer header for the gateways and protected the original host-to-host packet inside it. That is ESP tunnel mode. A normal WAN capture cannot read the inner plaintext without decryption material.",
+    "whyWrong": {
+      "0": "ESP can follow an IP header in either mode; the new outer header is decisive here.",
+      "1": "TCP versus UDP does not choose IPsec tunnel or transport mode.",
+      "3": "An SPI identifies an SA, not a GRE tunnel, and no GRE header is shown."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q10",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which example directly fits ESP transport mode without another encapsulating tunnel?",
+    "options": [
+      "Two gateways adding a new outer header for hosts behind them",
+      "A gateway hiding an entire original host-to-host IP header inside ESP",
+      "A VPN whose packet uses two IP headers because IPsec added an outer one",
+      "Two IPsec-capable hosts protecting their own payload while retaining the original IP header"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "In the straightforward host-to-host transport-mode case, the original IP header remains the routing header and ESP protects the carried upper-layer content. Tunnel mode supplies an additional outer header.",
+    "whyWrong": {
+      "0": "Adding an outer header for other hosts describes tunnel mode.",
+      "1": "Putting the complete original packet inside ESP describes tunnel mode.",
+      "2": "The added IPsec outer header identifies tunnel mode."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q13",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which comparison of certificates and pre-shared keys is accurate for gateway authentication?",
+    "options": [
+      "Certificates bind identity to a key but still need validation",
+      "A reused PSK contains each peer's compromise within one tunnel",
+      "A CA distributes the traffic keys instead of an IKE exchange",
+      "Certificates replace the need to check the intended peer identity"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Certificates can make identities easier to manage across many peers, but the peers must validate those identities and their trust and validity conditions. Revocation also requires an effective checking policy. IKE still negotiates and derives traffic keying material.",
+    "whyWrong": {
+      "1": "A shared secret reused across peers broadens the impact of disclosure.",
+      "2": "The CA certifies an identity/key relationship; IKE derives session keying material.",
+      "3": "The intended identity and trust/validity conditions must still be checked."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q16",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Relevant crypto-map reference",
+      "text": "ip access-list extended VPN-SELECT\n permit ip 10.1.1.0 0.0.0.255 10.2.2.0 0.0.0.255\ncrypto map CCNA-MAP 10 ipsec-isakmp\n match address VPN-SELECT\n set peer 203.0.113.1"
+    },
+    "prompt": "VPN-SELECT is referenced only by a crypto map, not by ip access-group. What does its implicit deny mean for a packet outside the selected LAN pair?",
+    "options": [
+      "The packet is denied by the crypto ACL as if it were an interface filter",
+      "The packet inherits the last successfully negotiated peer",
+      "The packet is outside this rule's protected traffic selection",
+      "The packet is protected whenever its route uses the WAN interface"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A crypto selector identifies traffic for protection. Exclusion from that selector does not itself impose an interface drop. If another route and policy permit it, unselected traffic can leave unprotected.",
+    "whyWrong": {
+      "0": "This list selects protection; it is not attached as an interface drop policy.",
+      "1": "An unmatched packet does not inherit a previous flow's crypto selection.",
+      "3": "Egress through the mapped interface is not sufficient; the selection also matters."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q18",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Tunnel-mode path",
+      "text": "Original: 10.1.1.10 -> 10.2.2.20\nAcross ISP: 198.51.100.1 -> 203.0.113.1, ESP\nISP routes: 198.51.100.0/30 and 203.0.113.0/30"
+    },
+    "prompt": "ISP has routes to both public gateway addresses but no route to either private LAN. Why can it still forward the encrypted tunnel-mode packet?",
+    "options": [
+      "ISP forwards on the unencrypted outer destination 203.0.113.1",
+      "IKE distributes every protected subnet to ISP",
+      "ISP decrypts the inner destination and uses a default private route",
+      "The ESP SPI tells ISP the private subnet route"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The intermediate router forwards the outer packet toward the receiving VPN gateway. Only that gateway needs to recover the inner packet and route it onward to the local LAN.",
+    "whyWrong": {
+      "1": "IKE between the gateways does not distribute those routes to ISP.",
+      "2": "ISP has no IPsec keying role in this topology and does not decrypt the payload.",
+      "3": "ISP does not use the ESP SPI as a route to the private destination."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q19",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A laptop has an IPsec split-tunnel policy for only 10.2.2.0/24. A public website is reached through the local Internet route. Which conclusion is correct?",
+    "options": [
+      "Every laptop packet is protected because the VPN icon is connected",
+      "The local website traffic uses this VPN even without a matching route",
+      "The laptop has become a site-to-site gateway for all hotel devices",
+      "The public website traffic is outside this VPN protection; it may have separate HTTPS protection"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Only traffic selected by the stated split policy follows this VPN. A website using HTTPS can have independent application-layer encryption, but the VPN connection does not automatically protect the local Internet path.",
+    "whyWrong": {
+      "0": "Connection status does not change the stated split selection.",
+      "1": "The scenario explicitly routes that destination outside the VPN.",
+      "2": "A remote-access client does not automatically provide a gateway-to-gateway service for other hotel devices."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q21",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Protection boundary (exercise)",
+      "text": "Branch browser -> branch LAN -> VPN gateway A -> transit network -> VPN gateway B -> HQ LAN -> HTTP server\nESP tunnel mode with encryption between gateways only.\nThe application uses plain HTTP; hosts do not run their own IPsec."
+    },
+    "prompt": "Where can a suitable observer see the unencrypted HTTP content in this stated site-to-site design?",
+    "options": [
+      "On the branch and HQ LAN segments outside IPsec termination",
+      "Only on the transit segment between the two public gateways",
+      "On no segment because the gateway VPN protects it end to end",
+      "Only inside IKE messages during the initial authentication"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The gateways protect the segment between them. Plain HTTP exists before the branch gateway encrypts it and after the HQ gateway decrypts it. Application TLS would be separate protection and is explicitly absent here.",
+    "whyWrong": {
+      "1": "ESP confidentiality protects the carried content on the stated transit segment.",
+      "2": "Gateway termination leaves the stated LAN segments outside that IPsec protection.",
+      "3": "IKE negotiates protection; it does not carry the web page as its user data."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q23",
+    "type": "multi",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "What a transit capture exposes (exercise)",
+      "text": "ESP tunnel mode with confidentiality enabled.\nOuter IPv4: gateway A -> gateway B\nProtected content: complete original IP packet carrying HTTP\nObserver: authorized capture on the transit link; no decryption material."
+    },
+    "prompt": "Which two facts remain visible to a transit observer without decryption keys in the described packet? Choose two.",
+    "options": [
+      "The outer gateway IP addresses",
+      "The original encrypted HTTP request body",
+      "The packet lengths and arrival times",
+      "The encrypted inner host IP addresses",
+      "The plaintext TCP destination port inside ESP"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "ESP tunnel confidentiality protects the inner packet, while outer routing fields and traffic timing/length remain observable. Encryption is not the concealment of all network metadata.",
+    "whyWrong": {
+      "1": "The request body is inside the protected inner payload.",
+      "3": "The stated encrypted tunnel contains the original header inside ESP.",
+      "4": "The TCP header is part of the protected inner packet."
+    }
+  },
+  {
+    "id": "vpns-ipsec-q22",
+    "type": "single",
+    "objectives": [
+      "v1:5.5",
+      "v2:4.5"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Application and VPN observations (exercise)",
+      "text": "Same remote-access client and intended server 10.35.20.80:\n- A fresh HTTP request to http://10.35.20.80 returns the expected page.\n- Matching protected-data counters increase in both directions during that request.\n- The isolated service accepts both numeric and named URLs.\n- http://portal.branch.example fails on a fresh attempt.\n- The application's resolved address and DNS response have not been inspected."
+    },
+    "prompt": "Which next check best separates the remaining explanations for the failed named request?",
+    "options": [
+      "Rebuild the IKE relationship because every application fault starts there",
+      "Capture or query the fresh hostname through the intended resolver and compare the application's chosen address",
+      "Add native ESP permission without checking the currently used transport",
+      "Replace the VPN route with a public default because both counter directions changed"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The controlled IP-literal HTTP test establishes a working protected application path to the stated server at that time. The failing name lookup may involve DNS data, a local override or a different selected address. Inspect that exact name and application resolution path before changing functioning crypto or routing.",
+    "whyWrong": {
+      "0": "The supplied successful protected HTTP transaction does not support resetting negotiation first.",
+      "2": "The already successful transaction gives no basis for assuming missing ESP permission.",
+      "3": "Changing the route would not diagnose name resolution and could bypass required protection."
+    }
+  }
+]

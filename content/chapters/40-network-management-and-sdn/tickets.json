@@ -1,0 +1,60 @@
+[
+  {
+    "id": "network-management-and-sdn-t01",
+    "title": "The controller cannot open new device sessions",
+    "objectives": [
+      "v1:6.2",
+      "v1:6.3.b",
+      "v2:5.3"
+    ],
+    "scenario": "The controller at 10.10.5.20 can ping SW3 10.10.0.13 but its new SSH connections time out. Users through SW3 still work. A console inspection confirms this ACL is applied inbound to every usable VTY range. These are authored diagnostic excerpts.",
+    "exhibits": [
+      {
+        "title": "SW3 VTY configuration",
+        "text": "line vty 0 15\n access-class MGMT-IN in\n login local\n transport input ssh"
+      },
+      {
+        "title": "SW3 management ACL",
+        "text": "Standard IP access list MGMT-IN\n 10 permit 10.10.99.0 0.0.0.255\n 20 deny any"
+      }
+    ],
+    "question": "Which mismatch is established by the configuration?",
+    "options": [
+      "The controller source is excluded from the device's VTY permit list",
+      "The SSH user is explicitly rejected after password authentication",
+      "The switch's transit ACL blocks all user traffic through the switch",
+      "The controller has no ICMP route to the switch management address"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "10.10.5.20 does not match the only permit and reaches deny any for VTY access. A VTY access-class does not apply to ordinary transit frames or prove that other management protocols are also blocked. The supplied source and ACL establish the SSH mismatch without attributing unrelated counters.",
+    "fix": "```ios\nSW3# configure terminal\nSW3(config)# ip access-list standard MGMT-IN\nSW3(config-std-nacl)# 15 permit host 10.10.5.20\nSW3(config-std-nacl)# end\nSW3# show access-lists MGMT-IN\n```\nRetest a new SSH session from the controller's actual source and then its documented synchronization workflow.\nRepeat a user-service test through SW3 as well. A controller synchronization result and preserved client forwarding are separate acceptance observations."
+  },
+  {
+    "id": "network-management-and-sdn-t02",
+    "title": "A replacement path passes small tests but stalls larger traffic",
+    "objectives": [
+      "v1:6.3"
+    ],
+    "scenario": "A controlled VXLAN design carries a 1500-byte inner IP packet with 14 bytes inner Ethernet, 8 VXLAN, 8 UDP and 20 outer IPv4 bytes. No inner VLAN tag is retained. A replacement underlay interface has an effective IP MTU of 1500. The design requires an outer IP MTU of at least 1550 along this path.",
+    "exhibits": [
+      {
+        "title": "Representative path evidence",
+        "text": "Small endpoint-locator ICMP tests: successful\n1550-byte outer IPv4 test with DF: ICMP fragmentation-needed received\nReported next-hop MTU: 1500\nReplacement interface effective IP MTU: 1500\nOther tested path interfaces: effective IP MTU at least 1550"
+      }
+    ],
+    "question": "What established issue should the approved repair address?",
+    "options": [
+      "The approved overlay identifier is mismatched at the two tunnel endpoints",
+      "The return route is absent for packets of every tested size",
+      "The replacement interface cannot carry the required outer IP packet",
+      "The controller's stored inventory is too old to authenticate the application"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The required outer IP packet is 1500+14+8+8+20=1550 bytes. Explicit fragmentation-needed evidence and the replacement interface's effective MTU establish the size mismatch. This is stronger than inferring MTU solely from a stalled file copy.",
+    "fix": "Use the replacement platform's documented MTU procedure to meet the approved end-to-end design, checking whether a reload or interface action is required. Do not blindly apply a system-wide command to an unspecified model. Recheck the effective MTU, repeat the 1550-byte DF test, and test the actual application and return direction."
+  }
+]

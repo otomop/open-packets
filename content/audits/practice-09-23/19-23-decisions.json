@@ -1,0 +1,2296 @@
+[
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q01",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q02",
+    "action": "revise",
+    "reason": "Retain the assessed topic and narrow its objective tags to the skill actually used. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q03",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q04",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q05",
+    "action": "revise",
+    "reason": "Retain the assessed topic and narrow its objective tags to the skill actually used. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q06",
+    "action": "revise",
+    "reason": "Keep alternatives parallel as missing-prerequisite claims. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q07",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q08",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q09",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q10",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q11",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q12",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q13",
+    "action": "revise",
+    "reason": "Retain the assessed topic and narrow its objective tags to the skill actually used. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q14",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q15",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q16",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q17",
+    "action": "add",
+    "reason": "What does /64 describe in an IPv6 address? Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q18",
+    "action": "add",
+    "reason": "Which is the canonical spelling of 2001:0db8:0000:0000:0001:0000:0000:000a? Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q19",
+    "action": "add",
+    "reason": "A site has 2001:db8:1200:3400::/56. Which proposed /64 is outside that allocation? Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q20",
+    "action": "add",
+    "reason": "What /61 prefix contains 2001:db8:7:ab3d::25/61? Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q29",
+    "action": "add",
+    "reason": "An isolated site needs 20 distinct /64 LANs. Which smallest allocation from this list can contain them? Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q21",
+    "action": "add",
+    "reason": "Derive the modified EUI-64 identifier from MAC 02:aa:bb:cc:dd:ee. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q22",
+    "action": "add",
+    "reason": "Which solicited-node multicast group corresponds to 2001:db8:4::ab12:3456? Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q23",
+    "action": "add",
+    "reason": "R1 has FE80::1 on Gi0/0 and on Gi0/1, which connect to separate isolated LANs. Which two statements are correct? Choose two. Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q27",
+    "action": "add",
+    "reason": "What action is justified by a duplicate-address indication on a newly assigned host address? Align objective tags with the assessed IPv6 skill."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q24",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q25",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q26",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "questions",
+    "id": "ipv6-addressing-q28",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: How long is an IPv6 address?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c02",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c03",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which space is commonly allocated for global unicast?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What is the ULA block and locally generated half?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What is link-local scope?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which multicast groups mean all nodes and all routers on a link?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: How do you form a solicited-node multicast address?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What do ::1 and :: mean?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: How is modified EUI-64 derived from a MAC?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c11",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: EUI-64 first byte: 00 becomes what, and 02 becomes what?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c12",
+    "action": "retire",
+    "reason": "Remove five ICMPv6 type-number memorization; retain ND message purposes in lesson, questions and lab."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c13",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c14",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Where does an automatically learned IPv6 default router come from?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c16",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does ipv6 unicast-routing enable on a basic IOS router?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c17",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: ipv6 enable versus ipv6 address prefix/64 eui-64?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c19",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c20",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c21",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Is 2001:db8::/32 public Internet address space for deployment?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c22",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Does assigning an IPv6 address automatically prove its prefix is on-link?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c23",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does Duplicate Address Detection test?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c24",
+    "action": "add",
+    "reason": "Two equally long zero runs: which does canonical IPv6 text compress?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c25",
+    "action": "add",
+    "reason": "In a /61, how many low bits of the fourth IPv6 group lie outside the prefix?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c26",
+    "action": "add",
+    "reason": "What extra information makes FE80::2 a specific neighbor?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c27",
+    "action": "add",
+    "reason": "What do the RA M and O flags describe?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c28",
+    "action": "add",
+    "reason": "Can an RA provide a usable autonomous prefix but no default router?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c29",
+    "action": "add",
+    "reason": "Does an IPv6 /64 have an IPv4-style broadcast address?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "cards",
+    "id": "ipv6-addressing-c30",
+    "action": "add",
+    "reason": "Can two router interfaces use FE80::1 on different LANs?"
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Enable IPv6 forwarding globally on R1."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Assign 2001:db8:acad:1::1 with prefix length 64 to this interface."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d03",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Set this interface's link-local address to fe80::1."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Derive this interface's global identifier from its MAC under 2001:db8:acad:2::/64."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Enable IPv6 processing and automatic link-local addressing without adding a global prefix."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: List IPv6 interface addresses and basic status."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Inspect Gi0/0's detailed IPv6 addressing, prefix and ND settings."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d11",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display R1's IPv6 neighbor cache."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display the installed IPv6 route table."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d13",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Read Gi0/1's interface details, including its MAC for EUI-64 calculation."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d14",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Remove only the temporary address 2001:db8:acad:1::99/64 from this interface."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "commands",
+    "id": "ipv6-addressing-d15",
+    "action": "retire",
+    "reason": "The controlled disable/restore remains supplied in the lab; do not repeat the inverse of the forwarding-enable drill as memorization."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "tickets",
+    "id": "ipv6-addressing-t01",
+    "action": "revise",
+    "reason": "Use plausible IPv6 configuration alternatives rather than unrelated IPv4 or /128 changes."
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "bank": "tickets",
+    "id": "ipv6-addressing-t02",
+    "action": "revise",
+    "reason": "Replace impossible alternatives with plausible but ineffective addressing/cache repairs."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q01",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q02",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q03",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Both links and their neighbors are usable. Which TWO statements follow from the configured routes?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 must route the remote LAN through R2 on the primary link. Which choice uses the correct scoped link-local next hop?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: All displayed routes are installed. Which interface handles destination 2001:db8:20::12?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q07",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which global command enables inter-interface IPv6 forwarding on the basic IOS router?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q08",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q09",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q10",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q11",
+    "action": "revise",
+    "reason": "Replace unrelated distractors with interface-only route and neighbor-resolution misconceptions."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q12",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q13",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which syntax difference is correct?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q14",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q15",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: In S 2001:DB8:20::/64 [1/0], what are the bracketed numbers?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q16",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q26",
+    "action": "add",
+    "reason": "Which neighbor-cache observation requires additional investigation rather than proving success or failure by its label alone?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q21",
+    "action": "add",
+    "reason": "Which two observations make these repeated link-local next hops unambiguous? Choose two."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q17",
+    "action": "add",
+    "reason": "Which installed route carries a packet to 2001:db8:44:ab3d::8?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q24",
+    "action": "add",
+    "reason": "After the exact temporary /128 is removed, which route matches the same destination?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q18",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q20",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q25",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q19",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q22",
+    "action": "add",
+    "reason": "Which missing return prefix explains why the endpoint test fails while the explicitly sourced router test succeeds?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "questions",
+    "id": "static-routing-ipv6-q23",
+    "action": "add",
+    "reason": "What happens while the selected host route remains installed and its next hop cannot be resolved?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which command enables IPv6 forwarding on a basic IOS router?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Why does a link-local next hop need scope?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c03",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Required IPv6 static-route form for a link-local next hop?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c04",
+    "action": "retire",
+    "reason": "Consolidate repeated prerequisite or identical scoped-route syntax retrieval.",
+    "destination": "static-routing-ipv6-c03"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: IPv6 default-route prefix?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: IPv6 host-route prefix length?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c07",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Ordinary static route distance, and unusable distance?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: How does an IPv6 floating static become selected?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Read [5/0] in an IPv6 static route."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does fully specified mean for an IPv6 static route?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c11",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Problem with an Ethernet interface-only route to a remote IPv6 LAN?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does a non-link-local next-hop-only route need?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c13",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What do C, L and S mean in the IPv6 route table?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c14",
+    "action": "retire",
+    "reason": "Consolidate repeated prerequisite or identical scoped-route syntax retrieval.",
+    "destination": "ipv6-addressing-c14"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c15",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which command shows IPv6 neighbor bindings?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c16",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Does a stale IPv6 neighbor entry prove failure?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c17",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Why can IOS ask for Output Interface during a link-local ping?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c18",
+    "action": "retire",
+    "reason": "Consolidate repeated prerequisite or identical scoped-route syntax retrieval.",
+    "destination": "ipv6-addressing-d03"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c19",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: How is an IPv6 route destination written?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c20",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Does lower distance make /64 beat an installed /128?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c21",
+    "action": "add",
+    "reason": "Does an ordinary floating static detect every failure beyond its next hop?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c22",
+    "action": "add",
+    "reason": "Does failed ND for an installed /128 automatically make a matching /64 the forwarding choice?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "cards",
+    "id": "static-routing-ipv6-c23",
+    "action": "add",
+    "reason": "Why can a router-sourced ping work while a client-sourced ping fails?"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d01",
+    "action": "retire",
+    "reason": "Remove repeated base IPv6 interface setup or status recall already assessed in chapter 19.",
+    "destination": "ipv6-addressing-d01"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d02",
+    "action": "retire",
+    "reason": "Remove repeated base IPv6 interface setup or status recall already assessed in chapter 19.",
+    "destination": "ipv6-addressing-d02"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d03",
+    "action": "retire",
+    "reason": "Remove repeated base IPv6 interface setup or status recall already assessed in chapter 19.",
+    "destination": "ipv6-addressing-d03"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Route 2001:db8:20::/64 through neighbor fe80::2 on GigabitEthernet0/0."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Add a next-hop-only route to 2001:db8:20::/64 through 2001:db8:12::2."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Add an IPv6 default through fe80::2 on GigabitEthernet0/0."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d07",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Route only host 2001:db8:20::12 through fe80::3 on GigabitEthernet0/1."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Add a backup to 2001:db8:20::/64 through fe80::3 on GigabitEthernet0/1 at distance 5."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display installed IPv6 static routes."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Ask IOS for the route covering 2001:db8:20::12."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d11",
+    "action": "retire",
+    "reason": "Remove repeated base IPv6 interface setup or status recall already assessed in chapter 19.",
+    "destination": "ipv6-addressing-d09"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "commands",
+    "id": "static-routing-ipv6-d12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Inspect IPv6 neighbor bindings."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "tickets",
+    "id": "static-routing-ipv6-t01",
+    "action": "revise",
+    "reason": "Use plausible preference and scope mistakes as competing repairs."
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "tickets",
+    "id": "static-routing-ipv6-t02",
+    "action": "retire",
+    "reason": "Consolidate the repeated two-direct-LAN forwarding prerequisite into chapter 19; replace it here with source-dependent return-route diagnosis.",
+    "destination": "ipv6-addressing-q28"
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "bank": "tickets",
+    "id": "static-routing-ipv6-t03",
+    "action": "add",
+    "reason": "Add a distinct static-routing case requiring comparison of probe source and reverse-prefix coverage."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R4 is a DROTHER on a healthy four-router broadcast segment. Which conclusion follows from its neighbor table?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: When a fresh IOS OSPF process starts, no explicit RID is configured. Loopback0 at 10.1.1.1 and Loopback1 at 10.9.9.9 are both up. Physical interfaces 172.16.1.1 and 192.168.1.1 are also up/up. Which RID is selected?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q03",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: A fresh broadcast election occurs after all four candidates are known, with no existing DR or BDR. Who becomes DR and BDR?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 reaches a remote LAN through R2 then R3. The outgoing costs along that direction are R1-to-R2 = 10, R2-to-R3 = 20, and R3-to-LAN = 1. What OSPF metric should R1 calculate?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 and R3 are the only two routers on an Ethernet link. They report Full, but remote LAN routes are missing. Which visible inconsistency should be corrected first?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q07",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Gi0/0 is addressed 172.16.5.33/27. Which router-mode network statement activates only that exact interface address in area 0?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R2 has a correctly addressed, up/up transit interface but no neighbor there. Which configuration line explains the absence?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q11",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: This adjacency repeatedly stalls during database exchange. Which evidence best identifies the fault?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q13",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q14",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 uses router ospf 10 and R2 uses router ospf 20. Their shared /30 link is in area 0 with matching timers, compatible point-to-point types, and unique RIDs. What should happen?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q15",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: With no explicit interface cost overrides, which command on every OSPF router makes 100-Mbps, 1-Gbps, and 10-Gbps interfaces cost 100, 10, and 1?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q16",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q17",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q18",
+    "action": "add",
+    "reason": "What does OSPF use to calculate paths within this single area?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q34",
+    "action": "add",
+    "reason": "How should the same up, OSPF-enabled LAN normally appear in the local and remote route tables?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q20",
+    "action": "add",
+    "reason": "Which prefix is advertised for the selected ordinary Ethernet LAN?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q22",
+    "action": "add",
+    "reason": "Which two statements about priority 0 are correct? Choose two."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q21",
+    "action": "add",
+    "reason": "What cost does OSPF use for this outgoing interface?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q28",
+    "action": "add",
+    "reason": "When R1 sends a packet to R3 client LAN, which next hop is expected on their shared Ethernet?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q30",
+    "action": "add",
+    "reason": "A router with a configured new RID still displays the old active RID. What should the engineer do before any disruptive action?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q25",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q31",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q27",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q23",
+    "action": "add",
+    "reason": "Which routes result from the directed costs?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q24",
+    "action": "add",
+    "reason": "Which result follows when both paths are eligible and the maximum-paths setting permits at least two? Balance option length without changing the answer."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q26",
+    "action": "add",
+    "reason": "Does the installed static route prove OSPF did not learn this prefix?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "questions",
+    "id": "ospfv2-q29",
+    "action": "add",
+    "reason": "What does the successful ping fail to establish?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Default Cisco IOS OSPF administrative distance?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: OSPFv2 protocol number and multicast groups?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c03",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: How does IOS choose a RID when a process starts?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Normal IOS Hello/dead defaults for broadcast and point-to-point?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What do 2-Way and Full establish?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c07",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Repeated ExStart/Exchange: which common fault should you check?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: When is 2WAY/DROTHER normal?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c10",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c11",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Broadcast versus point-to-point OSPF roles?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Configure OSPF point-to-point on a two-router Ethernet link?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c13",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: IOS automatic OSPF cost formula and default reference?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c14",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c15",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which interface costs make up a route metric?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c16",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Set an OSPF reference of 1 Gbps?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c17",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Two IOS ways to enable OSPFv2 on an interface?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c18",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does a passive OSPF interface still advertise?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c20",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c21",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does [110/11] in an IOS OSPF route mean?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c22",
+    "action": "add",
+    "reason": "Does OSPF priority 0 disable adjacency formation?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c23",
+    "action": "add",
+    "reason": "A higher-priority OSPF router joins a healthy broadcast segment: must it become DR?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c24",
+    "action": "add",
+    "reason": "Which wins: automatic OSPF cost or explicit ip ospf cost?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c25",
+    "action": "add",
+    "reason": "Does a host wildcard in an OSPF network command advertise a /32?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c26",
+    "action": "add",
+    "reason": "Does Full prove that every intended client LAN is advertised?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "cards",
+    "id": "ospfv2-c27",
+    "action": "add",
+    "reason": "Can R1 and R3 calculate different costs over the same physical link?"
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Enter configuration for OSPF process 10."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Set this process RID to 1.1.1.1 before activating interfaces."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d03",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Activate addresses in 10.0.13.0/30 in area 0 using a network statement."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Activate process 10 in area 0 on this interface."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Make all interfaces passive by default in this OSPF process."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Allow OSPF neighbors on Gi0/0 after passive-interface default."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d07",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Make this broadcast interface ineligible for DR/BDR."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Use point-to-point OSPF treatment on this two-router Ethernet link."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Set this process reference bandwidth to 1000 Mbps."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d11",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display OSPF neighbors with their states and interfaces."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display the compact OSPF interface summary."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d13",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display the installed OSPF IPv4 routes."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d14",
+    "action": "add",
+    "reason": "Inspect effective per-link parameters before repairing an adjacency."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "commands",
+    "id": "ospfv2-d15",
+    "action": "add",
+    "reason": "Practice the explicit outgoing-cost control used in route predictions."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "tickets",
+    "id": "ospfv2-t01",
+    "action": "revise",
+    "reason": "Identify the exact B2 interface named by the supplied repair."
+  },
+  {
+    "chapterId": "ospfv2",
+    "bank": "tickets",
+    "id": "ospfv2-t02",
+    "action": "revise",
+    "reason": "Name the interface targeted by the MTU repair and remove a duplicated word in a distractor."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q01",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q02",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q03",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q04",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q05",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 is DROTHER while healthy R2 and R3 are the established DR and BDR. An engineer raises R1's interface priority from 1 to 200. What immediately follows?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q07",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 has addressed IPv6 interfaces and a configured classic process 10 with RID 1.1.1.1. IPv6 forwarding and Gi0/0 activation are not yet configured. Which two commands supply these missing parts? Choose two."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q09",
+    "action": "revise",
+    "reason": "Use plausible advertisement/mask misconceptions instead of unrelated protocol alternatives."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q11",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: A supported IOS XE router has router ospfv3 10 and address-family ipv6 unicast configured. Which interface command activates that process in area 0?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q13",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: The direct IPv6 adjacency repeatedly stalls in ExStart. Which issue is supported by the comparison?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q14",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: All candidates are known before a fresh OSPFv3 broadcast election, with no existing DR/BDR. Who is DR and BDR?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q15",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 is a DROTHER and shows this stable entry for R4; its DR and BDR neighbors are Full. What does the entry mean?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q16",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q17",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 can reach R3 directly at outgoing cost 25 or across a shared segment at outgoing cost 10. R3's LAN cost is 1. Which route matches the lower-cost choice?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q18",
+    "action": "add",
+    "reason": "Which value identifies the adjacent forwarding neighbor for packets to the global prefix?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q21",
+    "action": "add",
+    "reason": "Which two statements about this IPv6-only transit are correct? Choose two."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q19",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q20",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q22",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q25",
+    "action": "add",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "questions",
+    "id": "ospfv3-q24",
+    "action": "add",
+    "reason": "Which paired route prediction is correct? Balance option length without changing the answer."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: OSPFv3 for IPv6 uses which Next Header number?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: OSPFv3 multicast groups on an ordinary IPv6 link?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c03",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Source address of an OSPFv3 Hello on an ordinary link?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Must OSPFv3 neighbors have the same global IPv6 prefix?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: OSPFv3 router ID size and format?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: No IPv4 addresses and no explicit RID on classic IOS OSPFv3?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c07",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Normal IOS broadcast/point-to-point OSPFv3 Hello and dead defaults?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which OSPFv3 identifier distinguishes instances on the same link?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Does the local OSPFv3 process number have to match the neighbor?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Classic command to activate OSPFv3 process 10 in area 0?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c11",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c12",
+    "action": "retire",
+    "reason": "Consolidate repeated global IPv6 forwarding retrieval.",
+    "destination": "ipv6-addressing-c16"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c15",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Meaning of O and [110/11] in show ipv6 route?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c16",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Normal OSPFv3 advertisement of an interface in Loopback state?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c17",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c18",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does Interface ID mean in show ipv6 ospf neighbor?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c19",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: OSPFv3 repeatedly in ExStart/Exchange: what should you compare?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c20",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does a controlled OSPFv3 process restart do to adjacencies?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c21",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Does a passive OSPFv3 LAN still need interface activation?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c22",
+    "action": "retire",
+    "reason": "Replace a repeated fixed 25+1 arithmetic cue with directional-cost questions; general outgoing-cost retrieval remains in OSPFv2.",
+    "destination": "ospfv2-c15"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c23",
+    "action": "add",
+    "reason": "Is the dotted-decimal OSPFv3 router ID its IPv6 next-hop address?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "cards",
+    "id": "ospfv3-c24",
+    "action": "add",
+    "reason": "Does an OSPFv3 Full neighbor prove the intended global LAN prefix is correct?"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d01",
+    "action": "retire",
+    "reason": "Forwarding-enable recall is already assessed in the IPv6 foundations chapter.",
+    "destination": "ipv6-addressing-d01"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Create classic IPv6 OSPF process 10."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d03",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Set the classic OSPFv3 process RID to 1.1.1.1."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Activate classic OSPFv3 process 10 in area 0 on this interface."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d05",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Make this two-router link point-to-point for classic OSPFv3."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Make this broadcast interface ineligible for OSPFv3 DR/BDR."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d07",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Suppress OSPFv3 neighbors on already activated client interface Gi0/2."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Use a 10000-Mbps reference in this classic OSPFv3 process."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d09",
+    "action": "retire",
+    "reason": "Keep alternative address-family syntax recognition in q12/q23 and lab translation; do not require memorizing two full platform families."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display the classic OSPFv3 neighbor table."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d11",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Inspect classic OSPFv3 details on Gi0/0."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "commands",
+    "id": "ospfv3-d12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display installed OSPF IPv6 routes."
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "tickets",
+    "id": "ospfv3-t01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: OSPFv3 cannot select an identity after an IPv6-only rebuild"
+  },
+  {
+    "chapterId": "ospfv3",
+    "bank": "tickets",
+    "id": "ospfv3-t02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: A direct adjacency disappears after a one-sided timer change"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q01",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q02",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q03",
+    "action": "retire",
+    "reason": "Retire hexadecimal virtual-MAC derivation from the core checkpoint; use supplied virtual identity in status interpretation instead."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: An IOS interface is currently using HSRPv1. Group 300 is rejected. Which required version change supports that IPv4 group number?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q05",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q06",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q07",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 rebooted and R2 took over. R1 has recovered with effective priority 110, but preemption is disabled. R2 remains healthy at 100. Which role result is expected?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q08",
+    "action": "revise",
+    "reason": "Replace implausible distractors with errors a learner could make in this task."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: An HSRP standby uses a 10-second active hold timer. It accepted its last active Hello 3 seconds ago, and no further Hello or Resign arrives. How much hold time remains before expiry?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q10",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Two intended IPv4 HSRP peers share a VLAN and VIP but each remains Active with unknown Standby. Which two configuration mismatches can create separate groups that do not recognize each other? Choose two."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q11",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: VRRP R2 is currently Master at priority 100. R1 returns at 110, both are non-owners, and R1's preemption is at its default. What is expected?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q12",
+    "action": "retire",
+    "reason": "Retire command spelling for preempt; the same preemption decision remains assessed by q07 and guided lab configuration.",
+    "destination": "fhrp-hsrp-vrrp-q07"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q14",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Both routers have preemption enabled. R1 uses priority 110 for VLAN 10 and 90 for VLAN 20; R2 uses 90 for VLAN 10 and 110 for VLAN 20. Each VLAN has its own agreed group/VIP. What is the intended steady-state arrangement?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q15",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q16",
+    "action": "revise",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q17",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1 is healthy HSRP Active at priority 100 and real address .2. R2 joins at priority 100 with real address .3 and preempt enabled. Does the higher real address require R2 to preempt R1?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q18",
+    "action": "add",
+    "reason": "What problem does a first-hop redundancy group solve for a host using its virtual gateway?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q23",
+    "action": "add",
+    "reason": "Which peer is expected to hold the forwarding role in this VRRP owner case?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q22",
+    "action": "add",
+    "reason": "Which two entries should remain unchanged during ordinary same-version failover of this group? Choose two."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q19",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q20",
+    "action": "add",
+    "reason": "Classify the actual reasoning demand rather than the appearance of an exhibit."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "questions",
+    "id": "fhrp-hsrp-vrrp-q21",
+    "action": "add",
+    "reason": "Which next action is supported by the two Active states?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c01",
+    "action": "retire",
+    "reason": "Remove packet-number, MAC-derivation or state-machine minutiae from the narrower FHRP purpose/status retrieval set; reference detail remains in the lesson."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c02",
+    "action": "retire",
+    "reason": "Remove packet-number, MAC-derivation or state-machine minutiae from the narrower FHRP purpose/status retrieval set; reference detail remains in the lesson."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c03",
+    "action": "retire",
+    "reason": "Remove packet-number, MAC-derivation or state-machine minutiae from the narrower FHRP purpose/status retrieval set; reference detail remains in the lesson."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c04",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: HSRP default Hello/hold and what starts the active hold timer?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c05",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c06",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: HSRP preemption default and purpose?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c07",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: IPv4 HSRP group ranges for versions 1 and 2?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c09",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c10",
+    "action": "retire",
+    "reason": "Remove packet-number, MAC-derivation or state-machine minutiae from the narrower FHRP purpose/status retrieval set; reference detail remains in the lesson."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c11",
+    "action": "retire",
+    "reason": "Remove packet-number, MAC-derivation or state-machine minutiae from the narrower FHRP purpose/status retrieval set; reference detail remains in the lesson."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c12",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c13",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: VRRP forwarding role in Cisco output versus the current RFC?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c15",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What changes in the switch during ordinary HSRP failover?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c16",
+    "action": "retire",
+    "reason": "Remove packet-number, MAC-derivation or state-machine minutiae from the narrower FHRP purpose/status retrieval set; reference detail remains in the lesson."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c17",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: R1's priority 110 minus tracking decrement 20: what else allows R2 takeover?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c18",
+    "action": "revise",
+    "reason": "Narrow the retrieval cue to one useful decision."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c19",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: What does unknown in an HSRP peer-role field mean?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c20",
+    "action": "retire",
+    "reason": "Remove packet-number, MAC-derivation or state-machine minutiae from the narrower FHRP purpose/status retrieval set; reference detail remains in the lesson."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c21",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Which VRRP version supports IPv6, and does IPv4 Master prove IPv6 Master?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c22",
+    "action": "add",
+    "reason": "Which gateway address should the PC use: a peer real IP or the agreed VIP?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c23",
+    "action": "add",
+    "reason": "Does a successful ping to the VIP prove a remote server path works?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c24",
+    "action": "add",
+    "reason": "Does tracking an uplink line protocol detect every remote application failure?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c25",
+    "action": "add",
+    "reason": "Which field should be compared with a peer after tracking triggers: configured or effective priority?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "cards",
+    "id": "fhrp-hsrp-vrrp-c26",
+    "action": "add",
+    "reason": "Two intended HSRP peers are Active with unknown Standby: is that a unique diagnosis?"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d01",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d02",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d03",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d04",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d05",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d06",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d07",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d08",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display compact HSRP roles, priorities, preemption flags, and virtual IPs."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d09",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display HSRP detail including virtual MAC, effective priority, and tracking."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d10",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d11",
+    "action": "retire",
+    "reason": "FHRP objectives require concepts and status interpretation; retain supplied optional configuration in the lab rather than testing its command spelling."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "commands",
+    "id": "fhrp-hsrp-vrrp-d12",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Display the classic IOS VRRP per-group summary."
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "tickets",
+    "id": "fhrp-hsrp-vrrp-t01",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: A responsive virtual gateway has lost its only upstream path"
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "bank": "tickets",
+    "id": "fhrp-hsrp-vrrp-t02",
+    "action": "keep",
+    "reason": "Retain accurate, relevant practice: Two active routers use different HSRP versions"
+  }
+]

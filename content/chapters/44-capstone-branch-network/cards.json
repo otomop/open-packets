@@ -1,0 +1,98 @@
+[
+  {
+    "id": "capstone-branch-network-c09",
+    "front": "What selects sources for the lab’s interface PAT?",
+    "back": "Inside/outside roles, the NAT-LANS source selector and interface overload mapping. An unmatched source is not denied by that selector alone.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c10",
+    "front": "Why can a router ping fail while translated client traffic works?",
+    "back": "The router may select a different source address excluded from NAT. Confirm that source, routes and policy, then compare a sourced test.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c11",
+    "front": "What is the capstone guest ACL’s order?",
+    "back": "DHCP permit; guest echo-reply to staff; specific internal denies; permit the intended guest source to other destinations. This is a packet policy, not session tracking.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c12",
+    "front": "What separate checks establish usable SSH management?",
+    "back": "Server keys/version, local or AAA authentication, every VTY’s transport/source policy, IP return path and a fresh authorized session.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c15",
+    "front": "An OSPF peer is FULL but a needed route is absent. What next?",
+    "back": "Check prefix advertisement, competing routes, topology consistency and return reachability. A network-type mismatch is one possible cause, not a conclusion from FULL alone.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c16",
+    "front": "Why collect several verification outputs for one service?",
+    "back": "Layer 2 state, lease, routes, translation and ACL counters answer different questions. A successful application test ties them to a real flow.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c20",
+    "front": "Can a router subinterface stay up when a trunk excludes its VLAN?",
+    "back": "Yes. Parent/subinterface state does not confirm the neighboring switch’s allowed and forwarding VLANs.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c21",
+    "front": "What does one surviving EtherChannel member demonstrate?",
+    "back": "A remaining forwarding path and reduced aggregate capacity; the failover is not guaranteed to be lossless.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c22",
+    "front": "Does a guest interface ACL necessarily prevent gateway SSH?",
+    "back": "No. Evaluate the gateway destination explicitly; the lab also uses a staff-only VTY access-class.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c23",
+    "front": "Why preserve a baseline before injecting a fault?",
+    "back": "It provides known state to compare and a recovery reference. Change one condition, observe, then restore and retest.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c24",
+    "front": "Does an active PAT entry prove an HTTP request completed?",
+    "back": "No. It proves translation state exists; check return traffic and the client’s application result.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "capstone-branch-network-c25",
+    "front": "What belongs in a test of a narrowly scoped policy change?",
+    "back": "A fresh request that should now succeed, a comparable request that must remain denied, and evidence from the actual attachment point. Retest the application; a configuration line or stale counter alone is insufficient.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

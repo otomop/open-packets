@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-24",
+  "origin": "http://localhost:4176",
+  "scope": "All test answers, card ratings, drills and lab-checkbox actions used an isolated local origin",
+  "studyViews": ["learn", "lab", "check", "cards", "drill"],
+  "chapterIds": ["dhcp", "dns", "nat-pat", "ntp-syslog-snmp", "qos", "file-management", "client-os-troubleshooting", "troubleshooting-toolkit", "security-concepts", "aaa-tacacs-radius"],
+  "chapterRoutesChecked": 50,
+  "all72RoutesRecheckedAfterFinalBuildAndReload": true,
+  "questionCounts": [25, 26, 24, 26, 17, 21, 24, 24, 18, 24],
+  "labStepCounts": [10, 10, 12, 13, 12, 17, 15, 12, 9, 12],
+  "closedSolutionCounts": [2, 2, 2, 4, 6, 4, 6, 1, 4, 2],
+  "allLabSolutionsInitiallyClosed": true,
+  "allCardAndDrillViewsLoaded": true,
+  "ticketIds": ["dhcp-t01", "dhcp-t02", "dns-t01", "dns-t02", "nat-pat-t01", "nat-pat-t02", "ntp-syslog-snmp-t01", "ntp-syslog-snmp-t02", "qos-t01", "qos-t02", "file-management-t01", "file-management-t03", "client-os-troubleshooting-t01", "client-os-troubleshooting-t03", "client-os-troubleshooting-t04", "troubleshooting-toolkit-t01", "troubleshooting-toolkit-t02", "troubleshooting-toolkit-t03", "security-concepts-t01", "security-concepts-t02", "aaa-tacacs-radius-t01", "aaa-tacacs-radius-t02"],
+  "ticketRoutesChecked": 22,
+  "eachTicketHadExhibitsAndFourOptions": true,
+  "documentOverflowOnCheckedRoutes": false,
+  "interactions": [
+    "Client q22: submitted a wrong gateway-only diagnosis; displayed keyed two-field explanation and matching distractor feedback.",
+    "QoS flashcard: Space revealed the answer, enabled rating, and Good recorded the displayed two-day review interval.",
+    "Security drill: show login was accepted with the relevant state/timer explanation.",
+    "File ticket t03: selected the restricted-ownership repair, obtained correct diagnosis and full command/retest feedback.",
+    "Client lab challenge: Enter opened the closed answer; the /27 address table, independent fault matrix and separate repairs displayed correctly.",
+    "Client lab progress: one test checkbox survived reload after waiting for the lazy chapter content; it was then unchecked. Solutions returned to closed on reload."
+  ],
+  "observedBrowserErrorsOrWarnings": [],
+  "notes": [
+    "Inner practice modules load lazily; assertions wait for the relevant question/card/drill or lab node, not only the chapter header.",
+    "One initial ticket navigation used a chapter ID and returned the index; testing resumed through the observed ticket-ID links.",
+    "An immediate transition measurement on dhcp-t01 briefly reported horizontal overflow. A direct settled-state recheck found document and viewport width both 1265px and no elements extending beyond it.",
+    "A representative expanded challenge was visually inspected at the browser's existing desktop size; no appearance settings were changed.",
+    "This verifies application presentation and interaction, not network-device execution, every learner response, or mobile layout."
+  ]
+}

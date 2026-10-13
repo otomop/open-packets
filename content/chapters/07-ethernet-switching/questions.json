@@ -1,0 +1,597 @@
+[
+  {
+    "id": "ethernet-switching-q05",
+    "type": "multi",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.d"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "With normal dynamic learning enabled, which two observations create a learned MAC-to-port association within the frame’s VLAN? Choose two.",
+    "options": [
+      "The source MAC address in the received frame",
+      "The destination MAC address in the received frame",
+      "The interface on which the frame arrived",
+      "The destination IP address inside the payload",
+      "The output interface selected after the lookup"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "The switch observes a source address arriving through a particular ingress port in a VLAN. That evidence establishes a path toward the source. The destination is looked up separately and does not reveal its own location from this frame.",
+    "whyWrong": {
+      "1": "The current destination is not evidence of where that destination is connected.",
+      "3": "An IP address is not the key used for ordinary dynamic MAC learning.",
+      "4": "The egress interface is a result of forwarding, not the source-location observation."
+    }
+  },
+  {
+    "id": "ethernet-switching-q11",
+    "type": "multi",
+    "objectives": [
+      "v1:1.13.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements distinguish store-and-forward from cut-through forwarding? Choose two.",
+    "options": [
+      "Cut-through waits for the complete frame before beginning its transmission.",
+      "Store-and-forward can check the complete frame’s FCS before forwarding.",
+      "Store-and-forward identifies the destination using the source MAC address.",
+      "Cut-through can begin forwarding before the complete frame and FCS arrive.",
+      "Cut-through replaces damaged payload bits using information in the FCS."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Store-and-forward has the full frame available for checking before forwarding it. Cut-through can begin earlier and therefore cannot wait for the entire frame’s FCS result before that initial transmission. Hardware behavior varies; family names alone are insufficient to select a mode.",
+    "whyWrong": {
+      "0": "Waiting for the complete frame describes store-and-forward rather than the defining early-start behavior.",
+      "2": "Destination MAC is used for the destination lookup in either forwarding method.",
+      "4": "The FCS detects corruption; it is not an error-correction code that repairs payload bits."
+    }
+  },
+  {
+    "id": "ethernet-switching-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.13",
+      "v1:1.13.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "In an untagged Ethernet II frame, which EtherType identifies an IPv4 payload?",
+    "options": [
+      "0x0806",
+      "0x86DD",
+      "0x0800",
+      "0x8100"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "EtherType 0x0800 identifies IPv4. It tells the receiving protocol stack what payload follows; it is distinct from the destination MAC used for basic forwarding.",
+    "whyWrong": {
+      "0": "0x0806 identifies ARP.",
+      "1": "0x86DD identifies IPv6.",
+      "3": "0x8100 identifies an 802.1Q tag, not an untagged IPv4 payload."
+    }
+  },
+  {
+    "id": "ethernet-switching-q19",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.d"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which comparison correctly distinguishes the switch MAC table from an IPv4 ARP table?",
+    "options": [
+      "The MAC table maps an IP prefix to a next hop; ARP maps a VLAN to a port.",
+      "The MAC table maps MAC/VLAN to a port; ARP maps an on-link IPv4 address to a MAC.",
+      "The MAC table maps a TCP port to a process; ARP maps a frame to its EtherType.",
+      "The MAC table maps IPv4 addresses to MACs; ARP maps learned MACs to switchports."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A Layer 2 switch uses the MAC/VLAN entry to choose a forwarding port. IPv4 ARP supplies a host’s on-link IP-to-MAC association; they serve different lookups.",
+    "whyWrong": {
+      "0": "The first description resembles routing, and ARP does not map VLANs to ports.",
+      "2": "Transport sockets and Ethernet payload types are separate from these tables.",
+      "3": "The two table roles are reversed."
+    }
+  },
+  {
+    "id": "ethernet-switching-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.b",
+      "v1:1.13.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1# show mac address-table dynamic",
+      "text": "Vlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n   1    00aa.aaaa.aaaa    DYNAMIC     Fa0/1\n   1    00bb.bbbb.bbbb    DYNAMIC     Fa0/2\n   1    00dd.dddd.dddd    DYNAMIC     Fa0/24\n   1    00ee.eeee.eeee    DYNAMIC     Fa0/24"
+    },
+    "prompt": "Fa0/1–Fa0/4 and Fa0/24 are VLAN 1 forwarding ports with no filtering policy. A valid frame from 00aa.aaaa.aaaa to 00bb.bbbb.bbbb enters Fa0/1. Which egress choice follows?",
+    "options": [
+      "Fa0/2 only, using the known destination entry.",
+      "Fa0/2, Fa0/3, Fa0/4, and Fa0/24, flooding the frame.",
+      "Fa0/2 and Fa0/24, using every port with an entry.",
+      "No egress, because the source already has an entry."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The source refreshes A’s entry on Fa0/1. The destination B is already known on a different forwarding port, Fa0/2, so ordinary unicast forwarding selects that port.",
+    "whyWrong": {
+      "1": "The destination is known, so unknown-unicast flooding is unnecessary.",
+      "2": "Other learned addresses do not make their ports destinations for this frame.",
+      "3": "A known source is normal; same-port filtering concerns the destination."
+    }
+  },
+  {
+    "id": "ethernet-switching-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.b"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1# show mac address-table dynamic",
+      "text": "Vlan    Mac Address       Type        Ports\n----    -----------       --------    -----\n   1    00aa.aaaa.aaaa    DYNAMIC     Fa0/1\n   1    00bb.bbbb.bbbb    DYNAMIC     Fa0/2\n   1    00dd.dddd.dddd    DYNAMIC     Fa0/24\n   1    00ee.eeee.eeee    DYNAMIC     Fa0/24"
+    },
+    "prompt": "With normal dynamic learning enabled, C (00cc.cccc.cccc) sends its first valid frame on VLAN 1 Fa0/3 to B (00bb.bbbb.bbbb). Fa0/2 is forwarding and no policy blocks the frame. What does SW1 do?",
+    "options": [
+      "Learns B on Fa0/3 and floods toward all other forwarding ports.",
+      "Rejects C’s frame until an administrator adds C to the table.",
+      "Learns C on Fa0/3 and forwards only toward B on Fa0/2.",
+      "Learns C on Fa0/3 and floods because C was previously unknown."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Source learning and destination lookup are separate decisions. The frame teaches C’s location, while the existing B entry directs forwarding to Fa0/2. An unfamiliar valid source is not by itself a reason to flood or reject ordinary traffic.",
+    "whyWrong": {
+      "0": "The switch learns the source C, not the destination B, from this arrival.",
+      "1": "Normal dynamic learning does not require a preconfigured host entry.",
+      "3": "Unknown-unicast flooding depends on an unknown destination, not an unknown source."
+    }
+  },
+  {
+    "id": "ethernet-switching-q04",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.c",
+      "v1:1.13.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative Port-state summary for this exercise",
+      "text": "Port    VLAN  Link  Forwarding for VLAN\nFa0/1   10    Up    Yes (ingress)\nFa0/2   10    Up    Yes\nFa0/3   10    Down  No\nFa0/4   10    Up    No\nFa0/5   20    Up    Yes"
+    },
+    "prompt": "An ordinary broadcast arrives on VLAN 10 Fa0/1. No storm-control or filtering policy applies. Which ports transmit a copy?",
+    "options": [
+      "Fa0/2 and Fa0/4, because both physical links are operational.",
+      "Fa0/2 only, because it is the other forwarding port in VLAN 10.",
+      "Fa0/2 and Fa0/5, because both are in a forwarding state.",
+      "Fa0/1 and Fa0/2, because broadcast includes its ingress port."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Flooding is limited to eligible forwarding ports in the same VLAN and excludes the ingress port. Fa0/3 is down, Fa0/4 is not forwarding for VLAN 10, and Fa0/5 belongs to VLAN 20. Only Fa0/2 qualifies.",
+    "whyWrong": {
+      "0": "An operational link is insufficient when it is not forwarding for the VLAN.",
+      "2": "Fa0/5 is in another VLAN and is not an egress for this broadcast.",
+      "3": "The switch does not send the ordinary flooded copy back through its ingress port."
+    }
+  },
+  {
+    "id": "ethernet-switching-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.13"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An untagged Ethernet II frame carries a 28-byte ARP message. What is its minimum frame length, counted from destination MAC through FCS, with ordinary Ethernet padding?",
+    "options": [
+      "42 bytes",
+      "46 bytes",
+      "60 bytes",
+      "64 bytes"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Padding extends the data area to 46 bytes. Adding the 14-byte untagged header and 4-byte FCS gives 64 bytes. Preamble, start frame delimiter, and interframe gap are excluded from this count.",
+    "whyWrong": {
+      "0": "42 counts only the header and unpadded ARP message.",
+      "1": "46 is the padded data area, not the complete frame.",
+      "2": "60 leaves out the four-byte FCS required by the stated counting scope."
+    }
+  },
+  {
+    "id": "ethernet-switching-q07",
+    "type": "single",
+    "objectives": [
+      "v1:1.13"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "What identifies 0100.5e01.0203 as an Ethernet group address?",
+    "options": [
+      "The organizational prefix proves that one individual NIC owns it.",
+      "The low-order bit of the first octet is set, indicating a group.",
+      "The final octet is odd, indicating a locally administered address.",
+      "The first octet differs from 00, making the address a broadcast."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The individual/group bit is the least-significant bit of the first octet. In 01 that bit is set, so the address is a group address; this example is an IPv4 multicast MAC. The Ethernet broadcast address is the separate all-ones value.",
+    "whyWrong": {
+      "0": "A group address is not an individual NIC’s ordinary unicast identifier.",
+      "2": "The relevant classification bits are in the first octet, not the last.",
+      "3": "Many valid unicast/group addresses do not begin with 00; broadcast is ffff.ffff.ffff."
+    }
+  },
+  {
+    "id": "ethernet-switching-q08",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "The switch’s dynamic aging timer is explicitly set to 300 seconds. B sends no frames for six minutes, while A continues sending toward B. No link or topology event occurs. Why can B’s dynamic entry disappear?",
+    "options": [
+      "No source frame from B refreshed its learned location before the timer expired.",
+      "A’s traffic replaced B’s entry because the table keeps one source per VLAN.",
+      "The timer converted B into a static entry after receiving traffic for five minutes.",
+      "The switch required a TCP acknowledgment from B to retain its Ethernet entry."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A received source frame is evidence of the sender’s location. Sending frames toward B does not provide new source evidence from B, so its inactive dynamic entry can age out. Subsequent traffic for an unknown B is flooded within the eligible VLAN ports until it is relearned.",
+    "whyWrong": {
+      "1": "A VLAN can contain entries for many distinct source MAC addresses.",
+      "2": "Ordinary dynamic aging removes an entry rather than configuring it as static.",
+      "3": "MAC learning is not maintained by TCP acknowledgment tracking."
+    }
+  },
+  {
+    "id": "ethernet-switching-q10",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1# show mac address-table · host rows",
+      "text": "Vlan    Mac Address       Type        Ports\n   1    00aa.aaaa.aaaa    DYNAMIC     Fa0/1\n   1    00bb.bbbb.bbbb    DYNAMIC     Fa0/2\n  10    0050.56be.1a2b    STATIC      Fa0/5"
+    },
+    "prompt": "After the representative display, an administrator enters clear mac address-table dynamic. No new host frame arrives before the next display. Which host entry remains?",
+    "options": [
+      "No host entry remains because clear removes configured and learned entries.",
+      "Only A remains because it is learned in the switch’s default VLAN.",
+      "Only 0050.56be.1a2b remains because its entry is configured as STATIC.",
+      "All three remain because clear changes only their aging countdowns."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The dynamic clear removes the two learned entries while leaving the configured static entry. Static configuration requires its matching removal command; ordinary dynamic aging or clearing is insufficient. Reserved platform entries are omitted from this exhibit.",
+    "whyWrong": {
+      "0": "The command is restricted to dynamic entries.",
+      "1": "VLAN 1 does not exempt a dynamic entry from the clear.",
+      "3": "The clear deletes dynamic entries rather than merely resetting countdowns."
+    }
+  },
+  {
+    "id": "ethernet-switching-q12",
+    "type": "single",
+    "objectives": [
+      "v1:1.13",
+      "v1:1.13.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "diagram",
+      "spec": {
+        "type": "topology",
+        "title": "All switch ports are in VLAN 1",
+        "nodes": [
+          {
+            "id": "R1",
+            "kind": "router",
+            "label": "R1",
+            "x": 6,
+            "y": 1
+          },
+          {
+            "id": "SW1",
+            "kind": "switch",
+            "label": "SW1",
+            "x": 2.5,
+            "y": 3
+          },
+          {
+            "id": "HUB",
+            "kind": "hub",
+            "label": "Hub",
+            "x": 9.5,
+            "y": 3
+          },
+          {
+            "id": "P1",
+            "kind": "pc",
+            "label": "PC1",
+            "x": 0.5,
+            "y": 5.5
+          },
+          {
+            "id": "P2",
+            "kind": "pc",
+            "label": "PC2",
+            "x": 2.5,
+            "y": 5.5
+          },
+          {
+            "id": "P3",
+            "kind": "pc",
+            "label": "PC3",
+            "x": 4.5,
+            "y": 5.5
+          },
+          {
+            "id": "P4",
+            "kind": "pc",
+            "label": "PC4",
+            "x": 8.5,
+            "y": 5.5
+          },
+          {
+            "id": "P5",
+            "kind": "pc",
+            "label": "PC5",
+            "x": 10.5,
+            "y": 5.5
+          }
+        ],
+        "links": [
+          {
+            "from": "R1",
+            "to": "SW1",
+            "fromLabel": "G0/0"
+          },
+          {
+            "from": "R1",
+            "to": "HUB",
+            "fromLabel": "G0/1"
+          },
+          {
+            "from": "SW1",
+            "to": "P1"
+          },
+          {
+            "from": "SW1",
+            "to": "P2"
+          },
+          {
+            "from": "SW1",
+            "to": "P3"
+          },
+          {
+            "from": "HUB",
+            "to": "P4"
+          },
+          {
+            "from": "HUB",
+            "to": "P5"
+          }
+        ],
+        "caption": "Two routed interfaces attach separate LANs; all switch ports share VLAN 1 and the hub is one shared segment."
+      }
+    },
+    "prompt": "The router’s two Ethernet interfaces are routed interfaces in separate LANs. SW1’s three PC links and router link are separate switch ports; the hub connects two PCs and the other router interface. Under introductory domain-counting conventions, what is the count?",
+    "options": [
+      "7 collision domains and 2 broadcast domains",
+      "5 collision domains and 1 broadcast domain",
+      "4 collision domains and 3 broadcast domains",
+      "5 collision domains and 2 broadcast domains"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "SW1 creates four separate link domains: three PC links plus the router link. The hub and everything on its shared segment form one more, giving five collision domains by the diagram convention; correctly operating full-duplex switch links do not actually collide. The routed interfaces separate the two broadcast domains.",
+    "whyWrong": {
+      "0": "Hub ports do not each separate the shared collision domain.",
+      "1": "The two distinct routed LANs do not share one broadcast domain.",
+      "2": "This misses a link/shared segment and adds a broadcast domain not present in the topology."
+    }
+  },
+  {
+    "id": "ethernet-switching-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.d"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A technician clears a PC’s IPv4 ARP cache. Before the PC sends new traffic, what direct effect does this have on the access switch’s MAC table?",
+    "options": [
+      "The switch removes the PC’s entry because its ARP mapping was removed.",
+      "No direct effect; the host’s ARP state and switch’s MAC state are separate.",
+      "The switch clears all entries associated with the PC’s access VLAN.",
+      "The switch converts the PC’s dynamic entry to a configured static entry."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The ARP cache on the PC maps IPv4 next-hop addresses to MACs. The switch’s separate table maps MACs within VLANs to ports, so clearing the host cache does not directly delete switch entries. The PC’s later frames can refresh or establish its learned source location.",
+    "whyWrong": {
+      "0": "A host-cache deletion is not a switch MAC-table removal operation.",
+      "2": "Deleting host ARP entries does not request a VLAN-wide switch clear.",
+      "3": "Host ARP state does not create static switch configuration."
+    }
+  },
+  {
+    "id": "ethernet-switching-q14",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1# show mac address-table interface gigabitethernet0/1 · abbreviated",
+      "text": "Vlan    Mac Address       Type        Ports\n  10    0011.2233.0001    DYNAMIC     Gi0/1\n  10    0011.2233.0002    DYNAMIC     Gi0/1\n  20    0011.2233.0044    DYNAMIC     Gi0/1\n...\nTotal Mac Addresses for this criterion: 38"
+    },
+    "prompt": "An inventory shows Gi0/1 connects to another access switch. The representative table has several VLANs and 38 distinct source MACs on Gi0/1. What is the appropriate first interpretation?",
+    "options": [
+      "The 38 distinct sources require a separate physical port for each learned address.",
+      "The expected uplink can learn downstream hosts; compare the observed paths with inventory.",
+      "The count establishes that one duplicate MAC is repeatedly moving between two ports.",
+      "The DYNAMIC label establishes that the learned entries have their aging timer disabled."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "An uplink carries frames whose sources are downstream hosts, so many distinct MACs on it are normal. The inventory supports that explanation. A count alone neither proves an attack nor proves that all traffic is benign; investigate additional evidence if the behavior differs from expectations.",
+    "whyWrong": {
+      "0": "An uplink carries source frames from many downstream hosts, so multiple learned addresses can legitimately share one physical port.",
+      "2": "These are different addresses on one port, not evidence of one address alternating between ports.",
+      "3": "DYNAMIC identifies learned entries; it does not display or prove an aging configuration."
+    }
+  },
+  {
+    "id": "ethernet-switching-q16",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A switch receives ordinary user IPv4 multicast in VLAN 1. The destination is not a reserved link-local group. Snooping and multicast restrictions are disabled, and all listed VLAN 1 ports are forwarding. Which behavior matches ordinary multicast flooding?",
+    "options": [
+      "Drop the frame because a group address cannot be dynamically learned as a host source.",
+      "Deliver only to the switch CPU because every group address is control-plane traffic.",
+      "Select receiver ports from membership information despite snooping being disabled.",
+      "Copy to the other eligible VLAN 1 ports, excluding the ingress port."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "With the stated restrictions absent, ordinary multicast is flooded within the VLAN, excluding ingress. Group delivery can differ when snooping, multicast forwarding state, policy, or reserved control addresses apply. The assumptions in the question make the forwarding decision unambiguous.",
+    "whyWrong": {
+      "0": "Lack of a learned unicast-source entry does not by itself require discarding ordinary multicast.",
+      "1": "Only particular control addresses receive special handling; multicast as a whole is not CPU-only.",
+      "2": "The question excludes the receiver-membership restrictions that would support this selection."
+    }
+  },
+  {
+    "id": "ethernet-switching-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.d"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative source-move evidence",
+      "text": "VLAN 1: A is on Fa0/1.\nInitial table: B = 00bb.bbbb.bbbb, DYNAMIC, Fa0/2.\nB is moved from Fa0/2 to enabled forwarding Fa0/4.\nA retains the correct IP-to-MAC mapping for B.\nA valid frame sourced by B then arrives on Fa0/4."
+    },
+    "prompt": "PC-B is physically moved as shown and then sends the first new frame. No static entries, security policies or loop are present. Which forwarding result follows?",
+    "options": [
+      "A’s next frame to B is flooded until the old timer expires.",
+      "A’s next frame to B is sent to Fa0/2 until its ARP entry is cleared.",
+      "A’s next frame to B is sent to both old and new ports during relearning.",
+      "A’s next frame to B is sent to Fa0/4 using the updated source location."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A valid frame from B on Fa0/4 updates B’s dynamic MAC location immediately. A can keep its correct IP-to-MAC mapping; the switch’s updated destination lookup chooses the new port.",
+    "whyWrong": {
+      "0": "New source evidence can update a dynamic location without waiting for the old aging interval.",
+      "1": "The host’s unchanged IP-to-MAC mapping does not prevent the switch from learning the new physical path.",
+      "2": "Ordinary learning updates the entry rather than keeping both ports as simultaneous unicast destinations."
+    }
+  },
+  {
+    "id": "ethernet-switching-q03",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.b",
+      "v1:1.13.d"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative switching worksheet · VLAN 1",
+      "text": "Initial dynamic table:\n00aa.aaaa.aaaa -> Fa0/1\n00dd.dddd.dddd -> Fa0/24\n00ee.eeee.eeee -> Fa0/24\n\nFrame 1: source 00ee.eeee.eeee, destination 00aa.aaaa.aaaa, arrives Fa0/3\nFrame 2: source 00dd.dddd.dddd, destination 00ee.eeee.eeee, arrives Fa0/24\nAll listed ports are forwarding; ordinary dynamic learning, no security restriction."
+    },
+    "prompt": "Initially D and E are reached through Fa0/24. Apply the two received frames in order. What happens to the second frame?",
+    "options": [
+      "It is filtered because the initial entry put E on its ingress port.",
+      "It is flooded because a learned source can have more than one location.",
+      "It is forwarded to Fa0/3 after E’s source frame updated the table.",
+      "It is returned through Fa0/24 because D was learned on that port."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Frame 1 updates the dynamic location of source E to Fa0/3. Frame 2 then looks up destination E using that updated table, so it leaves Fa0/3 rather than being same-port filtered. The initial table is not a permanent forwarding rule.",
+    "whyWrong": {
+      "0": "The source frame from E changed its learned location before the second lookup.",
+      "1": "The destination has a known current entry; a normal source move does not require unknown-unicast flooding.",
+      "3": "Destination lookup selects E’s port, and ordinary bridging does not reflect the frame through its ingress."
+    }
+  },
+  {
+    "id": "ethernet-switching-q17",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a",
+      "v1:1.13.d"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative two-switch frame sequence",
+      "text": "All ports are forwarding in VLAN 1, with ordinary bridging.\nA -- S1 Fa0/1     S1 Fa0/24 -- S2 Fa0/24\nB -- S2 Fa0/2     C -- S2 Fa0/3\n\n1. A sends a unicast Ethernet frame to B (A already knows B’s MAC).\n2. B sends a unicast reply to A.\n3. C sends a unicast Ethernet frame to B (C already knows B’s MAC)."
+    },
+    "prompt": "Both tables begin empty. The three frames below occur in order, and no other host transmits. Which host locations has S1 learned after frame 3?",
+    "options": [
+      "A on Fa0/1 and B on Fa0/24; it has not learned C.",
+      "A on Fa0/1, with both B and C on Fa0/24.",
+      "B on Fa0/24 and C on Fa0/3; it has not learned A.",
+      "A on Fa0/1 and C on Fa0/24; B ages out after its reply."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The first request teaches A on each switch along its path. B’s reply reaches S1 and teaches B on Fa0/24. C’s final frame is sent by S2 only to the already-known B port, so S1 never sees C transmit and cannot learn C from that frame.",
+    "whyWrong": {
+      "1": "C’s source frame stays on S2’s local path to B and does not reach S1.",
+      "2": "Fa0/3 is C’s port on S2, not a learned S1 port; A already transmitted into S1.",
+      "3": "B’s reply supplied source evidence; the stated immediate sequence includes no aging event."
+    }
+  }
+]

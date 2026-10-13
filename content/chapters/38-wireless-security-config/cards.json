@@ -1,0 +1,162 @@
+[
+  {
+    "id": "wireless-security-config-c01",
+    "front": "Why is WEP unsuitable for a new WLAN?",
+    "back": "Its RC4/key/IV design and inadequate integrity protection are obsolete and vulnerable.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c02",
+    "front": "Why avoid legacy WPA/TKIP for a new WLAN?",
+    "back": "It uses obsolete protection; select the supported WPA2/AES or WPA3 design instead.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c03",
+    "front": "What is AES-CCMP?",
+    "back": "AES-based encryption and integrity protection on the wireless link; the normal CCNA WPA2 configuration choice. It is separate from Personal or Enterprise authentication.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c04",
+    "front": "Do WPA3-Personal and WPA3-Enterprise both use SAE?",
+    "back": "No. Personal uses SAE; Enterprise uses an Enterprise authentication method.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c05",
+    "front": "Cisco WPA2 PSK field lengths: ASCII and HEX?",
+    "back": "ASCII passphrase: 8–63 characters. Raw HEX PSK: exactly 64 hexadecimal digits. Do not generalize this field rule to every SAE representation.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c08",
+    "front": "Central 802.1X WLAN: supplicant, authenticator, authentication server?",
+    "back": "Client, WLC and external RADIUS server in the stated central design; other deployment modes can place functions differently.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c10",
+    "front": "EAP-TLS versus typical PEAP/MS-CHAPv2?",
+    "back": "EAP-TLS uses client/server certificates; PEAP/MS-CHAPv2 uses password-based client authentication inside a server-validated tunnel.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c11",
+    "front": "What does SAE improve over WPA2-PSK key establishment?",
+    "back": "It is designed to resist passive offline dictionary verification and provide forward secrecy. The four-way handshake still follows.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c12",
+    "front": "What does PMF protect, and what does it not prevent?",
+    "back": "Specified robust management frames such as deauthentication/disassociation; not every beacon, RF jamming or all service disruption.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c13",
+    "front": "What assurance does OWE provide?",
+    "back": "Radio encryption without a shared user password or authenticated AP identity; application identity checks still matter.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c14",
+    "front": "A new AireOS WLAN shows 802.1X AKM; how do you make the basic lab PSK-only?",
+    "back": "Select WPA2/AES, disable 802.1X AKM, enable PSK, set the key and verify. Inspect actual settings rather than assuming defaults.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c16",
+    "front": "What does AireOS Silver mean, and does selecting a QoS profile guarantee bandwidth?",
+    "back": "Silver is best effort. A profile selects traffic treatment; it does not guarantee capacity.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c17",
+    "front": "Does a configured WLAN session timeout prove it caused a client failure?",
+    "back": "No. Correlate the client's event and elapsed time with that policy.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c18",
+    "front": "Which controller administration protocols should you select?",
+    "back": "HTTPS on TCP 443 and SSH on TCP 22, with proper identity validation and access restrictions. Check actual enabled settings.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c19",
+    "front": "What links a 9800 WLAN to a client VLAN policy on an AP?",
+    "back": "The policy tag maps the WLAN profile to a policy profile and must be assigned to the AP. Site/RF tags serve other purposes.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c20",
+    "front": "AireOS shows current DHCP_REQD after successful security. What is pending?",
+    "back": "Client addressing. Check the mapped VLAN and DHCP path; this state does not identify one specific failed device.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c21",
+    "front": "Profile name, SSID and WLAN ID: how do they differ?",
+    "back": "Controller object name, client-visible network name and internal WLAN identifier. Verify the AP's actual assignment rather than assuming ID alone advertises it.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c22",
+    "front": "Does Associated alone prove successful WPA2 security?",
+    "back": "No. Check current key-establishment/admission evidence and then IP/data access; a stale lease can survive a failed new join.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c23",
+    "front": "Which is the WLAN key: controller administrator password or issued Personal passphrase?",
+    "back": "The issued Personal passphrase. Administrator credentials and the RADIUS shared secret serve different relationships.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-security-config-c24",
+    "front": "Does WPA2/WPA3 radio protection secure every later server connection?",
+    "back": "No. It protects the radio link; validate and protect the application connection separately.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

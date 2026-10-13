@@ -1,0 +1,474 @@
+[
+  {
+    "id": "cdp-lldp-q02",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On the Cisco IOS CDP implementation documented in this chapter, the timers have not been changed. What are the default advertisement interval and advertised holdtime?",
+    "options": [
+      "60 seconds and 180 seconds",
+      "30 seconds and 120 seconds",
+      "60 seconds and 120 seconds",
+      "180 seconds and 60 seconds"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The referenced IOS guide specifies an advertisement every 60 seconds and an advertised holdtime of 180 seconds. A receiver ages its entry when advertisements stop; these values can be configured.",
+    "whyWrong": {
+      "1": "These are the LLDP interval and holdtime documented for the chapter’s Catalyst platform.",
+      "2": "The first number is the CDP default interval, but the default CDP holdtime is 180 seconds.",
+      "3": "This reverses the interval and holdtime. A timer value is not a count of neighbors."
+    }
+  },
+  {
+    "id": "cdp-lldp-q04",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1# show lldp neighbors",
+      "text": "Capability codes: (R) Router, (B) Bridge, (T) Telephone, (S) Station\nDevice ID   Local Intf  Hold-time  Capability  Port ID\nDIST1       Gi0/24     120        B           Te1/0/1"
+    },
+    "prompt": "Which interpretation is supported by this LLDP output?",
+    "options": [
+      "DIST1 is advertising the LLDP station capability.",
+      "DIST1 advertises bridge capability and remote port Te1/0/1.",
+      "B means the receiving local port is blocked by STP.",
+      "The B code proves that DIST1 cannot also support routing."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Read the legend belonging to this protocol. LLDP B means bridge, which includes Ethernet switching. The row maps the local Gi0/24 to the advertised remote Te1/0/1; it does not establish all configured features on DIST1.",
+    "whyWrong": {
+      "0": "The legend uses S for station, not B.",
+      "2": "The capability field describes the neighbor’s advertised capability, not the local STP state.",
+      "3": "A bridge capability does not rule out other capabilities or prove how every feature is configured."
+    }
+  },
+  {
+    "id": "cdp-lldp-q06",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "You must disable CDP only on SW1 Gi0/2 while retaining it on other intended ports. Which command belongs under interface Gi0/2?",
+    "options": [
+      "no cdp run",
+      "no lldp transmit",
+      "no cdp enable",
+      "cdp timer 0"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "no cdp enable disables CDP on the selected interface. Keep the global cdp run setting if CDP is still needed elsewhere.",
+    "whyWrong": {
+      "0": "no cdp run is a global command and disables CDP device-wide.",
+      "1": "This affects LLDP transmission, a different discovery protocol.",
+      "3": "A timer adjustment is not the per-interface enable/disable control."
+    }
+  },
+  {
+    "id": "cdp-lldp-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two privileged EXEC commands help inspect CDP advertisement/holdtime settings on the local IOS device? Choose two.",
+    "options": [
+      "show cdp neighbors detail",
+      "show cdp",
+      "show cdp interface",
+      "show ip route"
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "show cdp reports local global settings; show cdp interface reports CDP status and timing for participating local interfaces. Neighbor detail is a record about received neighbors, not a substitute for inspecting the local sender settings.",
+    "whyWrong": {
+      "0": "Neighbor detail can include the remaining lifetime of a received entry, but the task asks for local CDP timer settings.",
+      "3": "The IP routing table does not report CDP timer configuration."
+    }
+  },
+  {
+    "id": "cdp-lldp-q15",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A supported IP phone uses LLDP-MED network-policy information from its switch. What can that information help the phone learn?",
+    "options": [
+      "The phone's complete IPv4 address, subnet mask and default gateway.",
+      "The voice call server's successful registration response.",
+      "The switch's complete table of reachable IP subnets.",
+      "The intended voice VLAN and associated traffic-priority policy."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "LLDP-MED extends discovery for media endpoints, including network-policy information such as voice VLAN and priority. Advertisement does not replace configuring the required VLAN, power, and data path.",
+    "whyWrong": {
+      "0": "Network-policy information does not replace IP address configuration or DHCP.",
+      "1": "Advertising policy is not proof of successful call-server registration.",
+      "2": "LLDP-MED network policy is not an IP routing-table exchange."
+    }
+  },
+  {
+    "id": "cdp-lldp-q24",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied endpoint evidence",
+      "text": "PC-A has no CDP or LLDP agent\nIts access link is up in the intended VLAN\nPC-A and a same-subnet peer exchange repeated successful pings\nSwitch CDP/LLDP uplink neighbors refresh normally"
+    },
+    "prompt": "PC-A exchanges traffic successfully but never appears in either discovery table. Which conclusion follows?",
+    "options": [
+      "The user-traffic test is invalid because every host must advertise LLDP.",
+      "The access VLAN is inactive despite the successful local exchange.",
+      "The switch has proved PC-A's software is trustworthy.",
+      "Absence is expected for the stated host and does not contradict its traffic test."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A host needs a discovery speaker to advertise its identity. IP traffic can work without CDP or LLDP, and a table's absence or presence is not device authentication.",
+    "whyWrong": {
+      "0": "Ordinary endpoint traffic does not require a discovery agent.",
+      "1": "The successful tested path does not support that diagnosis.",
+      "2": "Discovery state does not authenticate software."
+    }
+  },
+  {
+    "id": "cdp-lldp-q01",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative SW1# show cdp neighbors",
+      "text": "Device ID  Local Intrfce  Holdtme  Capability  Platform    Port ID\nSW2        Gig 0/1       172      S I         WS-C2960-   Gig 0/2\nR1         Gig 0/2       156      R S I       CISCO2911   Gig 0/0"
+    },
+    "prompt": "Which link record correctly interprets both rows?",
+    "options": [
+      "SW1 Gi0/2 → SW2 Gi0/1; SW1 Gi0/0 → R1 Gi0/2",
+      "SW1 Gi0/1 → SW2 Gi0/1; SW1 Gi0/2 → R1 Gi0/2",
+      "SW1 Gi0/1 → SW2 Gi0/2; SW1 Gi0/2 → R1 Gi0/0",
+      "SW2 Gi0/1 → R1 Gi0/0; SW1 Gi0/2 has no neighbor"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The command ran on SW1. Local Intrfce belongs to SW1; Port ID is the interface advertised by the neighbor in that row. Record both device names and both ports.",
+    "whyWrong": {
+      "0": "This reverses local and remote port ownership and invents an SW1 Gi0/0 observation.",
+      "1": "The remote ports are Gi0/2 on SW2 and Gi0/0 on R1, not copies of the local port numbers.",
+      "3": "The table reports two SW1 adjacencies; it does not report a link between SW2 and R1."
+    }
+  },
+  {
+    "id": "cdp-lldp-q08",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Recorded interface state on the connected ports",
+      "text": "SW1 Gi0/1: LLDP Tx enabled; Rx enabled\nSW2 Gi0/2: LLDP Tx disabled; Rx enabled"
+    },
+    "prompt": "LLDP runs globally on both switches, the cable is correct, and old entries have expired. What is the expected neighbor-table result?",
+    "options": [
+      "Neither switch learns the other because LLDP requires bidirectional transmission.",
+      "Both switches learn each other because global enablement overrides interface settings.",
+      "SW1 learns SW2, but SW2 cannot learn SW1.",
+      "SW2 learns SW1, but SW1 cannot learn SW2."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "SW1 transmits, so SW2 can receive and learn SW1. SW2 does not transmit, so SW1 receives no new SW2 advertisement. Receive and transmit controls are independent.",
+    "whyWrong": {
+      "0": "One-way LLDP learning is possible when the corresponding sender and receiver are enabled.",
+      "1": "Global enablement does not override a disabled per-interface transmit direction.",
+      "2": "This reverses the direction: SW2 is the device with transmission disabled."
+    }
+  },
+  {
+    "id": "cdp-lldp-q09",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A fresh CDP detail entry advertises SW2 management address 192.168.12.12, but SW1 cannot ping it. Which conclusion is justified?",
+    "options": [
+      "Discovery works; IP reachability requires separate checks.",
+      "The management path is working because discovery crossed the link.",
+      "The management address must be on the port facing SW1.",
+      "CDP authenticated SW2 and verified its SSH service."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "CDP operates at Layer 2 and can advertise an address that is not on the facing interface. The entry is discovery evidence, not proof of IP reachability, identity authentication, or a working SSH service.",
+    "whyWrong": {
+      "1": "A received Layer 2 advertisement does not test the separate IP management path.",
+      "2": "A device can advertise a management address from another interface.",
+      "3": "Ordinary CDP advertisements do not authenticate the neighbor or test a management service."
+    }
+  },
+  {
+    "id": "cdp-lldp-q11",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A policy prohibits discovery on an untrusted provider-facing Ethernet port. Internal switch and phone links still require their approved discovery features. Which change best matches the policy?",
+    "options": [
+      "Disable both discovery protocols globally on the switch.",
+      "Disable CDP on the port while leaving LLDP participation enabled.",
+      "Disable both discovery protocols on the port and preserve approved internal use.",
+      "Disable only LLDP transmission on the port and leave other discovery enabled."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Apply the boundary policy to the selected interface. Review both discovery protocols, because disabling one does not disable the other. Preserve approved dependencies on other ports and verify their behavior.",
+    "whyWrong": {
+      "0": "The requirement is port-specific; a global change removes approved internal discovery.",
+      "1": "That leaves LLDP participating where all discovery is prohibited.",
+      "3": "That leaves reception and CDP participation outside the stated policy."
+    }
+  },
+  {
+    "id": "cdp-lldp-q12",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An IOS switch supports LLDP but show lldp reports that it is not enabled. You want discovery only on the approved Gi0/1 uplink. What is the appropriate next configuration?",
+    "options": [
+      "Enter cdp run; LLDP automatically shares CDP’s state.",
+      "Enable lldp run, Gi0/1 transmit/receive, and verify port policy.",
+      "Add a default route; the LLDP process starts when a gateway is reachable.",
+      "Only enter lldp receive on Gi0/1; the global process can remain disabled."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Enable the LLDP process and the intended interface directions. Inspect other interface states rather than assuming a universal default across models or releases.",
+    "whyWrong": {
+      "0": "CDP and LLDP have independent configuration.",
+      "2": "LLDP is Layer 2 and does not need a default route.",
+      "3": "An interface direction setting cannot make a globally disabled LLDP process operate."
+    }
+  },
+  {
+    "id": "cdp-lldp-q13",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "The sender advertises a 180-second CDP holdtime. A receiver’s countdown is now approximately 174 seconds. What does that indicate?",
+    "options": [
+      "The link has been down for exactly 174 seconds.",
+      "The sender will transmit its next advertisement in 174 seconds.",
+      "The neighbor was discovered for the first time 174 seconds ago.",
+      "About 6 seconds have elapsed since the advertisement that last refreshed this entry."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "180 − 174 = 6 seconds. The countdown describes the entry’s remaining lifetime after its last refresh; rounding and display timing make this an approximate observation. It does not establish physical link uptime.",
+    "whyWrong": {
+      "0": "The countdown is time remaining, not downtime.",
+      "1": "The receiver’s cache countdown is separate from the sender’s advertisement schedule.",
+      "2": "A refresh restarts the lifetime of an existing entry, so this is not an age-since-first-discovery value."
+    }
+  },
+  {
+    "id": "cdp-lldp-q14",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Global configuration explicitly contains `no cdp run`, but Gi0/1 contains `cdp enable`. What should you conclude?",
+    "options": [
+      "CDP remains disabled globally; the interface command does not override that.",
+      "Gi0/1 operates CDP while every other interface stays disabled.",
+      "Only CDP reception works on Gi0/1.",
+      "The device automatically changes to LLDP on Gi0/1."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "CDP needs the global process and the interface enabled. Global disablement prevents CDP operation even where the interface has cdp enable.",
+    "whyWrong": {
+      "1": "Per-interface enablement does not override the global state.",
+      "2": "CDP does not use LLDP-style independent transmit and receive controls here.",
+      "3": "One discovery protocol does not automatically substitute for the other."
+    }
+  },
+  {
+    "id": "cdp-lldp-q16",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Two devices appear as CDP neighbors, but inspection finds an Ethernet hub between them. What is the correct documentation conclusion?",
+    "options": [
+      "The hub must have an IP address in the CDP table before the observation can be valid.",
+      "Document the speakers and hub; discovery does not prove a single cable.",
+      "The hub is necessarily the Device ID shown in each CDP row.",
+      "Every unmanaged switch must forward LLDP in exactly the same way."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A hub repeats the received signal and does not identify itself through CDP. Neighbor discovery can therefore omit an intermediate nonparticipating component. Record observed speakers separately from verified physical infrastructure.",
+    "whyWrong": {
+      "0": "A hub does not need an IP address or CDP identity to repeat signals.",
+      "2": "The Device ID belongs to the advertising speaker, not automatically to an intermediate device.",
+      "3": "Do not generalize this CDP/hub case to all bridges or to LLDP forwarding behavior."
+    }
+  },
+  {
+    "id": "cdp-lldp-q22",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied protocol checks",
+      "text": "Physical connection up; intended interfaces verified\nSW1: CDP enabled; LLDP globally disabled\nSW2: LLDP globally enabled, Tx/Rx enabled; CDP disabled\nPolicy: use LLDP on this link"
+    },
+    "prompt": "Both images support both protocols, but their empty discovery tables persist after sufficient advertisement time. Which change establishes the approved LLDP discovery on this link?",
+    "options": [
+      "Change both management gateways to the same router address.",
+      "Enable CDP on SW2 while leaving SW1's LLDP disabled.",
+      "Enable LLDP globally and in both directions on SW1's connected port.",
+      "Clear both tables repeatedly while keeping their protocol settings."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The devices currently use different discovery protocols. Enable the approved common protocol, LLDP, at SW1 and verify both directions; IP addressing and table clears do not translate CDP into LLDP.",
+    "whyWrong": {
+      "0": "The Layer 2 protocol mismatch is independent of the management gateway.",
+      "1": "That could provide CDP discovery, but the approved outcome requires LLDP and SW1's LLDP process remains disabled.",
+      "3": "Clearing tables does not create compatible advertisements."
+    }
+  },
+  {
+    "id": "cdp-lldp-q23",
+    "type": "multi",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied complete relevant direction state",
+      "text": "LLDP globally enabled on both devices; link up\nSW1: transmit enabled, receive disabled\nSW2: transmit disabled, receive enabled\nOld entries have expired"
+    },
+    "prompt": "The required outcome is that SW1 receives fresh SW2 information. Which two interface changes are necessary under the stated configuration? Choose two.",
+    "options": [
+      "Enable LLDP transmit on SW1.",
+      "Enable LLDP receive on SW1.",
+      "Enable LLDP receive on SW2.",
+      "Enable LLDP transmit on SW2.",
+      "Disable CDP on both switches."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "SW2 is the sender for this observation and SW1 is the receiver. Restore those two disabled directions; the reverse-direction controls already work and CDP is independent.",
+    "whyWrong": {
+      "0": "SW1 transmission is already enabled and sends information in the opposite direction.",
+      "2": "SW2 reception is already enabled and concerns learning SW1.",
+      "4": "CDP need not be disabled for LLDP to operate."
+    }
+  },
+  {
+    "id": "cdp-lldp-q21",
+    "type": "single",
+    "objectives": [
+      "v1:2.3",
+      "v2:2.3"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied maintenance records",
+      "text": "09:00 drawing: SW1 Gi0/1 to SW2 Gi0/2\n09:02 saved CDP record: same endpoints\n09:10 cable move recorded, destination port not recorded\n09:11 new SW1 LLDP record: neighbor name SW2, remote Gi0/1\nNo post-move SW2 observation or physical-port inspection has yet been recorded"
+    },
+    "prompt": "Which documentation action is justified now?",
+    "options": [
+      "Replace the approved drawing with the oldest cached observation.",
+      "Record the disagreement and confirm current identities and both port ends before updating the drawing.",
+      "Declare Gi0/1 physically faulty because two records disagree.",
+      "Publish the new one-sided record immediately because it has the latest timestamp."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The observations were taken at different times and the new local record lacks corroboration. Preserve the evidence and establish the current physical endpoints and peer identity before publishing a correction.",
+    "whyWrong": {
+      "0": "The old record predates the move and may no longer describe the current connection.",
+      "2": "An identity or port-record conflict alone does not establish a physical-layer fault.",
+      "3": "The newer record is useful evidence, but its identity and physical endpoint still need corroboration."
+    }
+  }
+]

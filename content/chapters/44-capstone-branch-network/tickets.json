@@ -1,0 +1,131 @@
+[
+  {
+    "id": "capstone-branch-network-t01",
+    "title": "Guests on SW2 cannot obtain leases",
+    "objectives": [
+      "v1:2.2",
+      "v2:2.1.b",
+      "v2:1.7"
+    ],
+    "scenario": "In this isolated branch variation, one guest on SW1 works and a guest on SW2 fails. Both access ports are in active VLAN 20. R1 is the DHCP server behind SW1 Gi0/1; its pool has free addresses. Before a change, both clients obtained correct leases.",
+    "exhibits": [
+      {
+        "title": "Representative SW2 trunk state",
+        "text": "Po1 trunking; native VLAN 999\nAllowed VLANs: 10,99,999\nVLAN 20: active in local VLAN database\nGuest access port Fa0/2: VLAN 20, connected"
+      },
+      {
+        "title": "Representative SW1 state",
+        "text": "Po1 allowed VLANs: 10,20,99,999\nGi0/1 allowed/active/forwarding VLANs: 10,20,99,999\nLocal VLAN 20 client: valid DHCP lease"
+      }
+    ],
+    "question": "Which demonstrated change is needed on the SW2 path?",
+    "options": [
+      "Add a DHCP helper to the management SVI",
+      "Allow VLAN 20 on SW2 Port-channel1",
+      "Change the native VLAN to the guest VLAN",
+      "Move the DHCP pool to the external router"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SW2’s logical trunk excludes the client VLAN. The functioning local guest and healthy router trunk help isolate the failed path to the inter-switch link; a local VLAN entry alone does not place it in the trunk’s allowed list.",
+    "fix": "On this lab switch, restore the intended list and inspect member/logical consistency:\n\n```ios\nSW2# configure terminal\nSW2(config)# interface port-channel1\nSW2(config-if)# switchport trunk allowed vlan 10,20,99,999\nSW2(config-if)# end\nSW2# show interfaces trunk\nSW2# show etherchannel summary\nSW2# show spanning-tree vlan 20\n```\n\nVerify the VLAN is forwarding, renew the SW2 client and confirm the actual lease and gateway. Do not change the working DHCP server. Then confirm a fresh guest external HTTP request succeeds and a guest-initiated staff ping remains denied. Record the new client address if renewal changed it."
+  },
+  {
+    "id": "capstone-branch-network-t02",
+    "title": "HQ routes are missing despite an established neighbor",
+    "objectives": [
+      "v1:3.4.b",
+      "v2:3.3.b",
+      "v2:2.4"
+    ],
+    "scenario": "R1 and R2 are the only routers on a dedicated Ethernet transit. The approved design uses point-to-point at both ends. Both required LAN interfaces are enabled in area 0 and passive. HQ access failed after an image migration. The following authored evidence was collected.",
+    "exhibits": [
+      {
+        "title": "Representative R1 observations",
+        "text": "Gi0/1: Network Type POINT_TO_POINT; Hello 10; Dead 40\nNeighbor 2.2.2.2: FULL\nRequired HQ route: absent"
+      },
+      {
+        "title": "Representative R2 observations",
+        "text": "Gi0/0: Network Type BROADCAST; Hello 10; Dead 40\nRequired HQ interface: up/up, enabled in OSPF area 0\nIntended transit network type: point-to-point"
+      }
+    ],
+    "question": "Which repair addresses the explicit configuration inconsistency?",
+    "options": [
+      "Make the transit passive at both routers",
+      "Change both local process IDs to the same value",
+      "Restore point-to-point on R2’s transit interface",
+      "Redistribute all connected routes on both routers"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The interfaces disagree about the OSPF topology model. Cisco documents route-calculation failures with such mismatches even when a FULL relationship is observed. The conclusion relies on the displayed types and intended design, not FULL alone.",
+    "fix": "Restore the intended type on R2:\n\n```ios\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# ip ospf network point-to-point\nR2(config-if)# end\nR2# show ip ospf interface gigabitethernet0/0\nR2# show ip ospf neighbor\nR2# show ip route\n```\n\nAllow convergence, compare R1’s type and routes, then test HQ and its return path. If the route remains absent, continue with advertisement and route-selection evidence instead of assuming this one change proves service. From the authorized staff client, repeat the original HQ ping and numeric/name HTTP to the external server. Keep the guest-to-HQ denial intact."
+  },
+  {
+    "id": "capstone-branch-network-t03",
+    "title": "Guests receive leases but cannot use external HTTP",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6",
+      "v2:2.4"
+    ],
+    "scenario": "Guest gateway ping and external HTTP stopped after a named ACL edit. Staff service still works. GUEST-IN is inbound on R1 Gi0/0.20. The intended policy denies guest requests to staff, permits guest DHCP and permits external access.",
+    "exhibits": [
+      {
+        "title": "Representative ordered ACL",
+        "text": "10 permit udp any eq 68 any eq 67\n20 permit icmp 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255 echo-reply\n35 deny ip 10.10.20.0 0.0.0.255 any\n40 deny ip 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255\n70 permit ip 10.10.20.0 0.0.0.255 any"
+      },
+      {
+        "title": "Authored before/after probe record",
+        "text": "Guest DHCP renewal: succeeds\nLine 35 count before new gateway/external probes: 40\nLine 35 count after probes: 48\nStaff external HTTP: succeeds"
+      }
+    ],
+    "question": "Which minimal repair preserves the intended restrictions?",
+    "options": [
+      "Remove sequence 35 in named-ACL configuration",
+      "Remove the inbound attachment of GUEST-IN",
+      "Permit all sources in R2’s NAT selection ACL",
+      "Add a second default route on the guest PC"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The broad sequence 35 matches the failing requests before the intended entries. DHCP survives because an earlier permit matches it. Removing the whole list would also remove the required staff protection.",
+    "fix": "```ios\nR1# configure terminal\nR1(config)# ip access-list extended GUEST-IN\nR1(config-ext-nacl)# no 35\nR1(config-ext-nacl)# end\nR1# show access-lists GUEST-IN\n```\n\nRepeat a new gateway ping and HTTP request, renew DHCP, and confirm a guest-initiated staff ping remains denied. Existing NAT rows may outlive the fault; evaluate new traffic and counters."
+  },
+  {
+    "id": "capstone-branch-network-t04",
+    "title": "Branch clients reach HQ but lose external access",
+    "objectives": [
+      "v1:3.3",
+      "v1:3.4",
+      "v2:3.2.a",
+      "v2:3.3"
+    ],
+    "scenario": "The branch still reaches HQ but cannot reach the external server. The approved edge design uses a default route through 203.0.113.2 and advertises it conditionally to R1. R2’s ISP interface is up/up and that next hop answers a connected ping. The following state was collected after maintenance.",
+    "exhibits": [
+      {
+        "title": "Representative R1 state",
+        "text": "Neighbor 2.2.2.2: FULL\nO 10.255.20.0/24 via 10.255.12.2\nGateway of last resort is not set"
+      },
+      {
+        "title": "Representative R2 state",
+        "text": "router ospf 1\n default-information originate\nGi0/1 203.0.113.1/24 up/up\nshow ip route 0.0.0.0: network not in table\nApproved next hop: 203.0.113.2"
+      }
+    ],
+    "question": "Which repair restores the documented conditional default design?",
+    "options": [
+      "Add always to origination despite the missing route",
+      "Change R1’s VLAN gateways to the ISP address",
+      "Make R2’s ISP interface an OSPF area 0 peer",
+      "Restore the approved static default on R2"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "R2 has no default route, so default-information originate without always has nothing to advertise. HQ reachability and the FULL neighbor isolate the missing external route from the functioning internal routing relationship.",
+    "fix": "```ios\nR2# configure terminal\nR2(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.2\nR2(config)# end\nR2# show ip route 0.0.0.0\n```\n\nAfter OSPF convergence, verify R1 learns the default and repeat numeric/name HTTP from both clients. Restoring a route is necessary here but still does not by itself prove the external service is healthy."
+  }
+]

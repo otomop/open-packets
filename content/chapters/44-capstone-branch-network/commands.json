@@ -1,0 +1,91 @@
+[
+  {
+    "id": "capstone-branch-network-d06",
+    "task": "R2 has an installed default route to the ISP and a working OSPF relationship with R1. Advertise a default into OSPF only while R2 retains that route; do not force advertisement or change the default metric.",
+    "mode": "R2(config-router)#",
+    "answer": "default-information originate",
+    "accept": [],
+    "teaching": {
+      "sectionId": "hq-and-the-internet-edge",
+      "hint": "The branch needs an advertised default, but withdrawal must follow route availability.",
+      "takeaway": "Without always, origination depends on an eligible installed default. That route’s presence still does not prove the upstream application is healthy; test the service separately.",
+      "syntax": [
+        {
+          "text": "default-information originate",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "supporting",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "capstone-cmd-initial-dhcp",
+    "task": "R1’s GUEST-IN ACL is inbound on the guest gateway. Sequence 70 permits source 10.10.20.0/24, but a new client has no lease: its DHCP Discover is UDP 0.0.0.0:68 to 255.255.255.255:67. Add sequence 10 permitting client-to-server DHCP with any source and destination address.",
+    "mode": "R1(config-ext-nacl)#",
+    "answer": "10 permit udp any eq 68 any eq 67",
+    "accept": [],
+    "teaching": {
+      "sectionId": "policy-and-management",
+      "hint": "A new client cannot match a permit that assumes it already owns a guest-subnet address.",
+      "takeaway": "The initial Discover has source 0.0.0.0, so the guest-subnet permit misses it. The earlier UDP rule admits the stated allocation traffic; other guest traffic still reaches the later restrictions.",
+      "syntax": [
+        {
+          "text": "10",
+          "kind": "argument"
+        },
+        {
+          "text": "permit udp any eq",
+          "kind": "keyword"
+        },
+        {
+          "text": "68",
+          "kind": "argument"
+        },
+        {
+          "text": "any eq",
+          "kind": "keyword"
+        },
+        {
+          "text": "67",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "capstone-cmd-pat-selector",
+    "task": "After renumbering, guest 10.20.20.50 has a working gateway and route. Its fresh external HTTP request passes GUEST-IN but creates no PAT entry; staff traffic still works. Investigation found the old guest permit in NAT-LANS, and that obsolete entry has been removed. Add the new guest /24 permit without replacing the staff entry.",
+    "mode": "R2(config-std-nacl)#",
+    "answer": "permit 10.20.20.0 0.0.0.255",
+    "accept": [],
+    "teaching": {
+      "sectionId": "hq-and-the-internet-edge",
+      "hint": "Compare the actual inside source with the translation selector, not with the interface filter.",
+      "takeaway": "A NAT selector miss leaves eligible routing traffic untranslated; it is not itself an ACL drop. The ISP has no private return route here, so verify a new guest translation and retest staff service after the correction.",
+      "syntax": [
+        {
+          "text": "permit",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.20.20.0",
+          "kind": "argument"
+        },
+        {
+          "text": "0.0.0.255",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

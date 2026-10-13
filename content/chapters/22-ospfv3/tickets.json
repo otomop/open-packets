@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ospfv3-t01",
+    "title": "OSPFv3 cannot select an identity after an IPv6-only rebuild",
+    "objectives": [
+      "v2:3.3.d"
+    ],
+    "scenario": "R2 was rebuilt without IPv4 addresses and reloaded. IPv6 forwarding and addressed transit Gi0/0 are configured, but the classic OSPFv3 process never establishes neighbors. The supplied excerpts are representative.",
+    "exhibits": [
+      {
+        "title": "R2 configuration",
+        "text": "ipv6 unicast-routing\nipv6 router ospf 20\n passive-interface GigabitEthernet0/2\ninterface GigabitEthernet0/0\n ipv6 address 2001:db8:123::2/64\n ipv6 ospf 20 area 0\n no shutdown"
+      },
+      {
+        "title": "R2 log",
+        "text": "%OSPFv3-4-NORTRID: OSPFv3 process 20 could not pick a router-id, please configure manually"
+      }
+    ],
+    "question": "Which configuration gap is established by the evidence?",
+    "options": [
+      "OSPFv3 requires an IPv4 address on every transit.",
+      "The IPv6-only process lacks an explicit usable router ID.",
+      "Passive Gi0/2 disables Hellos on Gi0/0 too.",
+      "The process number must equal the area number."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The log explicitly says the process cannot obtain a RID. Configure a unique 32-bit identifier; it does not have to be assigned to an IPv4 interface. The passive setting names only Gi0/2, not the transit.",
+    "fix": "```ios R2\nR2# configure terminal\nR2(config)# ipv6 router ospf 20\nR2(config-rtr)# router-id 2.2.2.2\nR2(config-rtr)# end\nR2# show ipv6 ospf\nR2# show ipv6 ospf neighbor\nR2# show ipv6 route ospf\n```\nThis process lacked an active RID. If a different scenario has an already running process with a pending RID change, schedule any required process restart separately and expect adjacency disruption."
+  },
+  {
+    "id": "ospfv3-t02",
+    "title": "A direct adjacency disappears after a one-sided timer change",
+    "objectives": [
+      "v2:3.3.a"
+    ],
+    "scenario": "R1 and R3 share an up/up two-router link on Gi0/1. Their alternate routed path through R2 still works, but the direct OSPFv3 neighbor is absent. R3 received explicit timer overrides. These are representative interface excerpts.",
+    "exhibits": [
+      {
+        "title": "R1 Gi0/1",
+        "text": "Area 0, Instance 0, RID 1.1.1.1, POINT_TO_POINT\nHello 10, Dead 40\nNeighbor Count 0"
+      },
+      {
+        "title": "R3 Gi0/1",
+        "text": "Area 0, Instance 0, RID 3.3.3.3, POINT_TO_POINT\nHello 3, Dead 12\nNeighbor Count 0"
+      }
+    ],
+    "question": "What prevents the intended direct neighbor relationship?",
+    "options": [
+      "The two interfaces use different area IDs.",
+      "The interfaces disagree on network type.",
+      "The effective Hello/dead intervals disagree.",
+      "The RIDs are different from one another."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Area, instance, and intended network type agree. The effective timer pairs do not, so the Hellos do not meet the required parameters. The alternate path can mask this fault from an end-to-end ping.",
+    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/1\nR3(config-if)# no ipv6 ospf hello-interval\nR3(config-if)# no ipv6 ospf dead-interval\nR3(config-if)# end\nR3# show ipv6 ospf interface gigabitethernet0/1\nR3# show ipv6 ospf neighbor\n```\nVerify 10/40 at both ends and a Full direct adjacency. If a new timer pair is intentional, configure and verify both values consistently on both peers instead."
+  }
+]

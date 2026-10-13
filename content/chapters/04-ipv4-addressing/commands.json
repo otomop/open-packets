@@ -1,0 +1,132 @@
+[
+  {
+    "id": "ipv4-addressing-d01",
+    "task": "On R1’s selected routed interface, assign 192.168.44.129/26 using the IOS dotted-mask form.",
+    "mode": "R1(config-if)#",
+    "answer": "ip address 192.168.44.129 255.255.255.192",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-addresses-on-ios",
+      "hint": "A /26 has six host bits; convert the mask before typing.",
+      "takeaway": "The dotted mask is 255.255.255.192. The address belongs to 192.168.44.128/26; assigning it does not by itself enable the interface.",
+      "syntax": [
+        {
+          "text": "ip address",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.44.129",
+          "kind": "argument"
+        },
+        {
+          "text": "255.255.255.192",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv4-addressing-d03",
+    "task": "Check every router interface’s assigned IPv4 address and its status/protocol state in one concise table.",
+    "mode": "R1#",
+    "answer": "show ip interface brief",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Use the brief IPv4 interface view.",
+      "takeaway": "This table helps find an unassigned or administratively down interface. It omits subnet masks, so it cannot confirm that a displayed address has the correct prefix.",
+      "syntax": [
+        {
+          "text": "show ip interface brief",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv4-addressing-d04",
+    "task": "Gi0/0 shows the expected address in the brief table, but you suspect its mask. Display detailed IPv4 information for that interface.",
+    "mode": "R1#",
+    "answer": "show ip interface gigabitethernet0/0",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "The brief view omits the prefix you need.",
+      "takeaway": "Read the Internet address and prefix, then compare them with the plan. An up/up state does not make an incorrect mask correct.",
+      "syntax": [
+        {
+          "text": "show ip interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv4-addressing-d05",
+    "task": "Display R1’s full active configuration to inspect the dotted mask configured under Gi0/0.",
+    "mode": "R1#",
+    "answer": "show running-config",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Inspect the active settings, not the saved startup copy.",
+      "takeaway": "Find the correct interface stanza and its ip address line. The running configuration shows intent; operational output is still needed to establish that the interface is usable.",
+      "syntax": [
+        {
+          "text": "show running-config",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv4-addressing-d13",
+    "task": "From R1, send ICMP echo requests to the local test host 192.168.44.130.",
+    "mode": "R1#",
+    "answer": "ping 192.168.44.130",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Use a numeric destination so this test does not depend on DNS.",
+      "takeaway": "Replies establish this ICMP exchange from R1 at that time. They do not prove that the host’s mask is correct or that an application is available.",
+      "syntax": [
+        {
+          "text": "ping",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.44.130",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv4-addressing-d10",
+    "task": "The selected routed interface has one IPv4 address and no secondary addresses. Decommission only its IPv4 assignment while leaving the interface administratively enabled.",
+    "mode": "R1(config-if)#",
+    "answer": "no ip address",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-addresses-on-ios",
+      "hint": "Remove the address setting, not the administrative enablement.",
+      "takeaway": "The interface loses its IPv4 assignment; this is different from shutdown. Use this only when the address plan calls for removal, then inspect the active configuration.",
+      "syntax": [
+        {
+          "text": "no ip address",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "supporting"
+    }
+  }
+]

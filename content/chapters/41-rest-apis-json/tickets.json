@@ -1,0 +1,54 @@
+[
+  {
+    "id": "rest-apis-json-t01",
+    "title": "Inventory reads stop succeeding after several polls",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "scenario": "A documented controller API requires X-Auth-Token. This deployment's issued credential includes expires_at 03:00:00 UTC. The service obtained it at 02:00 and never renews it. The server reports token_expired after the stated expiry; no fixed lifetime for other products is assumed.",
+    "exhibits": [
+      {
+        "title": "Authored credential metadata and request log",
+        "text": "Issued credential expiry: 2026-09-20T03:00:00Z\n02:45:00 GET /inventory → 200\n03:15:00 GET /inventory → 401 {\"error\":\"token_expired\"}\n03:30:00 GET /inventory → 401 {\"error\":\"token_expired\"}\nEvery request uses the same X-Auth-Token value."
+      }
+    ],
+    "question": "Which repair follows the supplied evidence?",
+    "options": [
+      "Use a different header without consulting the API contract.",
+      "Obtain a current credential and verify a new inventory read.",
+      "Increase the account role while retaining the expired token.",
+      "Change the collection path while retaining the expired token."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The supplied expiry and explicit error establish an expired credential. This does not require guessing a product-wide one-hour lifetime. Use the documented renewal/acquisition flow, protect the new token and retry the read with limits rather than looping indefinitely. Role or path changes do not address the explicit token_expired evidence; changing header convention is unsupported by the given contract.",
+    "fix": "Replace the expired credential through the deployment's approved authentication flow. Record only safe expiry/error metadata, verify a new read, and implement renewal according to the API contract. A renewal failure should surface for investigation instead of exposing passwords or retrying without a limit."
+  },
+  {
+    "id": "rest-apis-json-t02",
+    "title": "A repeated creation request returns a conflict",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "scenario": "The API contract says POST /vlans creates a VLAN and returns 409 if that VLAN ID already exists. A network interruption makes the first response unavailable to the client. The supplied server audit and follow-up GET establish what happened.",
+    "exhibits": [
+      {
+        "title": "Authored server/client evidence",
+        "text": "Server 09:00:00: POST VLAN 30 committed; response 201 generated\nClient 09:00:01: response timeout\nServer 09:00:02: repeated POST VLAN 30 → 409 already_exists\nFollow-up GET /vlans/30 → 200 {\"id\":30,\"name\":\"LAB\"}"
+      }
+    ],
+    "question": "Why did the retry conflict?",
+    "options": [
+      "The first request committed even though its reply did not reach the client.",
+      "The follow-up GET returned a proposed object that has not been created yet.",
+      "The repeated request was rejected before the server parsed its credentials.",
+      "The first timeout rolled back the object, leaving only a stale client copy."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The audit explicitly records the first creation and the GET confirms the object. POST is not guaranteed idempotent, so repeating after an uncertain response collided with the existing ID under this API's contract. A timeout by itself would not have proved either success or failure. The GET and server audit describe an existing committed object, not a proposed object or client cache. The supplied conflict does not indicate credential rejection.",
+    "fix": "Reconcile the returned object against the exact intended attributes before treating it as complete. Use documented task/resource lookup or idempotency support for future uncertain outcomes. Do not delete an existing object merely to make a blind retry succeed."
+  }
+]

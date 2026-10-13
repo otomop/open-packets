@@ -1,0 +1,204 @@
+[
+  {
+    "id": "ansible-terraform-d01",
+    "task": "On the prepared Ubuntu control node, inventory.yml and collect.yml are in the current directory. Check the playbook’s syntax without executing its IOS tasks.",
+    "mode": "user@ctrl:~/ccna-automation$",
+    "answer": "ansible-playbook -i inventory.yml collect.yml --syntax-check",
+    "accept": [
+      "ansible-playbook --syntax-check -i inventory.yml collect.yml"
+    ],
+    "teaching": {
+      "sectionId": "running-it-safely-check-syntax-vault-idempotence",
+      "hint": "Choose validation, not a run or a host-list preview.",
+      "takeaway": "A successful syntax check does not contact the router or validate its IOS command strings. A syntactically valid play can still fail at authentication, authorization or command execution.",
+      "syntax": [
+        {
+          "text": "ansible-playbook",
+          "kind": "keyword"
+        },
+        {
+          "text": "-i",
+          "kind": "argument"
+        },
+        {
+          "text": "inventory.yml",
+          "kind": "argument"
+        },
+        {
+          "text": "collect.yml",
+          "kind": "argument"
+        },
+        {
+          "text": "--syntax-check",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ansible-terraform-d02",
+    "task": "collect.yml targets branch_routers, which contains r1 and r2 in inventory.yml. Before execution, display the eligible targets after limiting this run to r1. Both files are in the current directory.",
+    "mode": "user@ctrl:~/ccna-automation$",
+    "answer": "ansible-playbook -i inventory.yml collect.yml --limit r1 --list-hosts",
+    "accept": [
+      "ansible-playbook -i inventory.yml collect.yml --list-hosts --limit r1"
+    ],
+    "teaching": {
+      "sectionId": "running-it-safely-check-syntax-vault-idempotence",
+      "hint": "Preview the intersection of the play’s host selection and the run limit.",
+      "takeaway": "The preview should contain only r1. A limit narrows the play’s eligible hosts; it cannot add a host excluded by that play, and listing hosts does not test SSH.",
+      "syntax": [
+        {
+          "text": "ansible-playbook",
+          "kind": "keyword"
+        },
+        {
+          "text": "-i",
+          "kind": "argument"
+        },
+        {
+          "text": "inventory.yml",
+          "kind": "argument"
+        },
+        {
+          "text": "collect.yml",
+          "kind": "argument"
+        },
+        {
+          "text": "--limit",
+          "kind": "argument"
+        },
+        {
+          "text": "r1",
+          "kind": "argument"
+        },
+        {
+          "text": "--list-hosts",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ansible-terraform-d09",
+    "task": "From the prepared Ubuntu project directory, execute the reviewed read-only collect.yml using inventory.yml, restricted to r1. Host identity and manual SSH are already verified; request the SSH password interactively.",
+    "mode": "user@ctrl:~/ccna-automation$",
+    "answer": "ansible-playbook -i inventory.yml collect.yml --limit r1 --ask-pass",
+    "accept": [
+      "ansible-playbook -i inventory.yml collect.yml --ask-pass --limit r1"
+    ],
+    "teaching": {
+      "sectionId": "playbooks-modules-and-a-real-run",
+      "hint": "Select the playbook, inventory and limited target without storing the password in the command.",
+      "takeaway": "This command performs the device tasks rather than merely listing or validating them. Compare returned device identity and command output with the baseline; an ok recap alone does not establish the required network state.",
+      "syntax": [
+        {
+          "text": "ansible-playbook",
+          "kind": "keyword"
+        },
+        {
+          "text": "-i",
+          "kind": "argument"
+        },
+        {
+          "text": "inventory.yml",
+          "kind": "argument"
+        },
+        {
+          "text": "collect.yml",
+          "kind": "argument"
+        },
+        {
+          "text": "--limit",
+          "kind": "argument"
+        },
+        {
+          "text": "r1",
+          "kind": "argument"
+        },
+        {
+          "text": "--ask-pass",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "ansible-terraform-d11",
+    "task": "On the prepared Ubuntu control node, collect show clock once from r1 using the cisco.ios.ios_command module. Use inventory.yml, host group branch_routers, a limit of r1 and an interactive SSH-password prompt.",
+    "mode": "user@ctrl:~/ccna-automation$",
+    "answer": "ansible branch_routers -i inventory.yml -m cisco.ios.ios_command -a 'commands=\"show clock\"' --limit r1 --ask-pass",
+    "accept": [],
+    "teaching": {
+      "sectionId": "playbooks-modules-and-a-real-run",
+      "hint": "Use the one-off Ansible executable and keep the module argument together as one quoted value.",
+      "takeaway": "The module sends show clock to IOS; the control-node shell does not execute it locally. A returned clock string proves command output was collected, not that the device has synchronized time.",
+      "syntax": [
+        {
+          "text": "ansible",
+          "kind": "keyword"
+        },
+        {
+          "text": "branch_routers",
+          "kind": "argument"
+        },
+        {
+          "text": "-i",
+          "kind": "argument"
+        },
+        {
+          "text": "inventory.yml",
+          "kind": "argument"
+        },
+        {
+          "text": "-m",
+          "kind": "argument"
+        },
+        {
+          "text": "cisco.ios.ios_command",
+          "kind": "argument"
+        },
+        {
+          "text": "-a",
+          "kind": "argument"
+        },
+        {
+          "text": "'commands=\"show clock\"'",
+          "kind": "argument"
+        },
+        {
+          "text": "--limit",
+          "kind": "argument"
+        },
+        {
+          "text": "r1",
+          "kind": "argument"
+        },
+        {
+          "text": "--ask-pass",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

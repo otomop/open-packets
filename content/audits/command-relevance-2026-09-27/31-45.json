@@ -1,0 +1,733 @@
+{
+  "chapters": [
+    {
+      "chapterId": "troubleshooting-toolkit",
+      "number": 31,
+      "beforeCount": 8,
+      "goal": "Choose a diagnostic command from the source, direction and evidence needed to investigate a fault.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "client-os-troubleshooting",
+          "reason": "Establish the affected client’s parameters before following its path."
+        },
+        {
+          "chapterId": "static-routing-ipv4",
+          "reason": "Review forward and return route selection."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "troubleshooting-toolkit-d01",
+          "action": "revise",
+          "reason": "Keep the chapter’s distinguishing source-selection skill; connect the command to conflicting observations."
+        },
+        {
+          "id": "troubleshooting-toolkit-d02",
+          "action": "revise",
+          "reason": "Keep as optional focused MTU investigation, not a universal CCNA parameter-memorization requirement."
+        },
+        {
+          "id": "troubleshooting-toolkit-d03",
+          "action": "revise",
+          "reason": "Retain choosing traceroute for hop evidence; interpretation belongs to this toolkit rather than rote spelling alone."
+        },
+        {
+          "id": "troubleshooting-toolkit-d05",
+          "action": "revise",
+          "reason": "Retain a targeted diagnostic choice that applies earlier interface knowledge to intermittent loss; remove generic setup prose."
+        },
+        {
+          "id": "troubleshooting-toolkit-d07",
+          "action": "revise",
+          "reason": "Retain bounded log filtering as a useful new evidence-selection operation; explicitly state its blind spot."
+        },
+        {
+          "id": "troubleshooting-toolkit-d10",
+          "action": "revise",
+          "reason": "Retain the ARP-to-MAC-table handoff as purposeful command selection rather than a second generic switching glossary."
+        },
+        {
+          "id": "troubleshooting-toolkit-d11",
+          "action": "retire",
+          "reason": "Generic ARP display adds no new decision beyond the earlier Ethernet/neighbor lesson; local-neighbor interpretation remains in this chapter’s lab and checkpoint.",
+          "owner": "ethernet-switching"
+        },
+        {
+          "id": "troubleshooting-toolkit-d13",
+          "action": "revise",
+          "reason": "Retain actual-client return-route selection from combined evidence; the source address cannot be replaced by a nearby working host."
+        }
+      ]
+    },
+    {
+      "chapterId": "security-concepts",
+      "number": 32,
+      "beforeCount": 1,
+      "goal": "Choose proportionate security controls and explain what each protects.",
+      "demand": "foundation",
+      "emptyReason": "This chapter’s assessed work is evaluating threats, password policy and controls. Its optional quiet-mode demonstration supplies the commands; the worksheet and checkpoint assess the reasoning.",
+      "reviewLinks": [
+        {
+          "chapterId": "ios-essentials",
+          "reason": "Practise local device access and SSH configuration."
+        },
+        {
+          "chapterId": "layer2-security",
+          "reason": "Practise the specific Layer 2 enforcement controls."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "security-concepts-d10",
+          "action": "retire",
+          "reason": "Quiet-mode inspection is optional implementation detail, not a security-concepts recall outcome. Its complete demonstration and interpretation remain in the local lab’s optional extension.",
+          "owner": "security-concepts"
+        }
+      ]
+    },
+    {
+      "chapterId": "aaa-tacacs-radius",
+      "number": 33,
+      "beforeCount": 11,
+      "goal": "Build the AAA client selection chain and distinguish central rejection from an unavailable method.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "ios-essentials",
+          "reason": "Verify local recovery credentials and SSH before adding central authentication."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "aaa-tacacs-radius-d01",
+          "action": "revise",
+          "reason": "Retain the framework prerequisite with tested-recovery context instead of treating it as a standalone hardening trick."
+        },
+        {
+          "id": "aaa-tacacs-radius-d02",
+          "action": "revise",
+          "reason": "Retain the modern server-object entry point required to understand the full client chain."
+        },
+        {
+          "id": "aaa-tacacs-radius-d03",
+          "action": "revise",
+          "reason": "Revise address entry to discriminate server destination from NAS source rather than merely copy a number."
+        },
+        {
+          "id": "aaa-tacacs-radius-d04",
+          "action": "revise",
+          "reason": "Retain the RADIUS-specific distinction and explicitly verified ports; avoid assuming platform defaults."
+        },
+        {
+          "id": "aaa-tacacs-radius-d05",
+          "action": "revise",
+          "reason": "Retain group construction because it separates object existence from actual method selection."
+        },
+        {
+          "id": "aaa-tacacs-radius-d06",
+          "action": "revise",
+          "reason": "Retain explicit membership, a common otherwise-hidden break in AAA client configuration."
+        },
+        {
+          "id": "aaa-tacacs-radius-d07",
+          "action": "revise",
+          "reason": "Retain the central policy decision; task states the rejection constraint rather than merely naming the keywords."
+        },
+        {
+          "id": "aaa-tacacs-radius-d08",
+          "action": "revise",
+          "reason": "Retain deliberate local recovery policy as distinct from the remote fallback list."
+        },
+        {
+          "id": "aaa-tacacs-radius-d09",
+          "action": "revise",
+          "reason": "Retain line binding with a concrete incorrect-selection state; it completes the chain rather than repeat server construction."
+        },
+        {
+          "id": "aaa-tacacs-radius-d10",
+          "action": "retire",
+          "reason": "Detailed EXEC-authorization fallback is an optional lesson extension. Required management-client practice concentrates on login selection and tested rejection/outage behavior; the checkpoint retains authentication-versus-authorization distinctions.",
+          "owner": "aaa-tacacs-radius"
+        },
+        {
+          "id": "aaa-tacacs-radius-d11",
+          "action": "retire",
+          "reason": "Session-accounting syntax is not needed to demonstrate the chapter’s login-client configuration. The lesson and checkpoint retain what start/stop records establish and why accounting differs from authentication.",
+          "owner": "aaa-tacacs-radius"
+        }
+      ]
+    },
+    {
+      "chapterId": "acls",
+      "number": 34,
+      "beforeCount": 10,
+      "goal": "Translate IPv4 policy into ordered rules, correct attachment directions and focused verification.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "subnetting-vlsm",
+          "reason": "Review the address-block calculation used by wildcard matches."
+        },
+        {
+          "chapterId": "tcp-udp-ports",
+          "reason": "Review request and reply service-port roles."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "acls-d01",
+          "action": "revise",
+          "reason": "Retain the basic numbered-standard starting point before service policy and editing."
+        },
+        {
+          "id": "acls-d02",
+          "action": "revise",
+          "reason": "Retain numbered-extended coverage with a real source-versus-destination port decision."
+        },
+        {
+          "id": "acls-d03",
+          "action": "revise",
+          "reason": "Revise attachment from an explicit in-keyword cue to deriving direction from the path."
+        },
+        {
+          "id": "acls-d04",
+          "action": "revise",
+          "reason": "Retain named-extended entry with type choice from requirements."
+        },
+        {
+          "id": "acls-d05",
+          "action": "revise",
+          "reason": "Retain ordered insertion and narrow ICMP matching with the relevant existing list supplied."
+        },
+        {
+          "id": "acls-d06",
+          "action": "revise",
+          "reason": "Retain narrow editing but replace context-free deletion with an explicit obsolete-entry justification."
+        },
+        {
+          "id": "acls-d08",
+          "action": "revise",
+          "reason": "Retain as supporting practice on both tracks: reverse source-port construction reinforces the mandatory lab, but recalling the legacy established keyword is not a separately named exam requirement. The core bank prioritizes ACL type, wildcard, rule order, direction and attachment; the lesson/checkpoint retain its non-stateful limitation."
+        },
+        {
+          "id": "acls-d09",
+          "action": "revise",
+          "reason": "Retain the important line-versus-interface enforcement distinction."
+        },
+        {
+          "id": "acls-d10",
+          "action": "revise",
+          "reason": "Retain verification of rule order and evidence, not a generic command catalog."
+        },
+        {
+          "id": "acls-d11",
+          "action": "revise",
+          "reason": "Retain definition-versus-attachment diagnosis as a separate verification decision."
+        },
+        {
+          "id": "acls-cmd-named-standard",
+          "action": "add",
+          "reason": "Add missing named-standard construction; v2 explicitly requires standard/extended and numbered/named forms."
+        },
+        {
+          "id": "acls-cmd-ordered-deny",
+          "action": "add",
+          "reason": "Add the missing ordered deny decision; a permit-heavy syntax bank did not test the stated exception policy."
+        }
+      ]
+    },
+    {
+      "chapterId": "vpns-ipsec",
+      "number": 35,
+      "beforeCount": 2,
+      "goal": "Explain VPN protection boundaries, negotiation state and what packet counters establish.",
+      "demand": "application",
+      "emptyReason": "The CCNA VPN outcomes require explanation of endpoints, protocols and modes. Interpret the supplied IKE/IPsec evidence in the lesson, checkpoint and lab; optional IOS XE status syntax is provided there.",
+      "reviewLinks": [
+        {
+          "chapterId": "troubleshooting-toolkit",
+          "reason": "Review sourced probes and the limits of reachability evidence."
+        },
+        {
+          "chapterId": "acls",
+          "reason": "Review packet direction and traffic-selection logic."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "vpns-ipsec-d09",
+          "action": "retire",
+          "reason": "IPsec SA/counter interpretation remains important, but memorizing an optional IOS XE display command does not assess the describe objective. Retain the actual before/after counter worksheet in this lab.",
+          "owner": "vpns-ipsec"
+        },
+        {
+          "id": "vpns-ipsec-d11",
+          "action": "retire",
+          "reason": "The important distinction is IKE negotiation versus protected data delivery; the lesson and lab supply the version-specific status commands alongside their interpretation. No extra IKEv2 CLI recall target is justified.",
+          "owner": "vpns-ipsec"
+        }
+      ]
+    },
+    {
+      "chapterId": "wireless-principles",
+      "number": 36,
+      "beforeCount": 3,
+      "goal": "Interpret wireless identity, channel use and RF evidence before choosing a change.",
+      "demand": "application",
+      "emptyReason": "Channel planning, SNR comparisons and radio-versus-service diagnosis are practised in the lab and checkpoint. Windows inspection syntax is supplied in the optional observation exercise; client troubleshooting owns command recall.",
+      "reviewLinks": [
+        {
+          "chapterId": "client-os-troubleshooting",
+          "reason": "Practise inspecting the actual client connection and IP configuration."
+        },
+        {
+          "chapterId": "wireless-security-config",
+          "reason": "Continue to WLAN security and client-admission practice."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "wireless-principles-d01",
+          "action": "retire",
+          "reason": "Repeats Windows connection inspection already taught in the client OS chapter. RF interpretation needs the returned fields, not another copy of the same command.",
+          "owner": "client-os-troubleshooting"
+        },
+        {
+          "id": "wireless-principles-d02",
+          "action": "retire",
+          "reason": "The scan is optional data collection for the RF worksheet. Interpreting partial scan evidence matters; memorizing mode=bssid adds platform detail without establishing channel-planning skill.",
+          "owner": "wireless-principles"
+        },
+        {
+          "id": "wireless-principles-d03",
+          "action": "retire",
+          "reason": "Driver-capability display is optional Windows tooling. Capability-versus-negotiated-state interpretation remains in the lesson and checkpoint; this is not a new required RF command.",
+          "owner": "wireless-principles"
+        }
+      ]
+    },
+    {
+      "chapterId": "wireless-architecture",
+      "number": 37,
+      "beforeCount": 7,
+      "goal": "Derive the AP’s wired attachment from where management and client frames leave the AP.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "trunks-dtp",
+          "reason": "Review tagged, native and allowed-VLAN behavior."
+        },
+        {
+          "chapterId": "etherchannel",
+          "reason": "Use the existing LACP bank when the documented AP supports a bundle."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "wireless-architecture-d01",
+          "action": "revise",
+          "reason": "Retain an architecture-dependent port decision that goes beyond generic access-mode recall."
+        },
+        {
+          "id": "wireless-architecture-d02",
+          "action": "revise",
+          "reason": "Retain the contrasting local-switching/native-VLAN decision."
+        },
+        {
+          "id": "wireless-architecture-d05",
+          "action": "retire",
+          "reason": "The supplied AP bundle adds no new summary-command outcome beyond EtherChannel. The chapter lab retains the aggregation worksheet and actual hardware-support limits.",
+          "owner": "etherchannel"
+        },
+        {
+          "id": "wireless-architecture-d07",
+          "action": "revise",
+          "reason": "Retain AP-specific power evidence because a live link with reduced radio operation creates a distinct diagnostic decision."
+        },
+        {
+          "id": "wireless-architecture-d11",
+          "action": "retire",
+          "reason": "Automatic PoE allocation is an earlier edge-port configuration skill; this chapter adds the AP power requirement and evidence interpretation, retained by d07 and the lab.",
+          "owner": "vlans-and-access-ports"
+        },
+        {
+          "id": "wireless-architecture-d12",
+          "action": "retire",
+          "reason": "Active/passive LACP construction repeats the EtherChannel outcome once hardware support is supplied. Keep the AP compatibility worksheet, and link the owner bank for syntax practice.",
+          "owner": "etherchannel"
+        },
+        {
+          "id": "wireless-architecture-d13",
+          "action": "retire",
+          "reason": "Adding a VLAN while preserving the list repeats the trunk bank. The AP independent challenge already requires the complete new guest-VLAN path, which is more useful than another isolated add command.",
+          "owner": "trunks-dtp"
+        }
+      ]
+    },
+    {
+      "chapterId": "wireless-security-config",
+      "number": 38,
+      "beforeCount": 4,
+      "goal": "Configure WLAN GUI fields and distinguish security admission from fresh DHCP and application success.",
+      "demand": "application",
+      "emptyReason": "Practise the controller GUI and client-stage evidence in this chapter’s lab and checkpoint. Optional Catalyst 9800 displays are supplied references; repeated switch setup is not the WLAN-security outcome.",
+      "reviewLinks": [
+        {
+          "chapterId": "wireless-architecture",
+          "reason": "Review where AP/controller traffic enters the wired VLAN."
+        },
+        {
+          "chapterId": "client-os-troubleshooting",
+          "reason": "Inspect the affected client’s current connection and IP parameters."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "wireless-security-config-d05",
+          "action": "retire",
+          "reason": "Optional Catalyst 9800 WLAN summary syntax is not the required GUI configuration outcome. The lesson retains object-state interpretation and the lab provides GUI evidence.",
+          "owner": "wireless-security-config"
+        },
+        {
+          "id": "wireless-security-config-d06",
+          "action": "retire",
+          "reason": "A platform-specific client-list display does not establish security or service success. The lab and checkpoint assess actual client stages without requiring a 9800 CLI emulator.",
+          "owner": "wireless-security-config"
+        },
+        {
+          "id": "wireless-security-config-d08",
+          "action": "retire",
+          "reason": "This repeated allowed-list command assesses supplied wired setup, not WLAN security; its 10/99 example also differs from the current flat VLAN-10 lab. Trunk recall belongs in the trunk bank.",
+          "owner": "trunks-dtp"
+        },
+        {
+          "id": "wireless-security-config-d10",
+          "action": "retire",
+          "reason": "The long 9800 client-detail syntax is optional platform observation. The useful state/security/address evidence is still taught and assessed with the GUI and supplied outputs.",
+          "owner": "wireless-security-config"
+        }
+      ]
+    },
+    {
+      "chapterId": "virtualization",
+      "number": 39,
+      "beforeCount": 5,
+      "goal": "Apply the physical uplink contract while explaining what VM, container and VRF boundaries separate.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "trunks-dtp",
+          "reason": "Review the full allowed/native/tagged configuration sequence."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "virtualization-d06",
+          "action": "retire",
+          "reason": "VRF route-context interpretation is required background; the chapter explicitly makes VRF CLI an optional supplied demonstration. Its table comparison remains in the lab and checkpoint.",
+          "owner": "virtualization"
+        },
+        {
+          "id": "virtualization-d07",
+          "action": "retire",
+          "reason": "Optional VRF membership syntax adds platform recall without testing the routing-context concept; retain the membership observations and supplied display in the lab.",
+          "owner": "virtualization"
+        },
+        {
+          "id": "virtualization-d08",
+          "action": "retire",
+          "reason": "Pinging the router’s own VRF loopback demonstrates context but does not establish a remote virtualized workload path. Retain the paper comparison, not a separate CLI recall requirement.",
+          "owner": "virtualization"
+        },
+        {
+          "id": "virtualization-d10",
+          "action": "retire",
+          "reason": "The allowed-list example is another parameter-only trunk exercise. The independent host-uplink lab already applies allowed-list preservation to a new guest VLAN.",
+          "owner": "trunks-dtp"
+        },
+        {
+          "id": "virtualization-d11",
+          "action": "revise",
+          "reason": "Retain the specific v2 virtualized-host connectivity outcome while avoiding optional VRF memorization."
+        }
+      ]
+    },
+    {
+      "chapterId": "network-management-and-sdn",
+      "number": 40,
+      "beforeCount": 3,
+      "goal": "Explain management approaches and separate intended configuration, operational evidence and packet forwarding.",
+      "demand": "application",
+      "emptyReason": "The lab supplies familiar IOS commands to illustrate management, control and forwarding. Use its change-review exercise and checkpoint to assess those distinctions rather than repeat earlier CLI banks.",
+      "reviewLinks": [
+        {
+          "chapterId": "acls",
+          "reason": "Review line access policy and verification."
+        },
+        {
+          "chapterId": "ntp-syslog-snmp",
+          "reason": "Review service configuration versus operational evidence."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "network-management-and-sdn-d07",
+          "action": "retire",
+          "reason": "CEF display is optional implementation evidence for plane separation, not a management-architecture command requirement. The lab supplies it and a routing-table fallback.",
+          "owner": "network-management-and-sdn"
+        },
+        {
+          "id": "network-management-and-sdn-d08",
+          "action": "retire",
+          "reason": "NTP configuration filtering repeats service verification; comparing approved intent with actual state is the new outcome and remains in the chapter worksheet.",
+          "owner": "ntp-syslog-snmp"
+        },
+        {
+          "id": "network-management-and-sdn-d10",
+          "action": "retire",
+          "reason": "Named management-ACL display repeats the ACL chapter. The lab’s fresh-login/transit comparison retains the management-versus-data-plane learning decision.",
+          "owner": "acls"
+        }
+      ]
+    },
+    {
+      "chapterId": "rest-apis-json",
+      "number": 41,
+      "beforeCount": 2,
+      "goal": "Interpret API requests, response semantics and JSON types and paths.",
+      "demand": "application",
+      "emptyReason": "The assessed skill is interpreting HTTP and JSON. The optional local-service lab supplies curl and Python commands as tools; its worksheet and checkpoint assess the resulting exchanges.",
+      "reviewLinks": [
+        {
+          "chapterId": "network-management-and-sdn",
+          "reason": "Relate the exchange to controller inventory and management intent."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "rest-apis-json-d09",
+          "action": "retire",
+          "reason": "The credential/header interpretation is relevant, but this exact PowerShell curl invocation and loopback URL are supplied local-service tooling, not the v1 describe/recognize outcome.",
+          "owner": "rest-apis-json"
+        },
+        {
+          "id": "rest-apis-json-d10",
+          "action": "retire",
+          "reason": "Python pretty-print syntax is a convenience for observing the JSON, not JSON interpretation itself. The lab retains the command while the checkpoint tests values, paths, types and schema limits.",
+          "owner": "rest-apis-json"
+        }
+      ]
+    },
+    {
+      "chapterId": "ansible-terraform",
+      "number": 42,
+      "beforeCount": 4,
+      "goal": "Check the intended targets, execute a limited IOS command collection and interpret the returned results.",
+      "demand": "application",
+      "reviewLinks": [
+        {
+          "chapterId": "ios-essentials",
+          "reason": "Establish the SSH access used by the Ansible network connection."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "ansible-terraform-d01",
+          "action": "revise",
+          "reason": "Retain a useful workflow distinction before actual v2 execution; the task states the prepared control-node context."
+        },
+        {
+          "id": "ansible-terraform-d02",
+          "action": "revise",
+          "reason": "Revise the host-list task to require target-intersection reasoning instead of only copying flags."
+        },
+        {
+          "id": "ansible-terraform-d09",
+          "action": "revise",
+          "reason": "Retain actual limited remote execution, the v2 operational outcome, with necessary prerequisites in the task."
+        },
+        {
+          "id": "ansible-terraform-d11",
+          "action": "revise",
+          "reason": "Retain the one-off execution alternative because it selects the network module rather than a shell or Ansible ping."
+        }
+      ]
+    },
+    {
+      "chapterId": "ai-in-network-operations",
+      "number": 43,
+      "beforeCount": 0,
+      "goal": "Evaluate generated recommendations and write prompts that preserve evidence, scope and required verification.",
+      "demand": "analysis",
+      "emptyReason": "This chapter requires prompt selection and evidence review. Its networking setup is supplied; the lab, checkpoint and troubleshooting cases assess the new judgement skills without inventing another CLI syntax target.",
+      "reviewLinks": [
+        {
+          "chapterId": "troubleshooting-toolkit",
+          "reason": "Use sound diagnostic evidence when reviewing an assistant’s proposed next test."
+        },
+        {
+          "chapterId": "ansible-terraform",
+          "reason": "Distinguish a generated command or job result from verified execution."
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "chapterId": "capstone-branch-network",
+      "number": 44,
+      "beforeCount": 8,
+      "goal": "Resolve cross-feature gaps while preserving the branch’s working services and restrictions.",
+      "demand": "analysis",
+      "reviewLinks": [
+        {
+          "chapterId": "acls",
+          "reason": "Review first-match rules, packet direction and narrow edits."
+        },
+        {
+          "chapterId": "nat-pat",
+          "reason": "Review source selection, translation and return-path evidence."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "capstone-branch-network-d01",
+          "action": "retire",
+          "reason": "Basic LACP initiation duplicates the owner bank; the capstone lab instead verifies member failure and service survival.",
+          "owner": "etherchannel"
+        },
+        {
+          "id": "capstone-branch-network-d03",
+          "action": "retire",
+          "reason": "Native subinterface encapsulation repeats the inter-VLAN configuration mechanism with a new VLAN number. The complete branch setup remains in the lab.",
+          "owner": "inter-vlan-routing"
+        },
+        {
+          "id": "capstone-branch-network-d05",
+          "action": "retire",
+          "reason": "Setting OSPF point-to-point from an explicit instruction repeats OSPFv2 practice; integrated neighbor/route/service reasoning remains in the lab.",
+          "owner": "ospfv2"
+        },
+        {
+          "id": "capstone-branch-network-d06",
+          "action": "revise",
+          "reason": "Retain a bounded supporting integration of static default and OSPF propagation, with its conditional behavior explicit."
+        },
+        {
+          "id": "capstone-branch-network-d07",
+          "action": "retire",
+          "reason": "The overload mapping repeats NAT/PAT construction. Replace isolated mapping recall with the new source-selector diagnosis that combines filtering, routing and observed translation evidence.",
+          "owner": "nat-pat"
+        },
+        {
+          "id": "capstone-branch-network-d08",
+          "action": "retire",
+          "reason": "A direct instruction to attach GUEST-IN repeats ACL direction practice. The new guest DHCP exception assesses the cross-feature policy mistake the branch must actually avoid.",
+          "owner": "acls"
+        },
+        {
+          "id": "capstone-branch-network-d10",
+          "action": "retire",
+          "reason": "Generic EtherChannel summary recall adds no integration decision; member and client-service evidence remain in the capstone fault/recovery lab and owner bank.",
+          "owner": "etherchannel"
+        },
+        {
+          "id": "capstone-branch-network-d11",
+          "action": "retire",
+          "reason": "Generic NAT-table display repeats the NAT bank. The new selector task requires interpreting fresh flow evidence rather than typing another show command.",
+          "owner": "nat-pat"
+        },
+        {
+          "id": "capstone-cmd-initial-dhcp",
+          "action": "add",
+          "reason": "Add genuine DHCP/ACL integration: construct both port roles from the unaddressed client exchange while retaining guest restrictions."
+        },
+        {
+          "id": "capstone-cmd-pat-selector",
+          "action": "add",
+          "reason": "Add evidence-led selector repair combining new addressing, an already-passed interface ACL, absent translation and a preserved working source."
+        }
+      ]
+    },
+    {
+      "chapterId": "exam-readiness",
+      "number": 45,
+      "beforeCount": 10,
+      "goal": "Find weak objectives through an independent mixed attempt, then revisit their owning practice.",
+      "demand": "analysis",
+      "emptyReason": "Readiness adds no new command syntax. Use the mixed checkpoint and independent lab to identify gaps, then return to the relevant chapter’s command bank.",
+      "reviewLinks": [
+        {
+          "chapterId": "troubleshooting-toolkit",
+          "reason": "Practise choosing a diagnostic test rather than memorizing a generic show list."
+        },
+        {
+          "chapterId": "capstone-branch-network",
+          "reason": "Apply multiple features and preserve service in an integrated lab."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "exam-readiness-d01",
+          "action": "retire",
+          "reason": "Repeats the basic IPv4 interface summary without a new diagnostic decision; readiness lab Step 3 retains interface evidence in a complete independent build.",
+          "owner": "ipv4-addressing"
+        },
+        {
+          "id": "exam-readiness-d03",
+          "action": "retire",
+          "reason": "Repeats VLAN-table recall from the access-port chapter; the readiness lab still verifies membership against the specification.",
+          "owner": "vlans-and-access-ports"
+        },
+        {
+          "id": "exam-readiness-d04",
+          "action": "retire",
+          "reason": "Repeats trunk-summary recall; allowed/active/forwarding interpretation belongs to the trunk bank and remains part of independent lab acceptance.",
+          "owner": "trunks-dtp"
+        },
+        {
+          "id": "exam-readiness-d05",
+          "action": "retire",
+          "reason": "Repeats EtherChannel summary without an integration requirement; the owner lab and capstone member-failure case provide the meaningful practice.",
+          "owner": "etherchannel"
+        },
+        {
+          "id": "exam-readiness-d06",
+          "action": "retire",
+          "reason": "Repeats per-VLAN STP inspection; no new root or forwarding decision is supplied by this readiness item.",
+          "owner": "spanning-tree"
+        },
+        {
+          "id": "exam-readiness-d07",
+          "action": "retire",
+          "reason": "Repeats display of the whole routing table; route selection and return-path decisions are already assessed in routing and integrated labs.",
+          "owner": "routing-table"
+        },
+        {
+          "id": "exam-readiness-d08",
+          "action": "retire",
+          "reason": "Repeats the OSPF neighbor query; the independent lab separately requires adjacency and both-direction routes, which is stronger readiness evidence.",
+          "owner": "ospfv2"
+        },
+        {
+          "id": "exam-readiness-d10",
+          "action": "retire",
+          "reason": "Repeats NAT translation-table recall, and NAT is deliberately absent from this readiness topology. Revisit the owning NAT bank instead.",
+          "owner": "nat-pat"
+        },
+        {
+          "id": "exam-readiness-d11",
+          "action": "retire",
+          "reason": "Repeats DHCP bindings; the readiness fault exercise already shows why a binding does not prove the delivered gateway works.",
+          "owner": "dhcp"
+        },
+        {
+          "id": "exam-readiness-d12",
+          "action": "retire",
+          "reason": "Repeats ACL display without policy reasoning; the readiness lab requires permitted and denied controls and actual attachments.",
+          "owner": "acls"
+        }
+      ]
+    }
+  ]
+}

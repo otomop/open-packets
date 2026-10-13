@@ -1,0 +1,213 @@
+[
+  {
+    "id": "file-management-d07",
+    "task": "Before choosing a local backup destination on S1, list its supported file-system prefixes and identify the default storage location.",
+    "mode": "S1#",
+    "answer": "show file systems",
+    "accept": [],
+    "teaching": {
+      "sectionId": "where-ios-keeps-its-files",
+      "hint": "Discover actual storage names instead of assuming every platform uses flash:.",
+      "takeaway": "A remote protocol prefix is not a local disk. Use a verified local prefix explicitly so a default-directory change cannot silently redirect the destination.",
+      "syntax": [
+        {
+          "text": "show file systems",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "file-management-d08",
+    "task": "S1's inventory confirms flash: is the intended local storage. List its filenames and free space before staging another file there.",
+    "mode": "S1#",
+    "answer": "dir flash:",
+    "accept": [],
+    "teaching": {
+      "sectionId": "where-ios-keeps-its-files",
+      "hint": "Inspect the selected storage location, not the running configuration.",
+      "takeaway": "Available bytes establish only storage capacity. File compatibility, installation workspace and whether the file is active require separate evidence.",
+      "syntax": [
+        {
+          "text": "dir",
+          "kind": "keyword"
+        },
+        {
+          "text": "flash:",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "file-management-d17",
+    "task": "Preserve S1's active configuration as the named local file flash:S1-before.cfg. Leave the saved startup configuration unchanged.",
+    "mode": "S1#",
+    "answer": "copy running-config flash:S1-before.cfg",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-copy-command-and-its-url-forms",
+      "hint": "Read copy direction aloud: active configuration is the source, a named file is the destination.",
+      "takeaway": "This creates a local snapshot without changing startup-config. It still shares the device's failure risk; the following off-device transfer provides a separate recovery copy.",
+      "syntax": [
+        {
+          "text": "copy",
+          "kind": "keyword"
+        },
+        {
+          "text": "running-config",
+          "kind": "keyword"
+        },
+        {
+          "text": "flash:S1-before.cfg",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "file-management-d01",
+    "task": "In the isolated nonsensitive TFTP lab, send R1's active configuration to the server, letting IOS prompt for the remote host and filename.",
+    "mode": "R1#",
+    "answer": "copy running-config tftp:",
+    "accept": [
+      "copy running-config tftp"
+    ],
+    "teaching": {
+      "sectionId": "the-copy-command-and-its-url-forms",
+      "hint": "The router reads its active configuration and writes to the remote service.",
+      "takeaway": "The source comes before the destination. TFTP does not encrypt the backup; this supporting exercise demonstrates transfer direction, while the secure-transfer lab uses SCP/SFTP.",
+      "syntax": [
+        {
+          "text": "copy",
+          "kind": "keyword"
+        },
+        {
+          "text": "running-config",
+          "kind": "keyword"
+        },
+        {
+          "text": "tftp:",
+          "kind": "argument"
+        }
+      ],
+      "focus": "supporting",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "supporting"
+      }
+    }
+  },
+  {
+    "id": "file-management-d15",
+    "task": "From Linux, retrieve flash:S1-before.cfg from verified classic-SCP-only server 10.29.0.1 as user labbackup into existing directory ~/ccna-received/, retaining filename S1-before.cfg. Use OpenSSH's explicit legacy-SCP option.",
+    "mode": "Linux shell",
+    "answer": "scp -O labbackup@10.29.0.1:flash:S1-before.cfg ~/ccna-received/S1-before.cfg",
+    "accept": [],
+    "teaching": {
+      "sectionId": "tftp-ftp-scp-and-sftp",
+      "hint": "A pull places the remote user@host:path before the local destination; this server does not provide SFTP.",
+      "takeaway": "OpenSSH scp normally uses SFTP; -O selects classic SCP for this verified compatibility case while retaining SSH encryption. It does not repair bad credentials, trust or permissions.",
+      "syntax": [
+        {
+          "text": "scp",
+          "kind": "keyword"
+        },
+        {
+          "text": "-O",
+          "kind": "argument"
+        },
+        {
+          "text": "labbackup@10.29.0.1:flash:S1-before.cfg",
+          "kind": "argument"
+        },
+        {
+          "text": "~/ccna-received/S1-before.cfg",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "file-management-d14",
+    "task": "On a supporting IOS XE image with verified server identity and credentials, download /home/ccnafile/ccna-files/probe.txt from SFTP user ccnafile at 10.29.0.100 into flash:probe-sftp.txt. Use the documented absolute-path URL and let credentials be prompted.",
+    "mode": "S1#",
+    "answer": "copy sftp://ccnafile@10.29.0.100//home/ccnafile/ccna-files/probe.txt flash:probe-sftp.txt",
+    "accept": [],
+    "teaching": {
+      "sectionId": "tftp-ftp-scp-and-sftp",
+      "hint": "The remote URL is the source; the named local file is a staging destination.",
+      "takeaway": "The doubled slash after the host introduces the absolute server path in this IOS URL form. A completed copy stages bytes; it does not apply configuration or activate software.",
+      "syntax": [
+        {
+          "text": "copy",
+          "kind": "keyword"
+        },
+        {
+          "text": "sftp://ccnafile@10.29.0.100//home/ccnafile/ccna-files/probe.txt",
+          "kind": "argument"
+        },
+        {
+          "text": "flash:probe-sftp.txt",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "file-management-d16",
+    "task": "Approved software is staged as flash:approved-image.bin on an IOS XE release supporting SHA-512 verification. Compute that file's SHA-512 value before comparing it with trusted Cisco download metadata.",
+    "mode": "S1#",
+    "answer": "verify /sha512 flash:approved-image.bin",
+    "accept": [],
+    "teaching": {
+      "sectionId": "images-boot-system-and-the-config-register",
+      "hint": "Calculate the stored file's digest before deciding whether its bytes are acceptable.",
+      "takeaway": "Compare the complete result with the trusted value for the exact file. A matching hash does not establish platform compatibility, and a staged file is not yet running software.",
+      "syntax": [
+        {
+          "text": "verify",
+          "kind": "keyword"
+        },
+        {
+          "text": "/sha512",
+          "kind": "argument"
+        },
+        {
+          "text": "flash:approved-image.bin",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

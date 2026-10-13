@@ -1,0 +1,605 @@
+[
+  {
+    "chapterId": "start-here",
+    "goal": "Move through the basic IOS modes, name a switch, and save and check its configuration.",
+    "demand": "foundation",
+    "reviewLinks": []
+  },
+  {
+    "chapterId": "network-models",
+    "goal": "Follow the packet and distinguish ARP, MAC and routing tables using the supplied lab commands.",
+    "demand": "foundation",
+    "emptyReason": "This chapter assesses packet delivery and table interpretation. Its router and display commands are supplied observation tools, so no CLI memorization set is required here.",
+    "reviewLinks": [
+      {
+        "chapterId": "ipv4-addressing",
+        "reason": "Learn interface-address configuration and verification in Chapter 04."
+      },
+      {
+        "chapterId": "ethernet-switching",
+        "reason": "Practise selecting MAC-table commands in Chapter 07."
+      }
+    ]
+  },
+  {
+    "chapterId": "components-and-topologies",
+    "goal": "Choose device roles and topology paths, then distinguish link, ping and application evidence.",
+    "demand": "foundation",
+    "emptyReason": "Device roles, topology choices and PoE capacity are reasoning tasks here. The lab supplies its few commands; configuration recall starts in their owning chapters.",
+    "reviewLinks": [
+      {
+        "chapterId": "cabling-and-interfaces",
+        "reason": "Practise interface inspection in Chapter 03."
+      },
+      {
+        "chapterId": "vlans-and-access-ports",
+        "reason": "Configure and inspect endpoint power and VLAN settings in Chapter 09."
+      }
+    ]
+  },
+  {
+    "chapterId": "cabling-and-interfaces",
+    "goal": "Choose link-state evidence and restore intended administrative, speed and duplex settings.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "start-here",
+        "reason": "Review IOS prompts and configuration modes."
+      }
+    ]
+  },
+  {
+    "chapterId": "ipv4-addressing",
+    "goal": "Translate a prefix into an interface setting and choose evidence for its address, mask and reachability.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "cabling-and-interfaces",
+        "reason": "Review administrative and physical interface state."
+      },
+      {
+        "chapterId": "subnetting-vlsm",
+        "reason": "Extend these address skills into a complete VLSM allocation."
+      }
+    ]
+  },
+  {
+    "chapterId": "subnetting-vlsm",
+    "goal": "Calculate capacity, alignment and nonoverlap, then verify the implemented allocation against the plan.",
+    "demand": "application",
+    "emptyReason": "The new skill is building and checking a VLSM plan, not recalling another address-command variation. Use the subnetting exercises and this chapter’s allocation lab.",
+    "reviewLinks": [
+      {
+        "chapterId": "ipv4-addressing",
+        "reason": "Review the address and prefix-verification commands used in this lab."
+      }
+    ]
+  },
+  {
+    "chapterId": "tcp-udp-ports",
+    "goal": "Read transport endpoints and packet behavior, and separate ICMP reachability from an application connection.",
+    "demand": "foundation",
+    "emptyReason": "This chapter teaches TCP/UDP behavior and interpretation of supplied captures and socket output. Host utilities support those observations; they are not a separate command-memorization target here.",
+    "reviewLinks": [
+      {
+        "chapterId": "dns",
+        "reason": "Practise DNS query selection when DNS diagnosis is taught."
+      },
+      {
+        "chapterId": "client-os-troubleshooting",
+        "reason": "Choose host configuration and connectivity commands in Chapter 30."
+      }
+    ]
+  },
+  {
+    "chapterId": "ethernet-switching",
+    "goal": "Choose a MAC-table view that answers a forwarding or endpoint-location question.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "network-models",
+        "reason": "Review why a MAC table is different from an ARP or routing table."
+      },
+      {
+        "chapterId": "vlans-and-access-ports",
+        "reason": "Apply VLAN membership and learned-location evidence in Chapter 09."
+      }
+    ]
+  },
+  {
+    "chapterId": "ios-essentials",
+    "goal": "Build local-user SSH access and distinguish line policy, server state and session privilege.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "start-here",
+        "reason": "Review configuration modes and saving."
+      },
+      {
+        "chapterId": "aaa-tacacs-radius",
+        "reason": "Centralized authentication follows in Chapter 33."
+      }
+    ]
+  },
+  {
+    "chapterId": "vlans-and-access-ports",
+    "goal": "Create VLAN membership and verify the data, voice and power requirements of an endpoint port.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "ethernet-switching",
+        "reason": "Review learned MAC locations and VLAN context."
+      },
+      {
+        "chapterId": "trunks-dtp",
+        "reason": "Carry these VLANs between switches in Chapter 10."
+      }
+    ]
+  },
+  {
+    "chapterId": "trunks-dtp",
+    "goal": "Build an 802.1Q trunk and change VLAN permissions without disrupting existing traffic.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "vlans-and-access-ports",
+        "reason": "Review VLAN existence and access membership."
+      }
+    ]
+  },
+  {
+    "chapterId": "inter-vlan-routing",
+    "goal": "Choose the correct gateway interface and distinguish management access from inter-VLAN forwarding.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "trunks-dtp",
+        "reason": "Review tag and native-VLAN agreement."
+      },
+      {
+        "chapterId": "ipv4-addressing",
+        "reason": "Review assigning and verifying the gateway address."
+      }
+    ]
+  },
+  {
+    "chapterId": "cdp-lldp",
+    "goal": "Select neighbor evidence for a link map and control the correct discovery protocol and direction.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "inter-vlan-routing",
+        "reason": "Review why an advertised management address still needs a working IP path."
+      }
+    ]
+  },
+  {
+    "chapterId": "etherchannel",
+    "goal": "Build a negotiated LACP bundle and verify its members, partner and routed or switched role.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "trunks-dtp",
+        "reason": "Review common VLAN settings carried by a Layer 2 bundle."
+      },
+      {
+        "chapterId": "inter-vlan-routing",
+        "reason": "Review routed interfaces before a Layer 3 port channel."
+      }
+    ]
+  },
+  {
+    "chapterId": "spanning-tree",
+    "goal": "Verify Rapid PVST+ state, place the root deliberately and apply a justified path preference.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "trunks-dtp",
+        "reason": "Review VLAN forwarding over trunks."
+      },
+      {
+        "chapterId": "stp-protection",
+        "reason": "Apply edge and boundary protection after understanding the normal tree."
+      }
+    ]
+  },
+  {
+    "chapterId": "stp-protection",
+    "goal": "Match an STP protection to the port’s role and distinguish guard inconsistency from err-disable.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "spanning-tree",
+        "reason": "Review normal roles, states and root selection before applying protection."
+      }
+    ]
+  },
+  {
+    "chapterId": "layer2-security",
+    "goal": "Choose the access-port control for a stated MAC, DHCP, ARP or router-advertisement boundary.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "dhcp",
+        "reason": "Revisit fresh leases and relay behavior after learning the service."
+      },
+      {
+        "chapterId": "ipv6-addressing",
+        "reason": "Revisit the router-advertisement boundary after learning IPv6 discovery."
+      }
+    ]
+  },
+  {
+    "chapterId": "routing-table",
+    "goal": "Obtain the installed routing table and inspect the entry for a particular destination. Interpret the route choices in the checkpoint and lab.",
+    "demand": "foundation",
+    "reviewLinks": [
+      {
+        "chapterId": "static-routing-ipv4",
+        "reason": "Configure and compare static candidates in the next chapter."
+      },
+      {
+        "chapterId": "ospfv2",
+        "reason": "Inspect OSPF-specific evidence after learning the protocol."
+      }
+    ]
+  },
+  {
+    "chapterId": "static-routing-ipv4",
+    "goal": "Build distinct IPv4 route types, compare configured and installed paths, and test a meaningful return path.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "routing-table",
+        "reason": "Review longest-prefix selection before diagnosing static routes."
+      }
+    ]
+  },
+  {
+    "chapterId": "ipv6-addressing",
+    "goal": "Configure IPv6 addressing, distinguish forwarding from local processing, and obtain address, neighbor and route evidence.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "subnetting-vlsm",
+        "reason": "Apply the same retained-network-bits method to IPv6 prefixes."
+      }
+    ]
+  },
+  {
+    "chapterId": "static-routing-ipv6",
+    "goal": "Transfer static-routing skills to IPv6, giving link-local next hops the correct interface scope.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "static-routing-ipv4",
+        "reason": "Review route types and configured-versus-installed candidates."
+      },
+      {
+        "chapterId": "ipv6-addressing",
+        "reason": "Review link-local scope and neighbor evidence."
+      }
+    ]
+  },
+  {
+    "chapterId": "ospfv2",
+    "goal": "Activate single-area OSPFv2 deliberately, control where neighbors form, and choose evidence for neighbors, interfaces and installed routes.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "routing-table",
+        "reason": "Keep neighbor state separate from the routes actually installed."
+      }
+    ]
+  },
+  {
+    "chapterId": "ospfv3",
+    "goal": "Apply the OSPF skills already learned to IPv6: explicit router identity, interface activation, scoped neighbors and installed prefixes.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "ospfv2",
+        "reason": "Review elections, adjacency states and passive interfaces rather than relearning the algorithm."
+      },
+      {
+        "chapterId": "ipv6-addressing",
+        "reason": "Review the link-local identities used by IPv6 neighbors."
+      }
+    ]
+  },
+  {
+    "chapterId": "fhrp-hsrp-vrrp",
+    "goal": "Interpret HSRP and VRRP roles, virtual gateways and failover evidence in the checkpoint and lab.",
+    "demand": "analysis",
+    "emptyReason": "This chapter assesses gateway-role and failover interpretation. Its supplied command output, checkpoint and lab provide that practice; memorizing display syntax would not demonstrate the required skill.",
+    "reviewLinks": []
+  },
+  {
+    "chapterId": "dhcp",
+    "goal": "Configure the client and relay, then use server options and allocation evidence to distinguish DHCP failures.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "layer2-security",
+        "reason": "Check the separate snooping boundary when a valid server reply is blocked."
+      }
+    ]
+  },
+  {
+    "chapterId": "dns",
+    "goal": "Choose a resolver and record query that isolates a name-service failure; interpret the answer and verify the application afterward.",
+    "demand": "application",
+    "reviewLinks": []
+  },
+  {
+    "chapterId": "nat-pat",
+    "goal": "Select NAT interface roles and translation type, then distinguish mapping state from actual forwarding.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "acls",
+        "reason": "Study full filtering policy later; the ACL here is only a source selector."
+      }
+    ]
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "goal": "Configure and verify NTP where the track requires it, and retrieve logging evidence for an operational incident.",
+    "demand": "application",
+    "reviewLinks": []
+  },
+  {
+    "chapterId": "qos",
+    "goal": "Explain packet classification, marking, queuing, policing and shaping from the policy evidence in the lesson and lab.",
+    "demand": "application",
+    "emptyReason": "QoS requires explanation and policy interpretation here, not MQC syntax recall. Complete the traffic and counter worksheets; the optional device lab supplies its commands.",
+    "reviewLinks": []
+  },
+  {
+    "chapterId": "file-management",
+    "goal": "Choose the correct file source and destination, perform secure transfer on a supported platform, and verify the staged bytes before use.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "ios-essentials",
+        "reason": "Review SSH identity and local access before secure transfer."
+      },
+      {
+        "chapterId": "aaa-tacacs-radius",
+        "reason": "Study the supplied server-authentication and authorization setup in its owning chapter."
+      }
+    ]
+  },
+  {
+    "chapterId": "client-os-troubleshooting",
+    "goal": "Choose client evidence for addresses, routes, resolvers and current wireless state across Windows, macOS and Linux.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "dns",
+        "reason": "Reuse the explicit-server query instead of repeating its spelling here."
+      },
+      {
+        "chapterId": "troubleshooting-toolkit",
+        "reason": "Combine these client observations into a broader investigation next."
+      }
+    ]
+  },
+  {
+    "chapterId": "troubleshooting-toolkit",
+    "goal": "Choose a diagnostic command from the source, direction and evidence needed to investigate a fault.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "client-os-troubleshooting",
+        "reason": "Establish the affected client’s parameters before following its path."
+      },
+      {
+        "chapterId": "static-routing-ipv4",
+        "reason": "Review forward and return route selection."
+      }
+    ]
+  },
+  {
+    "chapterId": "security-concepts",
+    "goal": "Choose proportionate security controls and explain what each protects.",
+    "demand": "foundation",
+    "emptyReason": "This chapter’s assessed work is evaluating threats, password policy and controls. Its optional quiet-mode demonstration supplies the commands; the worksheet and checkpoint assess the reasoning.",
+    "reviewLinks": [
+      {
+        "chapterId": "ios-essentials",
+        "reason": "Practise local device access and SSH configuration."
+      },
+      {
+        "chapterId": "layer2-security",
+        "reason": "Practise the specific Layer 2 enforcement controls."
+      }
+    ]
+  },
+  {
+    "chapterId": "aaa-tacacs-radius",
+    "goal": "Build the AAA client selection chain and distinguish central rejection from an unavailable method.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "ios-essentials",
+        "reason": "Verify local recovery credentials and SSH before adding central authentication."
+      }
+    ]
+  },
+  {
+    "chapterId": "acls",
+    "goal": "Translate IPv4 policy into ordered rules, correct attachment directions and focused verification.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "subnetting-vlsm",
+        "reason": "Review the address-block calculation used by wildcard matches."
+      },
+      {
+        "chapterId": "tcp-udp-ports",
+        "reason": "Review request and reply service-port roles."
+      }
+    ]
+  },
+  {
+    "chapterId": "vpns-ipsec",
+    "goal": "Explain VPN protection boundaries, negotiation state and what packet counters establish.",
+    "demand": "application",
+    "emptyReason": "The CCNA VPN outcomes require explanation of endpoints, protocols and modes. Interpret the supplied IKE/IPsec evidence in the lesson, checkpoint and lab; optional IOS XE status syntax is provided there.",
+    "reviewLinks": [
+      {
+        "chapterId": "troubleshooting-toolkit",
+        "reason": "Review sourced probes and the limits of reachability evidence."
+      },
+      {
+        "chapterId": "acls",
+        "reason": "Review packet direction and traffic-selection logic."
+      }
+    ]
+  },
+  {
+    "chapterId": "wireless-principles",
+    "goal": "Interpret wireless identity, channel use and RF evidence before choosing a change.",
+    "demand": "application",
+    "emptyReason": "Channel planning, SNR comparisons and radio-versus-service diagnosis are practised in the lab and checkpoint. Windows inspection syntax is supplied in the optional observation exercise; client troubleshooting owns command recall.",
+    "reviewLinks": [
+      {
+        "chapterId": "client-os-troubleshooting",
+        "reason": "Practise inspecting the actual client connection and IP configuration."
+      },
+      {
+        "chapterId": "wireless-security-config",
+        "reason": "Continue to WLAN security and client-admission practice."
+      }
+    ]
+  },
+  {
+    "chapterId": "wireless-architecture",
+    "goal": "Derive the AP’s wired attachment from where management and client frames leave the AP.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "trunks-dtp",
+        "reason": "Review tagged, native and allowed-VLAN behavior."
+      },
+      {
+        "chapterId": "etherchannel",
+        "reason": "Use the existing LACP bank when the documented AP supports a bundle."
+      }
+    ]
+  },
+  {
+    "chapterId": "wireless-security-config",
+    "goal": "Configure WLAN GUI fields and distinguish security admission from fresh DHCP and application success.",
+    "demand": "application",
+    "emptyReason": "Practise the controller GUI and client-stage evidence in this chapter’s lab and checkpoint. Optional Catalyst 9800 displays are supplied references; repeated switch setup is not the WLAN-security outcome.",
+    "reviewLinks": [
+      {
+        "chapterId": "wireless-architecture",
+        "reason": "Review where AP/controller traffic enters the wired VLAN."
+      },
+      {
+        "chapterId": "client-os-troubleshooting",
+        "reason": "Inspect the affected client’s current connection and IP parameters."
+      }
+    ]
+  },
+  {
+    "chapterId": "virtualization",
+    "goal": "Apply the physical uplink contract while explaining what VM, container and VRF boundaries separate.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "trunks-dtp",
+        "reason": "Review the full allowed/native/tagged configuration sequence."
+      }
+    ]
+  },
+  {
+    "chapterId": "network-management-and-sdn",
+    "goal": "Explain management approaches and separate intended configuration, operational evidence and packet forwarding.",
+    "demand": "application",
+    "emptyReason": "The lab supplies familiar IOS commands to illustrate management, control and forwarding. Use its change-review exercise and checkpoint to assess those distinctions rather than repeat earlier CLI banks.",
+    "reviewLinks": [
+      {
+        "chapterId": "acls",
+        "reason": "Review line access policy and verification."
+      },
+      {
+        "chapterId": "ntp-syslog-snmp",
+        "reason": "Review service configuration versus operational evidence."
+      }
+    ]
+  },
+  {
+    "chapterId": "rest-apis-json",
+    "goal": "Interpret API requests, response semantics and JSON types and paths.",
+    "demand": "application",
+    "emptyReason": "The assessed skill is interpreting HTTP and JSON. The optional local-service lab supplies curl and Python commands as tools; its worksheet and checkpoint assess the resulting exchanges.",
+    "reviewLinks": [
+      {
+        "chapterId": "network-management-and-sdn",
+        "reason": "Relate the exchange to controller inventory and management intent."
+      }
+    ]
+  },
+  {
+    "chapterId": "ansible-terraform",
+    "goal": "Check the intended targets, execute a limited IOS command collection and interpret the returned results.",
+    "demand": "application",
+    "reviewLinks": [
+      {
+        "chapterId": "ios-essentials",
+        "reason": "Establish the SSH access used by the Ansible network connection."
+      }
+    ]
+  },
+  {
+    "chapterId": "ai-in-network-operations",
+    "goal": "Evaluate generated recommendations and write prompts that preserve evidence, scope and required verification.",
+    "demand": "analysis",
+    "emptyReason": "This chapter requires prompt selection and evidence review. Its networking setup is supplied; the lab, checkpoint and troubleshooting cases assess the new judgement skills without inventing another CLI syntax target.",
+    "reviewLinks": [
+      {
+        "chapterId": "troubleshooting-toolkit",
+        "reason": "Use sound diagnostic evidence when reviewing an assistant’s proposed next test."
+      },
+      {
+        "chapterId": "ansible-terraform",
+        "reason": "Distinguish a generated command or job result from verified execution."
+      }
+    ]
+  },
+  {
+    "chapterId": "capstone-branch-network",
+    "goal": "Resolve cross-feature gaps while preserving the branch’s working services and restrictions.",
+    "demand": "analysis",
+    "reviewLinks": [
+      {
+        "chapterId": "acls",
+        "reason": "Review first-match rules, packet direction and narrow edits."
+      },
+      {
+        "chapterId": "nat-pat",
+        "reason": "Review source selection, translation and return-path evidence."
+      }
+    ]
+  },
+  {
+    "chapterId": "exam-readiness",
+    "goal": "Find weak objectives through an independent mixed attempt, then revisit their owning practice.",
+    "demand": "analysis",
+    "emptyReason": "Readiness adds no new command syntax. Use the mixed checkpoint and independent lab to identify gaps, then return to the relevant chapter’s command bank.",
+    "reviewLinks": [
+      {
+        "chapterId": "troubleshooting-toolkit",
+        "reason": "Practise choosing a diagnostic test rather than memorizing a generic show list."
+      },
+      {
+        "chapterId": "capstone-branch-network",
+        "reason": "Apply multiple features and preserve service in an integrated lab."
+      }
+    ]
+  }
+]

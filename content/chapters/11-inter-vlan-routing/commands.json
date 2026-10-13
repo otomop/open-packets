@@ -1,0 +1,228 @@
+[
+  {
+    "id": "inter-vlan-routing-d01",
+    "task": "On R1, create or select subinterface 20 of GigabitEthernet0/0 for the VLAN 20 gateway design.",
+    "mode": "R1(config)#",
+    "answer": "interface gigabitethernet0/0.20",
+    "accept": [],
+    "teaching": {
+      "sectionId": "router-on-a-stick",
+      "hint": "Select a logical subinterface of the existing physical parent.",
+      "takeaway": "The .20 suffix is a local identifier. It does not bind traffic to VLAN 20; the encapsulation command must specify the VLAN separately.",
+      "syntax": [
+        {
+          "text": "interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet0/0.20",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d02",
+    "task": "You are in R1 Gi0/0.10 subinterface configuration. Bind it to traffic tagged for VLAN 10.",
+    "mode": "R1(config-subif)#",
+    "answer": "encapsulation dot1Q 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "router-on-a-stick",
+      "hint": "The tag association belongs on the router subinterface.",
+      "takeaway": "The encapsulation VLAN is what selects tagged traffic, not the subinterface suffix. Configure the association before assigning the gateway address.",
+      "syntax": [
+        {
+          "text": "encapsulation dot1Q",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d03",
+    "task": "You are in R1 Gi0/0.99 subinterface configuration. The switch sends native VLAN 99 untagged; associate this subinterface with that untagged VLAN.",
+    "mode": "R1(config-subif)#",
+    "answer": "encapsulation dot1Q 99 native",
+    "accept": [],
+    "teaching": {
+      "sectionId": "router-on-a-stick",
+      "hint": "The native keyword changes how the specified VLAN is carried.",
+      "takeaway": "This must agree with the switch trunk’s native VLAN. An unused native subinterface need not receive an IP address merely because it exists.",
+      "syntax": [
+        {
+          "text": "encapsulation dot1Q",
+          "kind": "keyword"
+        },
+        {
+          "text": "99",
+          "kind": "argument"
+        },
+        {
+          "text": "native",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d04",
+    "task": "On DSW1, both correctly addressed SVIs are up and hosts reach their own gateways. IPv4 routing is disabled. Enable forwarding between the connected VLANs.",
+    "mode": "DSW1(config)#",
+    "answer": "ip routing",
+    "accept": [],
+    "teaching": {
+      "sectionId": "svis-on-a-multilayer-switch",
+      "hint": "SVI addresses alone do not enable the multilayer switch’s routing function.",
+      "takeaway": "The routing function allows packet forwarding between appropriate interfaces. Verify the connected routes and both traffic directions; a gateway ping alone proves only local reachability.",
+      "syntax": [
+        {
+          "text": "ip routing",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d05",
+    "task": "VLAN 10 already exists on DSW1. Create or select its logical SVI so it can receive a gateway address.",
+    "mode": "DSW1(config)#",
+    "answer": "interface vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "svis-on-a-multilayer-switch",
+      "hint": "The Layer 2 VLAN object and its Layer 3 interface are separate.",
+      "takeaway": "An SVI also needs addressing and administrative enablement. With normal autostate, the VLAN must be active and have an eligible linked, forwarding member.",
+      "syntax": [
+        {
+          "text": "interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "vlan 10",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d06",
+    "task": "DSW1 Gi1/0/24 supports routing and is selected. Convert it from a Layer 2 switchport into a physical routed interface.",
+    "mode": "DSW1(config-if)#",
+    "answer": "no switchport",
+    "accept": [],
+    "teaching": {
+      "sectionId": "routed-ports-and-the-four-designs-compared",
+      "hint": "Change the interface role before assigning a Layer 3 address.",
+      "takeaway": "A routed port is separate from an SVI and does not belong to an access VLAN. Configure and verify its address and operational state separately.",
+      "syntax": [
+        {
+          "text": "no switchport",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d07",
+    "task": "SW2 is a non-routing access switch. Its working management SVI is 192.168.99.10/24; use reachable router 192.168.99.1 for SW2’s own off-subnet traffic.",
+    "mode": "SW2(config)#",
+    "answer": "ip default-gateway 192.168.99.1",
+    "accept": [],
+    "teaching": {
+      "sectionId": "routed-ports-and-the-four-designs-compared",
+      "hint": "Configure the non-routing switch’s gateway, not inter-VLAN forwarding.",
+      "takeaway": "This serves traffic originated by SW2. It does not make the switch route users between VLANs; a routing-enabled switch instead uses its routing table.",
+      "syntax": [
+        {
+          "text": "ip default-gateway",
+          "kind": "keyword"
+        },
+        {
+          "text": "192.168.99.1",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d09",
+    "task": "Vlan10 has an address but hosts cannot reach it. Display the SVI’s detailed interface state and hardware address.",
+    "mode": "DSW1#",
+    "answer": "show interfaces vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "svis-on-a-multilayer-switch",
+      "hint": "Inspect the logical interface named for the VLAN.",
+      "takeaway": "Read both interface and line-protocol state. If the SVI is enabled but not operational, check VLAN existence and an eligible forwarding member before changing the IP address.",
+      "syntax": [
+        {
+          "text": "show interfaces",
+          "kind": "keyword"
+        },
+        {
+          "text": "vlan 10",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d10",
+    "task": "After enabling the gateway interfaces, display only the directly connected IPv4 routing entries to check their subnet prefixes.",
+    "mode": "R1#",
+    "answer": "show ip route connected",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Filter by the connected route source.",
+      "takeaway": "A connected entry should match the intended subnet and gateway interface. Its presence is local routing evidence; it does not prove the remote host’s return path.",
+      "syntax": [
+        {
+          "text": "show ip route connected",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "inter-vlan-routing-d11",
+    "task": "After converting DSW1 Gi1/0/24 into a routed port, display its switchport view to verify that Layer 2 switchport operation is disabled.",
+    "mode": "DSW1#",
+    "answer": "show interfaces gigabitethernet1/0/24 switchport",
+    "accept": [],
+    "teaching": {
+      "sectionId": "routed-ports-and-the-four-designs-compared",
+      "hint": "Verify the role change on the exact physical interface.",
+      "takeaway": "Look for Switchport: Disabled. This confirms the interface role, while address and link-state checks establish whether the routed connection can operate.",
+      "syntax": [
+        {
+          "text": "show interfaces",
+          "kind": "keyword"
+        },
+        {
+          "text": "gigabitethernet1/0/24",
+          "kind": "interface"
+        },
+        {
+          "text": "switchport",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

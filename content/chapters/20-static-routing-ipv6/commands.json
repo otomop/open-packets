@@ -1,0 +1,203 @@
+[
+  {
+    "id": "static-routing-ipv6-d04",
+    "task": "R1 must reach 2001:db8:20::/64 through adjacent router fe80::2 on GigabitEthernet0/0. Add the IPv6 route with the necessary local-link scope.",
+    "mode": "R1(config)#",
+    "answer": "ipv6 route 2001:db8:20::/64 gigabitethernet0/0 fe80::2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "link-local-next-hops-need-a-link",
+      "hint": "A link-local next hop cannot identify its link from the address alone.",
+      "takeaway": "The exit interface scopes fe80::2 to the intended neighbor. Correct syntax can still fail if that address belongs to the peer on a different link.",
+      "syntax": [
+        {
+          "text": "ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:20::/64",
+          "kind": "argument"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        },
+        {
+          "text": "fe80::2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-d05",
+    "task": "Global next hop 2001:db8:12::2 is reachable through R1's connected transit prefix. Add a next-hop-only route to 2001:db8:20::/64 through it.",
+    "mode": "R1(config)#",
+    "answer": "ipv6 route 2001:db8:20::/64 2001:db8:12::2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-forms-of-ipv6-route",
+      "hint": "A global next hop can be resolved through another installed route.",
+      "takeaway": "Unlike a link-local next hop, this address can be resolved without an explicit interface in the static command. Verify that its resolving route remains usable; configuration alone is insufficient.",
+      "syntax": [
+        {
+          "text": "ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:20::/64",
+          "kind": "argument"
+        },
+        {
+          "text": "2001:db8:12::2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-d06",
+    "task": "For IPv6 destinations with no more-specific match, use neighbor fe80::2 on R1 GigabitEthernet0/0. Add that default route.",
+    "mode": "R1(config)#",
+    "answer": "ipv6 route ::/0 gigabitethernet0/0 fe80::2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "network-default-host-and-floating-routes",
+      "hint": "Use the IPv6 zero-length prefix and retain the link-local interface scope.",
+      "takeaway": "::/0 is the IPv6 default. More-specific installed routes still win, and the default cannot provide a missing downstream or return path.",
+      "syntax": [
+        {
+          "text": "ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "::/0",
+          "kind": "argument"
+        },
+        {
+          "text": "gigabitethernet0/0",
+          "kind": "interface"
+        },
+        {
+          "text": "fe80::2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-d07",
+    "task": "Only host 2001:db8:20::12 must use fe80::3 on R1 GigabitEthernet0/1. Add an IPv6 host route while preserving the wider LAN route.",
+    "mode": "R1(config)#",
+    "answer": "ipv6 route 2001:db8:20::12/128 gigabitethernet0/1 fe80::3",
+    "accept": [],
+    "teaching": {
+      "sectionId": "network-default-host-and-floating-routes",
+      "hint": "The destination length must identify exactly one 128-bit address.",
+      "takeaway": "A /128 affects one host and wins over a matching /64 when installed. The interface scopes the link-local next hop; it does not change which destination the prefix matches.",
+      "syntax": [
+        {
+          "text": "ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:20::12/128",
+          "kind": "argument"
+        },
+        {
+          "text": "gigabitethernet0/1",
+          "kind": "interface"
+        },
+        {
+          "text": "fe80::3",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-d08",
+    "task": "The preferred route to 2001:db8:20::/64 has distance 1. Add a standby through fe80::3 on GigabitEthernet0/1 at distance 5.",
+    "mode": "R1(config)#",
+    "answer": "ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::3 5",
+    "accept": [],
+    "teaching": {
+      "sectionId": "network-default-host-and-floating-routes",
+      "hint": "Preserve the same destination prefix and place the less-preferred distance last.",
+      "takeaway": "A higher distance creates a standby only against a better candidate for the same prefix. The backup must also have a usable scoped neighbor and a working return path.",
+      "syntax": [
+        {
+          "text": "ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:20::/64",
+          "kind": "argument"
+        },
+        {
+          "text": "gigabitethernet0/1",
+          "kind": "interface"
+        },
+        {
+          "text": "fe80::3",
+          "kind": "argument"
+        },
+        {
+          "text": "5",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-d09",
+    "task": "Primary and floating IPv6 static routes are configured. Display only the static routes currently installed on R1.",
+    "mode": "R1#",
+    "answer": "show ipv6 route static",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Choose the IPv6 installed table, not the configuration file.",
+      "takeaway": "An unselected floating route can remain configured without appearing here. Compare the selected distance and scoped next hop during the separate failure and recovery phases.",
+      "syntax": [
+        {
+          "text": "show ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "static",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "static-routing-ipv6-d10",
+    "task": "R1 has both a /64 LAN route and a /128 exception. Request the IPv6 route entry covering 2001:db8:20::12 to check which one handles that destination.",
+    "mode": "R1#",
+    "answer": "show ipv6 route 2001:db8:20::12",
+    "accept": [],
+    "teaching": {
+      "sectionId": "verify-and-troubleshoot",
+      "hint": "Query the destination address; do not choose the mask in advance.",
+      "takeaway": "The returned /128 is the more-specific match if installed, even when its distance is larger than the /64's. Next-hop resolution and a return route still determine whether the test succeeds.",
+      "syntax": [
+        {
+          "text": "show ipv6 route",
+          "kind": "keyword"
+        },
+        {
+          "text": "2001:db8:20::12",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  }
+]

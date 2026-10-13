@@ -1,0 +1,138 @@
+[
+  {
+    "id": "qos-c21",
+    "front": "How does interactive video differ from a buffered download?",
+    "back": "Interactive media needs timely delivery; buffering and retransmission may make file transfer more tolerant of delay. Neither application has unlimited tolerance for loss or poor throughput.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "qos-c04",
+    "front": "Where is the three-bit CoS/PCP field?",
+    "back": "In an IEEE 802.1Q tag, with values 0–7. An untagged Ethernet frame has no PCP field, but its IP packet may carry DSCP.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "qos-c05",
+    "front": "How are the IP service field's eight bits divided?",
+    "back": "Six bits carry DSCP (0–63); two carry ECN. This applies to the IPv4 DS field and IPv6 Traffic Class interpretation.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "qos-c07",
+    "front": "Which decimal DSCP is recommended for EF?",
+    "back": "46. EF is commonly used for voice media, but the mark needs a corresponding policy at each hop; it does not create an end-to-end reservation.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "qos-c08",
+    "front": "Calculate AFxy and interpret its two digits.",
+    "back": "DSCP = 8x + 2y. x is AF class 1–4; y is drop precedence 1–3. Higher y means greater discard eligibility within that AF class.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "qos-c09",
+    "front": "Must AF41 receive more bandwidth than AF21?",
+    "back": "No. AF class labels are not a universal bandwidth ranking. Resources and mappings depend on the configured policy.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "qos-c12",
+    "front": "What is a QoS trust boundary?",
+    "back": "Where the network decides whether incoming markings may be used as policy input. Validate untrusted endpoint markings before granting preferred service.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "qos-c15",
+    "front": "MQC match-all versus match-any?",
+    "back": "match-all requires every configured criterion (AND); match-any requires at least one (OR). Classification is separate from a policy action.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "qos-c16",
+    "front": "What can unconstrained strict priority do to other queues?",
+    "back": "Sustained priority traffic can starve lower-priority traffic. Suitable rate control and capacity planning protect other service classes.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "qos-c17",
+    "front": "CBWFQ bandwidth versus classic IOS LLQ priority?",
+    "back": "bandwidth supplies a minimum share during congestion. priority also gives priority scheduling, with a congestion-time rate/burst limit in the classic IOS example.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "qos-c18",
+    "front": "Tail drop versus WRED?",
+    "back": "Tail drop acts when a queue is full. WRED can act probabilistically earlier and differentiate drop behavior by marking; it is queue management, not scheduling.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "qos-c19",
+    "front": "Policing versus shaping?",
+    "back": "A policer meters then applies transmit/drop/remark actions without queuing excess traffic to wait. A shaper delays traffic in a finite buffer; overflow can still drop.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "qos-c22",
+    "front": "Does shaping change physical Ethernet speed?",
+    "back": "No. Frames still transmit at the physical rate; the shaper regulates departure timing. Its rate and burst accounting determine the resulting traffic profile.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "qos-c23",
+    "front": "Classification versus marking?",
+    "back": "Classification identifies a traffic category. Marking writes a value that this or another device can use as policy input.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "qos-c24",
+    "front": "Delay versus jitter?",
+    "back": "Delay is delivery time; jitter is variation in that delay. The same average delay can hide very different variation.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "qos-c25",
+    "front": "What does per-hop behavior mean?",
+    "back": "The treatment a device gives a traffic aggregate at one hop. A good local policy does not establish the treatment at every later hop.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "qos-c26",
+    "front": "Why compare policy counters before and after a known test?",
+    "back": "Their change relates to the interval. A nonzero cumulative value may belong to older traffic or the opposite direction.",
+    "tags": [
+      "troubleshoot"
+    ]
+  }
+]

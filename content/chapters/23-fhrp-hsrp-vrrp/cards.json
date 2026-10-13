@@ -1,0 +1,146 @@
+[
+  {
+    "id": "fhrp-hsrp-vrrp-c04",
+    "front": "HSRP default Hello/hold and what starts the active hold timer?",
+    "back": "3/10 seconds. Accepted active Hellos refresh the timer; silent failure is detected at expiry, not by counting exactly three missed packets.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c05",
+    "front": "Which HSRP priority is preferred?",
+    "back": "The higher effective priority. The normal configured default is 100; tracking can reduce the effective value.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c06",
+    "front": "HSRP preemption default and purpose?",
+    "back": "Disabled. Enabling it lets a higher-priority router take over from a healthy lower-priority Active router.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c07",
+    "front": "How do Active and Standby differ in an ordinary HSRP group?",
+    "back": "Active forwards for the virtual gateway. Standby is the selected replacement if the active role is lost.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c08",
+    "front": "IPv4 HSRP group ranges for versions 1 and 2?",
+    "back": "v1 0–255; v2 0–4095. Peers must use a compatible version and group.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c09",
+    "front": "Does VRRPv3 use one shared virtual MAC for both IPv4 and IPv6?",
+    "back": "No. The address families use different virtual MAC blocks and independent instances; read the family in the status.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c12",
+    "front": "What VRRP priority identifies the address owner?",
+    "back": "255. Ordinary non-owner routers use lower priorities; their normal default is 100.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c13",
+    "front": "VRRP forwarding role in Cisco output versus the current RFC?",
+    "back": "Cisco often says Master; RFC 9568 says Active. Backup is the non-forwarding role for that virtual instance.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c15",
+    "front": "What changes in the switch during ordinary HSRP failover?",
+    "back": "The learned port for the virtual MAC changes. The virtual IP/MAC identity remains, so hosts need not change their configured gateway.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c17",
+    "front": "R1's priority 110 minus tracking decrement 20: what else allows R2 takeover?",
+    "back": "R1 becomes 90; R2 at 100 needs preempt to take over while R1 remains alive on the LAN.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c18",
+    "front": "Why must an HSRP version change be coordinated across peers?",
+    "back": "Peers must recognize the same version, and changing versions changes the ordinary IPv4 virtual MAC. It is different from same-version failover.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c19",
+    "front": "What does unknown in an HSRP peer-role field mean?",
+    "back": "No peer in that role is currently known. In an intended pair, compare VLAN, version, group, and control traffic.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c21",
+    "front": "Which VRRP version supports IPv6, and does IPv4 Master prove IPv6 Master?",
+    "back": "VRRPv3 supports IPv4 and IPv6. Their instances are independent; inspect the address family and virtual address.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c22",
+    "front": "Which gateway address should the PC use: a peer real IP or the agreed VIP?",
+    "back": "The agreed virtual IP, so a replacement router can preserve the gateway identity.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c23",
+    "front": "Does a successful ping to the VIP prove a remote server path works?",
+    "back": "No. Verify the active router destination route, the return route and the actual remote test.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c24",
+    "front": "Does tracking an uplink line protocol detect every remote application failure?",
+    "back": "No. It tracks that local condition. A remote failure can occur while the interface remains up.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c25",
+    "front": "Which field should be compared with a peer after tracking triggers: configured or effective priority?",
+    "back": "Effective priority. The configured baseline can stay unchanged while a decrement lowers the value used for preference.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c26",
+    "front": "Two intended HSRP peers are Active with unknown Standby: is that a unique diagnosis?",
+    "back": "No. Compare VLAN/control reachability, version, group and other relevant peer settings before choosing a repair.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

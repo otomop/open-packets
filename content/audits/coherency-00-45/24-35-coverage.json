@@ -1,0 +1,1161 @@
+[
+  {
+    "number": 24,
+    "entry": [
+      {
+        "skill": "Local/remote address and gateway decisions",
+        "chapterId": "ipv4-addressing",
+        "sectionId": "why-the-mask-decides-everything"
+      },
+      {
+        "skill": "VLAN gateways and routed packet path",
+        "chapterId": "inter-vlan-routing",
+        "sectionId": "the-packet-walk-macs-change-ips-do-not"
+      },
+      {
+        "skill": "Source-dependent return route",
+        "chapterId": "static-routing-ipv4",
+        "sectionId": "the-return-path-and-how-to-test-it"
+      },
+      {
+        "skill": "Client DNS server and A-record before HTTP",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "which-application-uses-which-transport-and-why"
+      },
+      {
+        "skill": "Snooping, Option82 and giaddr",
+        "chapterId": "layer2-security",
+        "sectionId": "dhcp-snooping-one-trusted-path-to-the-server"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "DORA and message field/delivery conditions",
+        "sectionId": "the-four-messages-dora"
+      },
+      {
+        "skill": "Lease renewal/rebinding and other messages",
+        "sectionId": "leases-renewal-and-the-other-messages"
+      },
+      {
+        "skill": "Pools, exclusions, options and bindings",
+        "sectionId": "the-ios-dhcp-server"
+      },
+      {
+        "skill": "IOS DHCP client",
+        "sectionId": "the-ios-dhcp-client"
+      },
+      {
+        "skill": "Relay placement and return path",
+        "sectionId": "relay-crossing-the-router-with-ip-helper-address"
+      }
+    ],
+    "practiceDemands": [
+      "Build supplied VLAN/subnet and controlled DNS/HTTP baseline.",
+      "Configure server, relay and clients; calculate capacity and lease intervals.",
+      "Observe wrong-helper and exhaustion faults separately; verify actual lease, binding, gateway and service."
+    ],
+    "findings": [
+      "Added incoming bridge: DHCP supplies familiar manually configured parameters but cannot create VLANs or routing.",
+      "LabStep1 explains A-record lookup then separate HTTP, recalling06 before full DNS25.",
+      "Added exit handoff: correct lease does not prove resolver answer."
+    ],
+    "previews": [
+      "One-record DNS setup is supplied here;25 owns recursive/authoritative diagnosis.",
+      "Option82 revisits16 without requiring production relay-information policy design."
+    ],
+    "retained": [
+      "Kept DORA→renewal→server/client/relay→diagnosis order and complete independent challenge.",
+      "All practice retained; conditional message delivery, return routes and one-fault recovery are already coherent."
+    ],
+    "chapterId": "dhcp",
+    "filesRead": [
+      "content/chapters/24-dhcp/chapter.md",
+      "content/chapters/24-dhcp/lab.md",
+      "content/chapters/24-dhcp/questions.json",
+      "content/chapters/24-dhcp/cards.json",
+      "content/chapters/24-dhcp/commands.json",
+      "content/chapters/24-dhcp/tickets.json"
+    ],
+    "laterDependents": [
+      "dns",
+      "client-os-troubleshooting",
+      "troubleshooting-toolkit",
+      "wireless-architecture",
+      "capstone-branch-network"
+    ],
+    "counts": {
+      "questions": 25,
+      "cards": 23,
+      "commands": 12,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 25,
+    "entry": [
+      {
+        "skill": "DNS transports and source/destination ports",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "which-application-uses-which-transport-and-why"
+      },
+      {
+        "skill": "Resolver option versus client lease",
+        "chapterId": "dhcp",
+        "sectionId": "why-a-host-cannot-address-itself"
+      },
+      {
+        "skill": "IPv6 spelling for AAAA and reverse records",
+        "chapterId": "ipv6-addressing",
+        "sectionId": "writing-an-address-without-making-a-mistake"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Stub, recursive and authoritative roles",
+        "sectionId": "why-the-network-needs-a-directory"
+      },
+      {
+        "skill": "Lookup, TTL and negative cache/SOA",
+        "sectionId": "how-a-query-walks-the-tree"
+      },
+      {
+        "skill": "A/AAAA/CNAME/MX/NS/PTR dependencies",
+        "sectionId": "the-record-types-and-their-rules"
+      },
+      {
+        "skill": "Router-local DNS client",
+        "sectionId": "dns-on-a-cisco-router"
+      },
+      {
+        "skill": "NXDOMAIN/NODATA/SERVFAIL/timeout diagnosis",
+        "sectionId": "diagnosing-by-symptom"
+      }
+    ],
+    "practiceDemands": [
+      "Create controlled resolver/service and isolate wrong-record versus wrong-resolver failures.",
+      "Interpret six record types, alias chains, cache and IPv6 reverse forms using supplied records.",
+      "Distinguish direct fresh DNS response, application cache/override and actual service delivery."
+    ],
+    "findings": [
+      "Added earlier IPv6 prerequisite for AAAA/reverse IPv6 practice.",
+      "Defined SOA at first negative-cache use before TTL/MINIMUM fields."
+    ],
+    "previews": [
+      "Detailed zone administration/timers remain context rather than an undeclared DNS server deployment exercise."
+    ],
+    "retained": [
+      "Same-service IP/name comparison is valid for the controlled lab.",
+      "Paper MX/NS/PTR/IPv6 path remains explicit where simulator commands are unavailable."
+    ],
+    "chapterId": "dns",
+    "filesRead": [
+      "content/chapters/25-dns/chapter.md",
+      "content/chapters/25-dns/lab.md",
+      "content/chapters/25-dns/questions.json",
+      "content/chapters/25-dns/cards.json",
+      "content/chapters/25-dns/commands.json",
+      "content/chapters/25-dns/tickets.json"
+    ],
+    "laterDependents": [
+      "client-os-troubleshooting",
+      "troubleshooting-toolkit",
+      "wireless-architecture",
+      "capstone-branch-network"
+    ],
+    "counts": {
+      "questions": 26,
+      "cards": 23,
+      "commands": 11,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 26,
+    "entry": [
+      {
+        "skill": "Source choice and return routing",
+        "chapterId": "static-routing-ipv4",
+        "sectionId": "the-return-path-and-how-to-test-it"
+      },
+      {
+        "skill": "Ephemeral ports and reverse endpoints",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "ports-sockets-and-multiplexing"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Inside/outside local/global perspectives",
+        "sectionId": "the-four-address-terms"
+      },
+      {
+        "skill": "Static address and service translation",
+        "sectionId": "static-nat"
+      },
+      {
+        "skill": "ACL selector, nonselection and dynamic pool",
+        "sectionId": "dynamic-nat-with-a-pool"
+      },
+      {
+        "skill": "PAT mappings and multiplexing",
+        "sectionId": "pat-overload-on-an-interface-or-a-pool"
+      },
+      {
+        "skill": "Translation evidence and router-originated source limits",
+        "sectionId": "verify-and-troubleshoot"
+      }
+    ],
+    "practiceDemands": [
+      "Compare routed baseline, static NAT, two-address pool, interface PAT and pool PAT.",
+      "Predict changed fields and return delivery; repair wrong source selector.",
+      "Compare router-originated and eligible inside-host traffic."
+    ],
+    "findings": [
+      "Added TCP/UDP prerequisite and entry bridge connecting changed fields to06 and return path18.",
+      "Expanded ACL and defined implicit deny as translation nonselection before first selector example.",
+      "Confirmed existing lesson, labSteps2/9 and q10/t01 already teach router-source differences and unselected traffic remaining untranslated under explicit routing/no-drop assumptions needed by44."
+    ],
+    "previews": [
+      "Only source-selector subset introduced here;34 owns ordered interface/VTY filters."
+    ],
+    "retained": [
+      "Kept stopping old traffic and removing old mappings before testing alternatives.",
+      "No NAT-as-firewall claim; every bank preserves selector/filter distinction."
+    ],
+    "chapterId": "nat-pat",
+    "filesRead": [
+      "content/chapters/26-nat-pat/chapter.md",
+      "content/chapters/26-nat-pat/lab.md",
+      "content/chapters/26-nat-pat/questions.json",
+      "content/chapters/26-nat-pat/cards.json",
+      "content/chapters/26-nat-pat/commands.json",
+      "content/chapters/26-nat-pat/tickets.json"
+    ],
+    "laterDependents": [
+      "ntp-syslog-snmp",
+      "acls",
+      "vpns-ipsec",
+      "capstone-branch-network"
+    ],
+    "counts": {
+      "questions": 24,
+      "cards": 21,
+      "commands": 12,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 27,
+    "entry": [
+      {
+        "skill": "IOS configuration modes",
+        "chapterId": "ios-essentials",
+        "sectionId": "modes-prompts-and-the-two-configurations"
+      },
+      {
+        "skill": "NTP/syslog/SNMP transports",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "which-application-uses-which-transport-and-why"
+      },
+      {
+        "skill": "Source ACL selector and implicit nonselection",
+        "chapterId": "nat-pat",
+        "sectionId": "dynamic-nat-with-a-pool"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Stratum and hierarchy",
+        "sectionId": "ntp-stratum-and-the-time-hierarchy"
+      },
+      {
+        "skill": "NTP client/server, selection and reach",
+        "sectionId": "configuring-and-verifying-ntp-on-ios"
+      },
+      {
+        "skill": "Syslog anatomy/severity",
+        "sectionId": "syslog-severity-facility-and-the-anatomy-of-a-message"
+      },
+      {
+        "skill": "Logging destinations/thresholds",
+        "sectionId": "where-messages-go-the-four-logging-destinations"
+      },
+      {
+        "skill": "SNMP operations/security/source-bound community",
+        "sectionId": "snmp-managers-agents-and-the-mib"
+      },
+      {
+        "skill": "Counter-rate inference",
+        "sectionId": "reading-the-output"
+      }
+    ],
+    "practiceDemands": [
+      "Build NTP hierarchy and separate synchronized state from plausible clock.",
+      "Generate known event, verify thresholds and collector receipt.",
+      "Query intended object with matching source/version/community; calculate rates from known samples."
+    ],
+    "findings": [
+      "Added NAT prerequisite for source-selector recall.",
+      "Explained octal377 through known binary/decimal arithmetic.",
+      "Expanded MIB/OID; explained auth/privacy before v3 table; made v2c Inform support explicit.",
+      "Decoded host, ro and ACL-number attachment before SNMP example."
+    ],
+    "previews": [
+      "SNMPv3 levels conceptual; full cryptographic user/group configuration not imposed before32.",
+      "Exact-host ACL taught locally;34 owns general filtering."
+    ],
+    "retained": [
+      "NTP precedes timestamp correlation and sampled counters.",
+      "Local-master is an isolated reference, not production time-accuracy recommendation."
+    ],
+    "chapterId": "ntp-syslog-snmp",
+    "filesRead": [
+      "content/chapters/27-ntp-syslog-snmp/chapter.md",
+      "content/chapters/27-ntp-syslog-snmp/lab.md",
+      "content/chapters/27-ntp-syslog-snmp/questions.json",
+      "content/chapters/27-ntp-syslog-snmp/cards.json",
+      "content/chapters/27-ntp-syslog-snmp/commands.json",
+      "content/chapters/27-ntp-syslog-snmp/tickets.json"
+    ],
+    "laterDependents": [
+      "troubleshooting-toolkit",
+      "network-management-and-sdn",
+      "ai-in-network-operations",
+      "capstone-branch-network"
+    ],
+    "counts": {
+      "questions": 26,
+      "cards": 24,
+      "commands": 9,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 28,
+    "entry": [
+      {
+        "skill": "TCP/UDP delivery behavior",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "two-headers-two-philosophies"
+      },
+      {
+        "skill": "802.1Q PCP and frame overhead",
+        "chapterId": "trunks-dtp",
+        "sectionId": "the-802-1q-tag"
+      },
+      {
+        "skill": "IOS configuration modes",
+        "chapterId": "ios-essentials",
+        "sectionId": "modes-prompts-and-the-two-configurations"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Delay/jitter/loss and voice payload/header rate",
+        "sectionId": "why-a-busy-link-needs-a-policy"
+      },
+      {
+        "skill": "Classification and marking",
+        "sectionId": "classification-deciding-what-a-packet-is"
+      },
+      {
+        "skill": "CoS/DSCP/precedence/ECN",
+        "sectionId": "marking-cos-ip-precedence-and-dscp"
+      },
+      {
+        "skill": "Trust boundary",
+        "sectionId": "the-trust-boundary"
+      },
+      {
+        "skill": "Queuing and congestion mechanisms",
+        "sectionId": "queuing-who-goes-next"
+      },
+      {
+        "skill": "Policing versus shaping",
+        "sectionId": "policing-and-shaping-enforcing-a-rate"
+      },
+      {
+        "skill": "Policy/counter evidence limits",
+        "sectionId": "verify-and-troubleshoot"
+      }
+    ],
+    "practiceDemands": [
+      "Decode marks and distinguish queue, WRED, policer and shaper evidence.",
+      "Compute directional rate with overhead and controlled counter intervals.",
+      "Optional supplied MQC policy tests preserved/remarked DSCP."
+    ],
+    "findings": [
+      "Added trunks prerequisite for PCP foundation.",
+      "Defined codec/G.711 role and RTP sequence/timestamp purpose before first voice-overhead calculation."
+    ],
+    "previews": [
+      "Optional MQC follows required conceptual worksheet; advanced QoS algorithm/voice endpoint configuration is not required recall."
+    ],
+    "retained": [
+      "Lower drill count and mechanism-focused practice match describe/explain scope.",
+      "No new requirement to configure codecs or RTP applications."
+    ],
+    "chapterId": "qos",
+    "filesRead": [
+      "content/chapters/28-qos/chapter.md",
+      "content/chapters/28-qos/lab.md",
+      "content/chapters/28-qos/questions.json",
+      "content/chapters/28-qos/cards.json",
+      "content/chapters/28-qos/commands.json",
+      "content/chapters/28-qos/tickets.json"
+    ],
+    "laterDependents": [
+      "troubleshooting-toolkit",
+      "wireless-security-config"
+    ],
+    "counts": {
+      "questions": 17,
+      "cards": 17,
+      "commands": 3,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 29,
+    "entry": [
+      {
+        "skill": "Running/startup configurations and modes",
+        "chapterId": "ios-essentials",
+        "sectionId": "modes-prompts-and-the-two-configurations"
+      },
+      {
+        "skill": "SSH identity and local access",
+        "chapterId": "ios-essentials",
+        "sectionId": "configure-ssh-step-by-step"
+      },
+      {
+        "skill": "FTP control/data and SSH/TFTP transports",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "which-application-uses-which-transport-and-why"
+      },
+      {
+        "skill": "Catalyst routed port",
+        "chapterId": "inter-vlan-routing",
+        "sectionId": "routed-ports-and-the-four-designs-compared"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "File/key hash and protected backups",
+        "sectionId": "why-file-management-matters"
+      },
+      {
+        "skill": "Storage paths and inventory",
+        "sectionId": "where-ios-keeps-its-files"
+      },
+      {
+        "skill": "Copy URL source/destination",
+        "sectionId": "the-copy-command-and-its-url-forms"
+      },
+      {
+        "skill": "SCP/SFTP identity and local AAA preparation",
+        "sectionId": "tftp-ftp-scp-and-sftp"
+      },
+      {
+        "skill": "Merge versus replace",
+        "sectionId": "merge-replace-and-archive"
+      },
+      {
+        "skill": "Stage/hash-verify versus activate",
+        "sectionId": "images-boot-system-and-the-config-register"
+      }
+    ],
+    "practiceDemands": [
+      "Preserve startup checkpoint while backing up current active configuration off-device.",
+      "Use simulator TFTP/FTP and supported-platform SFTP/SCP path for v2 execution.",
+      "Separate host identity, user login, file permission/path and verified transfer stages.",
+      "Use supplied Ubuntu shell/account and fresh local AAA before secure transfer; compare rejected missing key, pinned key, source-path fault and recovered bytes/hash."
+    ],
+    "findings": [
+      "Defined file hashes, key pair and fingerprints before secure lab.",
+      "Explained EXEC authorization before relying on chapter33 knowledge.",
+      "LabStep9 supplies official Ubuntu installation route, isolated VM/NIC, sudo/user shell context, editor and ownership/permission explanations.",
+      "LabStep10 explains routed port and each local AAA list/binding before fresh-device block; public-key text creation has editor steps.",
+      "Fixed file-management-q21 explanation from positional wording to the actual correct SCP action; options/answer/ID unchanged."
+    ],
+    "previews": [
+      "VM preparation scoped to one transfer endpoint;39 owns virtualization design.",
+      "Local AAA supports SCP now;33 owns centralized groups/fallback/accounting.",
+      "Image activation/reload remain excluded."
+    ],
+    "retained": [
+      "Preserved separate v1 simulator and v2 secure-execution requirements; paper is not claimed live transfer.",
+      "Strict host-key enforcement and no weakened-algorithm workaround remain."
+    ],
+    "chapterId": "file-management",
+    "filesRead": [
+      "content/chapters/29-file-management/chapter.md",
+      "content/chapters/29-file-management/lab.md",
+      "content/chapters/29-file-management/questions.json",
+      "content/chapters/29-file-management/cards.json",
+      "content/chapters/29-file-management/commands.json",
+      "content/chapters/29-file-management/tickets.json"
+    ],
+    "laterDependents": [
+      "security-concepts"
+    ],
+    "counts": {
+      "questions": 21,
+      "cards": 20,
+      "commands": 11,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": [
+        "file-management-q21"
+      ]
+    }
+  },
+  {
+    "number": 30,
+    "entry": [
+      {
+        "skill": "Local/remote host mask/gateway decision",
+        "chapterId": "ipv4-addressing",
+        "sectionId": "why-the-mask-decides-everything"
+      },
+      {
+        "skill": "IPv6 scope",
+        "chapterId": "ipv6-addressing",
+        "sectionId": "address-types"
+      },
+      {
+        "skill": "Actual lease/options",
+        "chapterId": "dhcp",
+        "sectionId": "verify-and-troubleshoot"
+      },
+      {
+        "skill": "Resolver and application comparison",
+        "chapterId": "dns",
+        "sectionId": "diagnosing-by-symptom"
+      },
+      {
+        "skill": "Longest prefix route selection",
+        "chapterId": "routing-table",
+        "sectionId": "longest-prefix-match-the-forwarding-decision"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Active adapter and actual parameters",
+        "sectionId": "four-parameters-decide-everything"
+      },
+      {
+        "skill": "Windows/macOS/Linux observation tools",
+        "sectionId": "the-same-questions-on-three-operating-systems"
+      },
+      {
+        "skill": "Mask/gateway/DNS failure signatures",
+        "sectionId": "four-parameters-four-failure-signatures"
+      },
+      {
+        "skill": "SSID/profile, association and security-before-DHCP",
+        "sectionId": "wireless-clients-three-settings-that-must-match"
+      },
+      {
+        "skill": "Controlled repair and original-service verification",
+        "sectionId": "verify-and-troubleshoot-the-ladder"
+      }
+    ],
+    "practiceDemands": [
+      "Read actual/supplied OS output without assuming adapter name or DHCP origin of every setting.",
+      "Build isolated mask/gateway/DNS failures and separately record recovery.",
+      "Distinguish current association/key failure, saved profile and stale lease; optional AP setup uses supplied values."
+    ],
+    "findings": [
+      "Defined virtual adapter before VPN/VM references.",
+      "Added local WLAN/AP/SSID/profile/association primer.",
+      "Explained Personal/Enterprise, EAP, cipher and SAE before practice uses these labels.",
+      "Peer review identified HTTPS certificate/clock assumptions before32; added server identity/key binding and validity-period bridge at the first mention."
+    ],
+    "previews": [
+      "Client-facing wireless recognition is intentional preparation for36–38, not a dependency on later controller/RADIUS configuration.",
+      "VPN/VM design remains35/39; only interface selection used here."
+    ],
+    "retained": [
+      "Kept endpoint chapter before toolkit31 and radio36.",
+      "No assessment requires deploying later wireless infrastructure."
+    ],
+    "chapterId": "client-os-troubleshooting",
+    "filesRead": [
+      "content/chapters/30-client-os-troubleshooting/chapter.md",
+      "content/chapters/30-client-os-troubleshooting/lab.md",
+      "content/chapters/30-client-os-troubleshooting/questions.json",
+      "content/chapters/30-client-os-troubleshooting/cards.json",
+      "content/chapters/30-client-os-troubleshooting/commands.json",
+      "content/chapters/30-client-os-troubleshooting/tickets.json"
+    ],
+    "laterDependents": [
+      "troubleshooting-toolkit",
+      "wireless-principles"
+    ],
+    "counts": {
+      "questions": 24,
+      "cards": 21,
+      "commands": 12,
+      "tickets": 3
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 31,
+    "entry": [
+      {
+        "skill": "Endpoint evidence/test ladder",
+        "chapterId": "client-os-troubleshooting",
+        "sectionId": "verify-and-troubleshoot-the-ladder"
+      },
+      {
+        "skill": "MAC table and display commands",
+        "chapterId": "ethernet-switching",
+        "sectionId": "aging-static-entries-and-the-table-commands"
+      },
+      {
+        "skill": "Return path and probe source",
+        "chapterId": "static-routing-ipv4",
+        "sectionId": "the-return-path-and-how-to-test-it"
+      },
+      {
+        "skill": "Logging destinations/thresholds",
+        "chapterId": "ntp-syslog-snmp",
+        "sectionId": "where-messages-go-the-four-logging-destinations"
+      },
+      {
+        "skill": "Queue/policy counters",
+        "chapterId": "qos",
+        "sectionId": "verify-and-troubleshoot"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Problem statement and test selection",
+        "sectionId": "why-you-need-a-method"
+      },
+      {
+        "skill": "Extended ping and size conditions",
+        "sectionId": "ping-and-extended-ping"
+      },
+      {
+        "skill": "Traceroute TTL/probe/response limitations",
+        "sectionId": "traceroute-on-ios-windows-and-linux"
+      },
+      {
+        "skill": "Correlating interface/MAC/ARP evidence",
+        "sectionId": "interfaces-counters-mac-and-arp-tables"
+      },
+      {
+        "skill": "Logs/output filtering and device health",
+        "sectionId": "logs-and-device-operations"
+      },
+      {
+        "skill": "Capture evidence limits",
+        "sectionId": "reading-packet-captures"
+      }
+    ],
+    "practiceDemands": [
+      "Build routed VLAN/DNS baseline, observe and repair return-route/interface/VLAN/DNS faults separately.",
+      "Test original client/service and deliberate source rather than any successful ping.",
+      "Interpret captures/counter intervals; apply prior /32 discard-route specificity in challenge."
+    ],
+    "findings": [
+      "Added client OS and QoS prerequisites and incoming host→path/counter bridge.",
+      "Explained show logging pipe/include before drill.",
+      "Verified /32 Null0 challenge rests on17 discard/longest-prefix and18 host-route teaching."
+    ],
+    "previews": [
+      "Capture collection syntax is platform-specific; supplied interpretation remains valid without undeclared software setup."
+    ],
+    "retained": [
+      "Preserved one-fault observations before repair and explicit independent recovery.",
+      "HTTP503 is supplied application evidence, not a future API prerequisite."
+    ],
+    "chapterId": "troubleshooting-toolkit",
+    "filesRead": [
+      "content/chapters/31-troubleshooting-toolkit/chapter.md",
+      "content/chapters/31-troubleshooting-toolkit/lab.md",
+      "content/chapters/31-troubleshooting-toolkit/questions.json",
+      "content/chapters/31-troubleshooting-toolkit/cards.json",
+      "content/chapters/31-troubleshooting-toolkit/commands.json",
+      "content/chapters/31-troubleshooting-toolkit/tickets.json"
+    ],
+    "laterDependents": [
+      "aaa-tacacs-radius",
+      "network-management-and-sdn",
+      "ai-in-network-operations",
+      "capstone-branch-network"
+    ],
+    "counts": {
+      "questions": 24,
+      "cards": 14,
+      "commands": 8,
+      "tickets": 3
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 32,
+    "entry": [
+      {
+        "skill": "Local credentials, privilege and secret forms",
+        "chapterId": "ios-essentials",
+        "sectionId": "passwords-secrets-and-the-local-user-database"
+      },
+      {
+        "skill": "Layer2 spoofing defense",
+        "chapterId": "layer2-security",
+        "sectionId": "dynamic-arp-inspection-arp-must-match-the-bindings"
+      },
+      {
+        "skill": "Public-key/hash identity",
+        "chapterId": "file-management",
+        "sectionId": "tftp-ftp-scp-and-sftp"
+      },
+      {
+        "skill": "TCP opening for SYN-resource reasoning",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "opening-and-closing-a-connection"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "CIA/threat/vulnerability/exploit/control",
+        "sectionId": "threat-vulnerability-exploit-mitigation"
+      },
+      {
+        "skill": "Network and human attack mechanisms",
+        "sectionId": "reconnaissance-spoofing-and-denial-of-service"
+      },
+      {
+        "skill": "Password policy/MFA/certificate validation",
+        "sectionId": "password-policy-and-its-alternatives"
+      },
+      {
+        "skill": "Awareness/training/physical controls",
+        "sectionId": "the-security-program-awareness-training-physical-access"
+      },
+      {
+        "skill": "Salt/verifier and local control verification",
+        "sectionId": "hardening-the-device-verify-and-troubleshoot"
+      }
+    ],
+    "practiceDemands": [
+      "Match demonstrated threats to controls, distinguish factor categories and identity proof.",
+      "Interpret verifier exposure, records and policy limits.",
+      "Required worksheet precedes optional bounded SSH/quiet-mode exercise with console recovery."
+    ],
+    "findings": [
+      "Added file-management prerequisite for explicitly recalled trusted-key/hash foundation.",
+      "Built certificate/CA explanation from earlier SSH trusted-key experience.",
+      "Defined salt before stored-verifier interpretation."
+    ],
+    "previews": [
+      "IPsec remains a named protection example until35.",
+      "Quiet-mode ACL is a described source exception;34 teaches full source policy."
+    ],
+    "retained": [
+      "Kept conceptual required path and optional hardening extension.",
+      "No attack execution or new production policy prescribed."
+    ],
+    "chapterId": "security-concepts",
+    "filesRead": [
+      "content/chapters/32-security-concepts/chapter.md",
+      "content/chapters/32-security-concepts/lab.md",
+      "content/chapters/32-security-concepts/questions.json",
+      "content/chapters/32-security-concepts/cards.json",
+      "content/chapters/32-security-concepts/commands.json",
+      "content/chapters/32-security-concepts/tickets.json"
+    ],
+    "laterDependents": [
+      "aaa-tacacs-radius",
+      "vpns-ipsec"
+    ],
+    "counts": {
+      "questions": 18,
+      "cards": 19,
+      "commands": 1,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 33,
+    "entry": [
+      {
+        "skill": "Local accounts and line-selected authentication",
+        "chapterId": "ios-essentials",
+        "sectionId": "passwords-secrets-and-the-local-user-database"
+      },
+      {
+        "skill": "Identity, permission and security goals",
+        "chapterId": "security-concepts",
+        "sectionId": "password-policy-and-its-alternatives"
+      },
+      {
+        "skill": "Supplied local SCP AAA",
+        "chapterId": "file-management",
+        "sectionId": "tftp-ftp-scp-and-sftp"
+      },
+      {
+        "skill": "Fresh service evidence and fault stages",
+        "chapterId": "troubleshooting-toolkit",
+        "sectionId": "verify-and-troubleshoot-a-fault-walk"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "AAA roles and NAS client identity",
+        "sectionId": "three-questions-three-answers"
+      },
+      {
+        "skill": "TACACS+/RADIUS comparison",
+        "sectionId": "tacacs-versus-radius"
+      },
+      {
+        "skill": "Recovery console and AAA enablement",
+        "sectionId": "aaa-new-model-and-staying-out-of-the-lock-out"
+      },
+      {
+        "skill": "Servers/groups/keys/ports/source",
+        "sectionId": "servers-and-server-groups"
+      },
+      {
+        "skill": "List binding and FAIL versus ERROR",
+        "sectionId": "method-lists-authentication-authorization-accounting"
+      },
+      {
+        "skill": "Fresh central success/rejection/outage verification",
+        "sectionId": "verify-and-troubleshoot"
+      }
+    ],
+    "practiceDemands": [
+      "Test local recovery before central VTY policy.",
+      "Build classic Packet Tracer server case and translate modern named syntax on paper.",
+      "Separate accept/reject/ERROR fallback; trace line→list→group→server and NAS registry/return route."
+    ],
+    "findings": [
+      "Added opening handoff from08 local access,32 least privilege and29 supplied local AAA.",
+      "No further reordering or bank correction justified by full read."
+    ],
+    "previews": [
+      "802.1X/remote-access use cases do not require deploying later systems.",
+      "Full identity-server policy design outside client-focused exercise."
+    ],
+    "retained": [
+      "Modern/classic syntax and explicit RADIUS ports preserved.",
+      "EXEC authorization/accounting/list semantics taught before drills; central rejection does not fall back to local."
+    ],
+    "chapterId": "aaa-tacacs-radius",
+    "filesRead": [
+      "content/chapters/33-aaa-tacacs-radius/chapter.md",
+      "content/chapters/33-aaa-tacacs-radius/lab.md",
+      "content/chapters/33-aaa-tacacs-radius/questions.json",
+      "content/chapters/33-aaa-tacacs-radius/cards.json",
+      "content/chapters/33-aaa-tacacs-radius/commands.json",
+      "content/chapters/33-aaa-tacacs-radius/tickets.json"
+    ],
+    "laterDependents": [
+      "wireless-architecture",
+      "wireless-security-config"
+    ],
+    "counts": {
+      "questions": 24,
+      "cards": 19,
+      "commands": 11,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 34,
+    "entry": [
+      {
+        "skill": "Request/reply service ports",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "ports-sockets-and-multiplexing"
+      },
+      {
+        "skill": "Binary compare/AND and place values",
+        "chapterId": "ipv4-addressing",
+        "sectionId": "binary-and-the-32-bit-address"
+      },
+      {
+        "skill": "ACL selector versus interface drop",
+        "chapterId": "nat-pat",
+        "sectionId": "dynamic-nat-with-a-pool"
+      },
+      {
+        "skill": "SSH account/transport/line setup",
+        "chapterId": "ios-essentials",
+        "sectionId": "configure-ssh-step-by-step"
+      },
+      {
+        "skill": "Router-source and return packet",
+        "chapterId": "static-routing-ipv4",
+        "sectionId": "the-return-path-and-how-to-test-it"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "First match/implicit deny",
+        "sectionId": "how-an-acl-is-evaluated"
+      },
+      {
+        "skill": "Wildcard compare/ignore patterns",
+        "sectionId": "wildcard-masks"
+      },
+      {
+        "skill": "Standard/extended and reversed ports",
+        "sectionId": "extended-acls"
+      },
+      {
+        "skill": "Safe sequence insertion/replacement",
+        "sectionId": "named-acls-sequence-numbers-and-editing"
+      },
+      {
+        "skill": "Interface directions and VTY class",
+        "sectionId": "applying-an-acl-interfaces-direction-and-the-vty-lines"
+      },
+      {
+        "skill": "Controlled host policy evidence",
+        "sectionId": "verify-and-troubleshoot"
+      }
+    ],
+    "practiceDemands": [
+      "Draft ordered policy, predict first matches and test desired permits/denials.",
+      "Insert narrow exception; use complete replacement where simulator lacks sequence support.",
+      "Filter reverse traffic and explain established flag-only test.",
+      "Restrict every VTY range; diagnose missing TCP return permit and independent /27 DNS/service policy."
+    ],
+    "findings": [
+      "Added earlier IOS and NAT prerequisites and selector→filter transition.",
+      "Replaced unexplained XOR/NOT algebra with existing compare-zero-bits rule; kept noncontiguous/unaligned examples."
+    ],
+    "previews": [
+      "VPN selector is a use-case preview developed35.",
+      "IPv6 ACL/advanced firewall design excluded from required configuration."
+    ],
+    "retained": [
+      "Scoped absent/empty behavior, stateless established and safe replacement remain.",
+      "Every practice rule/syntax has prior local teaching or supplied setup."
+    ],
+    "chapterId": "acls",
+    "filesRead": [
+      "content/chapters/34-acls/chapter.md",
+      "content/chapters/34-acls/lab.md",
+      "content/chapters/34-acls/questions.json",
+      "content/chapters/34-acls/cards.json",
+      "content/chapters/34-acls/commands.json",
+      "content/chapters/34-acls/tickets.json"
+    ],
+    "laterDependents": [
+      "vpns-ipsec",
+      "network-management-and-sdn",
+      "capstone-branch-network"
+    ],
+    "counts": {
+      "questions": 28,
+      "cards": 20,
+      "commands": 10,
+      "tickets": 3
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  },
+  {
+    "number": 35,
+    "entry": [
+      {
+        "skill": "TCP/UDP transport endpoint ports and ICMP without transport ports",
+        "chapterId": "tcp-udp-ports",
+        "sectionId": "why-ip-alone-is-not-enough"
+      },
+      {
+        "skill": "Reachable underlay/return path",
+        "chapterId": "static-routing-ipv4",
+        "sectionId": "the-return-path-and-how-to-test-it"
+      },
+      {
+        "skill": "PAT outer flow",
+        "chapterId": "nat-pat",
+        "sectionId": "pat-overload-on-an-interface-or-a-pool"
+      },
+      {
+        "skill": "Filter versus selector",
+        "chapterId": "acls",
+        "sectionId": "why-a-router-needs-a-filter"
+      },
+      {
+        "skill": "Identity/certificates/authorization",
+        "chapterId": "security-concepts",
+        "sectionId": "password-policy-and-its-alternatives"
+      }
+    ],
+    "introduced": [
+      {
+        "skill": "Site-to-site/remote endpoints and split policy",
+        "sectionId": "site-to-site-versus-remote-access"
+      },
+      {
+        "skill": "ESP/AH services and NAT-T",
+        "sectionId": "what-ipsec-provides-and-which-protocol-provides-it"
+      },
+      {
+        "skill": "Tunnel/transport inner/outer headers",
+        "sectionId": "tunnel-mode-versus-transport-mode"
+      },
+      {
+        "skill": "IKEv2/SAs/authentication/compatible proposals",
+        "sectionId": "ike-how-two-peers-agree-on-keys"
+      },
+      {
+        "skill": "Crypto selector/route-based/GRE roles",
+        "sectionId": "gre-over-ipsec-vti-dmvpn-and-flexvpn"
+      },
+      {
+        "skill": "Underlay/negotiation/data/application evidence",
+        "sectionId": "verify-and-troubleshoot"
+      }
+    ],
+    "practiceDemands": [
+      "Build ordinary underlay then required packet/protection/evidence worksheet.",
+      "Reason through native-ESP filter failure/recovery without claiming Packet Tracer encryption.",
+      "Compare remote-access NAT-T, split route and authorization.",
+      "Optional supplied IOS XE configuration and proposal-mismatch recognition."
+    ],
+    "findings": [
+      "Added NAT/security prerequisites.",
+      "Expanded IPsec/IKE and symmetric encryption; defined GRE at first use.",
+      "Added compatible-proposal/key-length example before mismatch ticket.",
+      "Annotated optional algorithm/PRF/DH/HMAC roles before configuration."
+    ],
+    "previews": [
+      "Full IKEv2 implementation optional; required outcome is describe.",
+      "GRE/DMVPN construction and advanced MTU design remain outside scope."
+    ],
+    "retained": [
+      "Specific hardware/mapped interfaces, separate worksheet and no IKEv1 downgrade retained.",
+      "No reason to move VPN ahead of30 now that30 teaches bounded adapter vocabulary."
+    ],
+    "chapterId": "vpns-ipsec",
+    "filesRead": [
+      "content/chapters/35-vpns-ipsec/chapter.md",
+      "content/chapters/35-vpns-ipsec/lab.md",
+      "content/chapters/35-vpns-ipsec/questions.json",
+      "content/chapters/35-vpns-ipsec/cards.json",
+      "content/chapters/35-vpns-ipsec/commands.json",
+      "content/chapters/35-vpns-ipsec/tickets.json"
+    ],
+    "laterDependents": [],
+    "counts": {
+      "questions": 17,
+      "cards": 17,
+      "commands": 2,
+      "tickets": 2
+    },
+    "status": "reviewed",
+    "executionLimits": [
+      "Editorial/dependency review and content validation; no simulator, Cisco hardware, Linux VM or workstation lab executed."
+    ],
+    "practiceChanges": {
+      "added": [],
+      "retired": [],
+      "revised": []
+    }
+  }
+]

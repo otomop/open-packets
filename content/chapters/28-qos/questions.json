@@ -1,0 +1,449 @@
+[
+  {
+    "id": "qos-q03",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Where is the three-bit Ethernet CoS/PCP marking carried?",
+    "options": [
+      "In the priority field of an IEEE 802.1Q tag",
+      "In the final three bits of an IPv4 source address",
+      "In the complete eight-bit IPv6 Traffic Class field",
+      "In the destination port of a UDP transport header"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The 802.1Q priority code point has three bits. Untagged Ethernet has no PCP field, but an enclosed IP packet can still carry DSCP.",
+    "whyWrong": {
+      "1": "Source addresses identify endpoints; their final bits are not a QoS field.",
+      "2": "IPv6 Traffic Class contains DSCP and ECN, not an Ethernet PCP tag.",
+      "3": "A UDP port may be a classification criterion, but it is not a CoS marking."
+    }
+  },
+  {
+    "id": "qos-q12",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On classic IOS LLQ, why is a rate allowance associated with a priority class during congestion?",
+    "options": [
+      "To hold unused priority capacity idle until more voice arrives.",
+      "To bound priority consumption so other classes can receive service.",
+      "To set the same maximum rate for all nonpriority classes.",
+      "To delay excess priority packets in the congestion-time policer."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The congestion-time policer constrains the priority class's use of a busy link. Unused capacity remains available; the policy does not change link duplex.",
+    "whyWrong": {
+      "0": "Unused capacity can be used by other eligible traffic.",
+      "2": "Other classes retain their own scheduling treatment.",
+      "3": "The policer applies its configured excess action rather than creating a shaping queue."
+    }
+  },
+  {
+    "id": "qos-q17",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the main purpose of QoS when several applications compete for a busy link?",
+    "options": [
+      "Increase the physical capacity of the contracted circuit.",
+      "Remove the propagation delay between the two sites.",
+      "Allocate available forwarding service according to the traffic policy.",
+      "Reserve the same treatment across every independent provider."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "QoS controls treatment of competing traffic using the available resources. End-to-end results still depend on the path, capacity and policies at other hops.",
+    "whyWrong": {
+      "0": "QoS allocates existing service; it does not increase the circuit capacity.",
+      "1": "Propagation depends on the path and medium, not queue policy.",
+      "3": "A local policy does not configure every other administrative domain."
+    }
+  },
+  {
+    "id": "qos-q18",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which action is marking rather than classification?",
+    "options": [
+      "Checking whether an IP packet belongs to the managed-phone subnet.",
+      "Writing AF21 into the packet’s DSCP field.",
+      "Comparing a packet’s UDP destination with a voice-service port.",
+      "Matching a packet against a supported application signature."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Marking changes a packet field. Classification decides which category matches; a separate policy determines what to do with that category.",
+    "whyWrong": {
+      "0": "That test identifies a traffic category.",
+      "2": "That compares a field against a classification criterion.",
+      "3": "That identifies the application for classification."
+    }
+  },
+  {
+    "id": "qos-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements accurately compare policing and shaping? Choose two.",
+    "options": [
+      "A shaper guarantees delivery by allowing an unlimited queue",
+      "A policer can remark excess traffic instead of discarding it",
+      "A policer lowers the interface's negotiated physical speed",
+      "A shaper can buffer excess traffic and add waiting time",
+      "A shaper cannot transmit a short burst above its average rate"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Policing applies the configured action after metering; shaping controls departure timing with a buffer. Both can allow bursts, and a finite shaping queue can overflow.",
+    "whyWrong": {
+      "0": "Real buffers are finite; sustained excess demand can cause loss.",
+      "2": "A policy rate is independent of the negotiated physical rate.",
+      "4": "Burst allowances and measurement intervals matter; the configured average is not a limit on every instantaneous interval."
+    }
+  },
+  {
+    "id": "qos-q05",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative policer excerpt",
+      "text": "police cir 1000000\n  conform-action transmit\n  exceed-action set-dscp-transmit af13\nexceeded 1750 packets; actions: set-dscp-transmit"
+    },
+    "prompt": "What happens to the 1,750 packets counted as exceeding this policer?",
+    "options": [
+      "They wait until the policer's dedicated shaping queue drains",
+      "They are discarded because all exceed actions mean drop",
+      "They receive EF so they can bypass downstream congestion",
+      "They are transmitted with AF13 instead of their earlier mark"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The explicit exceed action remarks and transmits. Downstream discard behavior depends on the downstream policy; AF13 does not force immediate loss.",
+    "whyWrong": {
+      "0": "This action does not create a shaping queue.",
+      "1": "The configured action is set-dscp-transmit, not drop.",
+      "2": "The action names AF13, which is DSCP 14, not EF."
+    }
+  },
+  {
+    "id": "qos-q13",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Policy fragment",
+      "text": "policy-map WAN-OUT\n class DATA\n  bandwidth 512"
+    },
+    "prompt": "In a supporting IOS CBWFQ policy, what does `bandwidth 512` mean for DATA?",
+    "options": [
+      "A minimum 512 kb/s share during congestion, with excess capacity usable",
+      "A permanent 512 kb/s ceiling, with all additional packets discarded",
+      "A 512-byte queue limit, with later arriving packets tail-dropped",
+      "A 512 kb/s physical link speed, negotiated with the neighboring device"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The bandwidth command provides a minimum class share during congestion. It is not a policer or a physical interface speed command.",
+    "whyWrong": {
+      "1": "A ceiling requires a rate-limiting action such as policing or shaping.",
+      "2": "The argument here is kilobits per second, not queue bytes.",
+      "3": "Physical speed is separate from class scheduling."
+    }
+  },
+  {
+    "id": "qos-q01",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative classic IOS excerpt",
+      "text": "Class-map: VOICE\n  Match: dscp ef (46)\n  Priority: 128 (kbps), burst bytes 3200\n  b/w exceed drops: 400"
+    },
+    "prompt": "During congestion, this classic IOS LLQ counter increases by 400. What does it identify?",
+    "options": [
+      "The physical interface has dropped to a speed of 128 kb/s",
+      "The voice classifier failed to match the arriving packets",
+      "The priority class exceeded its permitted rate/burst allowance",
+      "The DATA class was capped at its minimum bandwidth"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The bandwidth-exceed counter belongs to the priority class's congestion-time policer. It identifies that action, not a link-speed change.",
+    "whyWrong": {
+      "0": "Priority policy changes service, not the Ethernet physical speed.",
+      "1": "A class-specific policer drop occurs after traffic has been assigned to the class.",
+      "3": "A bandwidth minimum for another class does not explain this counter."
+    }
+  },
+  {
+    "id": "qos-q02",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which interpretation of AF32 is correct?",
+    "options": [
+      "DSCP 32; AF class 3 with drop precedence 2",
+      "DSCP 28; AF class 3 with drop precedence 2",
+      "DSCP 26; AF class 2 with drop precedence 3",
+      "DSCP 46; the recommended Expedited Forwarding code"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "AFxy uses 8x + 2y: 8×3 + 2×2 = 28. The digits identify the AF class and drop precedence, not a decimal DSCP written without conversion.",
+    "whyWrong": {
+      "0": "The letters and two digits are a symbolic name, not decimal 32.",
+      "2": "AF32 uses x=3, y=2. DSCP 26 is AF31.",
+      "3": "EF is 46; AF32 is a different codepoint."
+    }
+  },
+  {
+    "id": "qos-q06",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A capture confirms that many TCP flows reduce sending together after a full FIFO queue drops a burst. Which mechanism is intended to spread earlier congestion signals across flows?",
+    "options": [
+      "Strict priority for every class on the output interface",
+      "Changing all packets to the same AF drop precedence",
+      "Random early detection before the queue is completely full",
+      "Increasing each endpoint's advertised Ethernet link speed"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "RED/WRED can act probabilistically before a queue fills, reducing the chance that many responsive flows react to one large loss event. It does not guarantee steady utilization.",
+    "whyWrong": {
+      "0": "Giving everything strict priority does not distinguish traffic or provide early congestion signals.",
+      "1": "A shared marking alone does not create early queue management.",
+      "3": "Endpoint link speed does not remove this bottleneck's finite capacity."
+    }
+  },
+  {
+    "id": "qos-q07",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Ordinary users can set DSCP on their PCs. The policy reserves preferred treatment for verified managed-phone traffic. Where should the network first validate those markings?",
+    "options": [
+      "At the destination, after the traffic has already crossed the managed queues.",
+      "At the ingress boundary, before received marks select preferred treatment.",
+      "At the WAN exit only, while every earlier switch accepts endpoint markings.",
+      "At the endpoint itself, treating its self-selected value as authorization."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Validation belongs at a boundary with reliable traffic information before untrusted markings influence preferred service. A managed phone can be part of that design, but its presence alone is not authentication.",
+    "whyWrong": {
+      "0": "Validation after the managed queues cannot protect resources already consumed.",
+      "2": "Earlier switches would still accept untrusted marks before the proposed WAN-only check.",
+      "3": "The premise says users control their marks; a self-selected value is not authorization for preferred service."
+    }
+  },
+  {
+    "id": "qos-q10",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A classifier requires both: source belongs to the managed-phone subnet AND DSCP is EF. A PC outside that subnet sends an EF-marked packet. How is it evaluated?",
+    "options": [
+      "It matches because the EF criterion is sufficient for this rule.",
+      "It matches because source membership is checked only after queue selection.",
+      "It fails because both criteria are required and source membership fails.",
+      "It fails because the policy compares the criteria as an OR expression."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "An AND rule requires both criteria. The source criterion fails even though the DSCP criterion succeeds. A PC is capable of marking EF.",
+    "whyWrong": {
+      "0": "That would apply OR logic to the stated AND rule.",
+      "1": "Both stated match conditions belong to classification.",
+      "3": "With OR, the true EF criterion would be sufficient; the configured rule is AND."
+    }
+  },
+  {
+    "id": "qos-q15",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A 1,500-byte packet is serialized onto a 1 Mb/s link. Ignoring all additional framing overhead, how long does serialization take?",
+    "options": [
+      "1.5 ms",
+      "8 ms",
+      "150 ms",
+      "12 ms"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "1,500 bytes × 8 = 12,000 bits; divided by 1,000,000 bits/s gives 0.012 s, or 12 ms.",
+    "whyWrong": {
+      "0": "This treats bytes as though they were bits.",
+      "1": "Eight is the bits-per-byte conversion, not the resulting time.",
+      "2": "150 ms is a voice design guideline, not this size/rate calculation."
+    }
+  },
+  {
+    "id": "qos-q19",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Two voice paths have the same average one-way delay. One varies between 20 and 100 ms while the other stays near 60 ms. Which difference matters to a playout buffer?",
+    "options": [
+      "The first path has higher physical bandwidth because its minimum is lower.",
+      "The second path has higher loss because its packets share similar delay.",
+      "The first path must have lower serialization delay on every hop.",
+      "The first path has greater delay variation despite the equal average."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Jitter concerns variation, not just average delay. A playout buffer must accommodate arriving packets with different delays; averages alone hide that variation.",
+    "whyWrong": {
+      "0": "Delay samples do not establish physical link capacity.",
+      "1": "Stable delay does not establish packet loss.",
+      "2": "End-to-end delay variation does not identify a particular delay component."
+    }
+  },
+  {
+    "id": "qos-q20",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Two policies see the same short excess burst after their token allowance is exhausted. One remarks and transmits it; the other has room to buffer it until transmission is allowed. Which outcome matches those actions?",
+    "options": [
+      "The policer forwards with a changed mark; the shaper adds waiting time.",
+      "Both hold the excess packets until a dedicated policing queue empties.",
+      "Both discard the burst because a rate limit always means drop.",
+      "The shaper changes physical link speed; the policer reserves bandwidth."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Read the configured action rather than inferring that every rate limit drops. The shaper has finite space and may drop later if sustained demand fills it.",
+    "whyWrong": {
+      "1": "A policer does not create a waiting queue for excess traffic.",
+      "2": "The specified actions are remark/transmit and buffer, not immediate drop.",
+      "3": "Shaping controls departures, while policing applies the metered action."
+    }
+  },
+  {
+    "id": "qos-q16",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Observed attachment",
+      "text": "GigabitEthernet0/1\n Service-policy input: MARK-IN\n  Class-map: DEFAULT-IP\n   Match: dscp default (0)"
+    },
+    "prompt": "PC-A requests enter Gi0/0 and leave Gi0/1. MARK-IN is applied input on Gi0/1. Its counters increase while a ping succeeds. What should be checked before declaring requests correctly marked?",
+    "options": [
+      "Inspect the request headers and move the policy to their intended ingress.",
+      "Raise the marking policy’s rate while leaving its attachment on Gi0/1.",
+      "Accept the aggregate match count as verification for both packet directions.",
+      "Replace the mark with EF while keeping the Gi0/1 input attachment."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Replies can enter Gi0/1 and increment counters even though requests enter Gi0/0. Inspect request headers and the relevant attachment; connectivity alone does not prove marking.",
+    "whyWrong": {
+      "1": "A rate change does not move the attachment to the requests’ Gi0/0 ingress.",
+      "2": "Replies can increment the counter without requests encountering this policy.",
+      "3": "A different marking action at the wrong ingress still misses the requests."
+    }
+  },
+  {
+    "id": "qos-q21",
+    "type": "single",
+    "objectives": [
+      "v1:4.7"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Authored correlated observations",
+      "text": "Local router: verified voice classification; priority allowance not exceeded.\nLocal voice-drop counter unchanged during the complaint.\nCapture before/after downstream switch: the same voice stream retains EF.\nDownstream shared egress queue: depth rises and drops increase during the complaint.\nThe downstream class mapping and scheduler have not yet been inspected."
+    },
+    "prompt": "What should be checked next to explain the voice impairment while preserving correctly classified local traffic?",
+    "options": [
+      "Increase the local priority allowance because no local drops prove downstream congestion.",
+      "Set every local packet to EF so all flows use the same downstream service.",
+      "Inspect the downstream queue policy, competing demand and voice treatment during impairment.",
+      "Disable local marking because unchanged EF values prove it is unnecessary."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A preserved mark does not guarantee a particular per-hop service. Correlate the downstream queue’s behavior and class mapping with the impairment before choosing a bounded correction.",
+    "whyWrong": {
+      "0": "No local drops do not establish the cause or required policy on the downstream device.",
+      "1": "That discards traffic differentiation without establishing the downstream classification or bottleneck.",
+      "3": "The mark is preserved but its downstream treatment remains unverified."
+    }
+  }
+]

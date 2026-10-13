@@ -1,0 +1,64 @@
+[
+  {
+    "id": "wireless-principles-t01",
+    "title": "Office transfers slow while the neighboring test radio operates",
+    "objectives": [
+      "v1:1.11.a",
+      "v2:1.5.d"
+    ],
+    "scenario": "The office AP and a separately authorized test AP use 2.4 GHz, 20 MHz channels. A survey first identifies overlap, then the operator repeats an approved on/off test of the test AP while other conditions remain stable. The excerpts below are an authored diagnostic scenario, not a captured simulator run.",
+    "exhibits": [
+      {
+        "title": "Radio inventory",
+        "text": "OFFICE-AP: channel 1, SSID OFFICE\nTEST-AP: channel 3, SSID TEST\nClient near OFFICE-AP: strong desired signal throughout the test"
+      },
+      {
+        "title": "Repeated controlled observation",
+        "text": "TEST-AP transmitting: OFFICE client retries rise sharply; transfer rate falls\nTEST-AP radio disabled: retries return near baseline; transfer rate recovers\nRepeat trials reproduce the same result; the OFFICE channel remains 1"
+      }
+    ],
+    "question": "What cause is supported by the combined evidence?",
+    "options": [
+      "A weak desired signal caused by increasing client distance",
+      "Interference from overlapping occupied channels 1 and 3",
+      "Co-channel contention because the SSIDs have different names",
+      "A DFS radar response on the office's 2.4 GHz channel"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The inventory establishes overlap, and the controlled repeatable test supports its effect here. Strong desired signal does not exclude interference; a scan alone would not establish the causal conclusion.",
+    "fix": "Restore the authorized baseline, then choose an allowed nonoverlapping channel using the complete survey. For a small North American 20 MHz plan, evaluate 1/6/11 across both APs. Change one radio at a time, reconnect clients and repeat the same measurements. Record actual retries and application results; do not infer an optimal channel solely from a neighbor's signal percentage."
+  },
+  {
+    "id": "wireless-principles-t02",
+    "title": "One client cannot rejoin after the WLAN security change",
+    "objectives": [
+      "v1:1.11.d",
+      "v2:1.5.c"
+    ],
+    "scenario": "STAFF is changed to WPA3-Personal-only. A failing client's OS/driver report and vendor compatibility check confirm that this installed combination supports WPA2-Personal but not SAE. The passphrase is verified unchanged. Other compatible clients connect. The excerpts are representative.",
+    "exhibits": [
+      {
+        "title": "WLAN settings",
+        "text": "SSID: STAFF\nBand: 5 GHz\nSecurity: WPA3-Personal only\nAuthentication: SAE\nPMF: Required"
+      },
+      {
+        "title": "Client capability evidence",
+        "text": "Radio support: 802.11a/n/ac\nWPA2-Personal + CCMP: Supported\nPMF: Supported\nWPA3-Personal / SAE: Not supported by installed OS/driver"
+      }
+    ],
+    "question": "Which mismatch prevents this client's access?",
+    "options": [
+      "The shared passphrase differs even though it was verified unchanged",
+      "The presence of an 802.11ax AP necessarily excludes 802.11ac clients",
+      "The client lacks the SAE authentication capability required by this WLAN",
+      "The client lacks CCMP even though the capability report lists support"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The security capability evidence establishes the missing SAE support. PMF and CCMP support alone do not make a client WPA3-capable; radio generation names alone do not establish the security method.",
+    "fix": "Check whether a supported OS/driver update provides the required capability for this hardware. Otherwise replace the client or use a separately approved migration design. On 2.4/5 GHz, a compatible WPA2/WPA3 transition design can allow older WPA2 clients, but they still use WPA2 and do not acquire SAE's properties. Confirm the exact controller security/PMF settings and client compatibility, document the exception, and retest. Do not apply a WPA2 fallback to a 6 GHz-only WLAN."
+  }
+]

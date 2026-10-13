@@ -1,0 +1,406 @@
+[
+  {
+    "id": "tcp-udp-ports-q17",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement correctly compares the transport service supplied to an application?",
+    "options": [
+      "TCP supplies an ordered byte stream; UDP supplies separate datagrams.",
+      "TCP preserves each application write; UDP combines writes into a byte stream.",
+      "TCP guarantees application success; UDP reports whether the service accepted data.",
+      "TCP encrypts its data by default; UDP relies on application encryption."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "TCP recovers and orders stream bytes, while UDP delivers individual datagrams without its own delivery guarantee. Application framing, security and successful processing remain separate concerns.",
+    "whyWrong": {
+      "1": "TCP does not preserve write boundaries, and UDP does not create a byte stream.",
+      "2": "Transport delivery does not guarantee that an application completed its work.",
+      "3": "Neither transport inherently encrypts the application data."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q09",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which comparison distinguishes TCP flow control from congestion control?",
+    "options": [
+      "Flow control tracks network loss; congestion control advertises receiver space.",
+      "Flow control respects receiver capacity; congestion control responds to the path.",
+      "Flow control establishes a connection; congestion control closes each direction.",
+      "Flow control selects service ports; congestion control identifies application data."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The advertised receive window limits data according to receiver capacity. Congestion control limits the sender in response to network-path conditions; the sender must respect both.",
+    "whyWrong": {
+      "0": "The receiver and network roles are reversed.",
+      "2": "Connection opening and closing are different TCP functions.",
+      "3": "Ports identify endpoints rather than controlling receiver capacity or network congestion."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two services conventionally use TCP in this course? Choose two.",
+    "options": [
+      "Initial DHCPv4 discovery",
+      "SMTP server-to-server mail transfer",
+      "NTP time synchronization",
+      "SSH remote management"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "SMTP mail transfer conventionally uses TCP 25, and SSH uses TCP 22. DHCPv4 discovery and NTP are conventional UDP examples.",
+    "whyWrong": {
+      "0": "Initial DHCPv4 discovery uses UDP client/server ports 68 and 67.",
+      "2": "NTP uses UDP 123 in the conventional exchange."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q16",
+    "type": "multi",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements correctly describe ordinary DNS transport? Choose two.",
+    "options": [
+      "DNS queries can use UDP destination port 53.",
+      "TCP port 53 is reserved exclusively for zone transfers.",
+      "DNS queries can use TCP destination port 53.",
+      "A UDP DNS query first establishes a UDP transport connection."
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "DNS supports both UDP and TCP queries. Many small queries use UDP, while TCP can carry normal queries and retry after a truncated UDP response.",
+    "whyWrong": {
+      "1": "TCP also carries ordinary DNS queries; it is not exclusive to zone transfers.",
+      "3": "UDP provides no transport connection-establishment handshake."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q01",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative TCP opening",
+      "text": "10.20.0.15:51514 -> 10.20.0.5:22  SYN      Seq=3000\n10.20.0.5:22 -> 10.20.0.15:51514  SYN,ACK  Seq=9000 Ack=3001\n10.20.0.15:51514 -> 10.20.0.5:22  ACK      Seq=3001 Ack=9001"
+    },
+    "prompt": "Which endpoint interpretation follows from this TCP opening?",
+    "options": [
+      "The server requests a service on TCP 51514 at 10.20.0.15.",
+      "The server listens on TCP 9000 and the client selects TCP 3000.",
+      "The client requests TCP 22 at 10.20.0.5 from local port 51514.",
+      "The client requests TCP 22 and receives replies on local port 22."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The initial SYN goes from client port 51514 to server port 22. Replies reverse those endpoints; the displayed sequence numbers are not ports.",
+    "whyWrong": {
+      "0": "The initial SYN identifies the opposite initiator and destination service.",
+      "1": "9000 and 3000 are sequence numbers, not transport ports.",
+      "3": "The server replies to the client-selected port 51514."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q04",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A DHCPv4 client has no usable IPv4 address and begins discovery. Which initial transport exchange matches this task?",
+    "options": [
+      "UDP source port 67 to destination port 68, sent by the new client.",
+      "TCP source port 68 to destination port 67, after a TCP opening.",
+      "UDP source port 68 to destination port 53, requesting its address.",
+      "UDP source port 68 to destination port 67, which can be broadcast."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The initial client discovery uses UDP client port 68 toward server port 67. It can be sent before the client has a usable address, without a TCP opening.",
+    "whyWrong": {
+      "0": "The client/server port roles are reversed.",
+      "1": "DHCPv4 uses UDP for this exchange, not TCP.",
+      "2": "Port 53 identifies DNS, not DHCP address discovery."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q12",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A client uses the same local IP address to open two separate simultaneous TCP connections to the same server address on TCP 443. Which difference distinguishes the two connections?",
+    "options": [
+      "The server uses a different listening port for the second connection.",
+      "The client uses a different local source port for the second connection.",
+      "The client uses a different TCP protocol number for the second connection.",
+      "The server uses a different MAC address for the second connection."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "With the same client/server IP addresses and server port, distinct client source ports produce distinct TCP endpoint pairs. The server can serve many connections on one listening port.",
+    "whyWrong": {
+      "0": "Both connections can use the stated server port 443.",
+      "2": "Both use TCP; its IP protocol identifier does not change per connection.",
+      "3": "MAC addresses are not part of the transport connection identity."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q07",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative application writes",
+      "text": "Write 1: 200 bytes\nWrite 2: 300 bytes\nTransport: TCP"
+    },
+    "prompt": "The application makes the writes shown. What must its receiving application assume?",
+    "options": [
+      "It receives a byte stream and must use its message format to find boundaries.",
+      "It receives two messages whose boundaries match the two sending writes.",
+      "It receives a message boundary wherever the TCP PSH flag is present.",
+      "It receives one application message for each arriving TCP segment."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "TCP preserves byte order rather than the sender’s write boundaries. The application needs its own framing, such as a length or delimiter, to recognize messages.",
+    "whyWrong": {
+      "1": "Two writes need not become two separately delivered messages.",
+      "2": "PSH does not define application-message boundaries.",
+      "3": "A message may span segments, and a segment may contain several messages."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q15",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "diagram",
+      "spec": {
+        "type": "sequence",
+        "title": "Complete the TCP opening",
+        "actors": [
+          "Client",
+          "Server"
+        ],
+        "steps": [
+          {
+            "from": 0,
+            "to": 1,
+            "label": "SYN",
+            "accent": true
+          },
+          {
+            "from": 1,
+            "to": 0,
+            "label": "SYN, ACK"
+          },
+          {
+            "from": 0,
+            "to": 1,
+            "label": "?",
+            "dashed": true
+          }
+        ],
+        "caption": "No application data is included in the opening segments."
+      }
+    },
+    "prompt": "The client has received the second segment. Which third segment completes this ordinary TCP opening?",
+    "options": [
+      "Server to client: FIN, ending the server’s sending direction.",
+      "Client to server: SYN, starting another independent connection.",
+      "Server to client: ACK, acknowledging its own initial sequence.",
+      "Client to server: ACK, acknowledging the server’s SYN."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "After receiving SYN/ACK, the client acknowledges the server’s SYN. This completes the ordinary SYN, SYN/ACK, ACK opening shown.",
+    "whyWrong": {
+      "0": "FIN closes a sending direction rather than completing this opening.",
+      "1": "Another SYN is not the expected third step in this ordinary opening.",
+      "2": "The client must acknowledge the server’s SYN; the server cannot acknowledge it on the client’s behalf."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q02",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A TCP data segment begins at sequence 20001 and contains 1460 bytes, with no SYN or FIN. All earlier bytes arrived in order and no later data is buffered. Which cumulative acknowledgment follows?",
+    "options": [
+      "20001",
+      "21461",
+      "21460",
+      "21462"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The bytes occupy sequence positions 20001 through 21460. The acknowledgment identifies the next expected byte, 21461.",
+    "whyWrong": {
+      "0": "This ignores the newly received data.",
+      "2": "This is the last received byte, not the next expected byte.",
+      "3": "No SYN or FIN consumes an additional position in this segment."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q08",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative Windows netstat -an excerpt",
+      "text": "Proto  Local Address         Foreign Address        State\nTCP    0.0.0.0:22            0.0.0.0:0              LISTENING\nTCP    172.16.5.20:22        172.16.5.99:50210       ESTABLISHED\nTCP    172.16.5.20:50344     198.51.100.10:443       ESTABLISHED\nTCP    172.16.5.20:50351     198.51.100.10:443       TIME_WAIT"
+    },
+    "prompt": "SSH uses local TCP 22 and HTTPS uses remote TCP 443. Which reading of this snapshot is correct?",
+    "options": [
+      "Two HTTPS connections are established, and the local host initiates SSH.",
+      "The local host has one SSH listener but no accepted SSH connection.",
+      "The local host serves HTTPS and connects outward from SSH port 22.",
+      "One SSH connection is accepted and one HTTPS connection is established."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The local port-22 row is an accepted SSH connection. Only the port-50344 HTTPS row is ESTABLISHED; the other is closing in TIME_WAIT.",
+    "whyWrong": {
+      "0": "TIME_WAIT is not ESTABLISHED, and local port 22 is the server endpoint here.",
+      "1": "The ESTABLISHED port-22 row shows a current accepted connection.",
+      "2": "The local temporary HTTPS port is the client endpoint; the remote service port is 443."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q11",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative client capture",
+      "text": "10.6.0.10:51000 -> 10.6.0.20:23  SYN\n10.6.0.20:23 -> 10.6.0.10:51000  RST,ACK"
+    },
+    "prompt": "What does this client-side observation establish about the connection attempt?",
+    "options": [
+      "The attempt received an active reset and did not complete a TCP opening.",
+      "The opening completed, but an established session then timed out.",
+      "The SYN was acknowledged normally and the client should send login data.",
+      "The request received no response before its retransmission timer expired."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The matching RST/ACK actively rejects the attempt. A closed server port is possible, but this one capture does not prove whether the server or an intermediary generated the reset.",
+    "whyWrong": {
+      "1": "No SYN/ACK and final ACK are shown to establish a connection.",
+      "2": "A reset is not the accepting SYN/ACK response.",
+      "3": "The second segment is a response, so this is not simply silence."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q14",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative receive state",
+      "text": "1001–1100: received\n1101–1200: missing\n1201–1300: received and retained"
+    },
+    "prompt": "The receiver has all earlier bytes and retains the shown later range. Which cumulative acknowledgment stays in place, and when may it advance to 1301?",
+    "options": [
+      "1301 now; the arrival of the highest-numbered range proves all earlier bytes.",
+      "1201 now; only another copy of 1201–1300 allows the acknowledgment to advance.",
+      "1101 now; receiving the missing 1101–1200 range completes the contiguous data.",
+      "1001 now; every original segment must be received again in its original order."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The cumulative acknowledgment cannot skip the missing middle range. Once that gap arrives, the retained later bytes complete the stream through 1300 and ACK can advance to 1301.",
+    "whyWrong": {
+      "0": "Later-byte arrival does not establish receipt of an earlier gap.",
+      "1": "1201 would incorrectly acknowledge the absent middle range.",
+      "3": "The receiver already has the earlier and later ranges; they need not all be resent."
+    }
+  },
+  {
+    "id": "tcp-udp-ports-q13",
+    "type": "single",
+    "objectives": [
+      "v1:1.5"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative combined client evidence",
+      "text": "Approved server: 192.168.40.20, HTTP on TCP 80\nFresh DNS answer www.lab.test: 192.168.40.20\nPing 192.168.40.20: replies received\nTCP capture at client: SYN to 192.168.40.20:80; retry SYN; no reply seen\nFresh HTTP request: fails"
+    },
+    "prompt": "All tests are fresh and target the intended server. Which next investigation best fits the combined evidence?",
+    "options": [
+      "Correct DNS first because the browser used a name rather than an address.",
+      "Correct the client subnet because TCP and ICMP require different gateways.",
+      "Check TCP 80 service and path evidence; ICMP success does not prove the opening.",
+      "Begin HTTP content diagnosis because a successful ping proves TCP acceptance."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The correct name response and successful ICMP exchange narrow the problem, but the capture does not show a completed TCP opening. Check the listener and relevant transport-path evidence before attributing one unique cause or diagnosing HTTP content.",
+    "whyWrong": {
+      "0": "The shown name response already returns the approved server address.",
+      "1": "The transport choice does not by itself imply a different gateway or wrong subnet.",
+      "3": "A ping does not perform the required TCP opening, and none is shown."
+    }
+  }
+]

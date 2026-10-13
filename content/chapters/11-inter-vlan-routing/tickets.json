@@ -1,0 +1,72 @@
+[
+  {
+    "id": "inter-vlan-routing-t01",
+    "title": "VLAN 30 loses its gateway after a cleanup",
+    "objectives": [
+      "v1:2.1.c",
+      "v2:2.1.d"
+    ],
+    "scenario": "DSW1 is a 3650 multilayer switch with IPv4 routing enabled. It serves VLANs 10,20,30 through SVIs. PC-C is 192.168.30.11/24, gateway 192.168.30.1, on Gi1/0/5. After a VLAN cleanup, PC-C cannot reach its gateway. VLANs 10 and 20 still route successfully. Read the representative excerpts and the complete VLAN-presence check before deciding why Vlan30 is unavailable.",
+    "exhibits": [
+      {
+        "title": "DSW1 SVI configuration excerpt",
+        "text": "interface Vlan30\n ip address 192.168.30.1 255.255.255.0\n no shutdown"
+      },
+      {
+        "title": "Completed VLAN and port checks",
+        "text": "show vlan brief: VLANs 1,10,20 and the model's reserved VLANs appear; VLAN 30 is absent from the complete list.\nGi1/0/5 remains configured with switchport mode access and switchport access vlan 30.\nIts switchport display identifies Access Mode VLAN: 30 (Inactive)."
+      },
+      {
+        "title": "Representative abbreviated IP interface display",
+        "text": "Vlan10   192.168.10.1   YES manual   up     up\nVlan20   192.168.20.1   YES manual   up     up\nVlan30   192.168.30.1   YES manual   down   down"
+      }
+    ],
+    "question": "Which root cause is established by the evidence?",
+    "options": [
+      "The Vlan30 SVI was administratively shut down.",
+      "VLAN 30 was removed from the local VLAN database.",
+      "PC-C uses an incorrect mask for its intended subnet.",
+      "IPv4 routing is disabled globally on DSW1."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The complete VLAN check proves that VLAN 30 is missing, while its SVI and access assignment remain configured. The SVI is enabled, the supplied host address and mask match the plan, and other VLANs still route. Its nonadministrative down state supports investigation but does not uniquely prove a cause by itself. Restore the missing VLAN and then verify forwarding membership; enabling routing or changing the host mask cannot replace that database entry.",
+    "fix": "Re-create VLAN 30 without changing the already-correct SVI address.\n\n```ios DSW1\nDSW1# configure terminal\nDSW1(config)# vlan 30\nDSW1(config-vlan)# name USERS30\nDSW1(config-vlan)# end\nDSW1# show vlan brief\nDSW1# show interfaces status\nDSW1# show ip interface brief\nDSW1# show ip route\n```\n\nConfirm Gi1/0/5 is linked and forwarding in VLAN 30. Vlan30 should become operational and its connected route should return. Test PC-C to 192.168.30.1, then to a known host in another routed VLAN, and verify the reply path. Save after tests pass."
+  },
+  {
+    "id": "inter-vlan-routing-t02",
+    "title": "A new subinterface has no gateway configuration",
+    "objectives": [
+      "v1:2.1.c",
+      "v2:2.1"
+    ],
+    "scenario": "R1 is a 2911 router-on-a-stick connected to SW1's static trunk. PC-C uses VLAN 30, address 192.168.30.11/24 and gateway 192.168.30.1. VLANs 10 and 20 work, but PC-C cannot reach its new gateway. The change record says a subinterface was added; the running configuration is the authoritative evidence of what actually exists.",
+    "exhibits": [
+      {
+        "title": "Representative excerpt — R1# show ip interface brief",
+        "text": "GigabitEthernet0/0       unassigned      YES unset   up   up\nGigabitEthernet0/0.10    192.168.10.1    YES manual  up   up\nGigabitEthernet0/0.20    192.168.20.1    YES manual  up   up\nGigabitEthernet0/0.30    unassigned      YES unset   up   up"
+      },
+      {
+        "title": "Complete configuration of the new subinterface",
+        "text": "interface GigabitEthernet0/0.30\n!\nNo encapsulation or IP address is configured under this subinterface."
+      },
+      {
+        "title": "SW1 verification worksheet",
+        "text": "VLAN 30 exists and is active.\nPC-C's connected access port belongs to VLAN 30.\nThe router-facing Gi0/1 trunk is operational.\nVLAN 30 is allowed, active and forwarding on Gi0/1.\nPC-C's address, /24 mask and gateway match the stated design."
+      }
+    ],
+    "question": "Why is the router not providing the VLAN 30 gateway?",
+    "options": [
+      "The new subinterface has neither encapsulation nor a gateway address.",
+      "SW1's uplink excludes VLAN 30 from its effective forwarding set.",
+      "The router's physical parent interface is shut down.",
+      "The gateway must be placed on the unaddressed physical parent."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Creating a subinterface name does not supply its VLAN mapping or address. Up/up can follow the operational parent without proving a usable gateway service. The evidence does not prove whether a paste failed or commands were omitted; it proves the two required settings are absent. The supplied switch evidence confirms VLAN 30 is active and forwarding on the trunk. The parent and subinterface are up/up; the missing encapsulation and address remain visible in the configuration.",
+    "fix": "Complete the new subinterface, setting encapsulation before addressing.\n\n```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/0.30\nR1(config-subif)# encapsulation dot1Q 30\nR1(config-subif)# ip address 192.168.30.1 255.255.255.0\nR1(config-subif)# no shutdown\nR1(config-subif)# end\nR1# show ip interface brief\nR1# show ip route\n```\n\nConfirm the address is assigned, the interface is operational, and 192.168.30.0/24 appears as connected. Test PC-C's own gateway and a known reachable host in another VLAN. Older images may not show a separate local /32 entry; gateway and forwarding verification matter more than reproducing an exact display."
+  }
+]

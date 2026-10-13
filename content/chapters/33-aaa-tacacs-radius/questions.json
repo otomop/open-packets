@@ -1,0 +1,687 @@
+[
+  {
+    "id": "aaa-tacacs-radius-q01",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A valid SSH login succeeds, but the server denies configure terminal through a command policy. Which AAA function made that denial?",
+    "options": [
+      "Authentication.",
+      "Session accounting.",
+      "Authorization.",
+      "Command accounting."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Authentication accepted the identity claim. Authorization decides permitted actions; accounting can record the result without being the permission decision.",
+    "whyWrong": {
+      "0": "The identity check already succeeded.",
+      "1": "Session records do not decide this command permission.",
+      "3": "Command accounting records an action; command authorization decides permission."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q12",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What role does the separately deployed central AAA service perform in this device-management design?",
+    "options": [
+      "It evaluates the configured central identity and policy requests from R1.",
+      "It is R1's local username database and exists only inside that router.",
+      "It forwards every user data packet after the administrator logs in.",
+      "It is the administrator's SSH client and supplies the laptop's transport connection."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "R1 is the AAA client and sends requests to the central service. That role is separate from the administrator's SSH client, R1's local account database and ordinary packet forwarding.",
+    "whyWrong": {
+      "1": "A separate service is not the router's local username table.",
+      "2": "An AAA decision does not make the service a mandatory data-plane next hop.",
+      "3": "The administrator's client initiates SSH to R1, not the central AAA exchange."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q03",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which conventional transport and service port does TACACS+ use?",
+    "options": [
+      "TCP 22.",
+      "TCP 49.",
+      "UDP 1812.",
+      "UDP 1813."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "TACACS+ carries its separate AAA exchanges over TCP port 49. SSH to the router is a different client/server relationship.",
+    "whyWrong": {
+      "0": "TCP 22 is SSH rather than the router-to-TACACS+ exchange.",
+      "2": "UDP 1812 is conventional RADIUS authentication.",
+      "3": "UDP 1813 is conventional RADIUS accounting."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q04",
+    "type": "multi",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements correctly describe conventional RADIUS/UDP? Select two.",
+    "options": [
+      "Its ordinary User-Password protection encrypts the entire IP packet.",
+      "An Access-Accept can carry authorization attributes with its successful result.",
+      "It uses the TACACS+ TCP-49 per-command authorization exchange.",
+      "Authentication normally uses UDP 1812 and accounting UDP 1813."
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "Conventional RADIUS combines the successful access decision with associated attributes, while accounting has separate messages/port. The ordinary password-hiding comparison does not mean whole-packet encryption.",
+    "whyWrong": {
+      "0": "The conventional User-Password hiding mechanism does not protect the entire packet.",
+      "2": "RADIUS is not the TACACS+ command protocol."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements explain the documented classic TACACS+ device-administration model accurately? Select two.",
+    "options": [
+      "It has separate authorization exchanges that support command policy.",
+      "Its UDP transport is what supplies per-command authorization.",
+      "Its cleartext header means no shared key is needed.",
+      "Its body obfuscation is not a substitute for a protected management path."
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Separate exchanges support TACACS+ command control on relevant IOS configurations. RFC 8907 calls the classic body mechanism obfuscation and requires a secure deployment; do not equate it with modern authenticated transport encryption.",
+    "whyWrong": {
+      "1": "TACACS+ uses TCP, and the command policy comes from its protocol/application model.",
+      "2": "A shared key is still required for the documented protected client/server exchange."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q16",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which configuration pair must share the same device/server key?",
+    "options": [
+      "R1's SSH host key and Morgan's account password on the AAA server.",
+      "R1's local recovery secret and the AAA server's own administrator password.",
+      "Morgan's user password and the shared key in R1's server definition.",
+      "R1's AAA server definition and the server's client entry for R1."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The shared key belongs to the NAS-to-server relationship. User credentials and enable access are separate decisions; forcing them to equal the shared key would conflate independent secrets.",
+    "whyWrong": {
+      "0": "The SSH host identity belongs to a different connection.",
+      "1": "These administrative login secrets are unrelated to the NAS-to-server key.",
+      "2": "The user password and the device/server shared secret serve different checks."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q07",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which line-configuration command binds the named login list VTY-AUTH?",
+    "options": [
+      "login authentication VTY-AUTH",
+      "authorization exec VTY-AUTH",
+      "aaa authentication VTY-AUTH",
+      "accounting exec VTY-AUTH"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The login authentication line command selects a login list. Authorization and accounting are separate list types and do not bind login authentication.",
+    "whyWrong": {
+      "1": "This selects an EXEC authorization list, not login authentication.",
+      "2": "AAA list definition commands belong to global configuration and use different syntax.",
+      "3": "This selects accounting rather than the login check."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q09",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "radius-server host 10.0.0.100 auth-port 1645 acct-port 1646 key [omitted]"
+    },
+    "prompt": "Which listening ports must the server match for the shown classic RADIUS client definition?",
+    "options": [
+      "TCP 22 for authentication and UDP 1646 for accounting.",
+      "UDP 1645 for authentication and UDP 1646 for accounting.",
+      "TCP 49 for both authentication and accounting.",
+      "UDP 1812 for authentication and UDP 1813 for accounting."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The explicitly configured port keywords select the legacy pair. Do not infer standard ports from the RADIUS name or rely on an image default when the configuration gives the values.",
+    "whyWrong": {
+      "0": "SSH is a different management transport.",
+      "2": "TCP 49 is TACACS+, not this RADIUS definition.",
+      "3": "Those are the standard pair but not the shown explicit values."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q14",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command requests records at EXEC session start and stop on supporting IOS?",
+    "options": [
+      "aaa accounting exec default start-stop group MGMT-TAC",
+      "aaa accounting exec default stop-only group MGMT-TAC",
+      "aaa authentication login default group MGMT-TAC local",
+      "aaa authorization exec default group MGMT-TAC local"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "EXEC start-stop accounting requests session lifecycle records. Verify delivery at the server; this does not automatically record every command.",
+    "whyWrong": {
+      "1": "Stop-only requests a stop record rather than both lifecycle points.",
+      "2": "Login authentication checks identity rather than recording the session lifecycle.",
+      "3": "Authorization decides permitted shell access, not the requested accounting events."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q02",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "aaa new-model\naaa authentication login default local\nline vty 0 4\n login authentication default\n transport input ssh\nNo username entries"
+    },
+    "prompt": "No local usernames exist in the complete relevant configuration. Why do these VTY logins fail?",
+    "options": [
+      "The VTY line password automatically replaces the absent username database.",
+      "A central server definition must precede any local AAA account.",
+      "The selected local method has no account with which to authenticate the user.",
+      "The CONSOLE list must be used on VTY lines for local accounts to work."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The explicit selected list is local, so valid local account data is required. AAA can operate without a central server; enabling its framework is not a substitute for creating accounts.",
+    "whyWrong": {
+      "0": "The selected local method requires username data, not the separate line-password method.",
+      "1": "An explicit local-only AAA design does not need a central server.",
+      "3": "A named VTY list can use local accounts without becoming the console list."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q05",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "aaa authentication login VTY-AUTH group MGMT-TAC local\nSelected list: VTY-AUTH\nCurrent central result: FAIL"
+    },
+    "prompt": "The central method returns an explicit authentication FAIL. What does this login list do?",
+    "options": [
+      "Accept the enable secret even though enable is not a listed method.",
+      "Try the local password because every first-method failure means fallback.",
+      "Reject this attempt without trying the local method.",
+      "Bypass authentication because the server was reachable."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "FAIL is a completed denial and stops authentication. ERROR is the result that can advance to the next method; reachability is not itself permission.",
+    "whyWrong": {
+      "0": "The enable method is not part of this list.",
+      "1": "A rejection is different from a method that cannot complete its decision.",
+      "3": "A reachable service can explicitly deny access."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q06",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "Selected: VTY-AUTH = group MGMT-TAC local\nGroup result: ERROR\nLocal recovery account exists and credentials are valid"
+    },
+    "prompt": "All eligible group methods return ERROR and the supplied recovery credentials match a local account. What happens next?",
+    "options": [
+      "The next local method can authenticate the recovery account.",
+      "An ERROR is always an explicit credential rejection, so the attempt must stop there.",
+      "AAA grants access without checking any remaining method.",
+      "The console list replaces VTY-AUTH automatically."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "ERROR permits advancement to the next method. Local still must accept valid account credentials; the line does not inherit the console list and does not become unauthenticated.",
+    "whyWrong": {
+      "1": "FAIL is the explicit-denial branch; ERROR means this method could not complete authentication.",
+      "2": "The remaining local method still makes a real check.",
+      "3": "A console binding does not automatically replace a VTY binding."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q13",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "aaa authentication login CONSOLE local\naaa authentication login VTY-AUTH group MGMT-TAC local\nline con 0\n login authentication CONSOLE\nline vty 0 4\n login authentication VTY-AUTH"
+    },
+    "prompt": "While the central group returns ERROR, which access behavior follows from these explicit bindings?",
+    "options": [
+      "Both paths allow access without validating credentials.",
+      "Console waits on MGMT-TAC; VTY ignores its bound list and uses CONSOLE.",
+      "Both paths require a central PASS before any local check.",
+      "Console uses local immediately; VTY can reach local after the central method cannot complete."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The console is explicitly bound to a local-only list. VTY-AUTH contains a central group followed by local, so the ERROR branch can select local there; both still require accepted credentials.",
+    "whyWrong": {
+      "0": "Local is an authentication method, not no authentication.",
+      "1": "The named bindings specify the opposite relationship.",
+      "2": "The VTY list expressly includes the local ERROR fallback, and console has no central method."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q15",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "Admin-PC SSH source: 10.0.0.50\nR1 configured AAA source: Loopback0 10.255.0.1\nAAA server: 10.0.0.100\nRouting to/from Loopback0 is verified."
+    },
+    "prompt": "Which server-side client address must be recognized for these management AAA requests?",
+    "options": [
+      "10.255.0.1, the selected and reachable NAS source.",
+      "10.0.0.50, because it initiates the SSH connection.",
+      "Any address in the client LAN, because a shared key replaces source identity.",
+      "10.0.0.100, because it receives the AAA request."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The AAA service recognizes the NAS/router request source. The source also needs return reachability and matching client/key policy; the SSH user’s address is a different endpoint.",
+    "whyWrong": {
+      "1": "That is the SSH client address, not this AAA request source.",
+      "2": "A matching shared key does not justify arbitrary unregistered client sources.",
+      "3": "That is the server’s own address."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q17",
+    "type": "single",
+    "objectives": [
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "prompt": "Which change makes new VTY logins use the approved central-first list?",
+    "options": [
+      "Change the AAA server key without checking the selected list.",
+      "Add another central server while leaving the local-only binding.",
+      "Bind login authentication VTY-AUTH to the intended VTY lines.",
+      "Change only the console binding to VTY-AUTH."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The line chooses LOCAL-ONLY, so the correctly defined central list is not used for this login. Apply the intended named list to each relevant VTY range while keeping the tested console local.",
+    "whyWrong": {
+      "0": "No key exchange occurs through the currently selected local list.",
+      "1": "An unselected method does not become active by adding servers.",
+      "3": "The fault concerns VTY selection; moving console recovery to central would add risk."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Definitions and actual line binding",
+      "text": "aaa authentication login LOCAL-ONLY local\naaa authentication login VTY-AUTH group MGMT-TAC local\nline vty 0 4\n login authentication LOCAL-ONLY\n transport input ssh\nFresh login: local user succeeds; central request count does not change."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q18",
+    "type": "single",
+    "objectives": [
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "prompt": "Which line completes the intended named server-group membership?",
+    "options": [
+      "aaa authentication login MGMT-TAC local",
+      "server name TAC1",
+      "tacacs-server host MGMT-TAC",
+      "login authentication TAC1"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The existing TAC1 object must be a member of the selected MGMT-TAC group. A server, group and login list are separate configuration objects.",
+    "whyWrong": {
+      "0": "That defines a separate login list and does not add the server.",
+      "2": "A group name is not a server IP address in the classic definition.",
+      "3": "That is a line authentication command, not server-group membership."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Missing group member on supporting IOS XE",
+      "text": "tacacs server TAC1\n address ipv4 10.0.0.100\n key [correct value omitted]\naaa group server tacacs+ MGMT-TAC\n [missing line here]\naaa authentication login VTY-AUTH group MGMT-TAC local"
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q19",
+    "type": "single",
+    "objectives": [
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "prompt": "Which targeted correction aligns this client with the verified RADIUS service?",
+    "options": [
+      "Change only acct-port to 1812 because authentication uses the accounting port.",
+      "Change the server's client IP to Admin-PC while retaining auth-port 1645.",
+      "Replace Morgan's password before changing the displayed destination port.",
+      "Change auth-port to 1812 while retaining the separately correct accounting port."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The client is sending authentication to 1645 while this service listens on 1812. Correct that explicit mismatch and verify a fresh login; neither a user secret nor the SSH client identity changes the destination port.",
+    "whyWrong": {
+      "0": "Authentication and accounting have distinct configured service ports.",
+      "1": "The NAS remains R1, and the port mismatch would persist.",
+      "2": "The request is addressed to the wrong service port before credentials can be evaluated."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "RADIUS port and service evidence",
+      "text": "R1: address ipv4 10.0.0.100 auth-port 1645 acct-port 1813\nServer: authentication listening on UDP 1812; accounting on UDP 1813\nNAS source, shared key and IP reachability are verified."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q08",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "VTY-AUTH = group MGMT-TAC local\nBefore fresh attempt: requests 10, timeouts 2\nAfter: requests 11, timeouts 3\nObserved method result: ERROR; local recovery accepted"
+    },
+    "prompt": "Which conclusion is supported by the current controlled test?",
+    "options": [
+      "The device has proved the exact fault is a wrong user password.",
+      "No central requests were sent because the counter increased only historically.",
+      "The central service rejected the user and that rejection authorized local fallback.",
+      "The selected central method could not complete the exchange, allowing its configured local fallback."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The test correlates new requests and timeouts with the selected method’s ERROR and local success. Investigate service/path/client/key settings; these counters do not identify one unique cause.",
+    "whyWrong": {
+      "0": "A timeout does not prove an incorrect user secret.",
+      "1": "The exhibit provides a before/after change for this fresh attempt.",
+      "2": "An explicit rejection would stop this authentication list."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q11",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Supplied AAA state and configuration",
+      "text": "aaa authentication login VTY-AUTH group MGMT-TAC local\naaa authorization exec default group MGMT-TAC\nServer method returns ERROR; local login succeeds; EXEC authorization fails.\nLocal recovery account has the approved privilege."
+    },
+    "prompt": "The approved outage policy allows defined local accounts with their local privilege levels. Which correction meets that policy?",
+    "options": [
+      "Add local as the fallback to the EXEC authorization list.",
+      "Enable console authorization to make the remote server reachable.",
+      "Remove local from login authentication so authorization no longer matters.",
+      "Add if-authenticated and treat it as exactly the same local-account check."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Authentication and EXEC authorization have separate method lists. A local EXEC fallback can enforce the stated local-account policy after central ERROR; if-authenticated is a different, broader decision and is not interchangeable.",
+    "whyWrong": {
+      "1": "Console authorization does not fix server reachability.",
+      "2": "Removing recovery authentication does not meet the required outage access policy.",
+      "3": "It does not perform the same local-user authorization policy check."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q23",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "prompt": "Which explanation fits a successful identity check followed by a denied shell?",
+    "options": [
+      "A central authentication PASS automatically overrides every later policy.",
+      "EXEC authorization is a separate permission decision that can deny shell access.",
+      "The console list must have replaced the VTY list after the password prompt.",
+      "A received accounting record must have changed the user's password."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Authentication and authorization are distinct stages. Inspect the configured EXEC policy and current authorization result rather than repeatedly changing a password the authentication method accepted.",
+    "whyWrong": {
+      "0": "Successful authentication does not promise shell permission.",
+      "2": "Bindings do not switch to the console list automatically.",
+      "3": "Accounting records do not change passwords."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two explicit results for one new SSH session",
+      "text": "Authentication result: PASS.\nEXEC authorization result: FAIL by central policy.\nShell not granted.\nThe intended login and EXEC lists are bound to this VTY."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q24",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "prompt": "What should happen after the RADIUS Access-Challenge?",
+    "options": [
+      "Treat it as final success and open the shell without the requested response.",
+      "Treat it as ERROR and try the local password immediately.",
+      "Treat it as Access-Reject and delete the central account.",
+      "Continue the supported authentication dialogue; no final acceptance has been shown."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Access-Challenge asks for further authentication information. It is neither final acceptance nor evidence that the method is unavailable; the client must support the requested exchange.",
+    "whyWrong": {
+      "0": "The challenge is not an Access-Accept.",
+      "1": "A challenge is an ongoing authentication exchange, not method ERROR.",
+      "2": "It is not an explicit rejection or a reason to remove the account."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Conventional RADIUS exchange",
+      "text": "NAS sends Access-Request.\nServer returns Access-Challenge with a prompt for further information.\nNo Access-Accept or Access-Reject has yet been received."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q21",
+    "type": "single",
+    "objectives": [
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "prompt": "Which configuration should be compared with the server's observed source before changing credentials?",
+    "options": [
+      "The user's shell-command policy and requested privilege level.",
+      "The NAS source selection and its server-side client registration.",
+      "The VTY idle timeout and the time of the last interactive command.",
+      "The SSH client address and the administrator's browser settings."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The server receives an unregistered NAS source even though a different client entry has the intended key. Verify how R1 selected that source and register the approved actual source with return reachability; do not substitute the administrator's SSH address.",
+    "whyWrong": {
+      "0": "The service cannot yet associate the request with the approved device client.",
+      "2": "Idle timeout does not change the AAA source identity.",
+      "3": "The browser profile does not select the router's AAA source."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Observed request and registered NAS identity",
+      "text": "Admin-PC SSH source: 10.0.0.50.\nServer received the AAA request from R1 address 10.255.33.1.\nApproved server client row currently recognizes only 10.0.0.1.\nServer reports unknown network client; user policy is not evaluated."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q22",
+    "type": "multi",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two separate checks are required before claiming the change meets the stated acceptance criteria? Choose two.",
+    "options": [
+      "Remove the local console list to make both paths use the new central method.",
+      "Treat the preexisting session as proof that the new method accepted it.",
+      "Verify actual receipt of the selected accounting records at the service.",
+      "Establish a new login through the changed VTY binding.",
+      "Assume authentication success records every command automatically."
+    ],
+    "answer": [
+      2,
+      3
+    ],
+    "explanation": "A session established before the edit does not exercise the new login path. Accounting has its own configured scope and delivery, so inspect the required records independently while preserving recovery.",
+    "whyWrong": {
+      "0": "That removes the independent recovery path without establishing either criterion.",
+      "1": "The session's original authentication predates the change.",
+      "4": "EXEC start/stop accounting is not per-command accounting."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Incomplete change acceptance",
+      "text": "Policy requires central authentication and EXEC start/stop records.\nThe VTY method list was edited while one SSH session stayed open.\nThat old session still accepts commands.\nNo new login or server accounting records have been checked."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q20",
+    "type": "single",
+    "objectives": [
+      "v2:4.1"
+    ],
+    "difficulty": 3,
+    "prompt": "Which next investigation is justified without replacing the user password yet?",
+    "options": [
+      "Assume the configured local fallback means the server sent Access-Reject.",
+      "Replace the SSH host key because the AAA response is missing.",
+      "Trace reply delivery to the NAS and verify the received response can be validated.",
+      "Clear every local account because a server-side reply was recorded."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The server reports a response, but the NAS did not record a usable one for this attempt. Follow the reverse path and client/key/protocol validation rather than equating a sent response with a completed NAS decision.",
+    "whyWrong": {
+      "0": "Fallback after ERROR is not evidence of a completed reject.",
+      "1": "The SSH transport already reached the separate AAA stage.",
+      "3": "Local account removal does not deliver or validate the central response."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Correlated fresh authentication attempt",
+      "text": "R1 selected MGMT-RAD; one request counter increment.\nServer capture: matching Access-Request arrives; Access-Accept sent.\nR1: no usable response recorded, timeout increases; group result ERROR.\nAn existing console remains local and available."
+    }
+  }
+]

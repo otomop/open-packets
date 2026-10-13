@@ -1,0 +1,94 @@
+[
+  {
+    "id": "client-os-troubleshooting-t01",
+    "title": "Local files work, but remote services time out",
+    "objectives": [
+      "v1:1.10",
+      "v2:1.6"
+    ],
+    "scenario": "A single-homed sales PC has no VPN or alternate routes. The verified network plan assigns 10.1.20.57/24 to this PC and 10.1.20.1 to its router. Address 10.1.20.254 is unused. A local file server at .20 responds. Other clients can reach the approved remote test server at 10.1.50.20. These are representative diagnostic observations.",
+    "exhibits": [
+      {
+        "title": "PC configuration",
+        "text": "DHCP Enabled: No\nIPv4 Address: 10.1.20.57\nSubnet Mask: 255.255.255.0\nDefault Gateway: 10.1.20.254\nDNS Server: 10.1.10.5"
+      },
+      {
+        "title": "Packet/route worksheet",
+        "text": "Only default route: 0.0.0.0/0 via 10.1.20.254\nRemote numeric test: 10.1.50.20\nObserved ARP: Who has 10.1.20.254? Tell 10.1.20.57\nNo reply to these ARP requests is observed."
+      }
+    ],
+    "question": "Which configuration fault is directly supported?",
+    "options": [
+      "A local DNS record is missing, so numeric off-link traffic has no destination",
+      "The default route selects unused .254 instead of the intended router .1",
+      "The client’s correct /24 forces .1 outside its directly connected network",
+      "The remote application listener is down, causing ARP for the wrong local next hop"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The plan, default route and fresh ARP requests agree: the client attempts to resolve the wrong next hop. The numeric test does not require DNS. A remote listener failure would not explain selecting an unused local gateway, and the shown /24 includes .1.",
+    "fix": "On this approved isolated/static client, open its adapter's IPv4 settings and retain 10.1.20.57 with mask 255.255.255.0 and DNS 10.1.10.5; correct only the default gateway to 10.1.20.1. Then test:\n\n```text\nping 10.1.20.1\narp -a\nping 10.1.50.20\n```\nInspect the fresh neighbor/route evidence and then test the intended DNS/application operation. A ping timeout alone would not have proven this cause; the configuration plan and ARP evidence support it."
+  },
+  {
+    "id": "client-os-troubleshooting-t03",
+    "title": "The intranet name fails while numeric web access works",
+    "objectives": [
+      "v1:1.10",
+      "v2:1.6"
+    ],
+    "scenario": "A single-homed client cannot open intranet.example. The approved plan names Server-A at 192.168.40.20 as its DNS resolver and 192.168.50.20 as the intranet server. There is no VPN, hosts-file override, browser DNS override or proxy in this isolated case. The observations below are authored and fresh.",
+    "exhibits": [
+      {
+        "title": "Client and numeric path",
+        "text": "Client: 192.168.40.120/24, gateway 192.168.40.1, DNS 192.168.40.20\nLocal peer: replies\nGateway: replies\nHTTP to 192.168.50.20: expected intranet page"
+      },
+      {
+        "title": "Fresh query and server-side check",
+        "text": "Query: intranet.example A, explicitly sent to 192.168.40.20\nAnswer: 192.168.50.99\nDNS administrator confirms the current A record is .50.99; this address is unused.\nApproved service address remains 192.168.50.20."
+      }
+    ],
+    "question": "Which narrow correction is supported by the combined evidence?",
+    "options": [
+      "Select a public DNS resolver so the internal service name uses another namespace",
+      "Correct the client’s gateway even though the tested routed HTTP service works",
+      "Change the local DNS server’s intranet A record to the approved .50.20 address",
+      "Renew the client’s address because the DNS response proves a failed lease"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The selected resolver matches the plan and responds, but its current record disagrees with the approved working service address. The numeric HTTP test supplies a control for the application path. Public DNS, gateway changes and DHCP renewal do not correct the demonstrated record.",
+    "fix": "In the isolated DNS service or through its authorized administrator, correct only intranet.example’s A record to 192.168.50.20. Query the same resolver again and confirm the new answer. If a client/application still uses cached data, use its supported refresh procedure or wait for expiration rather than changing routes. Then reopen the named intranet page and compare it with the known numeric service response. Keep the correct address, prefix, gateway and resolver selection."
+  },
+  {
+    "id": "client-os-troubleshooting-t04",
+    "title": "An old wireless address survives a failed new connection",
+    "objectives": [
+      "v2:1.6"
+    ],
+    "scenario": "A laptop previously worked on the isolated WPA2-Personal WLAN CCNA-LAB. Someone edited its saved passphrase and disconnected it. The intended AP profile and DHCP service have not changed. The current events below matter more than the old address still displayed by the client.",
+    "exhibits": [
+      {
+        "title": "Timeline and current status",
+        "text": "10:00 successful protected connection; DHCP address 192.168.40.120/24\n10:10 saved profile passphrase edited, then disconnected\n10:11 fresh attempt to CCNA-LAB fails key exchange\n10:12 old address .40.120 remains displayed; fresh gateway/application traffic fails"
+      },
+      {
+        "title": "Control and configuration check",
+        "text": "Wired control PC reaches the same DNS and web service.\nAP security: WPA2-Personal/AES; intended SSID CCNA-LAB.\nApproved credential comparison: the laptop’s edited passphrase differs.\nNo password values are included in this record."
+      }
+    ],
+    "question": "Which correction addresses the demonstrated cause?",
+    "options": [
+      "Restore the approved client credential, reconnect, then verify fresh network and application traffic",
+      "Keep the changed credential and widen the client prefix so its old lease remains on-link",
+      "Change the DHCP server’s default gateway because the laptop retains a valid-looking address",
+      "Replace the DNS A record because wired access excludes any wireless security failure"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The profile change, current key-exchange failure and approved credential mismatch identify the client security fault. A retained lease and a working wired control do not prove the current WLAN data path works.",
+    "fix": "On this isolated laptop, restore the approved WPA2-Personal profile credential without changing the AP or DHCP pool. Reconnect to the intended SSID and check the current security/connection state. If necessary, request a lease with the client’s supported procedure; inspect the actual address/prefix/gateway/DNS. Repeat the previously failing gateway and routed numeric tests, issue a fresh name query and open the required application. Record current observations, not just the old displayed address."
+  }
+]

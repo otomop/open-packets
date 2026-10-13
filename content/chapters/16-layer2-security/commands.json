@@ -1,0 +1,313 @@
+[
+  {
+    "id": "layer2-security-d01",
+    "task": "SW1 Fa0/1 is already a static access port. Enable its source-MAC security feature.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport port-security",
+    "accept": [],
+    "teaching": {
+      "sectionId": "port-security-who-may-talk-on-this-port",
+      "hint": "Ordinary MAC learning alone does not impose a secure-address limit.",
+      "takeaway": "Enabling port security establishes a limit and violation policy. It does not prove the identity of the device using an allowed MAC address.",
+      "syntax": [
+        {
+          "text": "switchport port-security",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d02",
+    "task": "Port security is enabled on Fa0/1. The approved phone-and-PC design needs exactly two secure MAC entries. Set that maximum.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport port-security maximum 2",
+    "accept": [],
+    "teaching": {
+      "sectionId": "port-security-who-may-talk-on-this-port",
+      "hint": "Count required secure entries, not just physical sockets.",
+      "takeaway": "The maximum is the total allowed secure entries, not the number of additional devices. Check the phone/data VLAN behavior rather than assuming every phone always needs the same allowance.",
+      "syntax": [
+        {
+          "text": "switchport port-security maximum",
+          "kind": "keyword"
+        },
+        {
+          "text": "2",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d03",
+    "task": "On Fa0/1, port security is enabled and only the approved endpoint is connected. Make newly learned secure MAC addresses become configuration entries.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport port-security mac-address sticky",
+    "accept": [],
+    "teaching": {
+      "sectionId": "port-security-who-may-talk-on-this-port",
+      "hint": "Choose the learning method that records addresses in running configuration.",
+      "takeaway": "Sticky learning records the learned addresses in running-config. Save afterward to retain them in startup-config; learning the first sender does not authenticate it.",
+      "syntax": [
+        {
+          "text": "switchport port-security mac-address sticky",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d04",
+    "task": "Fa0/1 already has an approved secure-address list. Select the violation response that drops and reports unauthorized sources while continuing to forward permitted traffic.",
+    "mode": "SW1(config-if)#",
+    "answer": "switchport port-security violation restrict",
+    "accept": [],
+    "teaching": {
+      "sectionId": "violation-modes-aging-and-err-disable-recovery",
+      "hint": "Compare reporting behavior and the effect on the entire port.",
+      "takeaway": "Restrict drops violating traffic and records violations while permitted sources continue. Protect omits that reporting; shutdown disables the port.",
+      "syntax": [
+        {
+          "text": "switchport port-security violation restrict",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d06",
+    "task": "A PC on Fa0/1 stopped communicating after an endpoint change. Inspect that port's security state, configured limit and violation count.",
+    "mode": "SW1#",
+    "answer": "show port-security interface fastethernet0/1",
+    "accept": [
+      "show port-security interface fa0/1"
+    ],
+    "teaching": {
+      "sectionId": "violation-modes-aging-and-err-disable-recovery",
+      "hint": "Use the security-specific interface display, not only ordinary link status.",
+      "takeaway": "Secure-shutdown identifies a current port-security outage. A nonzero historical violation count alone does not; compare current state and retest the approved endpoint after recovery.",
+      "syntax": [
+        {
+          "text": "show port-security interface",
+          "kind": "keyword"
+        },
+        {
+          "text": "fastethernet0/1",
+          "kind": "interface"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d17",
+    "task": "DHCP snooping is disabled globally on SW1. Enable the feature; VLAN selection and trust will be configured separately.",
+    "mode": "SW1(config)#",
+    "answer": "ip dhcp snooping",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dhcp-snooping-one-trusted-path-to-the-server",
+      "hint": "Enable the switch-wide feature before selecting client VLANs.",
+      "takeaway": "Global enablement alone does not inspect every VLAN. Verify the intended VLAN list and the authorized server-reply ingress before testing a new client lease.",
+      "syntax": [
+        {
+          "text": "ip dhcp snooping",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d07",
+    "task": "DHCP snooping is globally enabled on SW1, but VLAN 10 is not inspected. Enable inspection for that client VLAN.",
+    "mode": "SW1(config)#",
+    "answer": "ip dhcp snooping vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dhcp-snooping-one-trusted-path-to-the-server",
+      "hint": "The global process and the list of inspected VLANs are separate settings.",
+      "takeaway": "Both global enablement and VLAN selection are needed. A configured server-trust port cannot compensate for a client VLAN missing from the snooping policy.",
+      "syntax": [
+        {
+          "text": "ip dhcp snooping vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d08",
+    "task": "You are configuring SW1 Gi0/1, where replies from the only authorized DHCP server enter. Permit those server replies through the snooping boundary; client ports remain untrusted.",
+    "mode": "SW1(config-if)#",
+    "answer": "ip dhcp snooping trust",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dhcp-snooping-one-trusted-path-to-the-server",
+      "hint": "Follow the direction in which legitimate server messages enter this switch.",
+      "takeaway": "Trust belongs on the verified server-reply ingress. A trunk is not automatically trustworthy, and client ports should not gain permission to send server replies.",
+      "syntax": [
+        {
+          "text": "ip dhcp snooping trust",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d13",
+    "task": "A client obtained a lease after snooping was enabled. Display the switch records that associate its IP and MAC with a VLAN and access port.",
+    "mode": "SW1#",
+    "answer": "show ip dhcp snooping binding",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dhcp-snooping-one-trusted-path-to-the-server",
+      "hint": "The switch learns these records from DHCP exchanges; the server keeps a different lease table.",
+      "takeaway": "Compare the client's actual IP, MAC, VLAN and ingress port. A static printer may have no dynamic binding, and an old lease does not prove the switch observed a fresh exchange.",
+      "syntax": [
+        {
+          "text": "show ip dhcp snooping binding",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d15",
+    "task": "You are configuring SW1 Gi0/1, the controlled connection to a statically addressed router. The approved DAI design bypasses inspection only on this interface. Apply that trust.",
+    "mode": "SW1(config-if)#",
+    "answer": "ip arp inspection trust",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dynamic-arp-inspection-arp-must-match-the-bindings",
+      "hint": "DHCP-message trust does not automatically permit ARP claims.",
+      "takeaway": "DAI trust bypasses ARP inspection on this ingress. Keep endpoint ports inspected; the separate DHCP snooping trust setting does not provide this bypass.",
+      "syntax": [
+        {
+          "text": "ip arp inspection trust",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d10",
+    "task": "Fresh snooping bindings and the controlled router-facing ARP policy are ready. Enable Dynamic ARP Inspection on VLAN 10.",
+    "mode": "SW1(config)#",
+    "answer": "ip arp inspection vlan 10",
+    "accept": [],
+    "teaching": {
+      "sectionId": "dynamic-arp-inspection-arp-must-match-the-bindings",
+      "hint": "ARP validation is a separate feature from DHCP-message inspection.",
+      "takeaway": "DAI validates untrusted ARP claims against permitted bindings or policy. Prepare legitimate static-host exceptions before enabling it; an address exclusion alone does not authorize ARP.",
+      "syntax": [
+        {
+          "text": "ip arp inspection vlan",
+          "kind": "keyword"
+        },
+        {
+          "text": "10",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "layer2-security-d11",
+    "task": "On SW1 Fa0/2, configure broadcast suppression at 1% utilization and recovery below 0.5%, using percentage thresholds on a supporting Catalyst.",
+    "mode": "SW1(config-if)#",
+    "answer": "storm-control broadcast level 1.00 0.50",
+    "accept": [
+      "storm-control broadcast level 1 0.5",
+      "storm-control broadcast level 1.0 0.5"
+    ],
+    "teaching": {
+      "sectionId": "storm-control-and-ipv6-ra-guard",
+      "hint": "The first threshold enters suppression; the second controls when it ends.",
+      "takeaway": "The falling threshold must not exceed the rising threshold. These percentages measure the configured traffic class; storm suppression does not repair the underlying loop or traffic source.",
+      "syntax": [
+        {
+          "text": "storm-control broadcast level",
+          "kind": "keyword"
+        },
+        {
+          "text": "1.00",
+          "kind": "argument"
+        },
+        {
+          "text": "0.50",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "layer2-security-d18",
+    "task": "On a supporting Catalyst, policy HOSTS incorrectly has the router role. You are inside that policy. Correct its role for ordinary endpoint ports that must reject router advertisements.",
+    "mode": "SW1(config-nd-raguard)#",
+    "answer": "device-role host",
+    "accept": [],
+    "teaching": {
+      "sectionId": "control-ipv6-router-advertisements",
+      "hint": "An ordinary endpoint is not an authorized IPv6 router.",
+      "takeaway": "The host role rejects router messages under this policy. The policy must still be attached to the correct endpoint ports; defining it alone changes no ingress behavior.",
+      "syntax": [
+        {
+          "text": "device-role host",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "layer2-security-d12",
+    "task": "On a supporting Catalyst, you are configuring endpoint port Gi1/0/1. Policy HOSTS already has the host role. Attach it here so endpoint-originated router advertisements are filtered.",
+    "mode": "SW1(config-if)#",
+    "answer": "ipv6 nd raguard attach-policy HOSTS",
+    "accept": [],
+    "teaching": {
+      "sectionId": "control-ipv6-router-advertisements",
+      "hint": "A policy definition has no effect on a port until it is applied there.",
+      "takeaway": "Attach the host-role policy at the endpoint ingress. An authorized router needs its own permitted boundary; a policy name alone does not establish either role or enforcement.",
+      "syntax": [
+        {
+          "text": "ipv6 nd raguard attach-policy",
+          "kind": "keyword"
+        },
+        {
+          "text": "HOSTS",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  }
+]

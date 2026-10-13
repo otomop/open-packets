@@ -1,0 +1,82 @@
+[
+  {
+    "id": "exam-readiness-c32",
+    "front": "Does a course readiness score estimate Cisco’s passing score?",
+    "back": "No. Use it to prioritize revision and retain per-objective evidence; it is not a calibrated pass probability or official grading scale.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c37",
+    "front": "Why record a correct guess as a revision gap?",
+    "back": "A correct option without a defensible reason is weak evidence of understanding. Rework the decision with changed values and explain why the alternatives fail.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c38",
+    "front": "What makes a repeated lab attempt independent?",
+    "back": "Build or diagnose a fresh variation before opening the solution. Record the help used and preserve the first result separately from the corrected result.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c39",
+    "front": "How should an exam objective guide a practice task?",
+    "back": "Match its verb: describe and compare need clear explanations; configure, verify and troubleshoot need device or packet evidence. Check the blueprint version for your appointment.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c40",
+    "front": "What should follow a narrowly scoped repair?",
+    "back": "Repeat the original failed service test, check a permitted control and any required denial, then record the new state. An accepted command is not the same as restored service.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c41",
+    "front": "How do you distinguish an unperformed check from a failed check?",
+    "back": "Unperformed means no evidence was collected; failed means the stated test was run and did not meet its condition. Record unsupported simulator features separately and revisit them on a suitable platform.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c42",
+    "front": "What belongs in a useful mistake record?",
+    "back": "The objective, your original reasoning, the evidence you missed, the corrected rule and a fresh task to attempt later. Copying the answer alone does not show what changed in your reasoning.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c43",
+    "front": "How should blueprint weight affect a revision plan?",
+    "back": "Combine the weight with demonstrated gaps and available time. A high-weight weak domain deserves attention, but smaller domains still need coverage; a weighted course score is not a pass probability.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c44",
+    "front": "Why are mixed questions useful near the end of preparation?",
+    "back": "They require choosing the relevant concept without a chapter heading supplying it. Use unfamiliar values and explain your first choice before reading feedback.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c45",
+    "front": "Which source should settle an exam-day logistics question?",
+    "back": "The current Cisco policy, Pearson VUE program page and your appointment instructions. Check the delivery mode and date; do not turn a course note into a permanent rule.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

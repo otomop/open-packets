@@ -1,0 +1,317 @@
+{
+  "result": "passed",
+  "checks": 60,
+  "results": [
+    {
+      "item": "24-q10 / lab2",
+      "calculation": "excluded /24 hosts",
+      "result": 251
+    },
+    {
+      "item": "24-q10 / lab2",
+      "calculation": "eligible /24 hosts before bindings",
+      "result": 3
+    },
+    {
+      "item": "24-q10",
+      "calculation": "candidates remaining after three allocations",
+      "result": 0
+    },
+    {
+      "item": "24-q23",
+      "calculation": "ordinary /27 hosts",
+      "result": 30
+    },
+    {
+      "item": "24-q23",
+      "calculation": "eligible range .10 through .29",
+      "result": 20
+    },
+    {
+      "item": "24-q09",
+      "calculation": "default T1 hours for 12-hour lease",
+      "result": 6
+    },
+    {
+      "item": "24-lab",
+      "calculation": "default T1/T2 hours for 8-hour lease",
+      "result": [
+        4,
+        7
+      ]
+    },
+    {
+      "item": "24-lab9",
+      "calculation": "expanded .50 through .254 candidates",
+      "result": 205
+    },
+    {
+      "item": "24-challenge",
+      "calculation": "excluded addresses",
+      "result": 244
+    },
+    {
+      "item": "24-challenge",
+      "calculation": "remaining .50 through .59 candidates",
+      "result": 10
+    },
+    {
+      "item": "25-q12",
+      "calculation": "ordinary remaining TTL seconds",
+      "result": 82800
+    },
+    {
+      "item": "25-q12",
+      "calculation": "remaining TTL hours",
+      "result": 23
+    },
+    {
+      "item": "25-q22",
+      "calculation": "reverse lookup name",
+      "result": "80.1.1.10.in-addr.arpa"
+    },
+    {
+      "item": "25-challenge",
+      "calculation": "new reverse lookup name",
+      "result": "81.1.1.10.in-addr.arpa"
+    },
+    {
+      "item": "26-q24",
+      "calculation": "inclusive pool capacity",
+      "result": 4
+    },
+    {
+      "item": "26-q24",
+      "calculation": "shortfall for five simultaneous address allocations",
+      "result": 1
+    },
+    {
+      "item": "26-q24",
+      "calculation": "pool endpoints inside allocated /28",
+      "result": true
+    },
+    {
+      "item": "26-q27",
+      "calculation": "incorrect /32 takes precedence over correct pool route",
+      "result": "wrong neighbor"
+    },
+    {
+      "item": "26-lab11",
+      "calculation": "remaining illustrative lifetime seconds",
+      "result": 25
+    },
+    {
+      "item": "26-challenge",
+      "calculation": "static public service address inside return /28",
+      "result": true
+    },
+    {
+      "item": "26-challenge",
+      "calculation": "published inside service shares client LAN",
+      "result": true
+    },
+    {
+      "item": "27-q16 / lab12",
+      "calculation": "octet delta",
+      "result": 37500000
+    },
+    {
+      "item": "27-q16 / lab12",
+      "calculation": "mean bits/s",
+      "result": 10000000
+    },
+    {
+      "item": "27-lab12",
+      "calculation": "directional utilization percent",
+      "result": 10
+    },
+    {
+      "item": "27-challenge",
+      "calculation": "mean bits/s",
+      "result": 12000000
+    },
+    {
+      "item": "27-challenge",
+      "calculation": "directional utilization percent",
+      "result": 12
+    },
+    {
+      "item": "27-lab3",
+      "calculation": "selected stratum-8 upstream gives stratum 9 locally",
+      "result": 9
+    },
+    {
+      "item": "27-challenge",
+      "calculation": "warnings threshold excludes notification severity 5",
+      "result": false
+    },
+    {
+      "item": "27-challenge",
+      "calculation": "warnings threshold permits error severity 3",
+      "result": true
+    },
+    {
+      "item": "28-lab1",
+      "calculation": "packets/s",
+      "result": 50
+    },
+    {
+      "item": "28-lab1",
+      "calculation": "one-call Layer 3 bits/s",
+      "result": 80000
+    },
+    {
+      "item": "28-lab1",
+      "calculation": "two-call offered rate exceeds supplied allowance",
+      "result": true
+    },
+    {
+      "item": "28-lab4",
+      "calculation": "new priority exceed drops",
+      "result": 500
+    },
+    {
+      "item": "28-lab8",
+      "calculation": "AF21 decimal",
+      "result": 18
+    },
+    {
+      "item": "28-AF32",
+      "calculation": "AF32 decimal",
+      "result": 28
+    },
+    {
+      "item": "28-lab8",
+      "calculation": "AF21 DS byte with ECN zero",
+      "result": "48"
+    },
+    {
+      "item": "28-q15",
+      "calculation": "serialization milliseconds",
+      "result": 12
+    },
+    {
+      "item": "28-t02",
+      "calculation": "new policer drops",
+      "result": 720
+    },
+    {
+      "item": "28-challenge",
+      "calculation": "burst exceeds service while average is below it",
+      "result": [
+        true,
+        true
+      ]
+    },
+    {
+      "item": "29-storage",
+      "calculation": "remaining bytes",
+      "result": 110000000
+    },
+    {
+      "item": "29-lab9",
+      "calculation": "probe file bytes including newline",
+      "result": 30
+    },
+    {
+      "item": "29-challenge",
+      "calculation": "handover file bytes including newline",
+      "result": 25
+    },
+    {
+      "item": "30-lab2",
+      "calculation": "inclusive DHCP range size",
+      "result": 50
+    },
+    {
+      "item": "30-lab2",
+      "calculation": "static server and new client outside pool",
+      "result": true
+    },
+    {
+      "item": "30-lab8",
+      "calculation": "remote endpoint incorrectly on-link with /16",
+      "result": true
+    },
+    {
+      "item": "30-lab9",
+      "calculation": "remote endpoint off-link with intended /24",
+      "result": false
+    },
+    {
+      "item": "30-challenge",
+      "calculation": "/27 block size",
+      "result": 32
+    },
+    {
+      "item": "30-challenge",
+      "calculation": "router, server and unused .30 in same /27",
+      "result": true
+    },
+    {
+      "item": "30-challenge",
+      "calculation": "ordinary /27 host range and broadcast octet",
+      "result": [
+        1,
+        30,
+        31
+      ]
+    },
+    {
+      "item": "30-challenge",
+      "calculation": "local resolver and real gateway remain on-link",
+      "result": true
+    },
+    {
+      "item": "30-q17",
+      "calculation": "longest matching route before metric",
+      "result": "VPN service route"
+    },
+    {
+      "item": "30-q17",
+      "calculation": "other destination uses preferred default",
+      "result": "Ethernet default"
+    },
+    {
+      "item": "31-q18",
+      "calculation": "new input packets",
+      "result": 2000000
+    },
+    {
+      "item": "31-q18",
+      "calculation": "new CRC errors",
+      "result": 0
+    },
+    {
+      "item": "31-q25",
+      "calculation": "new output drops",
+      "result": 100
+    },
+    {
+      "item": "31-challenge",
+      "calculation": ".50 matches discard exception",
+      "result": "Null0 discard"
+    },
+    {
+      "item": "31-challenge",
+      "calculation": ".60 uses network route",
+      "result": "R1 transit next hop"
+    },
+    {
+      "item": "31-challenge",
+      "calculation": "router address uses network route",
+      "result": "R1 transit next hop"
+    },
+    {
+      "item": "33-challenge",
+      "calculation": "loopback NAS source is off server LAN",
+      "result": false
+    },
+    {
+      "item": "33-challenge",
+      "calculation": "server gateway is on server LAN",
+      "result": true
+    }
+  ],
+  "limits": "Authored arithmetic and supplied route decisions only; no networking device or simulator execution."
+}

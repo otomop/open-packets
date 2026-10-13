@@ -1,0 +1,694 @@
+[
+  {
+    "id": "troubleshooting-toolkit-q01",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Bounded ping result",
+      "text": "Sending 5, 100-byte ICMP Echos; timeout 2 seconds:\n.!!!!\nSuccess rate: 80 percent (4/5)"
+    },
+    "prompt": "What does this ping result establish?",
+    "options": [
+      "The destination enforced a four-reply ICMP limit for this source.",
+      "One request did not receive a reply within its wait; the cause needs more evidence.",
+      "A routing update installed the route immediately after the first request.",
+      "The first request was definitely discarded during ARP resolution."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The period reports a timeout and the four exclamation marks report replies. ARP startup delay is one possible explanation; repeat the test and correlate a current ARP/capture observation before assigning that cause.",
+    "whyWrong": {
+      "0": "Four replies do not establish a configured response limit.",
+      "2": "No routing change is shown.",
+      "3": "The output contains no ARP observation."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q02",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Ping response characters",
+      "text": "R1# ping 10.0.50.1\nU.U.U\nSuccess rate: 0 percent"
+    },
+    "prompt": "What conclusion follows from the U characters?",
+    "options": [
+      "Destination-unreachable responses were reported for some probes.",
+      "The source router had no usable interface for every probe.",
+      "The destination application accepted and then closed its connections.",
+      "Each period proves a fixed 500-ms ICMP response limiter on R2."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "U indicates unreachable evidence, unlike a period indicating a wait expired. Inspect the ICMP source and code, then routing/policy, rather than infer one device or a fixed rate limiter from the pattern.",
+    "whyWrong": {
+      "1": "The display does not establish all interfaces were unusable.",
+      "2": "Echo testing does not create an application connection.",
+      "3": "The pattern alone supplies neither the timer nor its location."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q03",
+    "type": "multi",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements correctly compare conventional IOS traceroute and Windows tracert? Select two.",
+    "options": [
+      "IOS normally uses ICMP echo while Windows normally uses UDP.",
+      "Windows tracert normally uses ICMP echo requests.",
+      "IOS normally uses UDP probes toward high destination ports.",
+      "Both tools must use the same probe transport to discover any hops."
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "Both use increasing TTL to obtain transit time-exceeded responses. Their probe protocols differ, which matters when comparing source and policy paths.",
+    "whyWrong": {
+      "0": "This reverses the conventional implementations described here.",
+      "3": "Different probe transports can elicit TTL-expiry responses; their policies may differ."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q11",
+    "type": "multi",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements about these tables are accurate? Select two.",
+    "options": [
+      "An absent ARP entry proves the host has never received a neighbor reply.",
+      "A dynamic MAC entry identifies a VLAN/port that learned that source MAC.",
+      "An incomplete ARP entry shows resolution is incomplete at this observation.",
+      "A learned MAC establishes the host has the correct mask and gateway."
+    ],
+    "answer": [
+      1,
+      2
+    ],
+    "explanation": "The tables describe different current mappings. Aging, clearing, and recent traffic affect their contents; neither alone certifies host addressing or all historical communication.",
+    "whyWrong": {
+      "0": "Entries can age or be cleared after earlier successful communication.",
+      "3": "MAC learning does not inspect the host mask/gateway as proof of correctness."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q05",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Routed Ethernet state",
+      "text": "Gi0/1 10.0.99.1 YES manual down down"
+    },
+    "prompt": "On this routed Ethernet interface, what should be investigated first?",
+    "options": [
+      "Remove a local shutdown command, which this status explicitly proves.",
+      "Change the IP mask before checking whether either end has carrier.",
+      "Replace the cable immediately because down/down uniquely proves its failure.",
+      "Inspect local media and the connected peer's current link state."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Down/down directs attention to physical/link availability and the peer. It does not uniquely identify a cable defect; a local shutdown normally has the distinct administratively-down status.",
+    "whyWrong": {
+      "0": "A local shutdown normally has the distinct administratively-down state.",
+      "1": "The IP mask does not restore physical link detection.",
+      "2": "The peer may be disabled or unpowered; this display does not isolate the cable."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q06",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Both-end duplex and current counters",
+      "text": "SW1 Fa0/24: 100 Mb/s, half duplex; late collisions rose 40→65\nR1 Gi0/0: speed 100; duplex full"
+    },
+    "prompt": "Which demonstrated problem should be corrected before further performance testing?",
+    "options": [
+      "Late collisions establish damaged copper regardless of the peer settings.",
+      "The displayed half/full settings establish a duplex mismatch.",
+      "The rising late collisions measure output-queue congestion.",
+      "The two 100-Mb/s values establish a negotiated speed mismatch."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Half duplex at SW1 and full duplex at R1 establishes a mismatch. Coordinate matching supported settings at both ends, then compare new error increments; clean CRC alone does not certify media.",
+    "whyWrong": {
+      "0": "The configuration directly establishes duplex disagreement; the counter alone cannot isolate copper damage.",
+      "2": "Late collisions are not output-queue drops.",
+      "3": "Both displayed speeds match at 100 Mb/s."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q04",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Trace with a silent intermediate hop",
+      "text": "1 10.0.99.2 1 ms\n2 * * *\n3 203.0.113.10 4 ms"
+    },
+    "prompt": "A web application is slow. Which interpretation of this trace is justified?",
+    "options": [
+      "The destination replies certify that HTTP performance is normal.",
+      "The three stars establish three seconds of forwarding delay for each user packet.",
+      "The third router dropped every packet and caused the slow application.",
+      "Later probes received replies, so the middle stars alone do not prove a forwarding break."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "A star is a missing probe response within the wait. Later replies weaken the claim of a complete path break, but load sharing, response policy, and application behavior still require investigation.",
+    "whyWrong": {
+      "0": "Traceroute does not test the HTTP transaction.",
+      "1": "A response timeout is not a measurement of per-packet forwarding delay.",
+      "2": "Later responses contradict an assertion that all traffic necessarily stops there."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q08",
+    "type": "single",
+    "objectives": [
+      "v1:4.5",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Logging threshold and two messages",
+      "text": "logging trap warnings\n%LINK-3-UPDOWN: Gi0/1 changed state to down\n%LINEPROTO-5-UPDOWN: Gi0/1 line protocol changed state to down"
+    },
+    "prompt": "Which shown message is eligible for remote syslog at the configured threshold?",
+    "options": [
+      "Neither message is selected because warnings means exactly severity 4.",
+      "Only the severity-5 LINEPROTO message is selected by this threshold.",
+      "Both messages are selected because both concern the same interface.",
+      "Only the severity-3 LINK message is selected by this threshold."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Warnings admits severity 4 and lower-numbered, more severe messages. This selects the severity-3 message; actual receipt still requires a working logging path.",
+    "whyWrong": {
+      "0": "The threshold includes more severe levels, not just exact level 4.",
+      "1": "Severity 5 is less severe than the configured level 4 threshold.",
+      "2": "Each message is filtered by its own severity."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q09",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Client-side TCP exchange",
+      "text": "10.0.10.50:49153 → 10.0.20.10:8080 SYN\n10.0.20.10:8080 → 10.0.10.50:49153 RST,ACK"
+    },
+    "prompt": "What does this client-side TCP observation support?",
+    "options": [
+      "A matching reset was received; identify the generating endpoint or intermediary before attributing the refusal.",
+      "The reset proves the client cannot receive any packet from that direction.",
+      "The SYN was silently discarded and no response reached the client.",
+      "The capture alone proves the application server itself generated the reset."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The reset is an active response, unlike silence. A firewall or intermediary can generate resets using the endpoint address, so correlate server-side capture and service status before declaring the server process at fault.",
+    "whyWrong": {
+      "1": "The reset itself arrived from that direction.",
+      "2": "The matching RST is an observed response.",
+      "3": "The observed source address alone does not exclude an intermediary."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q12",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Received ICMP error",
+      "text": "10.0.99.2 → 10.0.10.50\nICMP Destination Unreachable: communication administratively prohibited (type 3, code 13)"
+    },
+    "prompt": "Which next check is supported by the received ICMP error?",
+    "options": [
+      "Replace the missing default route that this code uniquely identifies.",
+      "Correct the expired TTL that is explicitly reported in this message.",
+      "Inspect administrative forwarding policy at the reporting device and the matching flow.",
+      "Repair ARP for the destination because this is a host-unreachable code."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Type 3 code 13 reports administrative prohibition. It supports investigating policy, but does not identify one exact ACL line without further configuration/counter evidence.",
+    "whyWrong": {
+      "0": "No-route evidence would be a different unreachable reason.",
+      "1": "TTL expiry uses time-exceeded rather than this administrative prohibition.",
+      "3": "Host unreachable is a different code."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q13",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "On supporting IOS, which bounded command compares a 1500-byte IPv4 datagram with the path MTU?",
+    "options": [
+      "ping 10.0.20.10 source 10.0.10.1 repeat 5 size 1500 df-bit",
+      "ping 10.0.20.10 source 10.0.10.1 repeat 5 size 1472",
+      "ping 10.0.20.10 source 10.0.10.1 repeat 5 size 100 df-bit",
+      "ping 10.0.20.10 source 10.0.10.1 repeat 5 size 1500"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "IOS size specifies the datagram size in this command and df-bit prevents fragmentation. A received fragmentation-needed error is informative; a timeout alone does not prove the MTU value.",
+    "whyWrong": {
+      "1": "That requests a different IOS datagram size, not 1500.",
+      "2": "A 100-byte datagram does not perform the requested large-size comparison.",
+      "3": "Without DF, IPv4 fragmentation can occur."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q15",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Two independent switch-port conditions",
+      "text": "Fa0/3: err-disabled\nFa0/4: inactive, configured access VLAN 30\nshow vlan brief: VLAN 30 absent"
+    },
+    "prompt": "The design requires VLAN 30 on Fa0/4. Which action pair follows the supplied evidence?",
+    "options": [
+      "Move both ports to an existing VLAN without checking their intended subnets.",
+      "Replace both cables before inspecting the recorded state and VLAN database.",
+      "Inspect Fa0/3's protection cause and restore the intended VLAN 30 for Fa0/4.",
+      "Enable Fa0/3 without checking why its protection acted."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Err-disabled requires its recorded cause and corrective action before controlled recovery. The explicit VLAN inventory identifies the missing intended VLAN for Fa0/4; do not move clients into an unrelated network.",
+    "whyWrong": {
+      "0": "That changes the documented VLAN design without repairing its missing object.",
+      "1": "The two displayed conditions do not establish physical cable damage.",
+      "3": "Recovery without resolving the triggering cause can repeat the failure."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which statement describes errors during the measured interval?",
+    "options": [
+      "There were 900 new CRC errors during this transfer.",
+      "The retained total proves that the present cable must be replaced.",
+      "The 2,000,000 packets prove that no loss occurred elsewhere.",
+      "No new CRC errors were counted on this interface during the interval."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The CRC counter remained 900, so its delta is zero. Preserve that distinction between history and this test; a clean delta on one interface is not an end-to-end certification.",
+    "whyWrong": {
+      "0": "Nine hundred is the retained total, not the difference.",
+      "1": "The retained count lacks evidence of a current cable fault.",
+      "2": "One receive count cannot prove delivery across the whole path."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Counters bracketing one controlled transfer",
+      "text": "Same interface; no counter clear or reboot.\nBefore: 1,000,000 input packets; 900 CRC\nAfter: 3,000,000 input packets; 900 CRC"
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q22",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "What should the investigation focus on next for this transaction?",
+    "options": [
+      "Inspect the responding application and its dependencies for the reported failure.",
+      "Change the client resolver and repeat the same lookup before examining the service.",
+      "Add a host route to the approved server to repair the unsuccessful request.",
+      "Raise the TCP connection timeout and retry before checking the service response."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The completed connection and received application response prove more than a ping. The service reports temporary unavailability for this request; investigate that service and its dependencies without declaring unrelated traffic healthy.",
+    "whyWrong": {
+      "1": "The observed lookup already returned the approved address.",
+      "2": "A complete TCP exchange and HTTP response do not justify this route change.",
+      "3": "The request received an explicit response; this is not an uncompleted TCP connection attempt."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "One captured application transaction",
+      "text": "Intended name resolves to the approved IPv4 address.\nTCP SYN, SYN-ACK, ACK complete for that address.\nHTTP response to the request: 503 Service Unavailable."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q23",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which evidence is still required before closing the incident?",
+    "options": [
+      "A repeat of R1's successful directly connected peer ping.",
+      "A screenshot showing the exact intended configuration line.",
+      "A fresh original-service test from the affected client.",
+      "An updated uptime display after restarting the router."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A route change and router test do not cover the affected client's whole path or application. Retest its original service and record the source, destination/name, result and any remaining limitation.",
+    "whyWrong": {
+      "0": "The local router test exercises a narrower path.",
+      "1": "Configuration shows intent, not successful delivery.",
+      "3": "A restart is not an acceptance test and may erase useful evidence."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Repair acceptance record",
+      "text": "Original complaint: PC-A cannot load the named application.\nA missing route was restored.\nR1 can ping the server.\nNo PC-A application test has been repeated."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q16",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Same DHCP attempt at two capture points",
+      "text": "Server-side: relayed Discover received; Offer sent to giaddr 10.0.10.1\nClient-side: Discover transmitted; no Offer observed in the same interval"
+    },
+    "prompt": "Which conclusion is justified by these captures from the same fresh DHCP attempt?",
+    "options": [
+      "Investigate delivery of the Offer from the server through the relay to the client.",
+      "The client certainly received the ACK but lost its default gateway setting.",
+      "The helper must be absent because no server reply can exist without it.",
+      "The server certainly had no matching pool and never constructed an Offer."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The server-side observation shows an outgoing Offer while the client-side view does not show receipt. Narrow the investigation to return and relay delivery, including capture coverage; do not assert a unique fault yet.",
+    "whyWrong": {
+      "1": "No ACK receipt is shown.",
+      "2": "A forwarded Discover and outgoing reply have already been observed.",
+      "3": "An outgoing Offer contradicts the claim that none was constructed."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q19",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which follow-up preserves the useful distinction between the two probe results?",
+    "options": [
+      "Treat the error as evidence of a size constraint; inspect the reported MTU and a smaller DF probe.",
+      "Treat both tests as proof that the server is down at every packet size.",
+      "Replace DNS settings because a larger numeric-address probe cannot resolve the name.",
+      "Remove DF and call the original unfragmented-size requirement verified if a reply arrives."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A received fragmentation-needed error positively reports a constraint for that DF packet. Correlate its source and any next-hop MTU value, then compare a smaller packet with the same source and destination; fragmentation-permitted success answers a different question.",
+    "whyWrong": {
+      "1": "The smaller probe already received replies.",
+      "2": "The test already uses a numeric address.",
+      "3": "Fragmented delivery does not verify the original unfragmented requirement."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Controlled IPv4 size comparison",
+      "text": "Same source and destination, ordinary 20-byte IPv4 header.\n100-byte DF datagrams receive replies.\n1500-byte DF datagrams receive ICMP fragmentation-needed errors.\nNo numeric next-hop MTU has yet been read."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q20",
+    "type": "single",
+    "objectives": [
+      "v1:4.5",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which incident note is defensible before comparing these event times?",
+    "options": [
+      "R2 must have caused R1's event because its printed time is earlier.",
+      "Record each clock's uncertainty and correlate a shared observation before ordering the events.",
+      "Use the collector's arrival order as proof of the devices' event order.",
+      "Subtract the displayed times and report a measured propagation delay."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Different unverified clocks do not provide a reliable cross-device timeline. Preserve their original text and obtain synchronization/offset or a shared observation before asserting which event preceded the other.",
+    "whyWrong": {
+      "0": "Printed times on unverified clocks do not establish causality.",
+      "2": "Collection paths and buffering can change arrival order.",
+      "3": "The difference includes unknown clock offsets."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Log times from two devices",
+      "text": "R1: *10:15:01 link event; clock not authoritative\nR2: 10:14:58 neighbor event; synchronization not checked\nCollector receives R1's message first."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q24",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which narrow next action fits the remaining failure?",
+    "options": [
+      "Undo the route repair and return to investigating the original missing route.",
+      "Correct the stale DNS record, then test a fresh answer and the named application.",
+      "Clear only the client DNS cache and close the incident after a numeric-address test.",
+      "Assign the server the stale address .99 to avoid changing the DNS service."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The restored numeric-address service and fresh wrong answer identify a separate DNS-data problem. Preserve both findings and validate the original name-based service after correcting the record.",
+    "whyWrong": {
+      "0": "The repaired path now carries the numeric-address service, and the DNS data shows a separate fault.",
+      "2": "A fresh direct response from the resolver is already wrong; a client cache clear does not repair that configured record.",
+      "3": "The approved server remains .10, so renumbering it to match stale DNS changes the design unnecessarily."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Checks after a routing repair",
+      "text": "Approved server: 10.31.20.10.\nPC-A HTTP to 10.31.20.10 now succeeds.\nFresh direct query to its intended resolver: app.lab.example A = 10.31.20.99.\nThe DNS configuration confirms that stale address; .99 is unused."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q25",
+    "type": "multi",
+    "objectives": [
+      "v1:1.4",
+      "v2:2.4"
+    ],
+    "difficulty": 2,
+    "prompt": "Which two conclusions are supported before a repair is chosen? Choose two.",
+    "options": [
+      "This interface has counted new outgoing drops during the interval.",
+      "The clean CRC count certifies every cable in the network.",
+      "Raising a buffer limit would guarantee recovery without any further evidence.",
+      "The switch must have a duplex mismatch despite both endpoints showing full.",
+      "The displayed queue evidence is relevant to local egress congestion."
+    ],
+    "answer": [
+      0,
+      4
+    ],
+    "explanation": "Current outgoing drops and a full egress queue point toward congestion at this observation point. They do not uniquely identify its source, prescribe one fix, or certify the rest of the path.",
+    "whyWrong": {
+      "1": "A clean receive counter on one interface does not certify all media.",
+      "2": "Traffic demand, scheduling and downstream capacity still matter.",
+      "3": "The stated duplex settings agree."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Current egress observations",
+      "text": "During one test: output drops 50→150.\nReceive CRC unchanged at 0.\nBoth endpoints operate full duplex.\nThe egress queue reaches its configured limit during the test."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q07",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Tests with different source addresses",
+      "text": "R1 source 10.0.99.1 → 10.0.20.10: success\nR1 source 10.0.10.1 → 10.0.20.10: failure\nPC-A 10.0.10.50/24: local gateway ping succeeds"
+    },
+    "prompt": "R1 can ping the server from its transit source, but not from its LAN source. What should the engineer check next?",
+    "options": [
+      "Retest from the transit source and close the issue if it succeeds again.",
+      "Add another R1 route to the server subnet before checking the reply destination.",
+      "Inspect the server return routes and source-dependent policy for the LAN source.",
+      "Replace the PC access cable, then repeat only the router-source test."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Changing the source changes the return destination and may change policy handling. The failed sourced test supports investigating those differences; it does not alone prove a missing route.",
+    "whyWrong": {
+      "0": "The transit source does not test replies toward the failed LAN source.",
+      "1": "The successful transit-source test and changed reply destination call for return/policy investigation before another forward-route change.",
+      "3": "The failed router-originated LAN-source test does not traverse the PC access cable."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q17",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 3,
+    "prompt": "Which next measurement best tests whether the observed capture gap is actual path loss?",
+    "options": [
+      "Count the analyzer warnings and report that count as packets lost on the server link.",
+      "Run a short ping after the transfer and use its loss percentage as the TCP loss rate.",
+      "Capture a different successful flow and use that result to dismiss the original gaps.",
+      "Compare a complete capture at a second point for the same flow and interval."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The analyzer reports what its captured sequence history lacks. The capture itself dropped packets, so corroborate the same flow elsewhere before attributing loss to a network link.",
+    "whyWrong": {
+      "0": "The capture dropped packets itself, so missing sequence history does not count losses on an identified network link.",
+      "1": "A later ICMP sample is not the same TCP flow or observation interval.",
+      "2": "A different flow may take different treatment and does not corroborate the missing sequence history."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Capture coverage and application evidence",
+      "text": "Client transfer completes, but intermittently slowly.\nCapture tool reports dropped capture packets.\nWireshark labels a gap: Previous segment not captured.\nNo second capture or current interface counter interval is available."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q21",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 3,
+    "prompt": "Which next check most directly separates a wrong server return next hop from a forward-path failure?",
+    "options": [
+      "Install another R2 route to the client subnet before examining the server route.",
+      "Inspect the server's selected route and neighbor resolution for the client reply.",
+      "Ping the server from R2 and treat that reply as proof of the client return path.",
+      "Capture the client gateway ARP exchange again before examining reply forwarding."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The server-side capture confirms the tested request arrived. Its route and selected next-hop resolution are now useful discriminators for the missing reply; the capture alone does not establish whether the application generated one.",
+    "whyWrong": {
+      "0": "A matching R2 return route is already supplied; the server next-hop choice is the missing dependency under investigation.",
+      "2": "A reply to R2 uses a different destination and does not settle how the server returns to the client.",
+      "3": "The request reached the server, so the unresolved return next hop is more directly discriminating here."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Matched observations for one attempt",
+      "text": "Client 10.31.10.50 sends to server 10.31.20.10.\nServer capture sees that request. Client capture sees no reply.\nServer is /24; its route/default-gateway configuration has not been inspected.\nR2 route to 10.31.10.0/24 is present."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q26",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 3,
+    "prompt": "What is the most useful next test for the original client failure?",
+    "options": [
+      "Capture only R1-originated replies and use them to clear the client access path.",
+      "Repeat the router-source service test until five successive attempts pass.",
+      "Compare client-source policy and the client-facing ingress path.",
+      "Increase the client's retry timeout before comparing how its flow is handled."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The router-source test does not traverse the client-facing ingress path and uses a different source address. Compare the actual client flow and both policy directions before concluding the paths are equivalent.",
+    "whyWrong": {
+      "0": "Router-originated replies do not establish treatment of the actual client source or ingress.",
+      "1": "Repeated router tests still omit client ingress and use a different source.",
+      "3": "The supplied source/path difference deserves investigation before changing a client timer."
+    },
+    "exhibit": {
+      "kind": "cli",
+      "title": "Different-origin test paths",
+      "text": "PC-A reaches its gateway but cannot reach a remote service.\nR1 reaches that service with source set to its LAN interface address.\nPC-A's address, mask and gateway match the plan.\nClient-source policy and ingress handling have not been checked."
+    }
+  }
+]

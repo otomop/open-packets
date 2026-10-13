@@ -1,0 +1,55 @@
+[
+  {
+    "id": "virtualization-t01",
+    "title": "A BLUE client cannot reach a remote service",
+    "objectives": [
+      "v1:1.12"
+    ],
+    "scenario": "R1's BLUE interfaces are Gi0/1 10.10.10.1/24 and Gi0/3 198.51.100.2/30. The isolated global table has no connected networks. BLUE can ping its next hop 198.51.100.1. An approved default route was recently added. Client 10.10.10.10/24 uses gateway 10.10.10.1 but cannot open the approved HTTP test service at 203.0.113.20. The far end has a verified return route to BLUE's client subnet.",
+    "exhibits": [
+      {
+        "title": "Representative route/context evidence",
+        "text": "BLUE: C 10.10.10.0/24 via Gi0/1\nBLUE: C 198.51.100.0/30 via Gi0/3\nBLUE: Gateway of last resort is not set\nRunning config: ip route 0.0.0.0 0.0.0.0 198.51.100.1"
+      }
+    ],
+    "question": "Which local configuration error does this evidence establish?",
+    "options": [
+      "The BLUE interface was assigned to the wrong client VLAN",
+      "The approved default route was configured in the global context",
+      "The next hop is unreachable within BLUE's connected WAN subnet",
+      "The far end lacks a route back to the BLUE client subnet"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The route lacks vrf BLUE, while BLUE's table has only connected routes. The successful BLUE next-hop test also contradicts a simple loss of that adjacency. Correct the context and then verify the remote service and return path; a new route alone does not prove end-to-end recovery.",
+    "fix": "```ios\nR1# configure terminal\nR1(config)# no ip route 0.0.0.0 0.0.0.0 198.51.100.1\nR1(config)# ip route vrf BLUE 0.0.0.0 0.0.0.0 198.51.100.1\nR1(config)# end\nR1# show ip route vrf BLUE\n```\nRepeat a BLUE-sourced service test and verify the far-end return route.\nFrom client 10.10.10.10, reopen http://203.0.113.20 after the context correction. Confirm the BLUE route and the original service, rather than only a router-local ping."
+  },
+  {
+    "id": "virtualization-t02",
+    "title": "A newly added guest network cannot reach its gateway",
+    "objectives": [
+      "v1:1.12",
+      "v2:2.2.d"
+    ],
+    "scenario": "A host sends VLANs 10 and 20 tagged through its sole uplink to SW1 Gi0/1. Both VLANs exist on SW1 and their remote gateways respond from other access ports. No port-security policy is configured. VLAN 10 guests work; VLAN 20 guests do not.",
+    "exhibits": [
+      {
+        "title": "Representative SW1 trunk configuration",
+        "text": "interface GigabitEthernet0/1\n switchport mode trunk\n switchport trunk native vlan 999\n switchport trunk allowed vlan 10,999\nOperational status: trunking"
+      }
+    ],
+    "question": "Which change addresses the demonstrated mismatch?",
+    "options": [
+      "Add VLAN 20 to the physical trunk's allowed list",
+      "Make VLAN 20 native so the tagged guest no longer needs an allowed entry",
+      "Move both guest VLANs onto a single access VLAN",
+      "Replace the host's matching VLAN 20 gateway address"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The host transmits VLAN 20 tags, but the physical trunk explicitly excludes VLAN 20. The provided evidence rules out missing VLAN creation and configured port security. Reintroduce the VLAN and verify the host-to-gateway path in both VLANs.",
+    "fix": "```ios\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# switchport trunk allowed vlan add 20\nSW1(config-if)# end\nSW1# show interfaces trunk\nSW1# show mac address-table\n```\nGenerate fresh traffic from a VLAN 20 guest and check gateway reachability.\nRepeat the previously successful VLAN 10 guest test too, confirming the existing service was preserved."
+  }
+]

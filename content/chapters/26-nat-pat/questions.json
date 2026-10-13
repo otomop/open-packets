@@ -1,0 +1,747 @@
+[
+  {
+    "id": "nat-pat-q21",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which property distinguishes ordinary dynamic NAT without overload from PAT?",
+    "options": [
+      "Dynamic NAT encrypts each client's application payload before forwarding.",
+      "Dynamic NAT allocates separate global addresses for active inside-address mappings.",
+      "Dynamic NAT installs the provider's return routes when it creates the pool.",
+      "Dynamic NAT uses an interface filter instead of a translation selector."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Without overload, ordinary dynamic mappings do not share a global address among different active inside addresses. PAT supplies sharing through flow distinctions; both still need routing and any required security policy.",
+    "whyWrong": {
+      "0": "NAT is not an encryption mechanism.",
+      "2": "Creating a pool does not install another router's routes.",
+      "3": "NAT selection and interface filtering are separate functions."
+    }
+  },
+  {
+    "id": "nat-pat-q01",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "EDGE# show ip nat translations",
+      "text": "Pro Inside global      Inside local       Outside local      Outside global\ntcp 198.51.100.17:443  10.20.30.10:443    203.0.113.10:51002 203.0.113.10:51002\n--- 198.51.100.17      10.20.30.10        ---                ---"
+    },
+    "prompt": "A router has a configured static mapping from 10.20.30.10 to 198.51.100.17. Which address interpretation is supported by this representative table?",
+    "options": [
+      "10.20.30.10 identifies the remote outside client in this session",
+      "198.51.100.17 is the inside host’s address before translation",
+      "198.51.100.17 represents the inside host on the outside network",
+      "203.0.113.10 has different local and global address values"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The Inside global column represents the inside host as 198.51.100.17; Inside local identifies it as 10.20.30.10. The remote address is unchanged in the two outside columns. The configuration establishes the static mode; a table row alone does not prove who initiated the TCP connection.",
+    "whyWrong": {
+      "0": "The outside host is 203.0.113.10 in the shown columns.",
+      "1": "The inside local value before this translation is 10.20.30.10.",
+      "3": "Both outside columns contain 203.0.113.10; no outside-address change is shown."
+    }
+  },
+  {
+    "id": "nat-pat-q04",
+    "type": "multi",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two configuration elements are required for dynamic NAT without overload, in addition to marking the inside and outside interfaces? (Choose two.)",
+    "options": [
+      "The overload keyword on the ip nat inside source command",
+      "An access list that identifies the inside local addresses to translate",
+      "A static mapping for each inside host that needs translation",
+      "An ip nat pool that defines the range of inside global addresses",
+      "An ip nat outside source list command to handle the return traffic"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "The source ACL selects eligible addresses, and the pool supplies global addresses. The inside-source list/pool rule joins them. Its mapping handles the corresponding return translation; a separate outside-source rule is not required.",
+    "whyWrong": {
+      "0": "Overload enables sharing and is not part of the requested plain dynamic mode.",
+      "2": "Per-host static mappings are not required for dynamic allocation.",
+      "4": "Outside-source NAT changes outside-host representations; it is not needed for these replies."
+    }
+  },
+  {
+    "id": "nat-pat-q23",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A static NAT mapping exists for an inside server. Which additional requirement is separate from that translation?",
+    "options": [
+      "A second outside-source rule for every ordinary reply.",
+      "A dynamic pool containing the statically mapped inside-local address.",
+      "A DHCP lease on the server before any outside access.",
+      "An access policy permitting only the intended services."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "NAT translates the address; it is not a complete security policy. Routes, the service itself and appropriate filtering also matter before describing access as permitted or restricted.",
+    "whyWrong": {
+      "0": "The inside-source mapping handles corresponding return translation.",
+      "1": "A separate pool is not a prerequisite for this static mapping.",
+      "2": "The server can use a valid static address; DHCP is not inherently required."
+    }
+  },
+  {
+    "id": "nat-pat-q13",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Two inside hosts share one PAT address while sending ICMP Echo Requests to the same server. Which ICMP field can be translated to distinguish their queries?",
+    "options": [
+      "The IPv4 destination address, giving each query a different server",
+      "The IPv4 Identification field, which the reply must always reuse",
+      "The Echo payload length, which becomes a lookup port number",
+      "The ICMP query identifier, which is returned in the corresponding reply"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "ICMP Echo uses a query identifier rather than TCP/UDP ports. PAT can map the inside address/identifier to a global address/identifier and reverse that mapping on the reply.",
+    "whyWrong": {
+      "0": "These queries still target the same outside server.",
+      "1": "IPv4 Identification concerns datagrams and fragmentation; a reply need not reuse the request’s value.",
+      "2": "Payload length is not a PAT port substitute."
+    }
+  },
+  {
+    "id": "nat-pat-q14",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": {
+      "kind": "cli",
+      "title": "R1# show ip nat statistics",
+      "text": "Total active translations: 0 (0 static, 0 dynamic; 0 extended)\nOutside interfaces:\n  GigabitEthernet0/0/1\nInside interfaces:\nHits: 0  Misses: 0\nExpired translations: 0\nDynamic mappings:\n-- Inside Source\n[Id: 1] access-list 1 interface GigabitEthernet0/0/1 refcount 0"
+    },
+    "prompt": "For this classic IOS XE inside-source PAT configuration, the LAN is on Gi0/0/0. Which missing configuration element is directly visible in the representative statistics?",
+    "options": [
+      "Add the overload keyword to the ip nat inside source command",
+      "Add ip nat inside to the LAN-facing interface",
+      "Create an ip nat pool because the interface form cannot translate",
+      "Replace access list 1 with an extended access list"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The Inside interfaces list is empty. Configure the intended LAN interface’s inside role, then confirm the selector, path and fresh traffic. This corrects a visible prerequisite; it does not guarantee there are no other faults.",
+    "whyWrong": {
+      "0": "The displayed absence concerns interface roles; read the actual rule separately to verify overload.",
+      "2": "Interface overload does not require an address pool.",
+      "3": "A standard ACL is supported for source selection."
+    }
+  },
+  {
+    "id": "nat-pat-q12",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "In an isolated IOS lab with dynamic PAT state and a configured static NAT mapping, what is the intended effect of clear ip nat translation *?",
+    "options": [
+      "Clear dynamic translation state while retaining the configured static mapping",
+      "Remove only entries already older than the configured idle timeout",
+      "Replace each static mapping with a newly allocated dynamic address",
+      "Delete the configured NAT rules and their interface role assignments"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The wildcard clear is for dynamic translation state; it is not a configuration deletion command. Active sessions can be interrupted. Supported clearing behavior and dependencies should be checked on the actual image.",
+    "whyWrong": {
+      "1": "A deliberate clear need not wait for the idle timeout.",
+      "2": "Clearing dynamic state does not convert static mappings into dynamic rules.",
+      "3": "NAT rules and interface roles remain in the running configuration."
+    }
+  },
+  {
+    "id": "nat-pat-q02",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A router translates PC 192.168.4.20 to 172.16.9.20 before forwarding its packets toward a partner network, where the PC talks to a server at 203.0.113.50. Which NAT term describes 172.16.9.20?",
+    "options": [
+      "Inside global",
+      "Outside local",
+      "Inside local",
+      "Outside global"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The PC is an inside host, and 172.16.9.20 is the address that represents it on the far side of the NAT router — its inside global address. Whether the address is private or public plays no part in the definition.",
+    "whyWrong": {
+      "1": "Outside local describes the remote server as the inside network sees it, 203.0.113.50 here.",
+      "2": "Inside local is the PC's real address on its own network, 192.168.4.20.",
+      "3": "Outside global is the remote server's real address, 203.0.113.50."
+    }
+  },
+  {
+    "id": "nat-pat-q03",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "R1# show running-config | section interface|ip nat|ip route|access-list",
+      "text": "interface GigabitEthernet0/0/0\n ip address 10.20.30.1 255.255.255.0\n ip nat outside\n!\ninterface GigabitEthernet0/0/1\n ip address 198.51.100.1 255.255.255.252\n ip nat inside\n!\nip nat inside source list 1 interface GigabitEthernet0/0/1 overload\nip route 0.0.0.0 0.0.0.0 198.51.100.2\n!\naccess-list 1 permit 10.20.30.0 0.0.0.255"
+    },
+    "prompt": "In this representative IOS XE configuration, Gi0/0/0 faces LAN 10.20.30.0/24 and Gi0/0/1 faces the provider. Fresh client traffic produces no dynamic translation. Which configuration error is visible?",
+    "options": [
+      "The access list must be an extended ACL when the overload keyword is used",
+      "The overload keyword requires a pool rather than an interface address",
+      "The ip nat inside and ip nat outside marks are on the wrong interfaces",
+      "The default route must point out of the inside interface for NAT to work"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The LAN-facing interface is marked outside and the provider-facing interface is marked inside. Those roles are reversed for the intended classic inside-source path. Correct them and repeat the client test; routing and filtering still need verification.",
+    "whyWrong": {
+      "0": "A standard source ACL can select this inside traffic for overload.",
+      "1": "Interface overload is a valid way to use the outside interface address.",
+      "3": "The displayed default route points toward the provider; reversing it would not repair interface roles."
+    }
+  },
+  {
+    "id": "nat-pat-q05",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "EDGE# show ip nat statistics",
+      "text": "Total active translations: 2 (0 static, 2 dynamic; 0 extended)\nOutside interfaces:\n  GigabitEthernet0/1\nInside interfaces:\n  GigabitEthernet0/0\nHits: 388  Misses: 19\nExpired translations: 0\nDynamic mappings:\n-- Inside Source\n[Id: 1] access-list 1 pool PUBPOOL refcount 2\n pool PUBPOOL: netmask 255.255.255.240\n        start 198.51.100.20 end 198.51.100.21\n        type generic, total addresses 2, allocated 2 (100%), misses 17"
+    },
+    "prompt": "The excerpt is from a plain dynamic NAT pool without overload. Two hosts hold both allocations; a fresh third host matches ACL 1 but cannot obtain a translation. Which explanation fits the evidence?",
+    "options": [
+      "The miss counter means the NAT selector filtered out the third client.",
+      "The allocated count measures TCP flows, leaving both addresses available.",
+      "The pool mask admits only .20; the displayed .21 allocation is invalid.",
+      "Both pool addresses are occupied; the third host has no free allocation."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The pool has two addresses and both are allocated. A new one-to-one mapping cannot obtain an address while those allocations remain. Evaluate an appropriately sized pool or overload according to the requirements, then verify new client traffic.",
+    "whyWrong": {
+      "0": "Top-level misses are not ACL drop counts, and the prompt confirms selector eligibility.",
+      "1": "This ordinary pool evidence reports allocated addresses, not just flow count.",
+      "2": "Both .20 and .21 are valid hosts within the supplied .16/28 block."
+    }
+  },
+  {
+    "id": "nat-pat-q07",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "EDGE# show ip nat translations",
+      "text": "Pro Inside global      Inside local       Outside local      Outside global\ntcp 198.51.100.1:49200 10.20.30.10:49200  203.0.113.10:443   203.0.113.10:443\ntcp 198.51.100.1:1025  10.20.30.11:49200  203.0.113.10:443   203.0.113.10:443\nudp 198.51.100.1:53011 10.20.30.12:53011  203.0.113.53:53    203.0.113.53:53"
+    },
+    "prompt": "The configured rule is interface overload, and the excerpt shows three active translation records. Which statement accurately reads the displayed addresses and ports?",
+    "options": [
+      "The hosts use three distinct global addresses; every original source port is preserved",
+      "The hosts share 198.51.100.1; 10.20.30.11’s source port maps from 49200 to 1025",
+      "The second TCP entry changes the server’s destination port from 443 to 1025",
+      "The UDP entry maps the local host’s address to the DNS server address 203.0.113.53"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "All three Inside global addresses are 198.51.100.1. The second TCP row pairs local port 49200 with global port 1025. The table does not establish the exact allocation algorithm or prove the application completed.",
+    "whyWrong": {
+      "0": "The same global address appears in all rows, and one source port differs.",
+      "2": "The server is shown at port 443 in both outside columns.",
+      "3": "203.0.113.53 identifies the outside DNS server, not the translated client."
+    }
+  },
+  {
+    "id": "nat-pat-q08",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An office will share the address already assigned to outside interface GigabitEthernet0/0/1. ACL 1 selects its LAN; no pool is configured. Which command selects that interface address for PAT?",
+    "options": [
+      "ip nat inside source list 1 pool PUBLIC overload",
+      "ip nat inside source static 10.20.30.0 198.51.100.1",
+      "ip nat inside source list 1 interface gigabitethernet0/0/1 overload",
+      "ip nat outside source list 1 interface gigabitethernet0/0/1 overload"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Inside-source interface overload uses the selected interface’s address for eligible client translations. The roles, address and routes must also be correct; the command alone is not a complete connectivity test.",
+    "whyWrong": {
+      "0": "This references an unconfigured pool instead of the specified interface address.",
+      "1": "This is an individual static address mapping, not the requested multi-host sharing rule.",
+      "3": "Outside-source translation is not the requested inside-client source translation."
+    }
+  },
+  {
+    "id": "nat-pat-q10",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "ACL 1 contains permit 10.20.30.0 0.0.0.255 and is used only by the sole NAT rule. Host 10.20.40.7 arrives on an inside interface. A valid outside route exists and no other feature drops or translates the packet. What happens?",
+    "options": [
+      "Routes the packet untranslated, with source address 10.20.40.7 intact",
+      "Drops the packet because the access list's implicit deny matches it",
+      "Translates it using the next free port on the outside interface address",
+      "Returns an ICMP administratively-prohibited message to the host"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The source does not match the selector, so this NAT rule does not translate it. Under the stated routing and filtering assumptions, it is forwarded with its original source. Reachability beyond this router and the reply path require separate checks.",
+    "whyWrong": {
+      "1": "The ACL is being used for NAT selection, not as an interface filter.",
+      "2": "The source is outside the permitted selector range.",
+      "3": "This NAT-selection decision does not itself request an administrative-prohibition response."
+    }
+  },
+  {
+    "id": "nat-pat-q11",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "diagram",
+      "title": "PAT on EDGE",
+      "spec": {
+        "type": "topology",
+        "title": "PC-B reaches a web server through EDGE",
+        "caption": "EDGE runs ip nat inside source list 1 interface g0/1 overload; access list 1 permits 10.20.30.0/24.",
+        "nodes": [
+          {
+            "id": "PCB",
+            "kind": "pc",
+            "label": "PC-B",
+            "sub": "10.20.30.11",
+            "x": 1,
+            "y": 3
+          },
+          {
+            "id": "EDGE",
+            "kind": "router",
+            "label": "EDGE",
+            "sub": "G0/0 10.20.30.1 · G0/1 198.51.100.1",
+            "x": 4.5,
+            "y": 3,
+            "highlight": true
+          },
+          {
+            "id": "ISP",
+            "kind": "router",
+            "label": "ISP",
+            "sub": "G0/0 198.51.100.2",
+            "x": 8,
+            "y": 3
+          },
+          {
+            "id": "SRV",
+            "kind": "server",
+            "label": "Server",
+            "sub": "203.0.113.10",
+            "x": 11,
+            "y": 3
+          }
+        ],
+        "links": [
+          {
+            "from": "PCB",
+            "to": "EDGE",
+            "toLabel": "G0/0",
+            "toBadge": "inside"
+          },
+          {
+            "from": "EDGE",
+            "to": "ISP",
+            "fromLabel": "G0/1",
+            "toLabel": "G0/0",
+            "fromBadge": "outside",
+            "accent": true
+          },
+          {
+            "from": "ISP",
+            "to": "SRV"
+          }
+        ]
+      }
+    },
+    "prompt": "PC-B sends TCP from port 51000 to server port 80. The configured PAT mapping preserves source port 51000 for this test. Which source and destination are carried on the EDGE–ISP link?",
+    "options": [
+      "Source 10.20.30.11:51000, destination 203.0.113.10:80",
+      "Source 198.51.100.1:51000, destination 198.51.100.2:80",
+      "Source 198.51.100.1:51000, destination 203.0.113.10:80",
+      "Source 198.51.100.2:51000, destination 203.0.113.10:80"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The stated mapping uses EDGE’s outside address 198.51.100.1 and preserves port 51000. The destination remains the server at 203.0.113.10:80. The next-hop router is a forwarding neighbor, not the application destination.",
+    "whyWrong": {
+      "0": "That source describes the packet before the stated translation.",
+      "1": "198.51.100.2 is the next hop, not the server destination.",
+      "3": "The ISP owns .2; this mapping uses EDGE’s .1."
+    }
+  },
+  {
+    "id": "nat-pat-q15",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "R1# show ip nat translations",
+      "text": "Pro Inside global         Inside local          Outside local         Outside global\ntcp 203.0.113.2:1025      192.168.10.10:1025    198.51.100.7:80       198.51.100.7:80\ntcp 203.0.113.2:1026      192.168.10.11:1025    198.51.100.7:80       198.51.100.7:80"
+    },
+    "prompt": "Two inside hosts share the public address 203.0.113.2 through PAT. According to the translation table, how does the router deliver the web server's replies to the correct inside host?",
+    "options": [
+      "By using the reply tuple to reverse the displayed global port mapping.",
+      "By sending both replies to the host that opened its session first.",
+      "By treating TCP port 80 as a unique identifier of the inside host.",
+      "By preserving destination port 1026 when forwarding to inside host .11."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The second flow maps local 192.168.10.11:1025 to global 203.0.113.2:1026. The matching reply tuple lets PAT restore that inside destination. The first flow has a different global port, so the two shown flows remain distinguishable.",
+    "whyWrong": {
+      "1": "The translations distinguish the flows; first-opened order does not select both destinations.",
+      "2": "Both outside flows use server port 80, so that field alone cannot distinguish these inside destinations.",
+      "3": "The mapping restores .11's local destination port 1025; the global port is 1026."
+    }
+  },
+  {
+    "id": "nat-pat-q16",
+    "type": "single",
+    "objectives": [
+      "v1:4.1",
+      "v2:4.3"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "ISP routing and EDGE pool (representative excerpts)",
+      "text": "ISP: 198.51.100.0/30 is connected toward EDGE at 198.51.100.1\nISP: no default route and no route for 198.51.100.16/28\nEDGE: ip nat pool P 198.51.100.20 198.51.100.21 netmask 255.255.255.240"
+    },
+    "prompt": "Which route on ISP provides the missing return path for both pool addresses?",
+    "options": [
+      "ip route 198.51.100.0 255.255.255.252 198.51.100.1",
+      "ip route 198.51.100.16 255.255.255.240 198.51.100.1",
+      "ip route 10.20.30.0 255.255.255.0 198.51.100.1",
+      "ip route 203.0.113.0 255.255.255.0 198.51.100.1"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The .16/28 range runs from .16 through .31 and includes .20 and .21. Routing it toward EDGE supplies the return path for those global addresses; it does not replace EDGE’s inside routes.",
+    "whyWrong": {
+      "0": "The /30 covers only .0 through .3 and does not include either pool address.",
+      "2": "A route to inside local addresses does not route replies addressed to the translated global values.",
+      "3": "This unrelated destination prefix does not include the pool."
+    }
+  },
+  {
+    "id": "nat-pat-q22",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative teaching evidence",
+      "text": "ip nat inside source static 10.20.30.10 198.51.100.17"
+    },
+    "prompt": "A reply arrives from 203.0.113.10 to global address 198.51.100.17. Which address pair leaves EDGE toward the inside host under the shown static mapping?",
+    "options": [
+      "Source 198.51.100.17, destination 10.20.30.10",
+      "Source 10.20.30.10, destination 203.0.113.10",
+      "Source 203.0.113.10, destination 198.51.100.17",
+      "Source 203.0.113.10, destination 10.20.30.10"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "For this inside-source static mapping, the reply destination is restored from inside global .17 to inside local 10.20.30.10. The outside server source remains unchanged.",
+    "whyWrong": {
+      "0": "The inside global value is the incoming reply destination, not its source.",
+      "1": "That reverses the reply direction into an outbound request.",
+      "2": "That is the packet before reverse translation."
+    }
+  },
+  {
+    "id": "nat-pat-q24",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative teaching evidence",
+      "text": "Pool mask: 255.255.255.240\nAllocated routed block: 198.51.100.16/28"
+    },
+    "prompt": "Five inside hosts require simultaneous one-to-one dynamic mappings with no overload. Pool P contains 198.51.100.20 through 198.51.100.23. No other mappings or conflicts exist. What is its capacity shortfall?",
+    "options": [
+      "One address: the inclusive pool contains four addresses.",
+      "No shortfall: four addresses can provide five one-to-one mappings.",
+      "Two addresses: the first and last values cannot be used.",
+      "Five addresses: dynamic pools allocate only after a static rule."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The inclusive range contains 23 − 20 + 1 = 4 addresses. Five simultaneous inside-address mappings without overload therefore need one more available global address.",
+    "whyWrong": {
+      "1": "Sharing different inside hosts would require overload, which is excluded.",
+      "2": "These are host values in the supplied routed /28 context; the pool endpoints are included.",
+      "3": "Ordinary dynamic NAT does not require per-host static mappings."
+    }
+  },
+  {
+    "id": "nat-pat-q29",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An idle dynamic translation disappears from the table, but the configured rule and routes are unchanged. What should a new eligible client request normally do?",
+    "options": [
+      "Fail until the router recreates every prior mapping from startup-config.",
+      "Remove the NAT configuration because its previous state expired.",
+      "Require the client to configure the old global port manually.",
+      "Create applicable new dynamic state and then depend on the remaining path."
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Dynamic translation state can age out independently of the configuration. A fresh eligible request can create new state; verify the actual mapping and response rather than expecting identical allocation values.",
+    "whyWrong": {
+      "0": "Startup configuration stores rules, not a requirement to recreate every earlier dynamic flow.",
+      "1": "State expiry does not delete the configured rule.",
+      "2": "The NAT implementation selects its applicable translation; the client does not configure the old global port."
+    }
+  },
+  {
+    "id": "nat-pat-q25",
+    "type": "multi",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative teaching evidence",
+      "text": "After one fresh client HTTP attempt, EDGE shows a new dynamic TCP translation.\nNo packet inspection or application result has yet been recorded."
+    },
+    "prompt": "Which two observations would strengthen verification beyond the new translation row? Select two.",
+    "options": [
+      "Observe the same request leave with the expected global source.",
+      "Verify the intended application receives its expected response.",
+      "Count an unrelated static mapping as proof this dynamic flow returned.",
+      "Infer reply delivery solely from a nonzero top-level miss counter.",
+      "Assume the existence of a default route proves the server's gateway."
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "A translation row proves recorded state. Correlating the actual outbound packet and the application's successful response supplies separate evidence of translation and useful two-way service.",
+    "whyWrong": {
+      "2": "An unrelated static mapping is not evidence for this flow.",
+      "3": "A lookup miss is not proof of reply delivery.",
+      "4": "One router's default route does not establish the endpoint's return configuration."
+    }
+  },
+  {
+    "id": "nat-pat-q09",
+    "type": "multi",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Fresh inside-client requests create translations, and a correctly placed capture sees them leaving EDGE with the intended global source. No replies appear in that capture. Which two faults could explain missing replies? Choose two possible causes, not a unique diagnosis.",
+    "options": [
+      "The return-path router has no usable route toward the translated address block",
+      "The sole NAT selector excluded these exact requests before their new mappings formed",
+      "The remote server lacks a usable gateway for replies to these off-subnet clients",
+      "The displayed global source was never applied to the captured outbound requests",
+      "The shown replies were received and successfully reverse-translated in the same capture"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "A missing return route or missing server gateway can prevent replies from reaching EDGE. The capture establishes the translated outbound packets at its observation point, not delivery to the destination or one unique failure location. Other unlisted faults can produce similar symptoms.",
+    "whyWrong": {
+      "1": "Fresh translations for these requests contradict exclusion by the sole selector as their explanation.",
+      "3": "The capture explicitly shows the intended translated source.",
+      "4": "The premise is that the capture contains no replies; this option contradicts it."
+    }
+  },
+  {
+    "id": "nat-pat-q26",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative teaching evidence",
+      "text": "Inside VLAN30 10.20.30.0/24: new client requests translate and work.\nInside VLAN40 10.20.40.0/24: reaches gateway; fresh requests leave untranslated.\nBoth client interfaces have ip nat inside; outside has ip nat outside.\nOnly rule: ip nat inside source list 1 interface Gi0/1 overload\nACL1 only entry: permit 10.20.30.0 0.0.0.255\nRoutes to the outside service work; no other NAT rules or filters."
+    },
+    "prompt": "The approved new subnet must use the same inside-source PAT service. What is the narrow repair that preserves the existing clients?",
+    "options": [
+      "Add only an ISP route to the new untranslated private subnet.",
+      "Clear existing translations until the new source gains a mapping.",
+      "Add the approved 10.20.40.0/24 source range to the NAT selector.",
+      "Remove the existing 10.20.30.0/24 permit and replace it with the new range."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The new source subnet traverses a correctly marked inside interface and has a valid forwarding path, but the sole selector covers only the old subnet. Add the new approved permit while retaining the old one, then test fresh traffic from both subnets.",
+    "whyWrong": {
+      "0": "That does not meet the stated requirement to translate the new subnet through the existing PAT service.",
+      "1": "Clearing state cannot make the unmatched subnet eligible.",
+      "3": "Replacing the old permit would remove translation eligibility for existing users."
+    }
+  },
+  {
+    "id": "nat-pat-q27",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative teaching evidence",
+      "text": "Reply at CORE: destination 198.51.100.20\nApproved return direction: EDGE at 198.51.100.1\nCORE routes:\n C 198.51.100.0/30 directly connected toward EDGE\n S 198.51.100.16/28 via 198.51.100.1\n S 198.51.100.20/32 via 192.0.2.1\n S* 0.0.0.0/0 via 192.0.2.1"
+    },
+    "prompt": "Which route is causing the observed reply to leave CORE in the wrong direction?",
+    "options": [
+      "The connected /30 automatically covers the whole 198.51.100 address range.",
+      "The /32 host route via 192.0.2.1 overrides the /28 toward EDGE.",
+      "The /28 pool route is ignored because NAT requires a /24.",
+      "The default route is preferred because the reply came from outside."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The reply destination .20 matches both the /28 and the /32, but longest-prefix forwarding selects the /32 toward the wrong neighbor. Correct that stale host route according to the approved design, then verify the same reply destination again.",
+    "whyWrong": {
+      "0": "A /30 covers only its four addresses, not an entire broader range.",
+      "2": "NAT does not force route masks to /24.",
+      "3": "A default route loses to a matching more-specific route regardless of this arrival direction."
+    }
+  },
+  {
+    "id": "nat-pat-q28",
+    "type": "single",
+    "objectives": [
+      "v2:4.3",
+      "v1:4.1"
+    ],
+    "difficulty": 3,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative teaching evidence",
+      "text": "Existing clients: interface PAT through 198.51.100.1; all work.\nInside HTTP server: 10.20.30.50:80, gateway EDGE; service verified locally.\nApproved publication: 198.51.100.17:80 only for this exercise.\nISP route: 198.51.100.16/28 via EDGE; .17 is unused.\nRequirement: preserve client PAT and publish the server."
+    },
+    "prompt": "Which change meets the stated service requirement while preserving the existing client rule?",
+    "options": [
+      "Replace all client PAT with a static mapping for 10.20.30.0.",
+      "Add static TCP mapping .17:80 to 10.20.30.50:80 and verify its path.",
+      "Change the client selector to permit only the server at .50.",
+      "Remove the provider /28 route because the static rule installs it."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A nonconflicting static TCP mapping publishes the named service while the existing interface PAT continues to use .1. Retain the /28 return route and verify both the inbound HTTP service and the original clients; translation still does not implement the full access policy.",
+    "whyWrong": {
+      "0": "A host static mapping cannot represent the whole client subnet as that one host.",
+      "2": "This would remove the original client sources from PAT eligibility.",
+      "3": "A static NAT command does not create the provider's route."
+    }
+  }
+]

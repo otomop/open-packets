@@ -1,0 +1,912 @@
+[
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q01",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: R2 uses the shown IOS-style association to a configured local-clock lab source. Which interpretation matches the representative output?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q02",
+    "action": "revise",
+    "reason": "Apply a hierarchy increment; this is a calculation from supplied source state rather than pure recall."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q03",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: An isolated router has ntp master 8, no other time source, and selects its own local reference. Which two statements follow? Choose two."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q04",
+    "action": "revise",
+    "reason": "Replace conspicuous timer/role distractors with plausible premature operational actions."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q05",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: A router logs `%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down`. Which severity keyword does the 5 in the message represent?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q06",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: A router has logging host 10.60.0.50 and a basic logging trap warnings threshold with no additional message filters. Which severity levels are eligible for that destination?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q07",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: Which statement about this logged message is correct?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q08",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: The representative output gives the current logging settings. No additional filters apply. Which two statements are correct? Choose two."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q09",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: New eligible events are being generated, monitor logging is enabled at debugging, and a current SSH session has not subscribed to monitor output. Which EXEC command subscribes this session?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q10",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: Which SNMP notification expects a Response and can be retransmitted according to configured retry limits?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q11",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: Which community-based SNMP version supports GetBulk and Inform, unlike v1?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q12",
+    "action": "revise",
+    "reason": "Read the explicitly displayed community-specific scope and ACL attachment without inflating it to analysis."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q13",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: Using the conventional SNMP-over-UDP mapping with no custom receiver port, which destination receives a linkDown trap?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q14",
+    "action": "retire",
+    "reason": "Retire the second synchronized-hierarchy arithmetic example; q02 applies the increment and q03 distinguishes an isolated master."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q15",
+    "action": "retire",
+    "reason": "Keep PRI arithmetic in the lesson as reference; assess the more relevant distinction between component and transport facility in new q23."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q16",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: What average input bit rate do these samples indicate?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q17",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: Which service supplies event messages such as an interface state transition?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q18",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: A monitoring station sends an SNMP Get to a router. Which description identifies their roles?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q19",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: A management requirement calls for cryptographic message authentication and encrypted SNMP data. Which common SNMPv3 security level meets both requirements?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q20",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: An interface goes down and recovers between two one-minute status polls. Both polls report up. What would add timely evidence of the brief transition?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q21",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: A manager reads 900,000 input octets, then 20,000 thirty seconds later. Device uptime also shows a restart during that interval. What should the manager do with this rate sample?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q22",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: A severity-5 line-protocol message reports that the only WAN interface went down. A severity-3 message concerns an unused test interface. How should the team assess impact?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q23",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: A collector stores an IOS message containing `%SYS-5-CONFIG_I` with transport facility `local6`. Which interpretation is correct?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q27",
+    "action": "add",
+    "reason": "Read the explicitly selected peer and corroborating status reference; this is foundation-level output recognition."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q28",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: R1 is synchronized to an approved source. Its IOS image supports serving downstream clients, and policy permits R2. What configuration is needed on R2 to use R1 at 10.60.0.1?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q24",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: Which conclusion is supported by all three records before attributing the incident to a user?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q25",
+    "action": "add",
+    "reason": "Add a distinct assessed decision: A new severity-5 event appears in the router buffer but not in a collector search. Which next check best separates forwarding eligibility from delivery or collector processing?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "questions",
+    "id": "ntp-syslog-snmp-q26",
+    "action": "add",
+    "reason": "Apply the stated manager source change to the displayed authorization entry and choose its narrow correction."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c01",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: NTP transport protocol and port?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c02",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: NTP stratum 0 versus stratum 1?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c03",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: What does NTP stratum 16 mean?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c04",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: A client syncs to a stratum N server. Its stratum?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c05",
+    "action": "retire",
+    "reason": "Default local-master stratum remains supplied configuration, not an additional required recall fact."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c06",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Command to make a router an NTP client of 10.0.12.1?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c07",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Meaning of reach 377 in `show ntp associations`?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c08",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: `*` and `~` in front of a line in `show ntp associations`?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c09",
+    "action": "retire",
+    "reason": "The exact local-reference literal remains annotated in examples; it does not merit a separate memory target."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c10",
+    "action": "retire",
+    "reason": "Poll timing is read from actual output; remove the optional interval-range memory card."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c11",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: The 8 syslog severities, 0 to 7?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c12",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: `logging trap warnings` sends which levels?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c13",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: How do you verify logging defaults and active destination thresholds?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c14",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Syslog server transport and port?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c15",
+    "action": "revise",
+    "reason": "Separate message fields from the independent timestamp-authority cue."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c16",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Command to see syslog messages in your SSH/Telnet session?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c17",
+    "action": "revise",
+    "reason": "Retrieve a transferable evidence limit instead of comparing platform-specific message names."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c18",
+    "action": "retire",
+    "reason": "Keep PRI construction in the lesson reference and prioritize facility meaning in question q23."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c19",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: SNMP ports?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c20",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: SNMP Trap versus Inform?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c21",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: SNMPv1 / v2c / v3 security?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c22",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: The three SNMPv3 security levels?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c23",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: MIB versus OID?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c24",
+    "action": "add",
+    "reason": "Add one retrieval cue: What does an asterisk before an IOS log timestamp warn about?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c25",
+    "action": "add",
+    "reason": "Add one retrieval cue: Why combine SNMP polling with event notifications?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c26",
+    "action": "add",
+    "reason": "Add one retrieval cue: What must hold before subtracting two interface counters?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c27",
+    "action": "add",
+    "reason": "Add one retrieval cue: How do you convert an octet-counter delta to average bit rate?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "cards",
+    "id": "ntp-syslog-snmp-c28",
+    "action": "add",
+    "reason": "Add one retrieval cue: Does a syslog forwarding threshold prove the collector stored an event?"
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d01",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Make this router an NTP client of the server at 10.0.12.1."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d02",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Make this isolated lab router advertise its own clock as a stratum 8 NTP source."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d03",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Show whether this router's clock is synchronised, and to what stratum and reference."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d04",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: List every configured NTP server with its stratum, reach and selection marker."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d05",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Stamp every log message with the date and time to the millisecond."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d06",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Send syslog messages to the collector at 10.60.0.50."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d07",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Limit the messages sent to the syslog server to warnings and more severe."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d08",
+    "action": "retire",
+    "reason": "Buffer capacity selection is supplied setup; show logging retains the operational verification outcome."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d09",
+    "action": "revise",
+    "reason": "State global prerequisites so the requested session command has a bounded outcome."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d10",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Display the logging destinations, their levels and the buffered messages."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d11",
+    "action": "retire",
+    "reason": "SNMP access configuration remains complete supplied lab preparation; the objective is to explain operation, not memorize community syntax."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "commands",
+    "id": "ntp-syslog-snmp-d12",
+    "action": "retire",
+    "reason": "Notification destination configuration exceeds the required SNMP-function outcome; retain polling/notification meaning in cards and questions."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "tickets",
+    "id": "ntp-syslog-snmp-t01",
+    "action": "revise",
+    "reason": "Remove the answer from the ticket title and shorten alternatives around distinct logging-stage misconceptions."
+  },
+  {
+    "chapterId": "ntp-syslog-snmp",
+    "bank": "tickets",
+    "id": "ntp-syslog-snmp-t02",
+    "action": "revise",
+    "reason": "Avoid naming the cause in the title or claiming this evidence excludes every independent downstream fault."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q01",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: During congestion, this classic IOS LLQ counter increases by 400. What does it identify?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q02",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: Which interpretation of AF32 is correct?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q03",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: Where is the three-bit Ethernet CoS/PCP marking carried?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q04",
+    "action": "revise",
+    "reason": "Retrieve the defining buffer-versus-meter distinction between shaping and policing."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q05",
+    "action": "revise",
+    "reason": "Recognize the explicitly configured remark-and-transmit action without adding a diagnostic demand."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q06",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: A capture confirms that many TCP flows reduce sending together after a full FIFO queue drops a burst. Which mechanism is intended to spread earlier congestion signals across flows?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q07",
+    "action": "revise",
+    "reason": "Make trust-boundary alternatives plausible placements instead of unrelated Internet or unconditional assertions."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q08",
+    "action": "retire",
+    "reason": "Remove binary encoding recall for EF; decimal marking remains a useful short card and codepoint interpretation remains q02."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q09",
+    "action": "retire",
+    "reason": "Comparing numbers with supplied voice guidelines adds little PHB reasoning; delay/jitter distinction is assessed in new q19."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q10",
+    "action": "revise",
+    "reason": "Use classification-logic misconceptions as alternatives instead of impossible numeric/endpoint claims."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q11",
+    "action": "retire",
+    "reason": "NBAR product-specific classification is optional reference; new q18 assesses the core classification/marking distinction."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q12",
+    "action": "revise",
+    "reason": "Classify this as retrieval of the priority-protection purpose and improve mechanism-based alternatives."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q13",
+    "action": "revise",
+    "reason": "Retrieve the taught congestion-time minimum-share meaning of the bandwidth command."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q14",
+    "action": "retire",
+    "reason": "Legacy switch-default recall remains scoped context in the worked ticket; do not repeat it as a required checkpoint."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q15",
+    "action": "keep",
+    "reason": "Retain the distinct questions learning task: A 1,500-byte packet is serialized onto a 1 Mb/s link. Ignoring all additional framing overhead, how long does serialization take?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q16",
+    "action": "revise",
+    "reason": "Keep one supported direction-and-packet verification action, with plausible wrong-parameter changes."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q17",
+    "action": "add",
+    "reason": "Add distinct core PHB practice: What is the main purpose of QoS when several applications compete for a busy link?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q18",
+    "action": "add",
+    "reason": "Add distinct core PHB practice: Which action is marking rather than classification?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q19",
+    "action": "add",
+    "reason": "Add distinct core PHB practice: Two voice paths have the same average one-way delay. One varies between 20 and 100 ms while the other stays near 60 ms. Which difference matters to a playout buffer?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q20",
+    "action": "add",
+    "reason": "Add distinct core PHB practice: Two policies see the same short excess burst after their token allowance is exhausted. One remarks and transmits it; the other has room to buffer it until transmission is allowed. Which outcome matches those actions?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "questions",
+    "id": "qos-q21",
+    "action": "add",
+    "reason": "Add distinct core PHB practice: What should be checked next to explain the voice impairment while preserving correctly classified local traffic?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c01",
+    "action": "retire",
+    "reason": "Voice planning thresholds remain supplied engineering context, not a compulsory standalone memory list."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c21",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: How does interactive video differ from a buffered download?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c03",
+    "action": "retire",
+    "reason": "Codec rate arithmetic remains a worked optional worksheet; prioritize PHB concepts in spaced retrieval."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c04",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Where is the three-bit CoS/PCP field?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c05",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: How are the IP service field's eight bits divided?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c06",
+    "action": "retire",
+    "reason": "Legacy IP precedence bits remain reference context rather than another parallel marking catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c07",
+    "action": "revise",
+    "reason": "Retain useful EF recognition without requiring binary encoding or an unrelated CoS mapping."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c08",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Calculate AFxy and interpret its two digits."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c09",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Must AF41 receive more bandwidth than AF21?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c10",
+    "action": "retire",
+    "reason": "Remove extra CS conversion recall; q02 and c08 cover a bounded codepoint interpretation."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c11",
+    "action": "retire",
+    "reason": "Platform mapping-table arithmetic remains reference context; no additional recall card is needed."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c12",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: What is a QoS trust boundary?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c13",
+    "action": "retire",
+    "reason": "Specific legacy switch defaults remain explained in the supporting ticket, not a general QoS memory target."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c14",
+    "action": "retire",
+    "reason": "NBAR implementation details remain optional context; core classification is covered directly."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c15",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: MQC match-all versus match-any?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c16",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: What can unconstrained strict priority do to other queues?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c17",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: CBWFQ bandwidth versus classic IOS LLQ priority?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c18",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Tail drop versus WRED?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c19",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Policing versus shaping?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c22",
+    "action": "keep",
+    "reason": "Retain the distinct cards learning task: Does shaping change physical Ethernet speed?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c23",
+    "action": "add",
+    "reason": "Add one core retrieval cue: Classification versus marking?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c24",
+    "action": "add",
+    "reason": "Add one core retrieval cue: Delay versus jitter?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c25",
+    "action": "add",
+    "reason": "Add one core retrieval cue: What does per-hop behavior mean?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "cards",
+    "id": "qos-c26",
+    "action": "add",
+    "reason": "Add one core retrieval cue: Why compare policy counters before and after a known test?"
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d01",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d02",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d03",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d04",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d05",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d06",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d07",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d08",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d09",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d10",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Optional MQC verification: inspect the attached policy and counters specifically on GigabitEthernet0/0."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d11",
+    "action": "keep",
+    "reason": "Retain the distinct commands learning task: Optional MQC verification: display the class maps and their match criteria."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d12",
+    "action": "retire",
+    "reason": "Configuration syntax is supplied in the optional lab/reference; the required objective explains PHBs. Retain a small operational display set instead of a configuration drill catalog."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "commands",
+    "id": "qos-d13",
+    "action": "add",
+    "reason": "Add policy-definition inspection alongside classifier and actual interface-policy verification."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "tickets",
+    "id": "qos-t01",
+    "action": "revise",
+    "reason": "Keep the evidenced legacy example as interpretation support while replacing obvious gateway/global-trust distractors."
+  },
+  {
+    "chapterId": "qos",
+    "bank": "tickets",
+    "id": "qos-t02",
+    "action": "revise",
+    "reason": "Replace physically impossible alternatives with plausible policy changes that fail the actual smoothing requirement."
+  }
+]

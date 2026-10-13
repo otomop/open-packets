@@ -1,0 +1,155 @@
+[
+  {
+    "id": "security-concepts-c01",
+    "front": "What is a vulnerability?",
+    "back": "A weakness that can contribute to harm, such as an exposed default credential or excessive permissions. A required, protected open service is not automatically a vulnerability.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c02",
+    "front": "What is an exploit?",
+    "back": "A method or action that takes advantage of a weakness. Distinguish the method from the weakness and from evidence of actual successful use.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c03",
+    "front": "How do threat and threat actor differ?",
+    "back": "A threat is a potential adverse event/circumstance; a threat actor is a person or organization associated with intentional harm. Threats can also be accidental or environmental.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "security-concepts-c04",
+    "front": "What is mitigation?",
+    "back": "A measure that reduces likelihood or impact. It may prevent, detect, correct, or support recovery; no single control removes every risk.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c05",
+    "front": "What does the CIA triad protect?",
+    "back": "Confidentiality protects against unauthorized disclosure; integrity against improper modification. Availability supports timely, reliable use. One incident can affect all three.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c06",
+    "front": "What does a conventional SYN flood target?",
+    "back": "Resources associated with incomplete TCP handshakes. Spoofing is common but not required; actual exhaustion and effective mitigation depend on the implementation.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c07",
+    "front": "How do reflection and amplification differ?",
+    "back": "Reflection sends replies toward a forged victim source. Amplification is a larger response/request ratio measured at the same layer; neither implies one fixed DNS multiplier.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "security-concepts-c08",
+    "front": "How does a worm's propagation differ from a file-infecting virus?",
+    "back": "A worm can spread between systems without someone launching a host file for each copy. A file-infecting virus attaches to content that executes.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "security-concepts-c11",
+    "front": "How do spraying and credential stuffing differ?",
+    "back": "Spraying tries few candidate passwords across many accounts. Stuffing reuses exposed account/password pairs, which can succeed or fail. Logs of usernames alone do not reveal the candidates.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "security-concepts-c13",
+    "front": "How does ARP poisoning support an on-path attack?",
+    "back": "A false IP-to-MAC association can redirect frames. Validated ARP policy and authenticated end-to-end protocols address different parts of the risk.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c14",
+    "front": "What belongs in a password policy beyond complexity?",
+    "back": "Ownership, length, blocked choices, uniqueness, storage, recovery, compromise response, and account removal. Traditional history/expiry terms describe controls, not universal recommended values.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c15",
+    "front": "What are the three authentication-factor categories?",
+    "back": "Knowledge, possession, and inherence. A certificate file alone is public; proof of a protected private key is the relevant possession mechanism.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c16",
+    "front": "Is password plus PIN multifactor authentication?",
+    "back": "Not when both are simply knowledge secrets. A possessed cryptographic authenticator activated by a PIN can combine possession and knowledge.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "security-concepts-c17",
+    "front": "What does certificate authentication require?",
+    "back": "Proof of the matching private key plus appropriate chain, identity, usage, validity, and revocation checks. Copying a public certificate alone proves no private-key control.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c18",
+    "front": "Why are biometrics not treated like replaceable passwords?",
+    "back": "They involve probabilistic comparison and sensitive characteristics that cannot simply be changed. NIST uses them with a physical authenticator as part of MFA and requires an alternative.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "security-concepts-c19",
+    "front": "How do awareness and training differ?",
+    "back": "Awareness supports recognition and reporting; training develops a task-specific skill through instruction and practice. One activity can contribute to both.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "security-concepts-c20",
+    "front": "What does type 7 in a Cisco backup imply for credential exposure?",
+    "back": "It is reversible obfuscation. Restrict the backup and replace exposed credentials; changing the stored format alone does not undo disclosure.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "security-concepts-c21",
+    "front": "What does login block-for 120 attempts 3 within 60 configure?",
+    "back": "A remote-login failure threshold/watch window and 120-second quiet interval. Documented IOS retains console access; a quiet-mode source exception does not bypass normal authentication.",
+    "tags": [
+      "command",
+      "number"
+    ]
+  },
+  {
+    "id": "security-concepts-c22",
+    "front": "What determines security risk beyond the existence of a weakness?",
+    "back": "The likelihood of harm and its impact, considering exposure, asset importance and existing controls. A score is a chosen assessment method, not a universal law.",
+    "tags": [
+      "concept"
+    ]
+  }
+]

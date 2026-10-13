@@ -1,0 +1,148 @@
+[
+  {
+    "id": "tcp-udp-ports-c20",
+    "front": "What is the central TCP-versus-UDP comparison?",
+    "back": "TCP supplies a reliable ordered byte stream. UDP sends separate datagrams without its own delivery, ordering, or retransmission guarantee.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c07",
+    "front": "What identifies a transport flow?",
+    "back": "The five-tuple: transport protocol, source IP, source port, destination IP, and destination port. A socket is an application endpoint.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c23",
+    "front": "A request is 10.6.0.10:51000 → 10.6.0.20:80. What are the reply endpoints?",
+    "back": "Source 10.6.0.20:80 → destination 10.6.0.10:51000, using the same transport. Source and destination swap.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c24",
+    "front": "Two simultaneous TCP connections share both IPs and the server port. What differs?",
+    "back": "The client source ports differ, giving distinct TCP endpoint pairs. This assumes both connections use the same client IP, server IP and server listening port.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c04",
+    "front": "TCP opening with client ISN 1000 and server ISN 5000?",
+    "back": "SYN seq 1000; SYN/ACK seq 5000 ack 1001; ACK seq 1001 ack 5001. Each SYN consumes one sequence number.",
+    "tags": [
+      "concept",
+      "number"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c03",
+    "front": "How do TCP FIN and RST differ?",
+    "back": "FIN closes one sending direction in an orderly shutdown. RST resets an existing connection or rejects an attempt rather than performing that orderly close.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c22",
+    "front": "What does cumulative TCP acknowledgment 1301 mean?",
+    "back": "All preceding stream bytes through 1300 have arrived without an earlier gap. Byte 1301 is next expected; this does not prove application processing.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c21",
+    "front": "Does TCP preserve application-write or message boundaries?",
+    "back": "No. The application must define its message format within the byte stream. Neither a TCP segment boundary nor PSH is a message marker.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c06",
+    "front": "TCP flow control versus congestion control?",
+    "back": "Flow control respects the receiver’s advertised capacity. Congestion control limits the sender according to conditions on the network path.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c08",
+    "front": "Can an application use UDP and still recover lost data?",
+    "back": "Yes. The application can add numbering, acknowledgments, and retries, as TFTP does. UDP itself does not provide that recovery.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c09",
+    "front": "Does a successful ping verify HTTP or HTTPS?",
+    "back": "No. ICMP echo success is round-trip reachability evidence; it does not verify DNS, a TCP port, TLS, or the web application.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c01",
+    "front": "Which IANA port range is dynamic/private?",
+    "back": "49152–65535. This registry category does not require every operating system to select ephemeral ports from that range.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c11",
+    "front": "Which ports identify conventional SSH and Telnet?",
+    "back": "SSH uses TCP 22; Telnet uses TCP 23. SSH protects the management session; Telnet carries it without that protection.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c16",
+    "front": "Conventional HTTP and HTTPS ports, and the HTTP/3 exception?",
+    "back": "HTTP commonly uses TCP 80 and HTTPS TCP 443. HTTP/3 uses QUIC over UDP, commonly UDP 443.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c13",
+    "front": "Which transports does ordinary DNS support on port 53?",
+    "back": "UDP and TCP. Small lookups often use UDP; TCP also handles normal queries and retry after a truncated UDP response.",
+    "tags": [
+      "number",
+      "concept"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c14",
+    "front": "What are the DHCPv4 client and server ports?",
+    "back": "UDP 68 is the client port; UDP 67 is the server port. Initial discovery can be broadcast; later exchanges are not all broadcasts.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c10",
+    "front": "FTP control and data connections?",
+    "back": "Control uses TCP 21. Active data traditionally comes from server TCP 20; passive data uses a server-selected destination port.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "tcp-udp-ports-c15",
+    "front": "What does UDP port 69 mean in TFTP?",
+    "back": "It receives the initial read/write request. The server selects a transfer identifier port used for the remaining exchange.",
+    "tags": [
+      "number"
+    ]
+  }
+]

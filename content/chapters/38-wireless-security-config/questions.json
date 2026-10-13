@@ -1,0 +1,604 @@
+[
+  {
+    "id": "wireless-security-config-q17",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which statement distinguishes WPA2-Personal from WPA2-Enterprise?",
+    "options": [
+      "Personal and Enterprise differ only in whether the SSID is broadcast",
+      "Personal encrypts radio traffic; Enterprise only authenticates without encryption",
+      "Personal requires RADIUS; Enterprise derives every user credential from one PSK",
+      "Personal uses a shared credential; Enterprise supports individual authentication through an EAP method"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Personal and Enterprise distinguish authentication/key management, not whether AES-based radio protection or SSID broadcast can exist.",
+    "whyWrong": {
+      "0": "SSID visibility is a separate setting.",
+      "1": "Enterprise can provide both authentication and radio protection.",
+      "2": "This reverses and misstates the key-management approaches."
+    }
+  },
+  {
+    "id": "wireless-security-config-q02",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What protection does AES-CCMP provide on the chapter's WPA2 WLAN?",
+    "options": [
+      "Individual user authentication through an EAP method and RADIUS",
+      "Legacy radio protection using TKIP and an RC4-based cipher",
+      "AES-based encryption and integrity protection on the radio link",
+      "Encryption of client data across both the radio and every wired hop"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "CCMP combines AES-based encryption and integrity protection for the wireless link. This is distinct from the authentication method, which can be Personal or Enterprise.",
+    "whyWrong": {
+      "0": "That describes Enterprise authentication, not the function of the cipher suite.",
+      "1": "That describes TKIP-era protection associated with WPA.",
+      "3": "Radio-link protection does not automatically extend across the subsequent wired path."
+    }
+  },
+  {
+    "id": "wireless-security-config-q03",
+    "type": "multi",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two statements describe a WPA3-Personal connection? (Choose two.)",
+    "options": [
+      "It removes the need for the four-way handshake",
+      "It uses SAE for password-based key establishment",
+      "It requires TKIP to support older Wi-Fi clients",
+      "It requires Protected Management Frames",
+      "It requires each client to authenticate through RADIUS"
+    ],
+    "answer": [
+      1,
+      3
+    ],
+    "explanation": "WPA3-Personal uses SAE and requires PMF for its connections. The four-way handshake still follows key establishment; SAE is not simply a replacement name for the WPA2 PSK handshake.",
+    "whyWrong": {
+      "0": "The four-way handshake is retained after SAE.",
+      "2": "TKIP is obsolete and does not provide WPA3 protection.",
+      "4": "RADIUS is associated with Enterprise authentication rather than ordinary WPA3-Personal."
+    }
+  },
+  {
+    "id": "wireless-security-config-q06",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "In this centrally authenticated WLAN, clients exchange EAP through a WLC with an external RADIUS server. Which device is the 802.1X authenticator?",
+    "options": [
+      "The WLC that controls admission and relays EAP",
+      "The RADIUS server that evaluates the EAP method",
+      "The client software that supplies its credential",
+      "The DHCP server that allocates the client address"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The WLC is the authenticator in the stated central-authentication design. The client is the supplicant, and RADIUS is the authentication server.",
+    "whyWrong": {
+      "1": "That is the authentication-server role.",
+      "2": "That is the supplicant role.",
+      "3": "Address allocation is separate from the stated 802.1X roles."
+    }
+  },
+  {
+    "id": "wireless-security-config-q07",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "The required EAP method uses both client and server certificates for authentication, rather than a client password. Which choice fits?",
+    "options": [
+      "PEAP with password-based client authentication",
+      "WPA2-Personal with a separate key for each test site",
+      "EAP carried through RADIUS with the client method unspecified",
+      "EAP-TLS with client and server certificates"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "EAP-TLS provides certificate-based authentication for both endpoints. Certificates must be issued, trusted and validated correctly; simply selecting the method is not a complete deployment.",
+    "whyWrong": {
+      "0": "Password-based client authentication does not meet the client-certificate requirement.",
+      "1": "A site PSK is not a client certificate.",
+      "2": "RADIUS transports authentication; an unspecified EAP method does not establish certificate use."
+    }
+  },
+  {
+    "id": "wireless-security-config-q09",
+    "type": "single",
+    "objectives": [
+      "v1:2.9"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An AireOS data WLAN currently uses Silver. A design calls for the voice QoS profile for its compatible handsets. Which profile change matches the requirement?",
+    "options": [
+      "Select Gold, the background traffic profile",
+      "Select Platinum, the voice traffic profile",
+      "Keep Silver, the video traffic profile",
+      "Select Bronze, the voice traffic profile"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Platinum is the AireOS voice QoS level; Silver is best effort. The profile must fit a consistent classification/WMM/wired QoS design and does not guarantee bandwidth.",
+    "whyWrong": {
+      "0": "Gold corresponds to video, not background or the requested voice level.",
+      "2": "Silver is best effort, not video.",
+      "3": "Bronze corresponds to background traffic."
+    }
+  },
+  {
+    "id": "wireless-security-config-q10",
+    "type": "multi",
+    "objectives": [
+      "v1:2.8",
+      "v1:2.9"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two protocols provide encrypted controller administration when configured with proper identity validation? (Choose two.)",
+    "options": [
+      "HTTPS web access on TCP 443",
+      "Telnet CLI access on TCP 23",
+      "SSH CLI access on TCP 22",
+      "HTTP web access on TCP 80",
+      "SNMPv2c access with a community string"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "HTTPS and SSH provide protected administration when the server/host identity and configuration are properly validated. This question does not assume a particular controller's factory enabled/disabled defaults.",
+    "whyWrong": {
+      "1": "Telnet does not encrypt the administration session.",
+      "3": "HTTP does not supply TLS protection.",
+      "4": "A community string does not give SNMPv2c confidentiality."
+    }
+  },
+  {
+    "id": "wireless-security-config-q14",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "No AAA override is configured. Which AireOS WLAN field selects the base client interface/VLAN mapping?",
+    "options": [
+      "Security → Layer 2: the PSK checkbox",
+      "General: the Interface/Interface Group field",
+      "QoS: the per-user rate contract",
+      "Advanced: the session-timeout field"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The General interface selection supplies the base mapping to an AireOS logical interface and its VLAN. That VLAN still needs a valid wired path and addressing service.",
+    "whyWrong": {
+      "0": "The PSK setting chooses key management, not a client VLAN.",
+      "2": "A rate contract affects traffic treatment rather than the interface mapping.",
+      "3": "A session timer controls client lifetime behavior rather than VLAN selection."
+    }
+  },
+  {
+    "id": "wireless-security-config-q01",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative AireOS WLAN 2 security",
+      "text": "WPA policy: disabled\nWPA2 policy: enabled\nAES: enabled; TKIP: disabled\nAKM 802.1X: enabled\nAKM PSK: disabled"
+    },
+    "prompt": "Clients are configured for WPA2-Personal with a shared passphrase. There is no RADIUS or local EAP service. Which change matches the intended design?",
+    "options": [
+      "Disable 802.1X AKM, enable PSK and set the matching key",
+      "Keep WPA2/AES and give clients the administrator password",
+      "Enable both 802.1X and PSK but leave the PSK field unset",
+      "Keep 802.1X AKM and enter the shared key as a RADIUS secret"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The cipher and WPA2 selection already match, but the configured key-management method is Enterprise 802.1X rather than Personal PSK. Configure the intended PSK method and key, then verify a fresh client connection.",
+    "whyWrong": {
+      "1": "Controller administrator credentials do not define the WLAN PSK.",
+      "2": "Enabling a method without its required key does not implement the issued Personal credential.",
+      "3": "The RADIUS shared secret is a different credential and does not make 802.1X into PSK."
+    }
+  },
+  {
+    "id": "wireless-security-config-q04",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative controlled WPA2-PSK diagnostic",
+      "text": "802.11 association: completed\nMessage 1: sent\nMessage 2: received; integrity check invalid\nNo successful four-way handshake recorded\nClient profile key differs from the configured WLAN key"
+    },
+    "prompt": "This diagnostic comes from a WPA2-PSK client that used the wrong passphrase. Which explanation fits the observed failure?",
+    "options": [
+      "The AP rejected the SSID before sending any security frame",
+      "The client successfully obtained the GTK and then failed DHCP",
+      "The peers derived different keys, so message 2's MIC failed",
+      "The PMF policy required the client to use a RADIUS password"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The wrong passphrase leads to different master/transient key material, so the infrastructure cannot validate the client's message-2 integrity check. This specific conclusion is supported by the diagnostic, not just a generic connection popup.",
+    "whyWrong": {
+      "0": "The record shows association and handshake message 1 already occurred.",
+      "1": "The diagnostic stops at message 2 before successful key establishment and addressing.",
+      "3": "Nothing in the evidence indicates a PMF/RADIUS requirement."
+    }
+  },
+  {
+    "id": "wireless-security-config-q05",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Which key entry violates Cisco's documented WPA2 PSK field length rules?",
+    "options": [
+      "A 63-character entry in ASCII format",
+      "A 64-hexadecimal-digit entry in HEX format",
+      "A 20-character random entry in ASCII format",
+      "A 7-character entry in ASCII format"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The documented ASCII PSK passphrase range is 8–63 characters; HEX requires exactly 64 hexadecimal digits. Seven ASCII characters is too short.",
+    "whyWrong": {
+      "0": "63 is within the documented ASCII length range.",
+      "1": "64 valid hex digits meet the raw-key format requirement.",
+      "2": "20 is within the documented ASCII length range."
+    }
+  },
+  {
+    "id": "wireless-security-config-q08",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative AireOS client evidence",
+      "text": "WLAN: CCNA-Lab; interface users; VLAN 20\nCurrent diagnostic: WPA2 key establishment completed\nPolicy Manager State: DHCP_REQD\nCurrent IP address: Unknown\nClient: repeated fresh DHCP requests; no lease"
+    },
+    "prompt": "What should be investigated next from these current client diagnostics?",
+    "options": [
+      "Compare the WLAN and client PSK because no secure association completed",
+      "Change the RF tag because DHCP_REQD proves the radio is disabled",
+      "Trace VLAN 20's DHCP service and transport from this client's mapping",
+      "Clear this client's exclusion because DHCP_REQD identifies an exclusion"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The explicit security-complete event and current DHCP_REQD state place the next investigation at addressing. Check the mapped VLAN, DHCP service and transport path without assuming which one is faulty.",
+    "whyWrong": {
+      "0": "The separate current diagnostic explicitly confirms key establishment.",
+      "1": "The supplied state does not identify a disabled radio or RF-tag fault.",
+      "3": "DHCP_REQD is an addressing wait, not evidence that this client is excluded."
+    }
+  },
+  {
+    "id": "wireless-security-config-q11",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative Catalyst 9800 configuration review",
+      "text": "WLAN profile GUEST: enabled, SSID Guest, ID 20\nPolicy profile PP-GUEST: enabled, VLAN 30\nAP1: joined; compatible radio enabled\nAP1 effective policy tag: PT-BRANCH\nPT-BRANCH entries: CORP → PP-CORP only"
+    },
+    "prompt": "Which configuration change addresses the missing SSID on AP1?",
+    "options": [
+      "Renumber GUEST to ID 1 without checking AP assignments",
+      "Map GUEST to PP-GUEST in AP1's effective policy tag",
+      "Create an AireOS dynamic interface on the 9800",
+      "Move the guest VLAN number into AP1's RF tag"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A 9800 policy tag maps a WLAN profile to its policy profile, and AP1 must receive a tag containing that mapping. The provided radio and enabled-state checks rule out those alternatives.",
+    "whyWrong": {
+      "0": "A lower ID does not correct an explicitly missing mapping in this custom tag.",
+      "2": "AireOS dynamic interfaces are not the 9800 policy-profile model.",
+      "3": "An RF tag supplies radio policy, not the WLAN-to-client-policy mapping."
+    }
+  },
+  {
+    "id": "wireless-security-config-q12",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Representative 9800 review",
+      "text": "ID  Profile  SSID      Status  Security\n1   CORP     Corp      UP      [WPA2][802.1X][AES]\n2   IOT      IoT-Sens  DOWN    [WPA2][PSK][AES]\nAP policy tag includes IOT; compatible radio is operational.\nSensors use WPA2-Personal/AES."
+    },
+    "prompt": "Which first configuration correction is directly supported for IoT-Sens?",
+    "options": [
+      "Enable the IOT WLAN, then verify its AP advertisement",
+      "Replace PSK with 802.1X while retaining the sensor profiles",
+      "Change the AP's effective tag despite its existing IOT mapping",
+      "Move the sensor SSID to CORP's enabled WLAN without changing credentials"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The IOT WLAN is administratively down while its intended security is already configured. Enable it, then verify the radio/AP assignment and a client rather than assuming one status change proves end-to-end access.",
+    "whyWrong": {
+      "1": "The existing PSK method already matches the sensors.",
+      "2": "The exhibit explicitly confirms the required mapping.",
+      "3": "CORP uses Enterprise security and a different SSID; this does not implement the intended sensor WLAN."
+    }
+  },
+  {
+    "id": "wireless-security-config-q13",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A public hotspot wants radio encryption without asking users for a shared password. Which method fits, while not authenticating the hotspot's identity?",
+    "options": [
+      "OWE using unauthenticated key establishment",
+      "WPA2-Personal using a publicly printed shared key",
+      "WebAuth terms over an otherwise unencrypted WLAN",
+      "A hidden SSID with MAC-address filtering"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "OWE supplies encryption without authenticated peer identity or a shared user password. It helps against passive observation but does not replace validation of the destination application's identity.",
+    "whyWrong": {
+      "1": "This still requires a shared password and does not match the requirement.",
+      "2": "A portal alone does not add radio encryption.",
+      "3": "Neither hiding the name nor filtering a MAC address supplies encryption."
+    }
+  },
+  {
+    "id": "wireless-security-config-q15",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A departing employee knows the single shared key for the staff WPA2-Personal WLAN. Which response addresses future authentication and improves individual revocation?",
+    "options": [
+      "Keep the key because a prior session's PTK has expired",
+      "Enable SSID hiding while keeping the existing shared key",
+      "Rotate the shared key and consider per-user Enterprise credentials",
+      "Enter the same raw PSK in HEX instead of ASCII format"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A person who retains the shared secret can attempt another Personal-mode join. Rotating the key changes that secret; Enterprise supports individual credential lifecycle management, with separate handling needed for active sessions/caches.",
+    "whyWrong": {
+      "0": "Fresh session keys do not invalidate knowledge of the shared secret.",
+      "1": "Hiding the name does not revoke knowledge of the key.",
+      "3": "Representing the same underlying key differently does not revoke it."
+    }
+  },
+  {
+    "id": "wireless-security-config-q16",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Controlled test description — representative",
+      "text": "WPA3 client has completed SAE/key establishment and negotiated PMF.\nForged unprotected deauthentication does not terminate its protected session.\nStrong RF interference later prevents successful data reception."
+    },
+    "prompt": "What does this evidence show about PMF?",
+    "options": [
+      "It guarantees data forwarding whenever the client retains an IP lease",
+      "It must encrypt every beacon before a WPA3 client can discover the SSID",
+      "It replaces SAE when the radio environment contains interference",
+      "It protects selected management exchanges but cannot prevent RF jamming"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "PMF protects specified robust management frames after the security relationship is established. Deliberate or accidental RF disruption can still prevent reception; PMF is not an anti-jamming guarantee.",
+    "whyWrong": {
+      "0": "A retained lease does not guarantee any current radio or data connection.",
+      "1": "PMF does not conceal every beacon or the SSID.",
+      "2": "PMF and SAE provide different security functions."
+    }
+  },
+  {
+    "id": "wireless-security-config-q18",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Profile CCNA-USERS advertises SSID Campus-Lab. A client saved network name CCNA-USERS with the issued correct PSK. Which client field should be corrected first?",
+    "options": [
+      "The default gateway to match the profile name",
+      "The network name to Campus-Lab, retaining the issued security settings",
+      "The cipher to match the controller's administrator account",
+      "The PSK to the numeric WLAN ID"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A client selects the SSID, not the controller's profile name or internal ID. The key and cipher remain separate fields.",
+    "whyWrong": {
+      "0": "A gateway is an IP parameter, not the advertised network name.",
+      "2": "The administrator account does not choose the WLAN cipher.",
+      "3": "The WLAN ID is not its key."
+    }
+  },
+  {
+    "id": "wireless-security-config-q20",
+    "type": "single",
+    "objectives": [
+      "v1:5.10"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A client used the wrong key in a new WPA2 connection attempt but still displays yesterday's 10.0.10.51 address. Which observation would establish recovery after correcting the key?",
+    "options": [
+      "The old IP field still contains 10.0.10.51",
+      "The SSID appears again in a refreshed list",
+      "A fresh secure connection completes and the known server page loads",
+      "The saved client profile contains the expected key length"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Current secure-connection evidence and a fresh service test establish recovery; an address, visible SSID or saved setting alone cannot.",
+    "whyWrong": {
+      "0": "A retained address is not current security or service evidence.",
+      "1": "Discovery precedes secure data access.",
+      "3": "A correctly sized saved key need not match the controller or have been used successfully."
+    }
+  },
+  {
+    "id": "wireless-security-config-q21",
+    "type": "single",
+    "objectives": [
+      "v1:2.9"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "An AireOS WLAN has a 1800-second session policy. A failed client last authenticated 45 seconds ago; its current diagnostic says key establishment failed. Which conclusion is supported?",
+    "options": [
+      "The session policy proves the 45-second failure was a timed disconnect",
+      "The 30-minute policy alone does not explain this current security failure",
+      "The session field shows an active 30-minute client-exclusion countdown",
+      "The session setting confirms that this client completed key establishment"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "1800 seconds is 30 minutes. A configured timer is not evidence that it expired, and the current failure occurs during security establishment.",
+    "whyWrong": {
+      "0": "The given elapsed interval and diagnostic do not support session expiry.",
+      "2": "A configured session limit is not evidence of a current client-exclusion timer; those are different policies and states.",
+      "3": "A configured timer does not prove a particular client completed the security exchange; the current diagnostic says it failed."
+    }
+  },
+  {
+    "id": "wireless-security-config-q22",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A WPA2/WPA3 transition WLAN accepts one legacy WPA2 client and one WPA3-Personal client. Which security claim is justified?",
+    "options": [
+      "Only the WPA3 connection is established to use SAE and required PMF",
+      "Both receive identical negotiated security because their IP subnet matches",
+      "Both receive SAE because the same SSID advertises WPA3",
+      "The WPA2 client no longer needs its Personal key"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Transition mode permits different negotiated security on the same SSID. WPA3's connection requirements must not be attributed automatically to its WPA2 clients.",
+    "whyWrong": {
+      "1": "IP addressing does not select negotiated wireless security.",
+      "2": "The legacy connection remains WPA2 rather than acquiring SAE by sharing the SSID.",
+      "3": "The WPA2 client's configured authentication still applies."
+    }
+  },
+  {
+    "id": "wireless-security-config-q19",
+    "type": "single",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10"
+    ],
+    "difficulty": 2,
+    "exhibit": {
+      "kind": "cli",
+      "title": "Approved design and current evidence — representative",
+      "text": "STAFF intended: staff interface/VLAN 20; 10.20.0.0/24\nGUEST intended: guests interface/VLAN 30; 10.30.0.0/24\nAAA override: disabled\nBoth VLANs: wired fresh DHCP and test-page checks pass\nCurrent STAFF mapping: staff; fresh client 10.20.0.101/24; page works\nCurrent GUEST mapping: staff; fresh client 10.20.0.102/24\nGuest policy permits the intended guest service only from 10.30.0.0/24"
+    },
+    "prompt": "One newly connected staff client reaches the test page; a newly connected guest does not. Both pass current security checks. Which narrow correction preserves staff service and addresses the guest evidence?",
+    "options": [
+      "Rotate both shared keys and leave the two interface mappings unchanged",
+      "Move STAFF to the guest interface and keep GUEST on its present mapping",
+      "Disable the guest DHCP service so the client reuses its old address",
+      "Map GUEST to guests, preserving STAFF and both working VLAN paths"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "The independent wired tests show both VLAN service paths work. The guest is mapped to staff and receives the staff subnet; correcting only GUEST's mapping meets the requirement without disturbing STAFF.",
+    "whyWrong": {
+      "0": "Both current security checks succeeded; changing keys does not correct the wrong VLAN mapping.",
+      "1": "This moves the working service instead of correcting the mismapped guest.",
+      "2": "Removing addressing does not move the client to its intended VLAN."
+    }
+  }
+]

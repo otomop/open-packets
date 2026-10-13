@@ -1,0 +1,70 @@
+[
+  {
+    "id": "security-concepts-t01",
+    "title": "Valid remote management sign-ins are refused",
+    "objectives": [
+      "v1:5.1",
+      "v1:5.2",
+      "v1:5.4"
+    ],
+    "scenario": "In this isolated representative case, authorized administrators use 10.0.99.0/24. The console remains accessible. Remote SSH tests with the correct password fail intermittently after unrelated failed login attempts.",
+    "exhibits": [
+      {
+        "title": "Configuration",
+        "text": "login block-for 120 attempts 3 within 60\nNo quiet-mode exception configured"
+      },
+      {
+        "title": "Current state",
+        "text": "Router presently in Quiet-Mode\nWill remain in Quiet-Mode for 64 seconds"
+      },
+      {
+        "title": "Events",
+        "text": "Remote failed-login threshold reached, followed by QUIET_MODE_ON"
+      }
+    ],
+    "question": "Which explanation follows from the current evidence?",
+    "options": [
+      "A permanent account lockout must persist after the displayed quiet interval.",
+      "The active remote quiet interval is restricting new remote login attempts.",
+      "A quiet-mode source exception would accept users without their passwords.",
+      "A current SSH session proves every new remote attempt must be accepted."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The displayed quiet state explains why a correct new remote login can be refused. It is not proof of permanent account lockout, and an established session does not test new authentication. A source exception bypasses only this block, not normal credentials or other access restrictions; preserve the console and test a new session after normal mode returns.",
+    "fix": "First use the existing console, observe the remaining interval, and retest a fresh valid SSH login after Normal-Mode returns. If the approved policy calls for a management exception, create its narrowly scoped ACL before applying login quiet-mode access-class. ACL design/configuration is developed in Chapter 34. An exception still requires authentication and does not override other restrictions; preserve evidence and save only the verified policy."
+  },
+  {
+    "id": "security-concepts-t02",
+    "title": "An unexpected login and a broadly readable backup",
+    "objectives": [
+      "v1:5.1",
+      "v1:5.2",
+      "v1:5.4"
+    ],
+    "scenario": "An audit finds an old R2 backup readable by unauthorized users. A separate alert shows one unexpected successful admin login. Investigation has not established which person logged in or how the credential was obtained.",
+    "exhibits": [
+      {
+        "title": "Backup excerpt",
+        "text": "enable password 7 [value omitted]\nusername admin privilege 15 password 7 [value omitted]"
+      },
+      {
+        "title": "Authentication evidence",
+        "text": "One unexpected successful admin login; no attributable credential-acquisition evidence"
+      }
+    ],
+    "question": "Which conclusion and response are justified now?",
+    "options": [
+      "The successful login proves the backup was the only possible credential source.",
+      "The backup exposes reversible credentials; treat them as compromised and investigate the login separately.",
+      "The type-7 label proves the backup is protected by a one-way hash.",
+      "The absence of earlier failures proves the login was authorized."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Type 7 establishes recoverable-secret exposure regardless of whether it caused this particular login. Restrict the backup and rotate affected credentials through the approved process while preserving evidence and examining active sessions/configuration changes. Do not claim attribution from an account name alone.",
+    "fix": "From an authorized working recovery session, protect the exposed backup, replace all affected credentials with new unique values and supported stronger storage, and verify intended access before retiring old access. Review the unexpected session and changes using the incident process. Do not paste public training passwords into a real repair or assume changing one enable secret covers every leaked shared key."
+  }
+]

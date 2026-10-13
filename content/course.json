@@ -1,0 +1,45 @@
+{
+  "title": "OpenPackets",
+  "tagline": "Learn it. Build it. Break it. Fix it.",
+  "sourceCheckedOn": "2026-09-17",
+  "exam": {
+    "code": "200-301",
+    "lengthMinutes": 120,
+    "price": "US$300",
+    "languages": ["English", "Japanese"],
+    "validityYears": 3,
+    "retakeWaitDays": 5,
+    "v1": { "label": "200-301 v1.1", "lastTestDate": "2027-02-02", "topicsUrl": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301-CCNA-v1.1.pdf" },
+    "v2": { "label": "200-301 v2.0", "firstTestDate": "2027-02-03", "topicsPublished": "2026-05-20", "topicsUrl": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301_CCNA_v2.0_Exam_Topics_PDF.pdf" },
+    "announcementUrl": "https://blogs.cisco.com/learning/stay-on-track-get-certified-before-the-ccna-refresh",
+    "examPageUrl": "https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccna.html"
+  },
+  "parts": [
+    { "id": "start", "title": "Start here", "blurb": "The exam, your tools, and how to study." },
+    { "id": "foundations", "title": "Foundations", "blurb": "Models, cabling, addressing, transport, switching, and the IOS command line." },
+    { "id": "switching", "title": "Switching & access", "blurb": "VLANs, trunks, inter-VLAN routing, discovery, EtherChannel, spanning tree, Layer 2 security." },
+    { "id": "routing", "title": "Routing", "blurb": "The routing table, static routes, IPv6, OSPF, first-hop redundancy." },
+    { "id": "services", "title": "Services", "blurb": "DHCP, DNS, NAT, time and logging, QoS, file management, client and toolkit troubleshooting." },
+    { "id": "security", "title": "Security", "blurb": "Concepts, AAA, access lists, VPNs." },
+    { "id": "wireless", "title": "Wireless", "blurb": "RF principles, architectures, security and WLAN configuration." },
+    { "id": "automation", "title": "Virtualization, automation & AI", "blurb": "Hypervisors and containers, management approaches, APIs, Ansible/Terraform, AI in operations." },
+    { "id": "capstone", "title": "Capstone", "blurb": "Build the branch network, break it, fix it, and get exam-ready." }
+  ],
+  "domains": {
+    "v1": [
+      { "id": "fundamentals", "n": "1.0", "title": "Network Fundamentals", "weight": 20 },
+      { "id": "access", "n": "2.0", "title": "Network Access", "weight": 20 },
+      { "id": "connectivity", "n": "3.0", "title": "IP Connectivity", "weight": 25 },
+      { "id": "services", "n": "4.0", "title": "IP Services", "weight": 10 },
+      { "id": "security", "n": "5.0", "title": "Security Fundamentals", "weight": 15 },
+      { "id": "automation", "n": "6.0", "title": "Automation and Programmability", "weight": 10 }
+    ],
+    "v2": [
+      { "id": "infra", "n": "1.0", "title": "Network Infrastructure and Connectivity", "weight": 25 },
+      { "id": "switching", "n": "2.0", "title": "Switching and Network Access", "weight": 25 },
+      { "id": "routing", "n": "3.0", "title": "IP Routing", "weight": 20 },
+      { "id": "services", "n": "4.0", "title": "Network Services and Security", "weight": 20 },
+      { "id": "aiops", "n": "5.0", "title": "AI, and Network Operations and Management", "weight": 10 }
+    ]
+  }
+}

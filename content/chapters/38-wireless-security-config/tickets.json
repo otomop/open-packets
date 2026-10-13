@@ -1,0 +1,73 @@
+[
+  {
+    "id": "wireless-security-config-t01",
+    "title": "Clients see the staff SSID but cannot establish service",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10",
+      "v2:1.5.c"
+    ],
+    "scenario": "Staff clients are configured for WPA2-Personal/AES on CCNA-Lab, with the issued lab passphrase StudyLab-2026!. They can see the SSID but cannot establish a working connection. The site has no external RADIUS server or local EAP configuration. The following are representative records.",
+    "exhibits": [
+      {
+        "title": "AireOS WLAN 2 security",
+        "text": "Profile: CCNA-USERS; SSID: CCNA-Lab; enabled\nWPA: disabled; WPA2: enabled\nAES: enabled; TKIP: disabled\nAKM 802.1X: enabled; PSK: disabled"
+      },
+      {
+        "title": "Authentication services",
+        "text": "External RADIUS authentication servers: none\nLocal EAP: disabled"
+      },
+      {
+        "title": "Client profile",
+        "text": "SSID: CCNA-Lab\nAuthentication: WPA2-Personal\nEncryption: AES\nShared-key profile configured"
+      }
+    ],
+    "question": "Which configuration mismatch is established by these records?",
+    "options": [
+      "The WLAN selected a different cipher from the clients' saved AES setting",
+      "The WLAN expects 802.1X while clients expect a Personal PSK",
+      "The client and controller chose different SSID names",
+      "The controller is waiting for an address after security completion"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The WLAN explicitly has 802.1X enabled and PSK disabled while the clients expect Personal key management. WPA2/AES is already correct. The record supports this mismatch without needing to infer an unshown exclusion event or exact handshake failure.",
+    "fix": "In the authorized lab's AireOS-style GUI, disable WLAN 2 while editing. Open Security → Layer 2, disable 802.1X AKM, enable PSK, set ASCII key StudyLab-2026!, retain WPA2/AES with WPA/TKIP off, Apply, then enable the WLAN and Save Configuration. If a client is actually shown excluded, handle only that client's remaining exclusion using the platform's supported procedure.\n\nStart a fresh connection. Verify security/admitted state, intended VLAN/address/gateway and traffic to a known server. Do not conclude that a saved PSK field alone proves recovery."
+  },
+  {
+    "id": "wireless-security-config-t02",
+    "title": "New wireless clients cannot obtain their intended addresses",
+    "objectives": [
+      "v1:2.9",
+      "v1:5.10"
+    ],
+    "scenario": "A centrally switched AireOS WLAN moved users to dynamic interface users in VLAN 10. Controller management uses tagged VLAN 99. DHCP proxy is explicitly disabled in this scenario, so client DHCP is bridged into VLAN 10. R1's 10.0.10.0/24 scope and gateway 10.0.10.1 work for a wired test client. The following are representative diagnostics.",
+    "exhibits": [
+      {
+        "title": "WLC current client and interface review",
+        "text": "Current client security event: WPA2 key establishment completed\nClient state: DHCP_REQD; current IP: Unknown\nWLAN interface users: VLAN 10, 10.0.10.2/24\nDHCP proxy: disabled; bridging DHCP to client VLAN\nFresh wireless client requests observed; no lease"
+      },
+      {
+        "title": "SW1 controller-facing trunk",
+        "text": "Port: Fa0/24; status trunking; native VLAN 1\nVLANs allowed: 99\nVLANs allowed and active: 99\nVLANs forwarding: 99"
+      },
+      {
+        "title": "Wired validation",
+        "text": "VLAN 10 exists and forwards on the R1 uplink\nWired VLAN 10 test client receives 10.0.10.101/24\nWired test reaches 10.0.10.1 and the known test server"
+      }
+    ],
+    "question": "Which failure is directly supported?",
+    "options": [
+      "The WLAN's mapped VLAN lacks DHCP service even for wired clients",
+      "The client stopped before WPA2 key establishment completed",
+      "The WLC uplink omits the required client VLAN",
+      "The AP lost its management registration before client requests began"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Security has completed, but the central client VLAN is absent from the controller uplink's allowed list. In the explicitly stated DHCP-bridging design, VLAN 10's requests and replies cannot cross that link. The successful wired test establishes that the separate VLAN 10 service path exists.",
+    "fix": "On the lab switch add the client VLAN without removing management:\n\n```ios\nSW1# configure terminal\nSW1(config)# interface fastethernet0/24\nSW1(config-if)# switchport trunk allowed vlan add 10\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nConfirm 10,99 are allowed/active/forwarding. Have the wireless client request a fresh lease, then verify its 10.0.10.x/24 address, gateway and server access. Retest controller management. A different DHCP-proxy design requires following that design's server/interface path instead of assuming every request remains an unchanged broadcast."
+  }
+]
