@@ -6,7 +6,7 @@ import { continueChapter, daysToExam, streak, trackLabel } from "@/lib/plan";
 import { domainMastery } from "@/lib/mastery";
 import { Kbd } from "./ui";
 import { ExamDateDialog } from "./ExamDate";
-import { MOBILE_QUERY, REDUCED_QUERY, useMedia } from "@/lib/useMedia";
+import { MOBILE_QUERY, useMedia } from "@/lib/useMedia";
 import type { Progress } from "@/lib/types";
 
 const NAV: [string, string, string][] = [
@@ -104,9 +104,8 @@ function Ticker({ hidden, away, blocked, onHide, onFocusOut }: { hidden: boolean
   const p = useProgress(p => p, (a, b) => a.questions === b.questions && a.chapters === b.chapters && a.activity === b.activity && a.settings === b.settings);
   // Only recompute when the inputs change (mastery scans every answered question).
   const text = useMemo(() => tickerItems(p), [p.questions, p.chapters, p.activity, p.settings]); // eslint-disable-line react-hooks/exhaustive-deps
-  const reducedSystem = useMedia(REDUCED_QUERY);
-  // "Enabled" in Settings overrides the system preference; "Reduced" always wins.
-  const reduced = p.settings.motion === "reduced" || (p.settings.motion !== "full" && reducedSystem);
+  // Motion is controlled by the learner's explicit Enabled / Disabled choice.
+  const reduced = p.settings.motion === "reduced";
   const viewport = useRef<HTMLDivElement>(null);
   const trackEl = useRef<HTMLDivElement>(null);
   const firstSet = useRef<HTMLDivElement>(null);

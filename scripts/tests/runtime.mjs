@@ -22,7 +22,8 @@ export function runtime(stubs = {}, initial = {}) {
     };
   };
   const window = { ...events(), setTimeout(fn) { const id = nextTimer++; timers.set(id, fn); return id; }, clearTimeout(id) { timers.delete(id); }, setInterval() { return nextTimer++; }, clearInterval() {}, scrollTo() {} };
-  const document = { ...events(), visibilityState: "visible", querySelector() { return null; }, documentElement: { setAttribute() {}, removeAttribute() {} } };
+  const styles = new Map();
+  const document = { ...events(), visibilityState: "visible", querySelector() { return null; }, documentElement: { setAttribute() {}, removeAttribute() {}, style: { setProperty(name, value) { styles.set(name, value); }, getPropertyValue(name) { return styles.get(name) ?? ""; } } } };
   const localStorage = { getItem(key) { return data.get(key) ?? null; }, setItem(key, value) { if (failWrites) throw new Error("Quota exceeded"); writes.push(key); data.set(key, String(value)); } };
   const hooks = [];
   let hook = 0;
@@ -30,6 +31,7 @@ export function runtime(stubs = {}, initial = {}) {
   const react = {
     Fragment: "Fragment",
     useRef(value) { const i = hook++; return hooks[i] ??= { current: value }; },
+    useId() { const i = hook++; return hooks[i] ??= `test-id-${i}`; },
     useState(value) { const i = hook++; if (!(i in hooks)) hooks[i] = typeof value === "function" ? value() : value; return [hooks[i], v => { hooks[i] = typeof v === "function" ? v(hooks[i]) : v; }]; },
     useMemo(fn) { return fn(); },
     useCallback(fn) { return fn; },

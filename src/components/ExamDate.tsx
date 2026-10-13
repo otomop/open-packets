@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { course } from "@/lib/course";
 import { daysUntil, examDatePatch, formatExamDate, trackForDate, trackLabel } from "@/lib/plan";
 import { getProgress, localDateKey, updateSettings, useProgress } from "@/lib/store";
+import { AccentColorPicker } from "./AccentColorPicker";
 
 const OPEN_EVENT = "ccna:exam-date";
 
@@ -57,20 +58,25 @@ export function ExamDatePicker({ value, onChange, label = "Exam date" }: { value
 }
 
 /**
- * Asks for the target exam date on first launch, and again whenever something calls openExamDateDialog().
+ * First launch offers a favorite color, then an exam date. Later calls open only the date picker.
  * Uses a native modal <dialog> so focus is trapped, Esc works and the page behind is inert.
  */
 export function ExamDateDialog() {
   const p = useProgress();
   const firstRun = !p.settings.onboarded && !p.settings.examDate;
   const [open, setOpen] = useState(firstRun);
+  const [welcome, setWelcome] = useState(firstRun);
+  const [step, setStep] = useState<"color" | "date">(firstRun ? "color" : "date");
   const [value, setValue] = useState(p.settings.examDate);
   const ref = useRef<HTMLDialogElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
   const titleId = useId();
 
   useEffect(() => {
     const onOpen = () => {
       setValue(getProgress().settings.examDate);
+      setWelcome(false);
+      setStep("date");
       setOpen(true);
     };
     window.addEventListener(OPEN_EVENT, onOpen);
@@ -82,7 +88,8 @@ export function ExamDateDialog() {
     if (!d) return;
     if (open && !d.open) d.showModal();
     if (!open && d.open) d.close();
-  }, [open]);
+    if (open) heading.current?.focus();
+  }, [open, step]);
 
   const dismiss = () => {
     if (!getProgress().settings.onboarded) updateSettings({ onboarded: true });
@@ -90,6 +97,7 @@ export function ExamDateDialog() {
   };
   const valid = value !== "" && (daysUntil(value) ?? -1) >= 0;
   const save = () => {
+    if (step === "color") { setStep("date"); return; }
     if (!valid) return;
     updateSettings(examDatePatch(value));
     setOpen(false);
@@ -108,14 +116,20 @@ export function ExamDateDialog() {
       {open && (
         <form method="dialog" onSubmit={(e) => { e.preventDefault(); save(); }}>
           <div className="exam-dialog-body">
-            <span className="eyebrow tone-accent">{firstRun ? "Welcome to OpenPackets" : "Your exam"}</span>
-            <h2 id={titleId} className="display">When is your exam?</h2>
-            <p className="lead">Your countdown, study plan and weekly pace all work back from this date. You can change it any time in Settings.</p>
-            <ExamDatePicker value={value} onChange={setValue} label="Target exam date" />
+            <div className="welcome-progress"><span className="eyebrow tone-accent">{welcome ? "Welcome to OpenPackets" : "Your exam"}</span>{welcome && <span className="small welcome-step">{step === "color" ? "1" : "2"} / 2</span>}</div>
+            <h2 ref={heading} tabIndex={-1} id={titleId} className="display welcome-title">{step === "color" ? "Pick a favorite color." : "When is your exam?"}</h2>
+            {step === "color" ? <>
+              <p className="lead">Make this study space yours. Pick one of these five colors or choose your own. You can change it any time in Settings.</p>
+              <AccentColorPicker value={p.settings.accentColor} onChange={accentColor => updateSettings({ accentColor })} />
+            </> : <>
+              <p className="lead">Your countdown, study plan and weekly pace all work back from this date. You can change it any time in Settings.</p>
+              <ExamDatePicker value={value} onChange={setValue} label="Target exam date" />
+            </>}
           </div>
           <div className="exam-dialog-actions">
-            <button type="button" className="link" onClick={dismiss}>{firstRun ? "Not booked yet — skip for now" : "Cancel"}</button>
-            <button type="submit" className="btn accent" disabled={!valid}>Save date →</button>
+            {welcome && step === "date" && <button type="button" className="link" onClick={() => setStep("color")}>← Color</button>}
+            <button type="button" className="link" onClick={dismiss}>{step === "color" ? "Set up later" : welcome ? "Skip date for now" : "Cancel"}</button>
+            <button type="submit" className="btn accent welcome-next" disabled={step === "date" && !valid}>{step === "color" ? "Continue →" : "Save date →"}</button>
           </div>
         </form>
       )}

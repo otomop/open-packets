@@ -50,6 +50,70 @@ test("invalid stored data is not silently overwritten; explicit reset recovers",
   assert.equal(store.useStorageStatus().state, "saved");
 });
 
+test("accent colors survive reload and export without changing study records; old backups keep blue", () => {
+  const { rt, store } = loadStore();
+  store.updateChapter("routing", { notes: "saved work", sectionsDone: ["intro"] });
+  store.updateSettings({ accentColor: "#A012FE", onboarded: true });
+  assert.equal(store.getProgress().settings.accentColor, "#a012fe");
+  assert.equal(rt.document.documentElement.style.getPropertyValue("--user-accent"), "#a012fe");
+  store.flushProgress();
+  const restored = loadStore({ [KEY]: rt.data.get(KEY) });
+  restored.store.applyTheme();
+  assert.equal(restored.store.getProgress().settings.accentColor, "#a012fe");
+  assert.equal(restored.store.getProgress().settings.onboarded, true);
+  assert.equal(restored.store.getProgress().chapters.routing.notes, "saved work");
+  const exported = store.exportProgress();
+  store.updateSettings({ accentColor: "#000000" });
+  assert.equal(store.importProgress(exported), null);
+  assert.equal(rt.document.documentElement.style.getPropertyValue("--user-accent"), "#a012fe");
+  const older = JSON.parse(exported);
+  delete older.settings.accentColor;
+  assert.equal(store.importProgress(JSON.stringify(older)), null);
+  assert.equal(store.getProgress().settings.accentColor, "#3860f4");
+  assert.equal(store.getProgress().chapters.routing.notes, "saved work");
+});
+
+test("invalid color updates and imports cannot replace saved progress or inject CSS", () => {
+  const { rt, store } = loadStore();
+  store.updateSettings({ accentColor: "#123456" });
+  store.flushProgress();
+  const before = store.getProgress();
+  const saved = rt.data.get(KEY);
+  for (const accentColor of ["red", "#fff", "#123456; color:red", "url(https://example.com)", 123456, null]) {
+    assert.throws(() => store.updateSettings({ accentColor }));
+    assert.match(store.importProgress(JSON.stringify({ ...plain(before), settings: { ...before.settings, accentColor } })), /Could not import/);
+    assert.equal(store.getProgress(), before);
+    assert.equal(rt.data.get(KEY), saved);
+    assert.equal(rt.document.documentElement.style.getPropertyValue("--user-accent"), "#123456");
+  }
+});
+
+test("external color settings and reset reapply the palette", () => {
+  const { rt, store } = loadStore();
+  const remote = JSON.stringify({ ...plain(store.getProgress()), settings: { ...store.getProgress().settings, accentColor: "#ffffff", onboarded: true } });
+  rt.data.set(KEY, remote);
+  rt.window.dispatch("storage", { key: KEY, newValue: remote });
+  assert.equal(rt.document.documentElement.style.getPropertyValue("--user-accent"), "#ffffff");
+  assert.equal(rt.document.documentElement.style.getPropertyValue("--user-accent-ink"), "#000000");
+  store.resetAll();
+  assert.equal(store.getProgress().settings.accentColor, "#3860f4");
+  assert.equal(rt.document.documentElement.style.getPropertyValue("--user-accent"), "#3860f4");
+});
+
+test("retired system motion imports as Enabled while Disabled and study progress are preserved", () => {
+  for (const [motion, expected] of [[undefined, "full"], ["system", "full"], ["full", "full"], ["reduced", "reduced"]]) {
+    const source = JSON.stringify({ v: 1, settings: { motion, theme: "system" }, chapters: { routing: { sectionsDone: ["intro"], stepsDone: [], notes: "keep this work" } } });
+    const { rt, store } = loadStore({ [KEY]: source });
+    assert.equal(store.getProgress().settings.motion, expected);
+    assert.equal(store.prefersReducedMotion(), expected === "reduced");
+    assert.equal(store.getProgress().settings.theme, "system", "Appearance keeps its separate system option");
+    assert.equal(store.getProgress().chapters.routing.notes, "keep this work");
+    assert.equal(rt.data.get(KEY), source, "loading does not overwrite the original backup");
+    assert.equal(store.importProgress(source), null);
+    assert.equal(JSON.parse(store.exportProgress()).settings.motion, expected);
+  }
+});
+
 test("lifecycle flush writes last changes; failures remain exportable and retryable", () => {
   const { rt, store } = loadStore();
   store.updateChapter("first", { notes: "last keystroke" });

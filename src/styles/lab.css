@@ -50,8 +50,8 @@
 .lab-m .lab-m-route button.is-bad .n { color: var(--bad); }
 .lab-m .lab-m-route button.is-done { border-top-color: var(--ok); }
 .lab-m .lab-m-route button.is-done .n { color: var(--ok); }
-.lab-m .lab-m-route button.is-current { border-top-color: var(--accent); }
-.lab-m .lab-m-route button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lab-m .lab-m-route button.is-current { border-top-color: var(--accent-text); }
+.lab-m .lab-m-route button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
 /* Long labs: titles would get a few pixels each, so the strip shows numbers and the title moves to the tooltip. */
 .lab-m.is-dense > * { --lab-route-h: 72px; }
 .lab-m.is-dense .lab-m-route { gap: 6px; padding: 12px 16px 14px; }
@@ -62,7 +62,7 @@
 .lab-m .lab-m-step.no-visual { grid-template-columns: 60px minmax(0, 1fr); }
 .lab-m .lab-m-step.no-visual .lab-m-body { max-width: 760px; }
 .lab-m .lab-m-step:focus { outline: none; }
-.lab-m .lab-m-step:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.lab-m .lab-m-step:focus-visible { outline: 2px solid var(--accent-text); outline-offset: -2px; }
 .lab-m .lab-m-num { display: flex; flex-direction: column; gap: 8px; }
 .lab-m .lab-m-num .n { font-size: 44px; line-height: .8; color: var(--ink); transition: color var(--t-base); }
 .lab-m .lab-m-step.is-warn .lab-m-num .n { color: var(--warn); }
@@ -133,7 +133,7 @@
 .lab-m .lab-m-trouble td { padding: 18px 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
 .lab-m .lab-m-trouble td:first-child { width: 34%; padding-right: 24px; font-size: 15px; font-weight: 600; color: var(--ink); }
 .lab-m .lab-m-trouble td + td { position: relative; padding-left: 44px; }
-.lab-m .lab-m-trouble td + td::before { content: "→"; position: absolute; top: 17px; left: 8px; font-family: var(--font-mono); color: var(--accent); }
+.lab-m .lab-m-trouble td + td::before { content: "→"; position: absolute; top: 17px; left: 8px; font-family: var(--font-mono); color: var(--accent-text); }
 
 /* ---------- challenge ---------- */
 .lab-m .lab-m-challenge { padding: 32px; background: var(--bg); border: 1px solid var(--accent); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; }

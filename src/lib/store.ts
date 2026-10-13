@@ -1,5 +1,6 @@
 import { useCallback, useRef, useSyncExternalStore } from "react";
 import type { Attempt, Progress, Settings } from "./types";
+import { accentVariables, DEFAULT_ACCENT, validAccent } from "./accent";
 
 const KEY = "ccna.progress.v1";
 
@@ -8,7 +9,8 @@ export const defaultSettings: Settings = {
   examDate: "",
   hoursPerWeek: 6,
   theme: "system",
-  motion: "system",
+  accentColor: DEFAULT_ACCENT,
+  motion: "full",
   newCardsPerDay: 20,
   gateCards: true,
   name: "",
@@ -62,6 +64,7 @@ function validSettings(v: unknown) {
   if (!record(v) || !keys(v, Object.keys(defaultSettings))) return false;
   return optional(v.track, x => x === "v1" || x === "v2") && optional(v.examDate, calendarDate)
     && optional(v.hoursPerWeek, x => number(x, 1, 60)) && optional(v.theme, x => typeof x === "string" && ["system", "dark", "light"].includes(x))
+    && optional(v.accentColor, validAccent)
     && optional(v.motion, x => typeof x === "string" && ["system", "full", "reduced"].includes(x)) && optional(v.newCardsPerDay, x => integer(x, 0, 200))
     && optional(v.name, x => text(x, 10000)) && ["gateCards", "onboarded", "showTicker", "navCollapsed", "toolsCollapsed"].every(k => optional(v[k], bool));
 }
@@ -101,7 +104,9 @@ export function parseProgress(json: string): Progress {
     && optional(parsed.createdAt, date);
   if (!valid) throw new Error("The progress file contains invalid settings or study records. Your existing progress was kept.");
   const base = fresh();
-  return { ...base, ...parsed, settings: { ...base.settings, ...(parsed.settings as Partial<Settings> ?? {}) } } as Progress;
+  const savedSettings = (parsed.settings ?? {}) as RecordValue;
+  // Older progress files may use "system"; the retired option now means Enabled.
+  return { ...base, ...parsed, settings: { ...base.settings, ...savedSettings, motion: savedSettings.motion === "reduced" ? "reduced" : "full" } } as Progress;
 }
 
 export type StorageStatus = { state: "saved" | "pending" | "error"; message: string | null };
@@ -175,11 +180,15 @@ export function update(fn: (draft: Progress) => Progress | void) {
 }
 
 export function updateSettings(patch: Partial<Settings>) {
+  if (patch.accentColor !== undefined) {
+    if (!validAccent(patch.accentColor)) throw new RangeError("Choose a six-digit RGB color.");
+    patch = { ...patch, accentColor: patch.accentColor.toLowerCase() };
+  }
   if (Object.entries(patch).every(([k, value]) => state.settings[k as keyof Settings] === value)) return;
   update((d) => {
     d.settings = { ...d.settings, ...patch };
   });
-  if (patch.theme !== undefined || patch.motion !== undefined) applyTheme();
+  if (patch.theme !== undefined || patch.motion !== undefined || patch.accentColor !== undefined) applyTheme();
 }
 
 export function updateChapter(id: string, patch: Partial<Progress["chapters"][string]>) {
@@ -286,14 +295,14 @@ export function useStorageStatus(): StorageStatus {
   return useSyncExternalStore(subscribeStorage, () => storageStatus, () => storageStatus);
 }
 
-/** Reflect theme + motion settings on <html> (also read at boot by index.html). */
+/** Apply saved appearance before React renders, and whenever settings change. */
 export function applyTheme() {
-  const { theme, motion } = state.settings;
+  const { theme, motion, accentColor } = state.settings;
   const root = document.documentElement;
+  for (const [name, value] of Object.entries(accentVariables(accentColor))) root.style.setProperty(name, value);
   if (theme === "system") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", theme);
-  if (motion === "reduced" || motion === "full") root.setAttribute("data-motion", motion);
-  else root.removeAttribute("data-motion");
+  root.setAttribute("data-motion", motion);
   try {
     localStorage.setItem("ccna.theme", theme);
     localStorage.setItem("ccna.motion", motion);
@@ -301,9 +310,7 @@ export function applyTheme() {
 }
 
 export function prefersReducedMotion(): boolean {
-  if (state.settings.motion === "reduced") return true;
-  if (state.settings.motion === "full") return false;
-  return typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return state.settings.motion === "reduced";
 }
 
 export function todayKey(d = new Date()): string {

@@ -1,0 +1,33 @@
+.accent-picker { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.accent-picker-summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.accent-current { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
+.accent-current code { font-size: 12px; font-weight: 400; color: var(--ink-3); }
+.accent-current-dot { width: 12px; height: 12px; background: var(--accent); border: 1px solid var(--accent-text); border-radius: 50%; }
+.accent-picker .link:disabled { color: var(--ink-3); cursor: default; text-decoration: none; }
+.accent-options { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.accent-option { position: relative; min-width: 0; padding: 12px 8px 10px; border: 1px solid var(--line-2); background: var(--bg-2); color: var(--ink-2); display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; font-size: 12px; font-weight: 600; transition: border-color var(--t-fast), background var(--t-fast); }
+.accent-option:hover { background: var(--bg-4); border-color: var(--ink-3); }
+.accent-option[aria-pressed="true"], .accent-custom[aria-expanded="true"] { border-color: var(--accent-text); color: var(--ink); box-shadow: inset 0 0 0 1px var(--accent-text); }
+.accent-swatch { display: block; width: 32px; height: 32px; border-radius: 50%; background: var(--swatch); box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); }
+.accent-custom .accent-swatch { background: conic-gradient(#f36c9c, #ffb454, #18c9ac, #3860f4, #9b6dff, #f36c9c); }
+.accent-choice-check { position: absolute; top: 2px; right: 5px; font-size: 12px; color: var(--ink); }
+.accent-manual { margin: 0; padding: 16px; min-width: 0; border: 1px solid var(--line-2); background: var(--bg-2); display: flex; flex-direction: column; gap: 14px; }
+.accent-manual legend { padding: 0 7px; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.accent-manual-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 12px; }
+.accent-manual .field input { min-width: 0; width: 100%; height: 44px; background: var(--bg); }
+.accent-manual input[type="color"] { padding: 4px; cursor: pointer; }
+.accent-manual input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.accent-manual input[type="color"]::-webkit-color-swatch { border: 0; }
+.accent-rgb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.accent-manual input[aria-invalid="true"] { border-color: var(--bad); }
+.welcome-progress { display: flex; justify-content: space-between; gap: 12px; }
+.welcome-step { color: var(--ink-3); white-space: nowrap; }
+.welcome-title:focus { outline: none; }
+.exam-dialog-actions .welcome-next { margin-left: auto; }
+@media (max-width: 600px) {
+  .accent-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .accent-option { flex-direction: row; justify-content: center; padding: 14px 6px; gap: 6px; }
+  .accent-swatch { width: 22px; height: 22px; flex: none; }
+  .accent-manual { padding: 12px; }
+  .accent-rgb { gap: 8px; }
+}

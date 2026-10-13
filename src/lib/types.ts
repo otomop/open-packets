@@ -370,12 +370,14 @@ export interface Settings {
   examDate: string;
   hoursPerWeek: number;
   theme: "system" | "dark" | "light";
-  /** system = follow the OS; full = always animate; reduced = keep motion to a minimum. */
-  motion: "system" | "full" | "reduced";
+  /** Full RGB accent color, stored as #RRGGBB. */
+  accentColor: string;
+  /** full (default) = always animate; reduced = minimize motion. */
+  motion: "full" | "reduced";
   newCardsPerDay: number;
   gateCards: boolean;
   name: string;
-  /** True once the first-launch exam-date prompt has been answered or dismissed. */
+  /** True once first-launch setup has been completed or dismissed. */
   onboarded: boolean;
   /** Show the scrolling ticker above the top bar. */
   showTicker: boolean;

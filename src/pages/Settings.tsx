@@ -3,13 +3,12 @@ import { course, totals } from "@/lib/course";
 import { exportProgress, flushProgress, importProgress, resetAll, updateSettings, useProgress, useStorageStatus } from "@/lib/store";
 import { examDatePatch } from "@/lib/plan";
 import { ExamDatePicker } from "@/components/ExamDate";
-import { REDUCED_QUERY, useMedia } from "@/lib/useMedia";
+import { AccentColorPicker } from "@/components/AccentColorPicker";
 
 export default function Settings() {
   const p = useProgress();
   const s = p.settings;
   const storage = useStorageStatus();
-  const systemReduced = useMedia(REDUCED_QUERY);
   const [msg, setMsg] = useState("");
   const download = () => {
     const a = document.createElement("a");
@@ -39,16 +38,18 @@ export default function Settings() {
           <select value={s.theme} onChange={(e) => updateSettings({ theme: e.target.value as "system" | "dark" | "light" })}><option value="system">Follow system</option><option value="dark">Dark</option><option value="light">Light (print)</option></select>
         </label>
         <label className="cell field">Motion
-          <select value={s.motion} onChange={(e) => updateSettings({ motion: e.target.value as "system" | "full" | "reduced" })}>
-            <option value="system">Follow system{systemReduced ? " (reduced on this device)" : ""}</option>
+          <select value={s.motion} onChange={(e) => updateSettings({ motion: e.target.value as "full" | "reduced" })}>
             <option value="full">Enabled — always animate</option>
-            <option value="reduced">Reduced</option>
+            <option value="reduced">Disabled — minimize motion</option>
           </select>
-          {s.motion === "system" && systemReduced && <small style={{ color: "var(--warn)" }}>This device asks apps to reduce motion (in Windows: Settings → Accessibility → Visual effects → Animation effects), so animations are off. Choose Enabled to turn them on here.</small>}
         </label>
         <label className="cell field">New flashcards per day<input type="number" min={0} max={200} step={1} value={s.newCardsPerDay} onChange={(e) => { const v = Number(e.target.value); if (Number.isInteger(v) && v >= 0 && v <= 200) updateSettings({ newCardsPerDay: v }); }} /></label>
         <label className="cell check" style={{ alignItems: "flex-start" }}><input type="checkbox" checked={s.gateCards} onChange={(e) => updateSettings({ gateCards: e.target.checked })} /><span>Only show flashcards from chapters I have opened<br /><small className="dim">Keeps the deck in step with your reading.</small></span></label>
       </div>
+      <section className="part-block">
+        <div className="part-head"><h2>Favorite color</h2><small>Your accent, across the app.</small></div>
+        <div className="panel"><AccentColorPicker value={s.accentColor} onChange={accentColor => updateSettings({ accentColor })} showReset /></div>
+      </section>
       <section className="part-block">
         <div className="part-head"><h2>Layout</h2><small>Closed something? Turn it back on here.</small></div>
         <div className="grid-cards layout-grid">

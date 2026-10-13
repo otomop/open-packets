@@ -1,7 +1,6 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import Shell from "./components/Shell";
 import { useRoute } from "./lib/router";
-import { applyTheme } from "./lib/store";
 import Today from "./pages/Today";
 import { LoadBoundary, LoadingContent } from "./components/LoadBoundary";
 import StorageNotice from "./components/StorageNotice";
@@ -18,7 +17,6 @@ const Settings = lazy(() => import("./pages/Settings"));
 
 export default function App() {
   const route = useRoute();
-  useEffect(() => applyTheme(), []);
   let page: React.ReactNode;
   switch (route.path) {
     case "": page = <Today />; break;
