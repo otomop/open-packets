@@ -9,7 +9,7 @@ An independent, original self-study companion for the Cisco CCNA 200-301 exam â€
 
 The study app runs in the browser; progress is stored locally (export/import from Settings). There are no accounts or backend services.
 
-This repository has no deployment workflow. Pushing changes to GitHub does not publish the app; hosting requires a separate, explicit setup.
+Publishing is manual. After pushing changes, open the repository's **Actions** tab, select **Publish OpenPackets**, and choose **Run workflow** on `main`. The workflow checks and builds the app, then publishes `dist/` to GitHub Pages. Ordinary pushes do not publish the app.
 
 ## Run it locally
 
