@@ -14,7 +14,7 @@
       // Apply the saved theme before first paint to avoid a flash.
       try {
         var t = localStorage.getItem("ccna.theme");
-        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+        if (t === "light" || t === "dark" || t === "gray") document.documentElement.setAttribute("data-theme", t);
         var m = localStorage.getItem("ccna.motion");
         if (m === "reduced" || m === "full") document.documentElement.setAttribute("data-motion", m);
       } catch (e) {}

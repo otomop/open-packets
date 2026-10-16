@@ -2,14 +2,14 @@
 @property --ticker-h { syntax: "<length>"; inherits: true; initial-value: 36px; }
 @property --ticker-vis { syntax: "<length>"; inherits: true; initial-value: 36px; }
 :root {
-  --bg: #0d0d0f; --bg-2: #121215; --bg-3: #17171b; --bg-4: #1f1f24;
+  --bg: #151515; --bg-2: #1b1b1b; --bg-3: #222222; --bg-4: #2a2a2a;
   --ink: #f1efe8; --ink-2: #c8c5bb; --ink-3: #9a9890; --ink-4: #6d6b64;
   --line: rgba(241, 239, 232, .14); --line-2: rgba(241, 239, 232, .28); --line-3: rgba(241, 239, 232, .5);
   --accent: var(--user-accent, #3860f4); --accent-ink: var(--user-accent-ink, #f1efe8);
   --accent-text: var(--user-accent-text-dark, #3860f4);
   --accent-soft: var(--user-accent-soft-dark, rgba(56, 96, 244, .16)); --accent-line: var(--user-accent-line-dark, rgba(56, 96, 244, .5));
   --ok: #35d07f; --ok-soft: rgba(53, 208, 127, .12); --bad: #ff5c5c; --bad-soft: rgba(255, 92, 92, .12); --warn: #ffb454; --warn-soft: rgba(255, 180, 84, .14);
-  --term: #060607; --term-ink: #e4e1d8;
+  --term: #0d0d0d; --term-ink: #e4e1d8;
   --d-infra: #58c9b9; --d-switching: #8fb4ff; --d-routing: #e0a16a; --d-services: #f09ab5; --d-aiops: #c9a7ff; --d-none: #9a9890;
   --d-fundamentals: #58c9b9; --d-access: #8fb4ff; --d-connectivity: #e0a16a; --d-security: #f09ab5; --d-automation: #c9a7ff;
   --font-display: "Big Shoulders Display", "Archivo", system-ui, sans-serif;
@@ -18,6 +18,18 @@
   --ease-enter: cubic-bezier(.16, 1, .3, 1); --ease-exit: cubic-bezier(.5, 0, .75, 0); --ease-move: cubic-bezier(.65, 0, .35, 1);
   --t-fast: 120ms; --t-base: 240ms; --t-slow: 480ms; --t-xslow: 800ms;
   --nav-w: 232px; --measure: 68ch; --grid: 80px;
+  color-scheme: dark;
+}
+:root[data-theme="gray"] {
+  --bg: #242424; --bg-2: #2b2b2b; --bg-3: #323232; --bg-4: #3b3b3b;
+  --ink: #e7e7e7; --ink-2: #d0d0d0; --ink-3: #b8b8b8; --ink-4: #b0b0b0;
+  --line: rgba(231, 231, 231, .14); --line-2: rgba(231, 231, 231, .28); --line-3: rgba(231, 231, 231, .5);
+  --accent-text: var(--user-accent-text-gray, #9db1fa);
+  --accent-soft: var(--user-accent-soft-gray, rgba(56, 96, 244, .12)); --accent-line: var(--user-accent-line-gray, #9db1fa);
+  --ok: #69df9f; --ok-soft: rgba(105, 223, 159, .12); --bad: #ffb8b8; --bad-soft: rgba(255, 184, 184, .12); --warn: #ffc875; --warn-soft: rgba(255, 200, 117, .14);
+  --term: #1d1d1d; --term-ink: #dedede;
+  --d-infra: #78d5c5; --d-switching: #afc7ff; --d-routing: #eaba91; --d-services: #f2b2c7; --d-aiops: #d3bdff; --d-none: #b8b8b8;
+  --d-fundamentals: #78d5c5; --d-access: #afc7ff; --d-connectivity: #eaba91; --d-security: #f2b2c7; --d-automation: #d3bdff;
   color-scheme: dark;
 }
 :root[data-theme="light"] {
@@ -230,8 +242,7 @@ h2.display { font-size: clamp(28px, 4vw, 44px); }
 .tabs a { padding: 12px 18px 12px 0; margin-right: 18px; font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color var(--t-fast), border-color var(--t-base) var(--ease-move); }
 .tabs a.on { color: var(--ink); border-bottom-color: var(--accent-text); }
 .tabs a small { font-family: var(--font-mono); letter-spacing: 0; text-transform: none; color: var(--ink-4); margin-left: 6px; }
-.lesson-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr) 220px; gap: 40px; align-items: start; transition: grid-template-columns var(--t-slow) var(--ease-move); }
-@media not all and (max-width: 1100px) { .lesson-layout.tools-hidden { grid-template-columns: 200px minmax(0, 1fr) 44px; } }
+.lesson-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 40px; align-items: start; }
 /* No quick-skip panel (the whole-library deck and drill): the content fills the column, flush with the page heading. */
 .lesson-layout.no-nav { grid-template-columns: minmax(0, 1fr); }
 .lesson-layout.no-nav .article { max-width: none; }
@@ -241,10 +252,6 @@ h2.display { font-size: clamp(28px, 4vw, 44px); }
 .lesson-toc a.on { color: var(--ink); border-left-color: var(--accent-text); }
 .lesson-toc a.done { color: var(--ink-4); text-decoration: line-through; }
 .lesson-toc .eyebrow { padding-bottom: 8px; }
-.lesson-rail { position: sticky; top: calc(var(--ticker-vis) + var(--topbar-h) + 20px); display: flex; flex-direction: column; gap: 14px; font-size: 13px; }
-.lesson-rail a.tool { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--line); text-decoration: none; }
-.lesson-rail a.tool span:last-child { color: var(--ink-4); font-family: var(--font-mono); font-size: 12px; }
-.lesson-rail .sources a { display: block; color: var(--ink-2); font-size: 12px; padding: 4px 0; }
 .article { max-width: var(--measure); display: flex; flex-direction: column; gap: 22px; font-size: 17px; line-height: 1.65; }
 .article .md h2, .article h2.section-title { font-family: var(--font-display); font-weight: 800; font-size: 36px; text-transform: uppercase; letter-spacing: -.01em; line-height: .95; margin-top: 12px; }
 .article .md h3, .article .md h4 { font-size: 20px; margin-top: 8px; }
@@ -571,7 +578,7 @@ details.domain summary .w { margin-left: auto; font-family: var(--font-mono); fo
 .countdown .countdown-actions { display: flex; gap: 14px; flex-wrap: wrap; }
 .settings-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .settings-grid .span-2 { grid-column: 1 / -1; }
-.layout-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.layout-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 800px) { .settings-grid, .layout-grid { grid-template-columns: minmax(0, 1fr); } .exam-dialog-body { padding: 24px 20px 18px; } .exam-dialog-actions { padding: 14px 20px; } }
 
 .palette-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, .55); z-index: 50; display: flex; justify-content: center; align-items: flex-start; padding: 12vh 16px; animation: fade var(--t-fast) both; }
@@ -610,14 +617,12 @@ p.panel, .md.panel { display: block; }
 /* Toolbars of filters and controls. */
 .toolbar { background: var(--bg); border: 1px solid var(--line); padding: 12px 16px; }
 
-/* Lesson: tabs, contents and tools rails, and the article as one sheet of section panels. */
+/* Lesson: tabs, contents, and the article as one sheet of section panels. */
 .tabs { flex-wrap: wrap; overflow: visible; }
-/* Reading rails hand scrolling back to the document at their edges. Only the modal drawer traps it. */
-.lesson-toc, .lesson-rail { background: var(--bg); border: 1px solid var(--line); padding: 14px 16px; max-height: calc(100dvh - var(--ticker-vis) - var(--topbar-h) - 40px); overflow-y: auto; transition: top var(--t-slow) var(--ease-move), max-height var(--t-slow) var(--ease-move); }
-/* The rail clips; its body scrolls, so the toggle stays pinned and collapsing clips instead of re-wrapping. */
-.lesson-rail { overflow: hidden; }
+/* The contents list hands scrolling back to the document at its edges. */
+.lesson-toc { background: var(--bg); border: 1px solid var(--line); padding: 14px 16px; max-height: calc(100dvh - var(--ticker-vis) - var(--topbar-h) - 40px); overflow-y: auto; transition: top var(--t-slow) var(--ease-move), max-height var(--t-slow) var(--ease-move); }
 .lesson-toc a { margin-left: -16px; margin-right: -16px; padding-left: 14px; padding-right: 16px; }
-.lesson-toc a:focus-visible, .lesson-rail a:focus-visible, .lesson-toc .toc-link:focus-visible { outline-offset: -2px; }
+.lesson-toc a:focus-visible, .lesson-toc .toc-link:focus-visible { outline-offset: -2px; }
 /* Quick-skip list items that are buttons (lab steps) match the contents links. */
 .lesson-toc .toc-link { display: block; width: calc(100% + 32px); text-align: left; font: inherit; font-size: 13px; color: var(--ink-3); background: transparent; border: 0; border-top: 1px solid var(--line); border-left: 2px solid transparent; padding: 8px 16px 8px 14px; margin-left: -16px; margin-right: -16px; cursor: pointer; }
 .lesson-toc .toc-link:hover { color: var(--ink); }
@@ -634,17 +639,8 @@ p.panel, .md.panel { display: block; }
 .jump-grid .jump.cur { box-shadow: inset 0 0 0 1px var(--accent-text); }
 .jump-more { display: block; padding-top: 8px; }
 .list-rows.panel-list { border-top: 1px solid var(--line); }
-/* Pages without the chapter tools rail keep the same centred reading column. */
-.lesson-layout .article { gap: 14px; max-width: calc(var(--measure) + 74px); transition: max-width var(--t-slow) var(--ease-move); }
-@media not all and (max-width: 1100px) { .lesson-layout.tools-hidden .article { max-width: calc(88ch + 74px); } }
-.rail-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; }
-.rail-toggle { flex: none; width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); background: var(--bg); color: var(--ink-3); cursor: pointer; transition: color var(--t-fast), border-color var(--t-fast); }
-.rail-toggle:hover { color: var(--ink); border-color: var(--line-3); }
-.rail-body { width: 186px; flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; transition: opacity var(--t-base) var(--ease-move); }
-.lesson-rail.collapsed { padding: 6px; gap: 0; overflow: hidden; }
-.lesson-rail.collapsed .rail-head { justify-content: center; }
-.lesson-rail.collapsed .rail-head .eyebrow { display: none; }
-.lesson-rail.collapsed .rail-body { opacity: 0; visibility: hidden; height: 0; overflow: hidden; transition: opacity var(--t-base) var(--ease-move), visibility 0s linear var(--t-base); }
+/* Keep a comfortable line length after removing the tools column. */
+.lesson-layout .article { gap: 14px; max-width: calc(var(--measure) + 74px); }
 .lesson-layout .section { background: var(--bg); border: 1px solid var(--line); padding: 30px 36px 34px; }
 /* Normal document flow keeps scroll positions stable without height-measurement passes. */
 .lesson-layout .article > .callout { background: var(--bg); padding: 20px 36px; }
@@ -679,7 +675,6 @@ p.panel, .md.panel { display: block; }
 
 @media (max-width: 1100px) {
   .lesson-layout { grid-template-columns: 180px minmax(0, 1fr); }
-  .lesson-rail { display: none; }
   .today-grid { grid-template-columns: 1fr 1fr; }
   .chapter-head, .hero-row { grid-template-columns: 1fr; }
   .chapter-head .facts, .hero-row .countdown { border-left: 0; padding-left: 0; }

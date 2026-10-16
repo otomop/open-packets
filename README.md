@@ -36,7 +36,7 @@ For development, use `npm run dev`. Before submitting changes, run `npm run type
 
 Found incorrect data, an unclear explanation, or an inconsistency? **Please open a pull request** with the affected chapter or exercise, your correction, and a credible supporting source so it can be reviewed and fixed. An issue is welcome if you're unsure how to make the change.
 
-Course material lives in [`content/chapters/`](content/chapters/). See the [authoring guide](content/AUTHORING.md) for its format.
+Course material lives in [`content/chapters/`](content/chapters/), with lessons, labs, and practice files grouped by chapter.
 
 Publishing is manual: **Actions → Publish OpenPackets → Run workflow** on `main`. Pushing a commit alone does not update the live app.
 

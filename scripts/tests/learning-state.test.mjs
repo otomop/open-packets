@@ -88,6 +88,28 @@ test("invalid color updates and imports cannot replace saved progress or inject 
   }
 });
 
+test("dark gray appearance survives reload and backup import without changing study records or accent", () => {
+  const { rt, store } = loadStore();
+  const attributes = new Map();
+  rt.document.documentElement.setAttribute = (name, value) => attributes.set(name, value);
+  store.updateChapter("routing", { notes: "Keep my notes", sectionsDone: ["intro"] });
+  store.updateSettings({ theme: "gray", accentColor: "#f36c9c", motion: "reduced" });
+  assert.equal(attributes.get("data-theme"), "gray");
+  assert.equal(rt.data.get("ccna.theme"), "gray");
+  store.flushProgress();
+  const restored = loadStore({ [KEY]: rt.data.get(KEY) });
+  assert.equal(restored.store.getProgress().settings.theme, "gray");
+  assert.equal(restored.store.useStorageStatus().state, "saved");
+  const exported = restored.store.exportProgress();
+  restored.store.updateSettings({ theme: "light" });
+  assert.equal(restored.store.importProgress(exported), null);
+  assert.equal(restored.store.getProgress().settings.theme, "gray");
+  assert.equal(restored.store.getProgress().settings.accentColor, "#f36c9c");
+  assert.equal(restored.store.getProgress().settings.motion, "reduced");
+  assert.equal(restored.store.getProgress().chapters.routing.notes, "Keep my notes");
+  assert.deepEqual(plain(restored.store.getProgress().chapters.routing.sectionsDone), ["intro"]);
+});
+
 test("external color settings and reset reapply the palette", () => {
   const { rt, store } = loadStore();
   const remote = JSON.stringify({ ...plain(store.getProgress()), settings: { ...store.getProgress().settings, accentColor: "#ffffff", onboarded: true } });

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import NetFigure, { EASE, PauseButton, frames, shown, useAway } from "./NetFigure";
 import { prefersReducedMotion } from "@/lib/store";
 
-/* ---------- topology: drawn to the figure standard (content/FIGURES.md) by NetFigure ---------- */
+/* ---------- topology: drawn by NetFigure ---------- */
 
 /** Describe the authored relationships, without making the decorative device icons separate announcements. */
 function topologyDescription(spec: TopologySpec): string {

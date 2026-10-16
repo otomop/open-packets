@@ -1,5 +1,0 @@
-{
-  "result": "passed",
-  "checks": 78,
-  "scope": "34–40 and 44–45 arithmetic, ranges, ordered policy, RF reuse and specified encapsulation; no network-device execution"
-}

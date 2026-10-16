@@ -7,7 +7,8 @@ const {
   validAccent, rgbFromHex, hexFromRgb, contrastRatio, accentVariables,
 } = runtime().load("src/lib/accent.ts");
 
-const darkSurfaces = ["#0d0d0f", "#121215", "#17171b", "#1f1f24"];
+const darkSurfaces = ["#151515", "#1b1b1b", "#222222", "#2a2a2a"];
+const graySurfaces = ["#242424", "#2b2b2b", "#323232", "#3b3b3b"];
 const lightSurfaces = ["#f1efe8", "#f7f6f1", "#e9e6dd", "#dedad0"];
 
 const channels = hex => [1, 3, 5].map(offset => Number.parseInt(hex.slice(offset, offset + 2), 16));
@@ -71,7 +72,7 @@ test("sampled RGB colors keep exact fills and readable text on base and tinted s
     assert.equal(vars["--user-accent"], selected);
     assert.ok(["#000000", "#ffffff"].includes(vars["--user-accent-ink"]));
     assert.ok(contrastRatio(selected, vars["--user-accent-ink"]) >= 4.5, `fill text on ${selected}`);
-    for (const [theme, surfaces, alpha] of [["dark", darkSurfaces, 0.16], ["light", lightSurfaces, 0.12]]) {
+    for (const [theme, surfaces, alpha] of [["dark", darkSurfaces, 0.16], ["gray", graySurfaces, 0.12], ["light", lightSurfaces, 0.12]]) {
       const tints = surfaces.flatMap(surface => [compositedTint(selected, surface, alpha), compositedTint(selected, surface, alpha, true)]);
       for (const surface of surfaces) {
         assert.ok(contrastRatio(vars[`--user-accent-text-${theme}`], surface) >= 4.5, `${selected}: ${theme} text on ${surface}`);
@@ -92,7 +93,7 @@ test("derived shades retain channel ordering and neutral colors stay neutral", (
   for (const selected of ["#ff0000", "#00ff00", "#0000ff", "#2f5bff", "#f36c9c", "#000000", "#ffffff", "#777777"]) {
     const original = rgbFromHex(selected);
     const vars = accentVariables(selected);
-    for (const theme of ["dark", "light"]) {
+    for (const theme of ["dark", "gray", "light"]) {
       const derived = rgbFromHex(vars[`--user-accent-text-${theme}`]);
       for (const a of ["r", "g", "b"]) {
         for (const b of ["r", "g", "b"]) assert.equal(Math.sign(derived[a] - derived[b]), Math.sign(original[a] - original[b]));
@@ -101,6 +102,7 @@ test("derived shades retain channel ordering and neutral colors stay neutral", (
   }
   const vars = accentVariables("#2F5BFF");
   assert.equal(vars["--user-accent-soft-dark"], "rgba(47, 91, 255, 0.16)");
+  assert.equal(vars["--user-accent-soft-gray"], "rgba(47, 91, 255, 0.12)");
   assert.equal(vars["--user-accent-soft-light"], "rgba(47, 91, 255, 0.12)");
   assert.throws(() => accentVariables("#123456; color:red"), /six-digit hex/);
 });

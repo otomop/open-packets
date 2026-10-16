@@ -6,7 +6,7 @@ OpenPackets uses separate licenses for the application and its teaching material
 
 | Material | License |
 | --- | --- |
-| Original application code, styles, build configuration, and engineering scripts and tests wherever located (including audit scripts under `content/audits/`); engineering documentation outside `content/` | [MIT](public/licenses/MIT.txt) |
+| Original application code, styles, build configuration, and engineering scripts and tests wherever located; engineering documentation outside `content/` | [MIT](public/licenses/MIT.txt) |
 | Original teaching material and documentation under `content/`, including lessons, lab guides, practice questions, flashcards, command drills, troubleshooting exercises, illustrative command/configuration examples, and authored diagram specifications; excludes the engineering scripts and tests above | [Creative Commons Attribution 4.0 International (CC BY 4.0)](public/licenses/CC-BY-4.0.txt) |
 
 These grants cover only rights held by the OpenPackets contributors. Third-party material remains subject to its own terms. In particular, the Cisco exam-topic wording in `content/blueprint.json`, attributed third-party excerpts, external source documents, and third-party elements visible in screenshots are not relicensed by this project. References and source links do not grant permission to redistribute the linked works.

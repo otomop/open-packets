@@ -15,8 +15,8 @@ import "@/styles/lab.css";
 
 type Tone = "ok" | "warn" | "bad" | "dim";
 interface Chip { node: string; text: string; tone?: Tone }
-/** A step's `state` fence: what is true of the network once that step is done, drawn to the figure standard
-    (content/FIGURES.md). Traffic, roles, chips and down cables come from NetTrace; the rest is specific to labs. */
+/** A step's `state` fence: what is true of the network once that step is done.
+    Traffic, roles, chips and down cables come from NetTrace; the rest is specific to labs. */
 interface StepState extends NetTrace {
   status: string;
   tone?: Tone;

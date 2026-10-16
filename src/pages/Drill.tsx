@@ -84,7 +84,7 @@ export function CommandSession({ list, chapterId, onRestart, onNextChapter }: {
   const ch = chapterById.get(d.chapterId);
   const showAnswer = entry.revealed || entry.grade?.correct;
 
-  return <TabLayout chapter={chapterId ? chapterById.get(chapterId) : undefined} nav={chapterId && !finished ? <JumpGrid label={`Commands · ${list.length}`} count={list.length} current={i} stateOf={n => {
+  return <TabLayout nav={chapterId && !finished ? <JumpGrid label={`Commands · ${list.length}`} count={list.length} current={i} stateOf={n => {
     const result = entries[list[n].id];
     return result?.first ? result.first.correct ? "ok" : "bad" : result?.skipped ? "done" : undefined;
   }} ariaLabel={n => `Command ${n + 1} of ${list.length}`} onPick={pick} /> : undefined}>

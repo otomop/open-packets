@@ -1,4 +1,4 @@
-/* The network figure engine (content/FIGURES.md). It turns a topology spec, and the traffic it should show, into a
+/* The network figure engine. It turns a topology spec, and the traffic it should show, into a
    drawing: device boxes, ports on the box edges, orthogonal cables that run port to port without crossing a device,
    placed labels, and a timeline in which traffic moves one hop at a time. Pure functions: the figure component
    renders the result and scripts/check-figures.mjs verifies every figure in the course with the same code. */

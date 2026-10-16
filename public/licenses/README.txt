@@ -3,7 +3,7 @@ Copyright (c) 2026 otomop and OpenPackets contributors.
 Source: https://github.com/otomop/open-packets
 
 Original application code, styles, build configuration, and engineering
-scripts and tests wherever located (including content/audits/), plus engineering
+scripts and tests wherever located, plus engineering
 documentation outside content/, are licensed under the MIT License.
 See MIT.txt in this directory.
 

@@ -4,7 +4,7 @@ import { prefersReducedMotion } from "@/lib/store";
 import type { NodeKind, NetTrace, TopologySpec } from "@/lib/types";
 import "@/styles/netfig.css";
 
-/* A network figure drawn to the figure standard (content/FIGURES.md): device boxes, ports on their edges, cables
+/* A network figure: device boxes, ports on their edges, cables
    port to port, and traffic that moves one hop at a time. The layout and the timeline come from src/lib/netfig. */
 
 export function glyph(kind: NodeKind): ReactNode {

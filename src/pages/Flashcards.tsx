@@ -80,7 +80,6 @@ export function Deck({ chapterId }: { chapterId?: string }) {
   const cur = queue.findIndex((k) => k.id === card?.id);
   return (
     <TabLayout
-      chapter={chapterId ? chapterById.get(chapterId) : undefined}
       nav={chapterId ? <JumpGrid label={`Cards · ${queue.length}`} count={queue.length} current={cur}
         stateOf={(i) => { const g = graded[queue[i].id]; return g ? (g === 1 ? "bad" : "ok") : p.cards[queue[i].id] ? "done" : undefined; }}
         ariaLabel={(i) => `Card ${i + 1} of ${queue.length}`}

@@ -24,7 +24,7 @@ const FLOW_TONES = new Set(["request", "reply", "alt", "warn"]);
 const MARK_TONES = new Set(["ok", "warn", "bad", "dim", "accent"]);
 const SIDES = new Set(["l", "r", "t", "b"]);
 
-/** The shape of a figure trace (content/FIGURES.md). Whether its nodes and cables exist is checked by
+/** Validate the shape of a figure trace. Whether its nodes and cables exist is checked by
     scripts/check-figures.mjs, which lays each figure out with the app's own engine. */
 function checkTrace(where, t) {
   const str = (v) => typeof v === "string" && v.length > 0;
@@ -163,7 +163,7 @@ for (const c of course.chapters) {
     checkMarkdown(`${where} lab troubleshooting`, c.lab.troubleshooting);
     checkMarkdown(`${where} lab challenge`, c.lab.challenge);
   }
-  // Workload follows content/PRACTICE-PLAN.md; short introductory banks are intentional.
+  // Practice volume follows each chapter's scope; short introductory banks are intentional.
   if (!c.questions.length) warn(`${where}: no checkpoint questions`);
   for (const q of c.questions) {
     const w = `${where} ${q.id}`;

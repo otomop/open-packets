@@ -47,27 +47,3 @@ test("every selected command has a valid lesson link, concise help and exact gra
     }
   }
 });
-
-test("the chapter audit accounts for every original item and each retained or added item", async () => {
-  const dir = "content/audits/command-relevance-2026-09-27";
-  const before = JSON.parse(await fs.readFile(`${dir}/before.json`, "utf8"));
-  const reviews = (await Promise.all(["00-15", "16-30", "31-45"].map(async range => JSON.parse(await fs.readFile(`${dir}/${range}.json`, "utf8"))))).flatMap(r => r.chapters);
-  assert.equal(reviews.length, course.chapters.length);
-  for (const chapter of course.chapters) {
-    const review = reviews.find(r => r.chapterId === chapter.id);
-    assert.ok(review, `${chapter.id}: audit`);
-    const plan = plans.find(p => p.chapterId === chapter.id);
-    for (const field of ["goal", "demand", "emptyReason", "reviewLinks"]) assert.deepEqual(plan[field], review[field], `${chapter.id}: plan differs from final review's ${field}`);
-    const original = before.filter(d => d.chapterId === chapter.id);
-    assert.equal(review.beforeCount, original.length, `${chapter.id}: baseline count`);
-    assert.equal(new Set(review.decisions.map(d => d.id)).size, review.decisions.length, `${chapter.id}: unique decisions`);
-    for (const item of original) assert.ok(review.decisions.some(d => d.id === item.id && d.action !== "add"), `${item.id}: missing original-item decision`);
-    for (const decision of review.decisions) {
-      assert.ok(["keep", "revise", "retire", "add"].includes(decision.action), `${decision.id}: action`);
-      assert.ok(decision.reason?.trim(), `${decision.id}: rationale`);
-      assert.equal(chapter.commands.some(d => d.id === decision.id), decision.action !== "retire", `${decision.id}: content disagrees with audit`);
-      assert.equal(original.some(d => d.id === decision.id), decision.action !== "add", `${decision.id}: original vs new identity`);
-    }
-    for (const item of chapter.commands) assert.ok(review.decisions.some(d => d.id === item.id), `${item.id}: unaudited current item`);
-  }
-});

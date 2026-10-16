@@ -101,7 +101,6 @@ function CheckpointContent({ chapter }: { chapter: ChapterSummary }) {
   if (!questions.length) return <div className="empty">No checkpoint questions yet.</div>;
   return (
     <TabLayout
-      chapter={chapter}
       nav={<JumpGrid label="Questions" count={questions.length} current={-1}
         stateOf={(i) => (states[i]?.revealed ? (isCorrect(questions[i], states[i].picked) ? "ok" : "bad") : states[i]?.picked.length ? "done" : undefined)}
         ariaLabel={(i) => `Question ${i + 1}`}

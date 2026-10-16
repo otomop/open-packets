@@ -10,12 +10,5 @@
 .DS_Store
 Thumbs.db
 
-# leftovers from the previous (pre-rebuild) app — safe to delete
-/_legacy
-/.next
-/.vinext
-/.wrangler
-/content/_source
-
 # local launcher (machine-specific)
 /dev.cmd

@@ -1,4 +1,4 @@
-/* Network figures: the look of content/FIGURES.md. Every rule is scoped to .nf. */
+/* Network figures. Every rule is scoped to .nf. */
 .nf {
   --nf-box: var(--line-3);
   --nf-focus: color-mix(in srgb, var(--accent-text) 72%, var(--ink));

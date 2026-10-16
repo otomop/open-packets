@@ -138,7 +138,7 @@ function Learn({ c }: { c: ReadingChapter }) {
     if (anchor) navigateToAnchor(window.location.hash.split("#").slice(0, 2).join("#"), "s-" + anchor, c.id);
   }, [c.id]);
   return (
-    <TabLayout chapter={c} nav={<LessonToc c={c} done={done} />}>
+    <TabLayout nav={<LessonToc c={c} done={done} />}>
       <LessonArticle c={c} done={done} />
     </TabLayout>
   );

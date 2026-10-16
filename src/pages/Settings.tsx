@@ -35,7 +35,7 @@ export default function Settings() {
           <select value={s.track} onChange={(e) => updateSettings({ track: e.target.value as "v1" | "v2" })}><option value="v2">200-301 v2.0 (from 3 Feb 2027)</option><option value="v1">200-301 v1.1 (until 2 Feb 2027)</option></select>
         </label>
         <label className="cell field">Appearance
-          <select value={s.theme} onChange={(e) => updateSettings({ theme: e.target.value as "system" | "dark" | "light" })}><option value="system">Follow system</option><option value="dark">Dark</option><option value="light">Light (print)</option></select>
+          <select value={s.theme} onChange={(e) => updateSettings({ theme: e.target.value as "system" | "dark" | "gray" | "light" })}><option value="system">Follow system</option><option value="dark">Dark</option><option value="gray">Dark gray</option><option value="light">Light (print)</option></select>
         </label>
         <label className="cell field">Motion
           <select value={s.motion} onChange={(e) => updateSettings({ motion: e.target.value as "full" | "reduced" })}>
@@ -55,7 +55,6 @@ export default function Settings() {
         <div className="grid-cards layout-grid">
           <label className="cell check" style={{ alignItems: "flex-start" }}><input type="checkbox" checked={s.showTicker} onChange={(e) => updateSettings({ showTicker: e.target.checked })} /><span>Scrolling ticker<br /><small className="dim">{s.showTicker ? "Shown at the top of each page. The × on it hides it." : "Hidden. Tick to bring it back."}</small></span></label>
           <label className="cell check" style={{ alignItems: "flex-start" }}><input type="checkbox" checked={!s.navCollapsed} onChange={(e) => updateSettings({ navCollapsed: !e.target.checked })} /><span>Side menu<br /><small className="dim">{s.navCollapsed ? "Hidden. Tick to bring it back, or press m." : "Wide screens. The menu button or m toggles it."}</small></span></label>
-          <label className="cell check" style={{ alignItems: "flex-start" }}><input type="checkbox" checked={!s.toolsCollapsed} onChange={(e) => updateSettings({ toolsCollapsed: !e.target.checked })} /><span>Chapter tools<br /><small className="dim">{s.toolsCollapsed ? "Collapsed. Tick to open the rail on lesson pages." : "The rail beside each lesson. Its arrow button collapses it."}</small></span></label>
         </div>
       </section>
       <section className="part-block">

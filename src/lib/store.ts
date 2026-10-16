@@ -63,7 +63,7 @@ function calendarDate(v: unknown) {
 function validSettings(v: unknown) {
   if (!record(v) || !keys(v, Object.keys(defaultSettings))) return false;
   return optional(v.track, x => x === "v1" || x === "v2") && optional(v.examDate, calendarDate)
-    && optional(v.hoursPerWeek, x => number(x, 1, 60)) && optional(v.theme, x => typeof x === "string" && ["system", "dark", "light"].includes(x))
+    && optional(v.hoursPerWeek, x => number(x, 1, 60)) && optional(v.theme, x => typeof x === "string" && ["system", "dark", "gray", "light"].includes(x))
     && optional(v.accentColor, validAccent)
     && optional(v.motion, x => typeof x === "string" && ["system", "full", "reduced"].includes(x)) && optional(v.newCardsPerDay, x => integer(x, 0, 200))
     && optional(v.name, x => text(x, 10000)) && ["gateCards", "onboarded", "showTicker", "navCollapsed", "toolsCollapsed"].every(k => optional(v[k], bool));

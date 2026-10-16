@@ -221,11 +221,11 @@ export interface TopologySpec {
   links: TopoLink[];
   packet?: { path: string[]; label?: string };
   zones?: { label: string; nodes: string[] }[];
-  /** The traffic the figure animates (content/FIGURES.md). */
+  /** The traffic the figure animates. */
   trace?: NetTrace;
 }
 
-/* ---------- network figure traces: see content/FIGURES.md ---------- */
+/* ---------- network figure traces ---------- */
 
 export type FlowTone = "request" | "reply" | "alt" | "warn";
 export type MarkTone = "ok" | "warn" | "bad" | "dim" | "accent";
@@ -369,7 +369,7 @@ export interface Settings {
   track: Track;
   examDate: string;
   hoursPerWeek: number;
-  theme: "system" | "dark" | "light";
+  theme: "system" | "dark" | "gray" | "light";
   /** Full RGB accent color, stored as #RRGGBB. */
   accentColor: string;
   /** full (default) = always animate; reduced = minimize motion. */
@@ -383,7 +383,7 @@ export interface Settings {
   showTicker: boolean;
   /** Desktop only: side menu collapsed. */
   navCollapsed: boolean;
-  /** Chapter pages: the chapter tools rail collapsed. */
+  /** Retired UI preference, retained so existing progress and backups remain valid. */
   toolsCollapsed: boolean;
 }
 
