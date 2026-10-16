@@ -75,7 +75,7 @@ export default function Settings() {
         <div className="part-head"><h2>About</h2></div>
         <div className="md panel">
           <p>OpenPackets is an independent, original study companion for the Cisco CCNA 200-301 exam — {totals.chapters} chapters, {totals.questions} practice questions, {totals.cards} flashcards, {totals.drills} command drills and {totals.tickets} troubleshooting tickets. It is not affiliated with or endorsed by Cisco; the exam blueprints are Cisco's. Sources were checked on {course.sourceCheckedOn}.</p>
-          <p>Code: MIT license. Original course material: CC BY 4.0. See <a href="/licenses/README.txt" target="_blank" rel="noreferrer">licenses and attribution</a>.</p>
+          <p>Code: MIT license. Original course material: CC BY 4.0. See <a href={`${import.meta.env.BASE_URL}licenses/README.txt`} target="_blank" rel="noreferrer">licenses and attribution</a>.</p>
           <p>Exam facts: {course.exam.lengthMinutes} minutes · {course.exam.price} · {course.exam.languages.join(", ")} · certification valid {course.exam.validityYears} years · v1.1 last test date {course.exam.v1.lastTestDate} · v2.0 first test date {course.exam.v2.firstTestDate}. See <a href={course.exam.examPageUrl} target="_blank" rel="noreferrer">Cisco's exam page</a> and the <a href={course.exam.announcementUrl} target="_blank" rel="noreferrer">refresh announcement</a>.</p>
         </div>
       </section>
