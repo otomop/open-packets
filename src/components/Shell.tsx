@@ -24,6 +24,8 @@ const NAV: [string, string, string][] = [
 
 /** Ticker scroll speed in pixels per second — slow enough to read, calm enough to ignore. */
 const TICKER_SPEED = 32;
+const HOVER_QUERY = "(hover: hover) and (pointer: fine)";
+const MENU_CLOSE_DELAY = 180;
 
 function Icon({ d, size = 17 }: { d: string; size?: number }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>;
@@ -202,26 +204,72 @@ export default function Shell({ children }: { children: ReactNode }) {
   const settings = useProgress(p => p.settings);
   const days = useProgress(daysToExam);
   const mobile = useMedia(MOBILE_QUERY);
+  const canHover = useMedia(HOVER_QUERY);
   const [palette, setPalette] = useState(false);
   const [help, setHelp] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [hoverMenu, setHoverMenu] = useState(false);
   const [away, setAway] = useState(false);
   const [toast, setToast] = useState<null | "ticker">(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const mainRef = useRef<HTMLElement>(null);
+  const menuCloseTimer = useRef<number | null>(null);
+  const pointerInMenu = useRef(false);
+  const focusMenuOnOpen = useRef(false);
   const collapsed = settings.navCollapsed;
   const showTicker = settings.showTicker;
-  const navOpen = mobile ? menu : !collapsed;
+  // Hover is an optional desktop interaction; touch and coarse pointers keep the click controls.
+  const hoverNav = settings.navMode === "hover" && !mobile && canHover;
+  const navOpen = mobile ? menu : hoverNav ? hoverMenu : !collapsed;
   const drawerOpen = mobile && menu;
 
-  const toggleNav = () => {
+  const cancelMenuClose = () => {
+    if (menuCloseTimer.current !== null) window.clearTimeout(menuCloseTimer.current);
+    menuCloseTimer.current = null;
+  };
+  const dismissHoverMenu = () => {
+    cancelMenuClose();
+    focusMenuOnOpen.current = false;
+    setHoverMenu(false);
+  };
+  const scheduleMenuClose = () => {
+    if (!hoverNav) return;
+    cancelMenuClose();
+    menuCloseTimer.current = window.setTimeout(() => {
+      menuCloseTimer.current = null;
+      if (!pointerInMenu.current && !navRef.current?.contains(document.activeElement)) setHoverMenu(false);
+    }, MENU_CLOSE_DELAY);
+  };
+  const focusMenu = () => {
+    const target = navRef.current?.querySelector<HTMLElement>("a[aria-current='page']") ?? navRef.current?.querySelector<HTMLElement>("a");
+    target?.focus({ preventScroll: true });
+  };
+  const enterMenu = (pointerType: string) => {
+    if (!hoverNav || pointerType === "touch") return;
+    pointerInMenu.current = true;
+    cancelMenuClose();
+    setHoverMenu(true);
+  };
+  const leaveMenu = (pointerType: string) => {
+    if (!hoverNav || pointerType === "touch") return;
+    pointerInMenu.current = false;
+    scheduleMenuClose();
+  };
+  const toggleNav = (keyboard = false) => {
     if (window.matchMedia(MOBILE_QUERY).matches) setMenu((m) => !m);
+    else if (hoverNav) {
+      cancelMenuClose();
+      focusMenuOnOpen.current = !hoverMenu && keyboard;
+      setHoverMenu(!hoverMenu);
+    }
     else updateSettings({ navCollapsed: !getProgress().settings.navCollapsed });
   };
   const toggleNavRef = useRef(toggleNav);
   toggleNavRef.current = toggleNav;
+  const dismissHoverMenuRef = useRef(dismissHoverMenu);
+  dismissHoverMenuRef.current = dismissHoverMenu;
 
   const hideTicker = () => {
     // The button is about to become inert; hand focus to something that stays put.
@@ -259,19 +307,29 @@ export default function Shell({ children }: { children: ReactNode }) {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
       const typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable);
-      if (e.key === "Escape") { setPalette(false); setHelp(false); setMenu(false); return; }
+      if (e.key === "Escape") { setPalette(false); setHelp(false); setMenu(false); dismissHoverMenuRef.current(); return; }
       if (typing || e.metaKey || e.ctrlKey || e.altKey || document.querySelector("dialog[open]")) return;
       if (e.key === "/") { e.preventDefault(); setPalette(true); }
-      else if (e.key === "m") toggleNavRef.current();
+      else if (e.key === "m") { e.preventDefault(); toggleNavRef.current(true); }
       else if (e.key === "?") setHelp((h) => !h);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Close the drawer on navigation and when the window grows past the mobile breakpoint.
-  useEffect(() => setMenu(false), [route.path, route.parts.join("/")]);
-  useEffect(() => { if (!mobile) setMenu(false); }, [mobile]);
+  // Temporary menus never carry into another page, interaction mode, or device layout.
+  useEffect(() => {
+    setMenu(false);
+    dismissHoverMenu();
+    pointerInMenu.current = false;
+  }, [route.path, route.parts.join("/"), route.query.toString(), mobile, canHover, settings.navMode]);
+  useEffect(() => () => cancelMenuClose(), []);
+
+  useLayoutEffect(() => {
+    if (!hoverNav || !hoverMenu || !focusMenuOnOpen.current) return;
+    focusMenuOnOpen.current = false;
+    focusMenu();
+  }, [hoverNav, hoverMenu]);
 
   // Crossing the breakpoint swaps the menu between a column and a drawer; do that without animating it across the page.
   useEffect(() => {
@@ -310,15 +368,25 @@ export default function Shell({ children }: { children: ReactNode }) {
     };
   }, [drawerOpen]);
 
-  const shellClass = ["shell", showTicker ? "" : "no-ticker", showTicker && away ? "ticker-away" : "", collapsed ? "nav-hidden" : ""].filter(Boolean).join(" ");
-  const toggleLabel = mobile ? (menu ? "Close menu" : "Open menu") : collapsed ? "Show menu" : "Hide menu";
+  const shellClass = ["shell", showTicker ? "" : "no-ticker", showTicker && away ? "ticker-away" : "", hoverNav ? "nav-hover" : collapsed ? "nav-hidden" : ""].filter(Boolean).join(" ");
+  const toggleLabel = mobile ? (menu ? "Close menu" : "Open menu") : navOpen ? "Hide menu" : "Show menu";
 
   return (
     <div className={shellClass} ref={shellRef}>
       <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); mainRef.current?.focus(); }}>Skip to content</a>
       <Ticker hidden={!showTicker} away={away} blocked={drawerOpen} onHide={hideTicker} onFocusOut={() => toggleRef.current?.focus({ preventScroll: true })} />
       <header className="topbar">
-        <button ref={toggleRef} className="nav-toggle" type="button" aria-label={toggleLabel} title={`${toggleLabel} (m)`} aria-expanded={navOpen} aria-controls="sidenav" onClick={toggleNav}>
+        <button ref={toggleRef} className="nav-toggle" type="button" aria-label={toggleLabel} title={`${toggleLabel} (m)`} aria-expanded={navOpen} aria-controls="sidenav"
+          onClick={(e) => toggleNav(e.detail === 0)}
+          onPointerEnter={(e) => enterMenu(e.pointerType)} onPointerLeave={(e) => leaveMenu(e.pointerType)}
+          onBlur={scheduleMenuClose}
+          onKeyDown={(e) => {
+            if (!hoverNav || e.key !== "ArrowDown") return;
+            e.preventDefault();
+            cancelMenuClose();
+            if (hoverMenu) focusMenu();
+            else { focusMenuOnOpen.current = true; setHoverMenu(true); }
+          }}>
           <Icon d={mobile ? "M4 7h16M4 12h16M4 17h16" : "M3 4h18v16H3zM9 4v16"} />
         </button>
         <a className="brand" href={href()} aria-label="OpenPackets">OPENPACKETS<span aria-hidden="true">.</span></a>
@@ -326,12 +394,14 @@ export default function Shell({ children }: { children: ReactNode }) {
           <button type="button" className="search-btn" onClick={() => setPalette(true)}><Icon d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-3.5-3.5" /><span>Search</span><Kbd>/</Kbd></button>
         </div>
       </header>
-      <nav id="sidenav" ref={navRef} className={`sidenav${menu ? " open" : ""}`} aria-label="Main" inert={!navOpen}>
+      <nav id="sidenav" ref={navRef} className={`sidenav${menu ? " open" : ""}${hoverNav && hoverMenu ? " hover-open" : ""}`} aria-label="Main" inert={!navOpen}
+        onPointerEnter={(e) => enterMenu(e.pointerType)} onPointerLeave={(e) => leaveMenu(e.pointerType)}
+        onFocus={cancelMenuClose} onBlur={scheduleMenuClose}>
         <div className="sidenav-inner">
           <div className="nav-list">
             {NAV.map(([id, label, d]) => {
               const on = isActive(id, route.path);
-              return <a key={id} href={href(id)} aria-current={on ? "page" : undefined} className={on ? "on" : ""} onClick={() => setMenu(false)}><Icon d={d} /><span>{label}</span></a>;
+              return <a key={id} href={href(id)} aria-current={on ? "page" : undefined} className={on ? "on" : ""} onClick={() => { setMenu(false); dismissHoverMenu(); }}><Icon d={d} /><span>{label}</span></a>;
             })}
           </div>
           <div className="nav-foot">

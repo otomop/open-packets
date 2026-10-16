@@ -88,22 +88,22 @@ test("invalid color updates and imports cannot replace saved progress or inject 
   }
 });
 
-test("dark gray appearance survives reload and backup import without changing study records or accent", () => {
+for (const theme of ["darkest", "gray"]) test(`${theme} appearance survives reload and backup import without changing study records or accent`, () => {
   const { rt, store } = loadStore();
   const attributes = new Map();
   rt.document.documentElement.setAttribute = (name, value) => attributes.set(name, value);
   store.updateChapter("routing", { notes: "Keep my notes", sectionsDone: ["intro"] });
-  store.updateSettings({ theme: "gray", accentColor: "#f36c9c", motion: "reduced" });
-  assert.equal(attributes.get("data-theme"), "gray");
-  assert.equal(rt.data.get("ccna.theme"), "gray");
+  store.updateSettings({ theme, accentColor: "#f36c9c", motion: "reduced" });
+  assert.equal(attributes.get("data-theme"), theme);
+  assert.equal(rt.data.get("ccna.theme"), theme);
   store.flushProgress();
   const restored = loadStore({ [KEY]: rt.data.get(KEY) });
-  assert.equal(restored.store.getProgress().settings.theme, "gray");
+  assert.equal(restored.store.getProgress().settings.theme, theme);
   assert.equal(restored.store.useStorageStatus().state, "saved");
   const exported = restored.store.exportProgress();
   restored.store.updateSettings({ theme: "light" });
   assert.equal(restored.store.importProgress(exported), null);
-  assert.equal(restored.store.getProgress().settings.theme, "gray");
+  assert.equal(restored.store.getProgress().settings.theme, theme);
   assert.equal(restored.store.getProgress().settings.accentColor, "#f36c9c");
   assert.equal(restored.store.getProgress().settings.motion, "reduced");
   assert.equal(restored.store.getProgress().chapters.routing.notes, "Keep my notes");
@@ -120,6 +120,28 @@ test("external color settings and reset reapply the palette", () => {
   store.resetAll();
   assert.equal(store.getProgress().settings.accentColor, "#3860f4");
   assert.equal(rt.document.documentElement.style.getPropertyValue("--user-accent"), "#3860f4");
+});
+
+test("menu interaction preferences survive reload and backups; older progress keeps click behavior", () => {
+  const older = JSON.stringify({ v: 1, settings: { navCollapsed: true }, chapters: {} });
+  const { rt, store } = loadStore({ [KEY]: older });
+  assert.equal(store.getProgress().settings.navMode, "click");
+  assert.equal(store.getProgress().settings.navCollapsed, true);
+  store.updateChapter("routing", { notes: "Keep my notes", sectionsDone: ["intro"] });
+  store.updateSettings({ navMode: "hover" });
+  store.flushProgress();
+  const restored = loadStore({ [KEY]: rt.data.get(KEY) }).store;
+  assert.equal(restored.getProgress().settings.navMode, "hover");
+  const exported = restored.exportProgress();
+  restored.updateSettings({ navMode: "click" });
+  assert.equal(restored.importProgress(exported), null);
+  assert.equal(restored.getProgress().settings.navMode, "hover");
+  assert.equal(restored.getProgress().settings.navCollapsed, true);
+  assert.equal(restored.getProgress().chapters.routing.notes, "Keep my notes");
+  const invalid = JSON.parse(exported);
+  invalid.settings.navMode = "unknown";
+  assert.match(restored.importProgress(JSON.stringify(invalid)), /Could not import/);
+  assert.equal(restored.getProgress().settings.navMode, "hover");
 });
 
 test("retired system motion imports as Enabled while Disabled and study progress are preserved", () => {

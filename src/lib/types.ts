@@ -369,7 +369,7 @@ export interface Settings {
   track: Track;
   examDate: string;
   hoursPerWeek: number;
-  theme: "system" | "dark" | "gray" | "light";
+  theme: "system" | "darkest" | "dark" | "gray" | "light";
   /** Full RGB accent color, stored as #RRGGBB. */
   accentColor: string;
   /** full (default) = always animate; reduced = minimize motion. */
@@ -381,7 +381,9 @@ export interface Settings {
   onboarded: boolean;
   /** Show the scrolling ticker above the top bar. */
   showTicker: boolean;
-  /** Desktop only: side menu collapsed. */
+  /** How the desktop side menu opens; touch screens always use the button. */
+  navMode: "click" | "hover";
+  /** Desktop click mode: side menu collapsed. */
   navCollapsed: boolean;
   /** Retired UI preference, retained so existing progress and backups remain valid. */
   toolsCollapsed: boolean;

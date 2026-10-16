@@ -12,12 +12,15 @@ export const ACCENT_PRESETS = [
 export const ACCENT_VARIABLE_NAMES = [
   "--user-accent",
   "--user-accent-ink",
+  "--user-accent-text-darkest",
   "--user-accent-text-dark",
   "--user-accent-text-gray",
   "--user-accent-text-light",
+  "--user-accent-soft-darkest",
   "--user-accent-soft-dark",
   "--user-accent-soft-gray",
   "--user-accent-soft-light",
+  "--user-accent-line-darkest",
   "--user-accent-line-dark",
   "--user-accent-line-gray",
   "--user-accent-line-light",
@@ -61,6 +64,7 @@ export function contrastRatio(first: string, second: string): number {
 }
 
 // Keep these in step with --bg through --bg-4 in app.css.
+const DARKEST_SURFACES = ["#0d0d0f", "#121215", "#17171b", "#1f1f24"];
 const DARK_SURFACES = ["#151515", "#1b1b1b", "#222222", "#2a2a2a"];
 const GRAY_SURFACES = ["#242424", "#2b2b2b", "#323232", "#3b3b3b"];
 const LIGHT_SURFACES = ["#f1efe8", "#f7f6f1", "#e9e6dd", "#dedad0"];
@@ -108,18 +112,22 @@ export function accentVariables(hex: string): Record<string, string> {
   const rgb = rgbFromHex(hex);
   const { r, g, b } = rgb;
   const selected = hex.toLowerCase();
+  const darkestText = readableShade(selected, surfaceLuminances(rgb, DARKEST_SURFACES, 0.16), 255);
   const darkText = readableShade(selected, surfaceLuminances(rgb, DARK_SURFACES, 0.16), 255);
   const grayText = readableShade(selected, surfaceLuminances(rgb, GRAY_SURFACES, 0.12), 255);
   const lightText = readableShade(selected, surfaceLuminances(rgb, LIGHT_SURFACES, 0.12), 0);
   return {
     "--user-accent": selected,
     "--user-accent-ink": contrastRatio(selected, "#000000") >= contrastRatio(selected, "#ffffff") ? "#000000" : "#ffffff",
+    "--user-accent-text-darkest": darkestText,
     "--user-accent-text-dark": darkText,
     "--user-accent-text-gray": grayText,
     "--user-accent-text-light": lightText,
+    "--user-accent-soft-darkest": `rgba(${r}, ${g}, ${b}, 0.16)`,
     "--user-accent-soft-dark": `rgba(${r}, ${g}, ${b}, 0.16)`,
     "--user-accent-soft-gray": `rgba(${r}, ${g}, ${b}, 0.12)`,
     "--user-accent-soft-light": `rgba(${r}, ${g}, ${b}, 0.12)`,
+    "--user-accent-line-darkest": darkestText,
     "--user-accent-line-dark": darkText,
     "--user-accent-line-gray": grayText,
     "--user-accent-line-light": lightText,

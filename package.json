@@ -19,7 +19,7 @@
     "preview": "vite preview --host 127.0.0.1 --port 5173 --strictPort",
     "validate": "node scripts/validate-content.mjs && node scripts/check-figures.mjs && node --test scripts/tests/command-content.test.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "node --test scripts/test-course-assets.mjs scripts/test-rendering.mjs scripts/test-router.mjs scripts/tests/learning-state.test.mjs scripts/tests/accent.test.mjs scripts/tests/accent-ui.test.mjs scripts/tests/subnet.test.mjs scripts/tests/subnet-ui.test.mjs scripts/tests/commands.test.mjs scripts/tests/command-content.test.mjs scripts/tests/command-ui.test.mjs"
+    "test": "node --test scripts/test-course-assets.mjs scripts/test-rendering.mjs scripts/test-router.mjs scripts/tests/learning-state.test.mjs scripts/tests/accent.test.mjs scripts/tests/accent-ui.test.mjs scripts/tests/shell-ui.test.mjs scripts/tests/subnet.test.mjs scripts/tests/subnet-ui.test.mjs scripts/tests/commands.test.mjs scripts/tests/command-content.test.mjs scripts/tests/command-ui.test.mjs"
   },
   "dependencies": {
     "marked": "^13.0.3",

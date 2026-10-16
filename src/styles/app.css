@@ -20,6 +20,12 @@
   --nav-w: 232px; --measure: 68ch; --grid: 80px;
   color-scheme: dark;
 }
+:root[data-theme="darkest"] {
+  --bg: #0d0d0f; --bg-2: #121215; --bg-3: #17171b; --bg-4: #1f1f24;
+  --accent-text: var(--user-accent-text-darkest, #6d8bf7);
+  --accent-soft: var(--user-accent-soft-darkest, rgba(56, 96, 244, .16)); --accent-line: var(--user-accent-line-darkest, #6d8bf7);
+  --term: #060607;
+}
 :root[data-theme="gray"] {
   --bg: #242424; --bg-2: #2b2b2b; --bg-3: #323232; --bg-4: #3b3b3b;
   --ink: #e7e7e7; --ink-2: #d0d0d0; --ink-3: #b8b8b8; --ink-4: #b0b0b0;
@@ -117,6 +123,10 @@ h2.display { font-size: clamp(28px, 4vw, 44px); }
   .shell.nav-hidden { grid-template-columns: 0px minmax(0, 1fr); }
   .shell.nav-hidden .sidenav { visibility: hidden; border-right-color: transparent; transition: visibility 0s linear var(--t-slow), border-color var(--t-slow); }
   .shell.nav-hidden .sidenav-inner { opacity: 0; transform: translateX(-20px); }
+  /* The hover menu floats above the page; opening it never resizes the reading column. */
+  .shell.nav-hover { grid-template-columns: 0px minmax(0, 1fr); }
+  .shell.nav-hover .sidenav { position: fixed; left: 0; width: var(--nav-w); z-index: 19; visibility: hidden; transform: translateX(-100%); transition: transform var(--t-base) var(--ease-move), visibility 0s linear var(--t-base), top var(--t-slow) var(--ease-move), height var(--t-slow) var(--ease-move); }
+  .shell.nav-hover .sidenav.hover-open { visibility: visible; transform: none; box-shadow: 16px 0 32px rgba(0, 0, 0, .25); transition: transform var(--t-base) var(--ease-move), top var(--t-slow) var(--ease-move), height var(--t-slow) var(--ease-move); }
 }
 
 /* ---- page primitives ---- */
