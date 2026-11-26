@@ -38,7 +38,7 @@ export default function Tickets({ id }: { id?: string }) {
     <div className="page">
       <a className="link" href={href("tickets")}>← All tickets</a>
       <div className="ticket">
-        <div><div className="eyebrow tone-accent">Ticket {idx + 1} · {t.chapterTitle}</div><h1 className="display wipe" style={{ fontSize: "clamp(36px,5vw,64px)", marginTop: 6 }}>{t.title}</h1></div>
+        <div><div className="eyebrow tone-accent">Ticket {idx + 1} · {t.chapterTitle}</div><h1 className="display as-written wipe" style={{ fontSize: "clamp(36px,5vw,64px)", marginTop: 6 }}>{t.title}</h1></div>
         <div className="md"><Markdown text={t.scenario} /></div>
         <div className="exhibits">{t.exhibits.map((e, i) => <CodeBlock key={i} lang="output" title={e.title} text={e.text} />)}</div>
         <div className="q-card">

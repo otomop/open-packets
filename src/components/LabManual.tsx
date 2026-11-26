@@ -109,7 +109,7 @@ export default function LabManual({ c, lab }: { c: ReadingChapter; lab: Lab }) {
           <span className="eyebrow tone-accent">Guided lab · {envLabel(lab.environment)}</span>
           <span className="eyebrow">{minutes} min</span>
         </div>
-        <h2 className="display lab-m-title">{lab.title}</h2>
+        <h2 className="display as-written lab-m-title">{lab.title}</h2>
         <div className="lab-m-hero-grid">
           <div className="lab-m-intro">
             {parsed.intro.map((b, i) => b.type === "md"
@@ -269,7 +269,7 @@ function StepPanel({ step, parsed, done, onToggle, topos }: { step: LabStep; par
       </div>
       <div className="lab-m-body">
         {flag && <span className={`lab-m-tag ${flag}`}>{state!.status}</span>}
-        <h3 id={`${step.id}-title`} className="display">{step.title}</h3>
+        <h3 id={`${step.id}-title`} className="display as-written">{step.title}</h3>
         {body}
         {!hasExpected && verify(true)}
       </div>

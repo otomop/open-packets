@@ -10,14 +10,14 @@
 .lab-m .lab-m-hero { padding: 36px 36px 32px; display: flex; flex-direction: column; gap: 20px; }
 .lab-m .lab-m-hero-top { display: flex; justify-content: space-between; gap: 16px; }
 /* Sits under the chapter title (h1, up to 96px): a section heading, not a second page title. */
-.lab-m .lab-m-title { margin: 0; max-width: 26ch; font-size: clamp(32px, 4.4cqi, 52px); line-height: .9; letter-spacing: -.005em; }
+.lab-m .lab-m-title { margin: 0; max-width: 26ch; font-size: clamp(32px, 4.4cqi, 52px); line-height: 1; letter-spacing: -.005em; }
 .lab-m .lab-m-hero-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 36px; align-items: start; }
 .lab-m .lab-m-intro .md p { font-size: 15px; line-height: 1.6; color: var(--ink-2); }
 .lab-m .lab-m-intro .md p.lab-m-notice { padding: 10px 14px; border: 1px solid var(--line-2); font-size: 14px; line-height: 1.55; }
 .lab-m .lab-m-kit { border: 1px solid var(--line-2); background: var(--bg-2); display: flex; flex-direction: column; }
 .lab-m .lab-m-kit dl { margin: 0; }
 .lab-m .lab-m-kit-row { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
-.lab-m .lab-m-kit-row dt { padding-top: 2px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.lab-m .lab-m-kit-row dt { padding-top: 2px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
 .lab-m .lab-m-kit-row dd { margin: 0; font-family: var(--font-mono); font-size: 13px; line-height: 1.5; color: var(--ink); }
 .lab-m .lab-m-kit-foot { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
 .lab-m .lab-m-count { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); }
@@ -35,15 +35,18 @@
 .lab-m .lab-m-fig { margin: 0; display: flex; flex-direction: column; gap: 18px; }
 .lab-m .lab-m-fig-head { display: flex; justify-content: space-between; gap: 16px; }
 .lab-m .lab-m-fig figcaption { font-size: 15px; line-height: 1.55; color: var(--ink-2); }
-.lab-m .lab-m-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px 32px; align-items: start; }
-.lab-m .lab-m-tables .table-scroll { margin: 0; }
+/* Tables share a row when there is room; the notes around them take a row of their own.
+   A single table therefore gets the whole width instead of being clipped between two text columns. */
+.lab-m .lab-m-tables { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-start; }
+.lab-m .lab-m-tables .table-scroll { flex: 1 1 320px; min-width: 0; margin: 0; }
+.lab-m .lab-m-tables > :not(.table-scroll) { flex: 1 1 100%; max-width: 72ch; margin: 0; }
 .lab-m .lab-m-tables th { padding: 0 16px 10px 0; font-weight: 400; letter-spacing: .12em; border-bottom-color: var(--line-2); }
 .lab-m .lab-m-tables td { padding: 13px 16px 13px 0; color: var(--ink); }
 
 /* ---------- step route: the quick-skip, pinned under the top bar ---------- */
 .lab-m .lab-m-route { position: sticky; top: var(--lab-sticky); z-index: 3; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 12px; padding: 16px 24px 18px; background: var(--bg); border: 1px solid var(--line); transition: top var(--t-slow) var(--ease-move); }
 .lab-m .lab-m-route button { display: flex; flex-direction: column; gap: 6px; min-height: 44px; padding: 10px 0 0; border: 0; border-top: 2px solid var(--line-2); background: none; text-align: left; font: inherit; color: var(--ink-3); cursor: pointer; transition: border-color var(--t-base); }
-.lab-m .lab-m-route .n { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; }
+.lab-m .lab-m-route .n { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; }
 .lab-m .lab-m-route .t { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 12.5px; line-height: 1.35; color: var(--ink-2); }
 .lab-m .lab-m-route button:hover .t, .lab-m .lab-m-route button.is-current .t { color: var(--ink); }
 .lab-m .lab-m-route button.is-warn .n { color: var(--warn); }
@@ -68,10 +71,10 @@
 .lab-m .lab-m-step.is-warn .lab-m-num .n { color: var(--warn); }
 .lab-m .lab-m-step.is-bad .lab-m-num .n { color: var(--bad); }
 .lab-m .lab-m-step.is-done .lab-m-num .n { color: var(--ok); }
-.lab-m .lab-m-verified { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); }
+.lab-m .lab-m-verified { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); }
 .lab-m .lab-m-body { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
 .lab-m .lab-m-body > h3 { margin: 0 0 2px; font-size: 24px; line-height: 1; }
-.lab-m .lab-m-tag { align-self: flex-start; padding: 3px 8px; border: 1px solid currentColor; font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.lab-m .lab-m-tag { align-self: flex-start; padding: 3px 8px; border: 1px solid currentColor; font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
 .lab-m .lab-m-tag.warn { color: var(--warn); }
 .lab-m .lab-m-tag.bad { color: var(--bad); }
 .lab-m .lab-m-visual { position: sticky; top: calc(var(--lab-sticky) + var(--lab-route-h) + 16px); align-self: start; }
@@ -92,7 +95,7 @@
 /* Command blocks: the shared CodeBlock, dressed for the bench. */
 .lab-m .cli-block { border-color: var(--line); }
 .lab-m .cli-head { padding: 6px 6px 6px 14px; }
-.lab-m .cli-title { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: #c8c5bb; }
+.lab-m .cli-title { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: #c8c5bb; }
 .lab-m .cli-title::before { content: ""; width: 6px; height: 6px; background: var(--ok); }
 .lab-m .cli-kind { display: none; }
 .lab-m .cli-copy { margin-left: auto; height: 32px; padding: 0 12px; font-family: var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
@@ -100,25 +103,25 @@
 
 /* What you should see, with the verification tick built in. */
 .lab-m .lab-m-expect { border: 1px solid color-mix(in srgb, var(--ok) 34%, transparent); background: color-mix(in srgb, var(--ok) 5%, transparent); }
-.lab-m .lab-m-expect-head { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid color-mix(in srgb, var(--ok) 18%, transparent); font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); }
+.lab-m .lab-m-expect-head { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid color-mix(in srgb, var(--ok) 18%, transparent); font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); }
 .lab-m .lab-m-expect-head svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .lab-m .lab-m-expect-body { padding: 14px 16px; }
 .lab-m .lab-m-expect-body .md p { font-size: 15px; line-height: 1.6; color: var(--ink); }
 .lab-m .lab-m-verify { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 16px; border-top: 1px solid color-mix(in srgb, var(--ok) 18%, transparent); font-size: 14px; color: var(--ink-2); cursor: pointer; }
 .lab-m .lab-m-verify.standalone { border: 1px solid var(--line-2); }
-.lab-m .lab-m-verify input { width: 18px; height: 18px; margin: 0; accent-color: var(--ok); }
+.lab-m .lab-m-verify input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--ok); }
 .lab-m .lab-m-step.is-done .lab-m-verify { color: var(--ok); }
 
 /* ---------- the network after this step ---------- */
 .lab-m .lab-m-state { margin: 0; border: 1px solid var(--line); background: var(--bg-2); }
-.lab-m .lab-m-state-head { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.lab-m .lab-m-state-head { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
 .lab-m .tone-ok { color: var(--ok); }
 .lab-m .tone-warn { color: var(--warn); }
 .lab-m .tone-dim { color: var(--ink-3); }
 .lab-m .tone-bad { color: var(--bad); }
 .lab-m .lab-m-state-rows { margin: 0; padding: 6px 16px 12px; border-top: 1px solid var(--line); }
 .lab-m .lab-m-state-rows > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 5px 0; }
-.lab-m .lab-m-state-rows dt { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.lab-m .lab-m-state-rows dt { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
 .lab-m .lab-m-state-rows dd { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink); overflow-wrap: anywhere; }
 .lab-m .lab-m-state-rows dd.tone-ok { color: var(--ok); }
 .lab-m .lab-m-state-rows dd.tone-warn { color: var(--warn); }
