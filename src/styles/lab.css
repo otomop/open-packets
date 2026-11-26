@@ -12,7 +12,7 @@
 /* Sits under the chapter title (h1, up to 96px): a section heading, not a second page title. */
 .lab-m .lab-m-title { margin: 0; max-width: 26ch; font-size: clamp(32px, 4.4cqi, 52px); line-height: 1; letter-spacing: -.005em; }
 .lab-m .lab-m-hero-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 36px; align-items: start; }
-.lab-m .lab-m-intro .md p { font-size: 15px; line-height: 1.6; color: var(--ink-2); }
+.lab-m .lab-m-intro .md p { font-size: max(15px, calc(var(--read) - 2.5px)); line-height: 1.6; color: var(--ink-2); }
 .lab-m .lab-m-intro .md p.lab-m-notice { padding: 10px 14px; border: 1px solid var(--line-2); font-size: 14px; line-height: 1.55; }
 .lab-m .lab-m-kit { border: 1px solid var(--line-2); background: var(--bg-2); display: flex; flex-direction: column; }
 .lab-m .lab-m-kit dl { margin: 0; }
