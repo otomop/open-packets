@@ -5,7 +5,7 @@ title: Inter-VLAN routing
 subtitle: "Build gateways with router subinterfaces and SVIs, then follow a packet between them."
 part: switching
 domain: switching
-minutes: { lesson: 65, lab: 80 }
+minutes: { lesson: 65, lab: 45 }
 summary: "Route between VLANs using a router trunk or a multilayer switch. Distinguish management addressing from packet forwarding, verify gateway prerequisites, and interpret SVI and subinterface failures."
 objectives:
   v1: ["2.1.c"]

@@ -197,5 +197,47 @@
       ],
       "focus": "core"
     }
+  },
+  {
+    "id": "ipv6-addressing-d15",
+    "task": "R1 Gi0/2 needs IPv6 only for link-local communication with a neighbor. Turn on IPv6 on the interface without assigning a global address.",
+    "mode": "R1(config-if)#",
+    "answer": "ipv6 enable",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ipv6-on-ios",
+      "hint": "One interface command creates an automatic link-local address and nothing else.",
+      "takeaway": "The interface gets a link-local address built with modified EUI-64 and no global address. It does not enable forwarding between interfaces; that is ipv6 unicast-routing.",
+      "syntax": [
+        {
+          "text": "ipv6 enable",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "ipv6-addressing-d16",
+    "task": "R2 Gi0/0 faces an ISP router that sends Router Advertisements. Make the interface build its own global address from the advertised prefix, as a SLAAC client.",
+    "mode": "R2(config-if)#",
+    "answer": "ipv6 address autoconfig",
+    "accept": [],
+    "teaching": {
+      "sectionId": "configuring-ipv6-on-ios",
+      "hint": "The router acts as a host on this link and learns its prefix from another router's RA.",
+      "takeaway": "The prefix comes from the neighbor's RA, so no address is typed. With no RA on the link, the interface keeps only its link-local address.",
+      "syntax": [
+        {
+          "text": "ipv6 address",
+          "kind": "keyword"
+        },
+        {
+          "text": "autoconfig",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
   }
 ]

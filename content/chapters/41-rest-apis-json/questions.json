@@ -6,7 +6,7 @@
       "v1:6.5"
     ],
     "difficulty": 1,
-    "prompt": "The API documentation says X-Lab-API-Key carries an issued API key. Which mechanism is shown?",
+    "prompt": "The API documentation says X-Lab-API-Key carries an issued API key. Which authentication mechanism is shown?",
     "options": [
       "An API key in a documented vendor-specific header.",
       "HTTP Basic containing an encoded username and password.",
@@ -16,11 +16,11 @@
     "answer": [
       0
     ],
-    "explanation": "The supplied contract identifies this header as an API-key mechanism. A random-looking string by itself would not establish how a credential was issued.",
+    "explanation": "The documentation identifies this header as an API-key mechanism. Basic uses the Authorization header instead.",
     "whyWrong": {
-      "1": "Basic uses its own Authorization scheme and encodes user:password.",
+      "1": "Basic uses the Authorization header and encodes user:password.",
       "2": "No authorization-code flow or redirect is shown.",
-      "3": "A client certificate participates in TLS; this field is a documented key."
+      "3": "A client certificate is part of TLS, not an HTTP header."
     },
     "exhibit": {
       "kind": "cli",
@@ -46,10 +46,10 @@
       2,
       3
     ],
-    "explanation": "PUT and DELETE have the same intended state effect when repeated identically. Their responses can differ between attempts, and incidental logging can occur more than once.",
+    "explanation": "PUT and DELETE leave the same state when repeated with the same request. POST and PATCH are not guaranteed to.",
     "whyWrong": {
-      "0": "POST is not guaranteed idempotent; API-specific facilities may make particular operations safe to repeat.",
-      "1": "PATCH is not guaranteed idempotent, although a particular patch operation can be."
+      "0": "POST is not idempotent, so repeating it can create duplicates.",
+      "1": "PATCH is not guaranteed idempotent."
     }
   },
   {
@@ -59,7 +59,7 @@
       "v1:6.5"
     ],
     "difficulty": 1,
-    "prompt": "Which REST constraint requires requests to supply their interaction context without relying on a remembered conversational sequence?",
+    "prompt": "Which REST constraint requires each request to carry its own context rather than rely on remembered earlier requests?",
     "options": [
       "Layered-system architecture",
       "Stateless interaction",
@@ -69,11 +69,11 @@
     "answer": [
       1
     ],
-    "explanation": "Statelessness concerns the interaction between client and server. It does not prohibit resource databases, authorization data or server logs.",
+    "explanation": "Stateless interaction means the server keeps no client conversation state between requests. It still stores resources and logs.",
     "whyWrong": {
-      "0": "Layering concerns intermediaries and component visibility.",
-      "2": "Caching governs reuse of responses rather than conversational context.",
-      "3": "Code on demand concerns optional executable code supplied to clients."
+      "0": "Layering concerns intermediaries between client and server.",
+      "2": "Caching concerns reuse of responses.",
+      "3": "Code on demand concerns optional executable code sent to clients."
     }
   },
   {
@@ -83,7 +83,7 @@
       "v1:6.5"
     ],
     "difficulty": 1,
-    "prompt": "What can be concluded from the Basic scheme in this header?",
+    "prompt": "What does the Basic scheme in this header tell you about the credential?",
     "options": [
       "Its credential is reversible encoding and needs transport protection.",
       "Its credential is a one-way password hash verified without a password.",
@@ -93,11 +93,11 @@
     "answer": [
       0
     ],
-    "explanation": "HTTP Basic encodes user:password with Base64. The sample is fictional; real use requires authenticated HTTPS and careful credential handling.",
+    "explanation": "HTTP Basic Base64-encodes user:password, which is reversible and not encryption. Send it only over HTTPS.",
     "whyWrong": {
-      "1": "Basic does not replace the password with a one-way hash.",
-      "2": "The Basic scheme does not provide encryption.",
-      "3": "A Basic header does not identify an OAuth browser flow."
+      "1": "Basic does not hash the password.",
+      "2": "Basic does not encrypt anything.",
+      "3": "Basic does not indicate an OAuth flow."
     },
     "exhibit": {
       "kind": "cli",
@@ -122,10 +122,10 @@
     "answer": [
       3
     ],
-    "explanation": "The question mark introduces the query, here hostname=R1. The API defines what the parameter means and whether it is supported.",
+    "explanation": "The query starts after the question mark: `hostname=R1`.",
     "whyWrong": {
       "0": "That is the path.",
-      "1": "That is the server authority/host portion.",
+      "1": "That is the host.",
       "2": "That is the scheme."
     }
   },
@@ -146,11 +146,11 @@
     "answer": [
       2
     ],
-    "explanation": "Content-Type describes the representation carried in that message. A correct media type does not prove that its fields meet the API's schema.",
+    "explanation": "Content-Type gives the media type of the message body. A correct media type does not prove the fields match the API's schema.",
     "whyWrong": {
-      "0": "Authorization carries access credentials, not body encoding.",
-      "1": "Content-Length describes size, not the media type.",
-      "3": "Accept expresses acceptable response formats."
+      "0": "Authorization carries credentials.",
+      "1": "Content-Length gives the body size.",
+      "3": "Accept names the response formats the client will take."
     }
   },
   {
@@ -170,11 +170,11 @@
     "answer": [
       1
     ],
-    "explanation": "This is a common YAML presentation. Recognize the syntax without assuming that every YAML document must use only this style.",
+    "explanation": "Indentation with dash sequence markers and unquoted keys is YAML syntax.",
     "whyWrong": {
-      "0": "These unquoted mapping names and dash sequence syntax are not JSON.",
-      "2": "There are no XML elements or attributes.",
-      "3": "The structure is nested rather than comma-separated records."
+      "0": "JSON uses double-quoted names and brackets, not indentation.",
+      "2": "The sample has no XML tags or attributes.",
+      "3": "The structure is nested, not comma-separated records."
     },
     "exhibit": {
       "kind": "cli",
@@ -189,7 +189,7 @@
       "v1:6.7"
     ],
     "difficulty": 1,
-    "prompt": "What types are the four values in order?",
+    "prompt": "What are the types of the four values, in order?",
     "options": [
       "Number, string, boolean and null.",
       "Number, number, string and absent member.",
@@ -199,11 +199,11 @@
     "answer": [
       0
     ],
-    "explanation": "The syntax distinguishes all four values. An explicit null member is also different from the member being absent.",
+    "explanation": "JSON distinguishes number, string, boolean and null. An explicit null differs from an absent member.",
     "whyWrong": {
-      "1": "The second is quoted, false is boolean and last is an explicit null.",
-      "2": "JSON has built-in value types; not every value is a string.",
-      "3": "Null is distinct from an empty string."
+      "1": "The second value is quoted, so it is a string, and false is a boolean.",
+      "2": "JSON has distinct types, and not every value is a string.",
+      "3": "null is not an empty string."
     },
     "exhibit": {
       "kind": "cli",
@@ -228,11 +228,11 @@
     "answer": [
       3
     ],
-    "explanation": "201 specifically reports creation of one or more resources. Inspect the representation and Location header when provided to identify what was created.",
+    "explanation": "201 Created reports that the POST created a resource. The Location header, when present, identifies it.",
     "whyWrong": {
-      "0": "202 says processing was accepted, not necessarily completed.",
-      "1": "204 indicates successful handling with no content but does not specifically express creation.",
-      "2": "409 identifies a conflict rather than successful creation."
+      "0": "202 means accepted for processing, not completed.",
+      "1": "204 means success with no content, not creation.",
+      "2": "409 reports a conflict."
     }
   },
   {
@@ -242,7 +242,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "An API supports PUT for complete replacement and PATCH for a partial modification. Which method should change only an interface description?",
+    "prompt": "An API uses PUT for full replacement and PATCH for partial changes. Which method changes only an interface description?",
     "options": [
       "PUT",
       "GET",
@@ -252,11 +252,11 @@
     "answer": [
       3
     ],
-    "explanation": "PATCH matches the stated partial-change contract. The body still has to use the API's documented patch format and authorization.",
+    "explanation": "PATCH is the partial-change method. The body must use the API's documented patch format.",
     "whyWrong": {
-      "0": "The supplied contract says PUT replaces the representation.",
-      "1": "GET requests a read, not this modification.",
-      "2": "DELETE requests removal, not a field update."
+      "0": "PUT replaces the whole representation.",
+      "1": "GET reads and does not modify.",
+      "2": "DELETE removes the resource."
     }
   },
   {
@@ -266,7 +266,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "What correction is supported by this controller response?",
+    "prompt": "Which correction does this controller response support?",
     "options": [
       "Change the account's role because authentication definitely succeeded.",
       "Obtain a new valid credential through the documented authentication flow.",
@@ -276,10 +276,10 @@
     "answer": [
       1
     ],
-    "explanation": "The error body states that the supplied token expired. Renew it through the documented flow, protect the replacement credential and retry the read with bounded error handling.",
+    "explanation": "The error body says the token expired. Get a new token through the documented authentication flow and retry the read.",
     "whyWrong": {
-      "0": "The response explicitly identifies an expired credential; permission may be checked later.",
-      "2": "The supplied error identifies credential expiry rather than a missing resource.",
+      "0": "The response reports an expired credential, not a role problem.",
+      "2": "The error is expiry, not a missing collection.",
       "3": "No rate-limit error is shown."
     },
     "exhibit": {
@@ -305,11 +305,11 @@
     "answer": [
       0
     ],
-    "explanation": "The array contains two device objects. Zero-based position 1 is its second item; JSON types are determined by syntax, not how a value looks to a person.",
+    "explanation": "The top level is an array of two device objects, and zero-based index 1 is the second. JSON types come from syntax, not appearance.",
     "whyWrong": {
-      "1": "Square brackets make response an array; the hostnames are member values.",
+      "1": "Square brackets make response an array.",
       "2": "Quotes make the second ports value a string.",
-      "3": "The quotes make version a string."
+      "3": "Quotes make version a string."
     },
     "exhibit": {
       "kind": "cli",
@@ -324,7 +324,7 @@
       "v1:6.7"
     ],
     "difficulty": 2,
-    "prompt": "Which two syntax faults make this document invalid JSON? Choose two.",
+    "prompt": "Which two syntax faults make this document invalid JSON? (Choose two.)",
     "options": [
       "The member name managed uses single quotes.",
       "The array ends with a trailing comma after 30.",
@@ -336,11 +336,11 @@
       0,
       1
     ],
-    "explanation": "JSON requires double-quoted member names and does not allow trailing commas. The boolean and null values shown are otherwise valid.",
+    "explanation": "JSON requires double-quoted member names and forbids trailing commas.",
     "whyWrong": {
-      "2": "Unquoted lowercase null is valid JSON.",
+      "2": "null is written without quotes in valid JSON.",
       "3": "Lowercase true is the required boolean syntax.",
-      "4": "Object member ordering need not be alphabetical."
+      "4": "Members need not be in alphabetical order."
     },
     "exhibit": {
       "kind": "cli",
@@ -355,7 +355,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "A read-only inventory GET returns 503 with Retry-After: 30. Which response is most appropriate?",
+    "prompt": "A read-only inventory GET returns 503 with Retry-After: 30. What should the client do?",
     "options": [
       "Revise the requested fields before retrying this inventory read.",
       "Obtain a different token before repeating this inventory read.",
@@ -365,11 +365,11 @@
     "answer": [
       2
     ],
-    "explanation": "503 is a server-error response indicating temporary unavailability in this scenario. Honor the supplied retry guidance for the safe read, while limiting repeated attempts and retaining useful error evidence.",
+    "explanation": "503 means temporary unavailability. Wait at least the stated interval, then retry with a bounded number of attempts.",
     "whyWrong": {
-      "0": "The response supplies temporary-unavailability guidance, not a schema error.",
-      "1": "No credential-expiry or authentication error is supplied.",
-      "3": "503 is not a successful asynchronous submission such as 202."
+      "0": "A 503 is not a request-format error.",
+      "1": "A 503 is not an authentication error.",
+      "3": "202, not 503, means a request was accepted."
     }
   },
   {
@@ -379,7 +379,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "What authentication pattern is shown in this documented API exchange?",
+    "prompt": "Which authentication pattern does this exchange show?",
     "options": [
       "An OAuth redirect flow is proved by the custom header name.",
       "A client certificate is supplied in the token JSON member.",
@@ -389,11 +389,11 @@
     "answer": [
       2
     ],
-    "explanation": "The example shows a product-defined token acquisition pattern. It does not establish a universal token lifetime, token format or OAuth grant.",
+    "explanation": "The client uses Basic to acquire a token, then sends that token with the data call.",
     "whyWrong": {
-      "0": "This exchange does not demonstrate an OAuth redirect or authorization code.",
-      "1": "The member is an issued token, not evidence of a TLS client certificate.",
-      "3": "The second request shows the token header rather than Basic."
+      "0": "Nothing in the exchange shows an OAuth redirect.",
+      "1": "The token member is an issued token, not a client certificate.",
+      "3": "The second request carries the token, not Basic."
     },
     "exhibit": {
       "kind": "cli",
@@ -408,7 +408,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "A job submission returns 202 with a task URL. What should the client conclude?",
+    "prompt": "A job submission returns 202 with a task URL. What should the client do?",
     "options": [
       "Treat the task URL as confirmation that the resource is already changed.",
       "Inspect the task outcome, then verify the intended device result.",
@@ -418,11 +418,11 @@
     "answer": [
       1
     ],
-    "explanation": "202 indicates acceptance for processing. The API's task status and the required operational checks determine whether the intended change actually completed.",
+    "explanation": "202 means accepted for processing, not finished. Check the task outcome, then verify the device result.",
     "whyWrong": {
       "0": "A queued task can still fail before changing the device.",
-      "2": "Repeated submissions can create duplicate work; follow the supplied task instead.",
-      "3": "No deletion or deleted-resource contract is shown."
+      "2": "Repeating the submission can create duplicate work.",
+      "3": "The task URL does not locate a deleted resource."
     }
   },
   {
@@ -442,11 +442,11 @@
     "answer": [
       2
     ],
-    "explanation": "Double quotes encode a string. Parsing and checking the required field type are separate decisions.",
+    "explanation": "A quoted value is a string, so the document is valid JSON but fails the required boolean type.",
     "whyWrong": {
       "0": "A quoted string is valid JSON.",
-      "1": "The schema requires a boolean, not the string containing its spelling.",
-      "3": "A JSON object may have one member."
+      "1": "The quoted value is a string, not a boolean.",
+      "3": "An object may have a single member."
     },
     "exhibit": {
       "kind": "cli",
@@ -471,10 +471,10 @@
     "answer": [
       0
     ],
-    "explanation": "The first device is at index 0, and its second interface is at index 1. The final member contains boolean false.",
+    "explanation": "The first device is index 0 and its second interface is index 1, so the path is `devices[0].interfaces[1].enabled`.",
     "whyWrong": {
-      "1": "There is no second device in this document.",
-      "2": "interfaces is an array; select an element before reading its enabled member.",
+      "1": "The document has only one device.",
+      "2": "interfaces is an array, so index it before reading enabled.",
       "3": "That selects Gi0/0, not Gi0/1."
     },
     "exhibit": {
@@ -490,7 +490,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "What should this client do before attempting to parse a JSON response body?",
+    "prompt": "What should this client expect before it tries to parse the response body?",
     "options": [
       "Treat the missing body as a failed write and retry it.",
       "Add Accept: application/json to require an error document.",
@@ -500,11 +500,11 @@
     "answer": [
       3
     ],
-    "explanation": "204 is a successful response without content. A client should branch on response semantics instead of unconditionally parsing JSON.",
+    "explanation": "204 is a success with no body. Branch on the status code instead of always parsing JSON.",
     "whyWrong": {
-      "0": "An absent body is expected for 204 and does not establish failure.",
-      "1": "Accept does not require a body on a 204 response.",
-      "2": "GET reads; it does not replace the intended deletion."
+      "0": "A missing body is normal for 204.",
+      "1": "Accept does not force a body on a 204.",
+      "2": "GET reads and does not delete."
     },
     "exhibit": {
       "kind": "cli",
@@ -519,7 +519,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "Which conclusion about repeated DELETE requests is correct?",
+    "prompt": "A client repeats a DELETE and gets different status codes. Which conclusion is correct?",
     "options": [
       "The method loses idempotence whenever the response code changes.",
       "The intended absent state can be the same despite different statuses.",
@@ -529,11 +529,11 @@
     "answer": [
       1
     ],
-    "explanation": "Idempotence concerns the intended state effect of repetition, not identical response bytes. Both attempts leave this resource absent.",
+    "explanation": "Idempotence is about the resulting state, not identical responses. Both attempts leave the resource absent.",
     "whyWrong": {
-      "0": "Identical status codes are not the definition of idempotence.",
-      "2": "Changing a returned status is not a resource-state operation.",
-      "3": "Recreation would contradict the deletion goal."
+      "0": "A different status code does not remove idempotence.",
+      "2": "A status code does not change resource state.",
+      "3": "Recreating the object would undo the deletion."
     },
     "exhibit": {
       "kind": "cli",
@@ -548,7 +548,7 @@
       "v1:6.5"
     ],
     "difficulty": 2,
-    "prompt": "Why is the proposed credential renewal not supported as the first correction?",
+    "prompt": "Why is renewing the credential not the first correction?",
     "options": [
       "A 200 response proves the role can perform every write.",
       "A successful GET guarantees that the PATCH body is valid.",
@@ -558,16 +558,116 @@
     "answer": [
       2
     ],
-    "explanation": "The identity-service check confirms a current token, the successful read exercises it, and the write error identifies missing scope. Compare the operation with authorized role policy rather than assuming expiry.",
+    "explanation": "The token is current and the read succeeded, while the write fails with a missing-scope error. Check the account's role against the operation.",
     "whyWrong": {
       "0": "Read permission does not imply write permission.",
-      "1": "GET success does not validate a different operation or its body.",
-      "3": "Response-format negotiation does not grant authorization."
+      "1": "A successful GET says nothing about a PATCH body.",
+      "3": "Accept does not grant privileges."
     },
     "exhibit": {
       "kind": "cli",
       "title": "Supplied API evidence",
       "text": "Identity check: current token belongs to inventory-reader; not expired.\nGET /api/devices/r8: 200.\nPATCH /api/devices/r8: 403 {\"error\":\"scope_required\",\"scope\":\"device.write\"}.\nRole policy: inventory-reader has device.read only.\nProposed repair: renew the same role token repeatedly."
+    }
+  },
+  {
+    "id": "rest-apis-json-q22",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which HTTP status code means the request lacks valid authentication?",
+    "options": [
+      "401",
+      "403",
+      "404",
+      "502"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "401 is about authentication. 403 is about authorization, and 404 means not found.",
+    "whyWrong": {
+      "1": "403 means the identity is known but not authorized.",
+      "2": "404 means the resource was not found.",
+      "3": "502 is a server-side gateway error."
+    }
+  },
+  {
+    "id": "rest-apis-json-q23",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which HTTP method normally creates a new resource in the CRUD mapping?",
+    "options": [
+      "GET",
+      "POST",
+      "DELETE",
+      "PATCH"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "In the CRUD mapping, POST creates, GET reads, PUT replaces, PATCH modifies and DELETE removes.",
+    "whyWrong": {
+      "0": "GET reads.",
+      "2": "DELETE removes.",
+      "3": "PATCH modifies part of a resource."
+    }
+  },
+  {
+    "id": "rest-apis-json-q24",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which HTTP status code class indicates a client error?",
+    "options": [
+      "2xx",
+      "3xx",
+      "4xx",
+      "5xx"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "4xx is a client error, 2xx is success and 5xx is a server error.",
+    "whyWrong": {
+      "0": "2xx means success.",
+      "1": "3xx means redirection.",
+      "3": "5xx means a server error."
+    }
+  },
+  {
+    "id": "rest-apis-json-q25",
+    "type": "single",
+    "objectives": [
+      "v1:6.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which HTTP status code means the requested resource was not found?",
+    "options": [
+      "202",
+      "401",
+      "404",
+      "503"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "404 means not found.",
+    "whyWrong": {
+      "0": "202 means accepted but not finished.",
+      "1": "401 is an authentication problem.",
+      "3": "503 means the service is temporarily unavailable."
     }
   }
 ]

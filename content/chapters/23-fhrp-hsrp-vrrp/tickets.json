@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "R1 still sends Hellos on the LAN at priority 110, so the group sees a healthy Active router. Nothing ties R1's priority to its uplink. With tracking and a decrement of 20, R1 would drop to 90 and R2, at 100 with preempt, would take over.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# track 1 interface gigabitethernet0/1 line-protocol\nR1(config-track)# exit\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# standby 1 track 1 decrement 20\nR1(config-if)# end\nR1# show standby\n```\nOn an image without track objects, use the older `standby 1 track gigabitethernet0/1 20` instead. Confirm that R2 becomes Active and that a host reaches a real remote destination. After the uplink is repaired, confirm that R1's priority returns to 110."
+    "explanation": "Nothing ties R1's priority to its uplink, so it stays Active at 110 after the uplink fails. With tracking and a decrement of 20, R1 would fall to 90 and R2 would preempt.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# track 1 interface gigabitethernet0/1 line-protocol\nR1(config-track)# exit\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# standby 1 track 1 decrement 20\nR1(config-if)# end\nR1# show standby\n```\nOn an older image use standby 1 track gigabitethernet0/1 20 instead. Confirm R2 becomes Active and a host can reach a remote destination."
   },
   {
     "id": "fhrp-hsrp-vrrp-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "R1's heading says version 2 and its virtual MAC has the 0000.0c9f.f format. R2's heading has no version tag, which is how IOS shows version 1, and its virtual MAC has the 0000.0c07.ac format. The two versions do not interoperate, so each router ignores the other's Hellos and stays Active. Raising a priority cannot fix that.",
-    "fix": "```ios R2\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# standby version 2\nR2(config-if)# end\nR2# show standby\nR2# show standby brief\n```\nThis assumes version 2 is the intended design. Confirm one Active router, one Standby, no `unknown` peer, and a successful client ping before you save."
+    "explanation": "R1 runs HSRP version 2 (0000.0c9f.f MAC) and R2 runs version 1 (0000.0c07.ac MAC). The versions do not interoperate, so each router stays Active.",
+    "fix": "```ios R2\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# standby version 2\nR2(config-if)# end\nR2# show standby\nR2# show standby brief\n```\nThis assumes version 2 is intended. Confirm one Active router, one Standby and a successful client ping before you save."
   }
 ]

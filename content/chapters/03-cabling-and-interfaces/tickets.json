@@ -31,8 +31,8 @@
     "answer": [
       1
     ],
-    "explanation": "The switch operates at 100/half while the endpoint is set to 100/full. That direct comparison establishes a duplex mismatch, and the increasing collision counters are consistent with it. The counters do not independently prove or exclude a cable fault; the operational settings are the decisive evidence here.",
-    "fix": "Coordinate the endpoint change so its NIC returns to automatic speed and duplex. Then restore the switch side:\n```ios ASW2\nASW2# configure terminal\nASW2(config)# interface gigabitethernet1/0/12\nASW2(config-if)# speed auto\nASW2(config-if)# duplex auto\nASW2(config-if)# end\nASW2# show interfaces gigabitethernet1/0/12\n```\nVerify matching operational speed and full duplex on both ends. Record current counters, repeat the same transfer and compare new increments and completion time. Old totals do not disappear when the cause is fixed. If the endpoint must remain manually configured for a documented reason, deliberately match both ends instead; do not force only one and assume the peer follows. Save the working configuration only after verification."
+    "explanation": "The switch runs 100/half while the endpoint is set to 100/full, which is a duplex mismatch. The rising collision counters fit that evidence.",
+    "fix": "Return the endpoint NIC to automatic speed and duplex, then restore the switch side:\n```ios ASW2\nASW2# configure terminal\nASW2(config)# interface gigabitethernet1/0/12\nASW2(config-if)# speed auto\nASW2(config-if)# duplex auto\nASW2(config-if)# end\nASW2# show interfaces gigabitethernet1/0/12\n```\nVerify matching speed and full duplex on both ends. Record the counters, repeat the same transfer and compare the new increments; old totals do not reset. If the endpoint must stay manual, set both ends manually to matching values rather than forcing only one. Save after verification."
   },
   {
     "id": "cabling-and-interfaces-t02",
@@ -62,7 +62,7 @@
     "answer": [
       2
     ],
-    "explanation": "The inventory identifies incompatible optical designs: SR over OM3 at one end and LR at the other. The 180 m path is within the supplied SR-on-OM3 distance, but distance alone does not make the module pair compatible. Connector fit does not prove that a supported optical link exists.",
-    "fix": "For the intended OM3 design, select a compatible 10GBASE-SR module supported by CORE1 so both ends use the appropriate SR design. Follow the equipment's module replacement and fiber-handling procedure. Alternatively, an LR design requires a correctly specified single-mode path and compatible modules at both ends; changing a label does not change the installed fiber.\n\nAfter the component correction, verify transmit-to-receive polarity, inspect and clean connectors using approved equipment, and measure received power against each actual module's permitted range. Never look into a live fiber. On supported hardware, use the interface and transceiver displays, then test traffic and watch for new errors. Do not predict an exact receive dBm value or declare both transmitters healthy from one reading; other faults may remain after the confirmed mismatch is corrected."
+    "explanation": "The inventory pairs SR optics over multimode fiber at one end with LR optics meant for single-mode at the other. The 180 m path is within SR-on-OM3 reach, but the two module types are incompatible.",
+    "fix": "For the OM3 design, fit a supported 10GBASE-SR module at both ends, following the equipment’s module replacement and fiber-handling procedure. An LR design instead needs single-mode fiber and LR modules at both ends; changing a label does not change the installed fiber.\n\nThen verify transmit-to-receive polarity, clean the connectors, and compare received power with each module’s permitted range. Never look into a live fiber. Check the interface and transceiver displays, test traffic and watch for new errors."
   }
 ]

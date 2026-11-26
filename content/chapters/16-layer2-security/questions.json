@@ -8,7 +8,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which mode discards violating frames and records violations while continuing to forward traffic from secure MAC addresses?",
+    "prompt": "Which port-security violation mode drops violating frames, logs them and keeps forwarding traffic from secure MACs?",
     "options": [
       "shutdown",
       "disabled",
@@ -18,11 +18,11 @@
     "answer": [
       3
     ],
-    "explanation": "Restrict drops violating frames, logs them and increments the violation counter, while frames from secure addresses are still forwarded.",
+    "explanation": "Restrict drops violating frames, logs them and counts them, while the port stays up. Protect drops silently, and shutdown err-disables the port.",
     "whyWrong": {
-      "0": "Shutdown err-disables the port, which stops permitted traffic too.",
-      "1": "Disabling port security removes the enforcement altogether.",
-      "2": "Protect drops violating frames but logs nothing and leaves the violation counter unchanged."
+      "0": "Shutdown err-disables the port and stops permitted traffic too.",
+      "1": "Disabled is not a violation mode.",
+      "2": "Protect drops frames but does not log or count them."
     }
   },
   {
@@ -34,7 +34,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "`switchport port-security` is entered on a Catalyst access port with no other port-security commands. Which two settings apply? (Choose two.)",
+    "prompt": "switchport port-security is entered on an access port with no other port-security commands. Which two settings apply? (Choose two.)",
     "options": [
       "The maximum is one secure MAC",
       "The aging interval is five minutes",
@@ -46,11 +46,11 @@
       0,
       3
     ],
-    "explanation": "The defaults are a maximum of 1 secure MAC address and violation mode shutdown. Sticky learning and aging stay off until you configure them.",
+    "explanation": "The defaults are a maximum of 1 secure MAC address and violation mode shutdown. Sticky learning and aging are off.",
     "whyWrong": {
-      "1": "Default aging time is 0, meaning disabled.",
-      "2": "Enabling port security does not enable sticky learning.",
-      "4": "Restrict requires an explicit configuration."
+      "1": "Aging is 0 by default, which means disabled.",
+      "2": "Sticky learning is off until you enable it.",
+      "4": "Restrict must be configured."
     }
   },
   {
@@ -74,11 +74,11 @@
       2,
       4
     ],
-    "explanation": "DAI validates the sender IP and MAC of an ARP message against the DHCP snooping bindings, and an ARP ACL can permit a static host that has no binding. DAI trust is configured separately from DHCP snooping trust.",
+    "explanation": "DAI checks the ARP sender IP and MAC against the DHCP snooping bindings, and an ARP ACL can permit a static host with no binding. DAI trust is a separate setting from DHCP snooping trust.",
     "whyWrong": {
-      "0": "Validating an address claim is not user authentication.",
-      "1": "A trunk's existence does not establish that all ARP arriving on it should bypass inspection.",
-      "3": "`ip arp inspection trust` is a separate interface setting."
+      "0": "Checking an IP/MAC pair does not authenticate a user.",
+      "1": "Trunks are not automatically exempt from inspection.",
+      "3": "DAI trust needs its own ip arp inspection trust."
     }
   },
   {
@@ -100,11 +100,11 @@
     "answer": [
       2
     ],
-    "explanation": "`src-mac` compares the Ethernet source with the sender MAC inside ARP. It supplements the underlying binding or ACL validation.",
+    "explanation": "src-mac compares the Ethernet source MAC with the ARP sender MAC. dst-mac checks the destination side and ip checks invalid IP values.",
     "whyWrong": {
-      "0": "Lease time is binding information, not this validation keyword.",
-      "1": "The `dst-mac` check compares the Ethernet destination with the ARP target MAC in replies.",
-      "3": "The `ip` option checks invalid IP-address values in ARP fields, not this MAC comparison."
+      "0": "lease-time is not a DAI validation keyword.",
+      "1": "dst-mac compares the Ethernet destination with the ARP target MAC in replies.",
+      "3": "ip checks for invalid IP addresses in ARP fields."
     }
   },
   {
@@ -115,7 +115,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A port has `storm-control broadcast level` configured and no `storm-control action` command. What does the switch do when broadcasts reach the rising threshold?",
+    "prompt": "A port has storm-control broadcast level set and no storm-control action. What happens when broadcasts reach the rising threshold?",
     "options": [
       "Drop broadcasts on the port until they subside.",
       "Send a notification without suppressing any traffic.",
@@ -125,11 +125,11 @@
     "answer": [
       0
     ],
-    "explanation": "The default action is to drop the controlled traffic class, here broadcasts, until it falls below the falling threshold. Other traffic on the port continues and the port stays up.",
+    "explanation": "The default action is to drop the storm traffic until it falls below the falling threshold. Other traffic keeps flowing and the port stays up.",
     "whyWrong": {
-      "1": "A notification action is separate from the default suppression behavior.",
-      "2": "Storm suppression does not elect an STP port role.",
-      "3": "Interface shutdown requires the separately configured shutdown action."
+      "1": "A notification needs a separate action setting.",
+      "2": "Storm control does not change STP roles.",
+      "3": "Err-disable needs storm-control action shutdown."
     }
   },
   {
@@ -141,7 +141,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Why can a large number of forged source MAC addresses create a Layer 2 security concern?",
+    "prompt": "Why are many forged source MAC addresses a Layer 2 security problem?",
     "options": [
       "They can force known unicast to flood across every VLAN regardless of policy.",
       "They can authenticate forged senders by adding more entries to the MAC table.",
@@ -151,11 +151,11 @@
     "answer": [
       3
     ],
-    "explanation": "The forged addresses fill the MAC address table, so the switch cannot learn real hosts. Frames to destinations it has not learned are flooded to every port in the VLAN, where the attacker can capture them.",
+    "explanation": "Forged addresses fill the MAC address table. The switch then cannot learn real hosts and floods their traffic.",
     "whyWrong": {
-      "0": "Known destinations, VLAN boundaries and other forwarding controls still matter.",
-      "1": "Learning a source MAC is not identity authentication.",
-      "2": "An unknown destination has no usable learned location to select."
+      "0": "Known unicast is still forwarded normally and VLANs still separate traffic.",
+      "1": "Learning a MAC does not authenticate anyone.",
+      "2": "An unknown destination has no learned port to use."
     }
   },
   {
@@ -167,7 +167,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "What does an accepted secure source MAC establish about the sender?",
+    "prompt": "What does an accepted secure source MAC show about the sender?",
     "options": [
       "It proves the logged-in user owns the physical device.",
       "It establishes that the IP and ARP claims are also authorized.",
@@ -177,11 +177,11 @@
     "answer": [
       3
     ],
-    "explanation": "Port security evaluates source MAC policy. That match is not user authentication and does not replace DHCP, ARP or application controls.",
+    "explanation": "Port security checks only the source MAC against its policy. It does not authenticate a user or approve IP, ARP or application traffic.",
     "whyWrong": {
-      "0": "A MAC can be impersonated; this feature does not authenticate a user.",
-      "1": "Other controls must evaluate the IP/ARP claims.",
-      "2": "Allowed MAC identity does not classify the safety of every application exchange."
+      "0": "A MAC can be spoofed, so it does not identify a user.",
+      "1": "Other controls must check IP and ARP claims.",
+      "2": "An allowed MAC says nothing about application safety."
     }
   },
   {
@@ -197,7 +197,7 @@
       "title": "SW1: port-security status (excerpt)",
       "text": "Port Status             : Secure-shutdown\nViolation Mode          : Shutdown\nMaximum MAC Addresses   : 1\nTotal MAC Addresses     : 1\nSticky MAC Addresses    : 1\nSecurity Violation Count: 1"
     },
-    "prompt": "PC-A is the authorized sticky device. After a different PC is connected to Fa0/1, the exhibit is recorded. Which action restores the intended one-device policy?",
+    "prompt": "PC-A is the authorized sticky device, and a different PC is plugged into Fa0/1. What restores the one-device policy?",
     "options": [
       "Keep the new PC connected and raise the maximum to two",
       "Reconnect PC-A, then shut and re-enable Fa0/1",
@@ -207,11 +207,11 @@
     "answer": [
       1
     ],
-    "explanation": "Secure-shutdown identifies a shutdown-mode violation. Restore the authorized endpoint before resetting the interface; otherwise the same cause can immediately recur.",
+    "explanation": "Secure-shutdown means the port was err-disabled by a violation. Reconnect PC-A, then shut and no shut Fa0/1.",
     "whyWrong": {
-      "0": "Increasing the limit authorizes additional addresses instead of restoring the specified one-device policy.",
-      "2": "Automatic recovery for this cause must be enabled; it is not established by the exhibit.",
-      "3": "Clearing the approved entry would allow a different device to be learned and changes the intended policy."
+      "0": "Raising the maximum authorizes a second device.",
+      "2": "Automatic recovery is off unless you enable it for this cause.",
+      "3": "Clearing sticky entries lets the new device be learned."
     }
   },
   {
@@ -227,7 +227,7 @@
       "title": "SW1 command result",
       "text": "SW1(config-if)# switchport port-security\nCommand rejected: FastEthernet0/1 is a dynamic port."
     },
-    "prompt": "Fa0/1 connects one untagged PC. What should be corrected before retrying port security?",
+    "prompt": "Fa0/1 connects one untagged PC and port security is rejected. What do you fix first?",
     "options": [
       "Configure a native VLAN on the PC",
       "Enable trunk negotiation on the PC",
@@ -237,11 +237,11 @@
     "answer": [
       3
     ],
-    "explanation": "The port is still in a dynamic switchport mode. For this endpoint, configure `switchport mode access`, verify its access VLAN, then enable port security.",
+    "explanation": "Port security needs a static access or trunk port, and this port is still dynamic. Enter switchport mode access, then enable port security.",
     "whyWrong": {
-      "0": "Native-VLAN configuration does not repair the dynamic-mode restriction.",
-      "1": "A normal untagged PC does not negotiate a trunk.",
-      "2": "Port security is enabled per interface; a global enable command is not the solution."
+      "0": "A native VLAN does not fix the dynamic mode.",
+      "1": "An ordinary PC does not negotiate a trunk.",
+      "2": "Port security is enabled per interface, not globally."
     }
   },
   {
@@ -253,7 +253,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A sticky address was learned after the last configuration save. No later save occurred before power was lost. What should you expect after restart?",
+    "prompt": "A sticky address was learned after the last save and power was lost before another save. What do you expect after restart?",
     "options": [
       "Startup configuration does not contain that new address",
       "The switch restores it from its ordinary MAC table",
@@ -263,11 +263,11 @@
     "answer": [
       0
     ],
-    "explanation": "Sticky learning adds a configuration entry to running configuration. Persistence depends on saving that entry to startup configuration before the restart.",
+    "explanation": "Sticky addresses are added to the running configuration only. Unsaved ones are lost at reload.",
     "whyWrong": {
-      "1": "The ordinary forwarding table is not a backup for unsaved configuration.",
-      "2": "Learning does not convert the address into an independently persistent static entry.",
-      "3": "Sticky describes the learning/configuration behavior, not automatic saving."
+      "1": "The MAC table is not a backup of configuration.",
+      "2": "Learning does not make the address permanent.",
+      "3": "Sticky does not save automatically."
     }
   },
   {
@@ -279,7 +279,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 serves DHCP. SW1 Gi0/1 connects to R1; SW1 Gi0/2 connects to downstream SW2 Gi0/1. Clients are below SW2. Both switches have snooping enabled and Option 82 insertion disabled. Which server-trust placement fits this reply path?",
+    "prompt": "R1 is the DHCP server on SW1 Gi0/1. SW1 Gi0/2 connects to SW2 Gi0/1, and clients are below SW2. Where do you set trust?",
     "options": [
       "Trust only SW1 Gi0/2 because it is the inter-switch link",
       "Leave both uplinks untrusted and trust only client ports",
@@ -289,11 +289,11 @@
     "answer": [
       3
     ],
-    "explanation": "Trust is an ingress decision. R1's replies enter SW1 on Gi0/1 and enter SW2 on its Gi0/1. SW1's downlink receives client traffic and does not need server trust merely because it connects another switch.",
+    "explanation": "Trust the ports where the real server's replies enter. Replies enter SW1 on Gi0/1 and SW2 on Gi0/1, and SW1's downlink Gi0/2 stays untrusted.",
     "whyWrong": {
-      "0": "The server reply actually enters SW1 on Gi0/1; downstream connectivity alone does not identify a trusted ingress.",
-      "1": "This permits the wrong direction and leaves legitimate server replies blocked.",
-      "2": "Trusting client ports permits server messages from endpoints and expands the boundary unnecessarily."
+      "0": "Server replies enter SW1 on Gi0/1, not Gi0/2.",
+      "1": "Untrusted uplinks would drop the real server's replies.",
+      "2": "Trusting client ports lets endpoints send server messages."
     }
   },
   {
@@ -309,7 +309,7 @@
       "title": "R1 DHCP server diagnostics (summary)",
       "text": "Request received: giaddr 0.0.0.0, relay-agent information (Option 82) present\nRequest rejected by relay-information trust policy"
     },
-    "prompt": "The server-facing switch port is trusted. The isolated lab does not use relay-agent information for policy, and the server records the exhibit. Which switch change removes the explicitly observed cause?",
+    "prompt": "The server-facing port is trusted, and the server rejects requests that carry Option 82 with giaddr 0.0.0.0. This lab does not need Option 82. What fixes it?",
     "options": [
       "Make all client-facing interfaces trusted",
       "Disable Option 82 insertion on the switch",
@@ -319,11 +319,11 @@
     "answer": [
       1
     ],
-    "explanation": "The server rejected a request that carried Option 82 with `giaddr` 0.0.0.0, which is what a snooping access switch sends by default. Nothing in this lab uses Option 82, so `no ip dhcp snooping information option` on the switch removes the cause. A design that needs Option 82 would configure the server to trust it instead.",
+    "explanation": "A snooping access switch inserts Option 82 by default, and the server rejects it. Enter no ip dhcp snooping information option on the switch.",
     "whyWrong": {
-      "0": "Client trust does not establish a correct relay-information policy and would permit unauthorized server replies.",
-      "2": "The gateway option does not repair rejection of the DHCP request.",
-      "3": "Removing all snooping also removes the required access-layer protection."
+      "0": "Trusting client ports lets rogue servers answer.",
+      "2": "A gateway setting does not stop the server rejecting requests.",
+      "3": "Disabling snooping removes the protection."
     }
   },
   {
@@ -335,7 +335,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A verified static printer has no snooping binding. Its ARP is rejected on an untrusted port. DHCP clients in the same VLAN must still use their bindings. Which change is appropriate?",
+    "prompt": "A verified static printer has no snooping binding, so its ARP is dropped on an untrusted port. DHCP clients must keep using bindings. What do you do?",
     "options": [
       "Add its MAC to the switch's ordinary forwarding table only",
       "Permit its exact IP/MAC in an applied ARP ACL without `static`",
@@ -345,11 +345,11 @@
     "answer": [
       1
     ],
-    "explanation": "An exact ARP ACL permit can admit the static printer. Without the `static` application keyword, an ACL nonmatch can fall back to the snooping database, preserving validation for DHCP clients.",
+    "explanation": "Permit the printer's exact IP and MAC in an ARP ACL and apply it without static. Without static, other hosts fall back to the snooping bindings.",
     "whyWrong": {
-      "0": "A Layer 2 forwarding entry does not establish a valid ARP sender IP/MAC pair.",
-      "2": "Here `static` makes the ACL's implicit denial final, so unlisted DHCP clients lose the fallback.",
-      "3": "An exclusion prevents DHCP allocation; it does not create a DAI authorization."
+      "0": "A forwarding entry does not validate ARP.",
+      "2": "With static, unlisted DHCP clients are denied with no fallback.",
+      "3": "A DHCP exclusion does not authorize ARP."
     }
   },
   {
@@ -364,7 +364,7 @@
       "title": "SW1 interface configuration",
       "text": "storm-control broadcast level 1.00 0.50"
     },
-    "prompt": "The broadcast level crossed the rising threshold. It now measures 0.7%. Under the displayed policy, what is the threshold interpretation?",
+    "prompt": "The broadcast level crossed the rising threshold and now reads 0.7%. What does the displayed policy do?",
     "options": [
       "All unicast traffic is discarded at the same threshold",
       "Forwarding resumes whenever the rate falls below 1.00%",
@@ -374,11 +374,11 @@
     "answer": [
       3
     ],
-    "explanation": "Once the rising threshold has been crossed, broadcasts are dropped until the level falls below the falling threshold. 0.7% is still above 0.50%, so the port keeps dropping broadcasts.",
+    "explanation": "Once the rising threshold is crossed, broadcasts are dropped until the level falls below the falling threshold, which is 0.50%. At 0.7% suppression continues.",
     "whyWrong": {
-      "0": "This policy selects broadcast traffic, not all unicast.",
-      "1": "The separately configured falling threshold prevents immediate recovery at the rising threshold.",
-      "2": "The port is err-disabled only if `storm-control action shutdown` is configured; the default action drops the traffic class."
+      "0": "The policy affects broadcasts, not all unicast.",
+      "1": "Traffic resumes only below the falling threshold, not the rising one.",
+      "2": "The port is err-disabled only with storm-control action shutdown."
     }
   },
   {
@@ -389,7 +389,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An RA guard policy with `device-role host` has been defined, but unwanted router advertisements still enter through an endpoint port with no attached policy. What is missing?",
+    "prompt": "An RA guard host policy is defined, but unwanted RAs still enter an endpoint port. What is missing?",
     "options": [
       "Clear the client’s old default route without changing ingress policy.",
       "Redefine the same host policy without applying it to any port.",
@@ -399,11 +399,11 @@
     "answer": [
       2
     ],
-    "explanation": "Defining the policy does not enforce it on an interface. Apply `ipv6 nd raguard attach-policy NAME` to the intended endpoint ingress and verify the policy and attachment.",
+    "explanation": "A defined policy does nothing until you attach it. Enter ipv6 nd raguard attach-policy on the endpoint ingress port.",
     "whyWrong": {
-      "0": "Clearing old state does not block new advertisements entering through an unprotected port.",
-      "1": "A repeated definition still supplies no interface enforcement.",
-      "3": "The intended endpoint role rejects unauthorized router messages; a router role does not meet that policy."
+      "0": "Clearing old state does not block new RAs.",
+      "1": "Defining the policy again still does not apply it.",
+      "3": "A router role would admit the advertisements."
     }
   },
   {
@@ -414,7 +414,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "You deploy RA guard on an access switch with one legitimate IPv6 router. Which two actions belong in a correct deployment and check? (Choose two.)",
+    "prompt": "You deploy RA guard on an access switch with one legitimate IPv6 router. Which two actions belong in the deployment? (Choose two.)",
     "options": [
       "Judge success from the policy name alone",
       "Assume DHCP snooping also validates IPv6 RAs",
@@ -426,11 +426,11 @@
       2,
       4
     ],
-    "explanation": "A host-role policy must be attached to the endpoint ports, and the router's port needs the router role so that its RAs still pass. Check with fresh RAs, because hosts keep addresses and routers they learned earlier until the lifetimes expire.",
+    "explanation": "Attach the host policy to endpoint ports and give the legitimate router's port the router role. Then check with fresh RAs, because hosts keep older addresses until lifetimes expire.",
     "whyWrong": {
-      "0": "A policy can exist without being applied anywhere.",
-      "1": "These are separate features protecting different traffic.",
-      "3": "Previously learned addresses and routes need not vanish immediately when future RAs are blocked."
+      "0": "A policy name does not show it is applied.",
+      "1": "DHCP snooping does not check IPv6 RAs.",
+      "3": "Old addresses do not vanish immediately."
     }
   },
   {
@@ -446,7 +446,7 @@
       "title": "Supplied access-security evidence",
       "text": "Secure maximum: 1; authorized secure MAC: A.\nAn isolated hub presents frames from A and new source B to this one port.\nA’s traffic continues; B’s frames are dropped.\nPort remains secure-up; violation counter increases and log records new violations."
     },
-    "prompt": "Which violation response matches the recorded behavior?",
+    "prompt": "Which violation mode matches the recorded behavior, where B is rejected and A keeps forwarding?",
     "options": [
       "Shutdown: disable the entire port while keeping A’s frames forwarding.",
       "Restrict: reject the additional source while reporting its violations.",
@@ -456,11 +456,11 @@
     "answer": [
       1
     ],
-    "explanation": "Restrict rejects B and records violations while retaining forwarding for the already secure A. Protect lacks that violation reporting, while shutdown would stop the whole port.",
+    "explanation": "Restrict rejects the extra source and records violations while keeping the secure address forwarding. Protect does not report and shutdown stops the whole port.",
     "whyWrong": {
-      "0": "A port in shutdown violation state does not continue forwarding A’s user traffic.",
-      "2": "The documented protect mode does not provide restrict’s violation counting/reporting.",
-      "3": "The evidence shows B is rejected, so enforcement is active."
+      "0": "Shutdown stops all traffic, A's included.",
+      "2": "Protect does not count violations.",
+      "3": "B was rejected, so enforcement is active."
     }
   },
   {
@@ -486,11 +486,11 @@
     "answer": [
       2
     ],
-    "explanation": "The binding ties 10.1.10.51 to 00bb.0000.0002, but the ARP message claims that IP address with 00dd.0000.0009. The sender IP and MAC must both match a binding, so DAI drops the message. The drop shows a mismatch; it does not show whether the cause is spoofing or a replaced network card.",
+    "explanation": "The binding ties 10.1.10.51 to 00bb.0000.0002, but the ARP claims that IP with 00dd.0000.0009. The sender IP and MAC must both match a binding.",
     "whyWrong": {
-      "0": "Private IPv4 addressing is normal and does not invalidate the claim.",
-      "1": "The matching IP identifies the entry to compare; the sender MAC is the mismatch.",
-      "3": "A DHCP client binding is the intended validation source for this client’s claim."
+      "0": "Private addressing is normal.",
+      "1": "The IP matches, and the MAC is what differs.",
+      "3": "A client lease binding is the right source for validation."
     }
   },
   {
@@ -506,7 +506,7 @@
       "title": "Supplied access-security evidence",
       "text": "Applied ARP ACL for VLAN 10 has an explicit deny matching client 10.1.10.51 / 00bb.0000.0002.\nThe filter is applied without the static keyword.\nA correct DHCP snooping binding also exists for the same client and ingress.\nDAI is enabled; ingress untrusted."
     },
-    "prompt": "What happens to the client’s ARP claim under this explicitly supplied policy?",
+    "prompt": "What happens to the client's ARP under this policy?",
     "options": [
       "The missing static keyword means all ARP ACL entries are ignored.",
       "The explicit ACL deny rejects it even without the static keyword.",
@@ -516,11 +516,11 @@
     "answer": [
       1
     ],
-    "explanation": "The non-static application permits binding fallback for an implicit nonmatch. An explicit matching deny remains a denial; it is not overridden by the binding.",
+    "explanation": "Without static, unmatched ARP falls back to the bindings, but an explicit deny entry still denies. The matching deny rejects the ARP.",
     "whyWrong": {
-      "0": "Without static, explicit permit/deny entries still have effect.",
-      "2": "The matching explicit deny is applied before fallback.",
-      "3": "A unicast source MAC does not bypass the policy decision."
+      "0": "Without static, ACL entries still apply.",
+      "2": "A matching explicit deny is applied before any binding fallback.",
+      "3": "A unicast source MAC does not bypass the policy."
     }
   },
   {
@@ -531,7 +531,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A 1% broadcast storm threshold is copied from a 100 Mb/s port to a 1 Gb/s port. What nominal rate comparison is correct?",
+    "prompt": "A 1% broadcast threshold is copied from a 100 Mb/s port to a 1 Gb/s port. What rates result?",
     "options": [
       "The faster port uses 100 Mb/s because the percentage is a packet count.",
       "The thresholds correspond to about 1 Mb/s on the slower port and 10 Mb/s on the faster.",
@@ -541,11 +541,11 @@
     "answer": [
       1
     ],
-    "explanation": "A percentage threshold is a share of the port's bandwidth. One percent of 100 Mb/s is 1 Mb/s and one percent of 1000 Mb/s is 10 Mb/s, so the copied setting allows ten times the broadcast rate on the faster port.",
+    "explanation": "The threshold is a percentage of port bandwidth. 1% is 1 Mb/s at 100 Mb/s and 10 Mb/s at 1 Gb/s.",
     "whyWrong": {
-      "0": "The percentage is not one packet per hundred packets or a 100 Mb/s allocation here.",
-      "2": "The values are reversed.",
-      "3": "A percentage scales with the stated port bandwidth."
+      "0": "The percentage is not a packet count.",
+      "2": "The values are swapped.",
+      "3": "A percentage scales with bandwidth."
     }
   },
   {
@@ -556,7 +556,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "After verified RA guard enforcement, the client still lists an old IPv6 address and default router. What is the justified conclusion?",
+    "prompt": "After RA guard is enforced, the client still lists an old IPv6 address and default router. What follows?",
     "options": [
       "The policy must have stopped inspecting because the old address is still visible.",
       "The presence of a default router proves its latest advertisement crossed this port.",
@@ -566,11 +566,11 @@
     "answer": [
       3
     ],
-    "explanation": "Existing learned addresses/routes can outlive a policy change. Fresh packet observations distinguish current RA delivery from retained state.",
+    "explanation": "Learned addresses and routes stay until their lifetimes expire. Check fresh RAs to judge enforcement.",
     "whyWrong": {
-      "0": "Retained state alone does not establish a new policy failure.",
-      "1": "The router entry can have been learned before the policy change.",
-      "2": "DAI is an IPv4 ARP feature and does not perform that IPv6 reset."
+      "0": "Old state alone does not show the policy failed.",
+      "1": "The router entry may predate the policy.",
+      "2": "DAI is an IPv4 ARP feature and does not reset IPv6 state."
     }
   },
   {
@@ -587,7 +587,7 @@
       "title": "Supplied access-security evidence",
       "text": "Snooping is correctly enabled globally and for VLAN 10; server ingress trust is correct.\nPC-A still uses a lease acquired earlier, before snooping was enabled.\nR1 lists that lease; SW1’s binding table is empty.\nThe intended design will validate PC-A’s ARP through DAI."
     },
-    "prompt": "Which action establishes the missing evidence before DAI is enabled?",
+    "prompt": "Before DAI is enabled, which action supplies the missing binding?",
     "options": [
       "Obtain a fresh DHCP exchange and verify the resulting switch binding.",
       "Add the client’s MAC to the ordinary forwarding table without its IP.",
@@ -597,11 +597,11 @@
     "answer": [
       0
     ],
-    "explanation": "The existing server lease was acquired before snooping observed the exchange. Obtain and verify a fresh binding with the actual IP, MAC, VLAN and interface; a lease on the server and a binding on the switch are different records.",
+    "explanation": "The server lease came before snooping saw the exchange, so the switch has no binding. Get a fresh DHCP exchange and check the binding table.",
     "whyWrong": {
-      "1": "A MAC forwarding entry does not provide the DHCP-derived IP association.",
-      "2": "That bypasses the intended client inspection rather than establishing its input.",
-      "3": "Configuration saving does not automatically persist or synthesize operational DHCP snooping bindings."
+      "1": "A forwarding entry has no IP association.",
+      "2": "Trusting the port bypasses inspection for the client.",
+      "3": "Saving the configuration does not create bindings."
     }
   },
   {
@@ -617,7 +617,7 @@
       "title": "Supplied access-security evidence",
       "text": "PC-A MAC 00aa.0000.0001 is still explicitly secured on Fa0/1 in VLAN 10.\nAn approved move places PC-A on Fa0/2, also a secure VLAN 10 access port.\nFa0/2’s maximum is not full. The old secure entry was not removed."
     },
-    "prompt": "The moved endpoint violates the second secure port even though that port has spare capacity. Which evidence explains why?",
+    "prompt": "A moved endpoint violates the second secure port, which has spare capacity. Why?",
     "options": [
       "Port security requires the two ports to belong to different STP instances.",
       "The ordinary MAC aging interval has not yet enabled additional secure capacity.",
@@ -627,11 +627,11 @@
     "answer": [
       2
     ],
-    "explanation": "A violation also occurs when an address secured on one port appears on another secure port in the same VLAN, whatever that port's limit. Remove the old secure entry from Fa0/1 to complete the move; raising the maximum on Fa0/2 does not help.",
+    "explanation": "A violation also occurs when an address secured on one port appears on another secure port in the same VLAN. Remove the old secure entry from Fa0/1.",
     "whyWrong": {
-      "0": "STP-instance differences are not the source-address violation rule.",
-      "1": "Ordinary forwarding-table aging does not remove the shown secure configuration.",
-      "3": "ARP does not inherently create a second distinct secure source entry."
+      "0": "STP instances are not part of this rule.",
+      "1": "MAC aging does not remove the secure entry.",
+      "3": "ARP does not create a second secure entry."
     }
   },
   {
@@ -647,7 +647,7 @@
       "title": "SW1 relevant configuration",
       "text": "ip dhcp snooping\nip dhcp snooping vlan 20\nip arp inspection vlan 10\n!\ninterface GigabitEthernet0/1\n ip dhcp snooping trust\n ip arp inspection trust\n!\nDHCP snooping binding table: 0 entries"
     },
-    "prompt": "Clients in VLAN 10 have leases, but their fresh ARP requests are dropped after DAI is enabled. Which correction addresses the missing source of bindings shown here?",
+    "prompt": "VLAN 10 clients have leases, but their ARP is dropped after DAI is enabled. Which fix supplies the missing bindings?",
     "options": [
       "Enable snooping for VLAN 10, then obtain fresh client leases",
       "Enable sticky MAC learning on every client-facing port",
@@ -657,11 +657,11 @@
     "answer": [
       0
     ],
-    "explanation": "DAI is inspecting VLAN 10, while snooping is configured only for VLAN 20. Enable snooping on VLAN 10 and verify new bindings from fresh leases before retesting ARP.",
+    "explanation": "DAI inspects VLAN 10, but snooping is configured only for VLAN 20, so no bindings exist. Enable snooping on VLAN 10 and get fresh leases.",
     "whyWrong": {
-      "1": "Port-security entries do not replace DHCP snooping bindings for DAI.",
-      "2": "Moving clients changes the intended LAN and does not correct its missing protection policy.",
-      "3": "A gateway option does not populate the switch binding table."
+      "1": "Port-security entries are not DAI bindings.",
+      "2": "Moving clients to VLAN 20 changes the design and does not fix VLAN 10.",
+      "3": "A gateway setting does not create bindings."
     }
   },
   {
@@ -677,7 +677,7 @@
       "title": "Supplied access-security evidence",
       "text": "Approved replacement MAC: 00bb.0000.0002.\nBefore power loss: running-config sticky entry 00bb.0000.0002; fresh traffic succeeds.\nStartup-config sticky entry: 00aa.0000.0001.\nNo save occurred after replacement. Maximum 1; violation shutdown."
     },
-    "prompt": "After a normal restart, why does the approved replacement endpoint fail this saved one-device policy?",
+    "prompt": "After a restart, why does the approved replacement endpoint fail the one-device policy?",
     "options": [
       "The normal dynamic MAC-table aging timer immediately deletes every secure address.",
       "The lower source MAC replaces any higher saved sticky address during root election.",
@@ -687,11 +687,11 @@
     "answer": [
       3
     ],
-    "explanation": "The operational replacement was made only in running configuration. Normal boot loads startup configuration, which still reserves the one entry for the old device. Review the approved change and save the corrected identity after verification.",
+    "explanation": "The replacement was set up in running configuration only. At boot the switch loads the startup configuration, which still holds the old device's address.",
     "whyWrong": {
-      "0": "The configuration mismatch, not ordinary dynamic aging, is shown.",
-      "1": "Spanning-tree root election does not choose secure host MACs.",
-      "2": "Violations do not automatically authorize or save an unknown endpoint."
+      "0": "Dynamic MAC aging does not delete secure addresses.",
+      "1": "STP root election does not choose secure MACs.",
+      "2": "A violation does not save the new endpoint."
     }
   },
   {
@@ -708,7 +708,7 @@
       "title": "Supplied access-security evidence",
       "text": "Only R1, an approved static router/server, connects to SW1 Gi0/1.\nGi0/1: DHCP snooping trusted; DAI untrusted.\nClient Fa0/1: fresh lease and correct snooping binding.\nR1 10.1.10.1 has no DHCP-client binding or ARP ACL permit.\nCapture: valid DHCP ACK reaches client; R1’s ARP reply enters Gi0/1 and DAI rejects it.\nThe approved design explicitly permits an ARP-inspection bypass only on R1’s controlled link."
     },
-    "prompt": "Which narrow policy change fits this verified one-router design?",
+    "prompt": "DHCP trust works but the static router's ARP is rejected. Which narrow change fits this one-router design?",
     "options": [
       "Raise the port-security maximum on the client because ARP uses an extra source.",
       "Apply the separate intended DAI trust to the controlled router ingress.",
@@ -718,11 +718,11 @@
     "answer": [
       1
     ],
-    "explanation": "DHCP trust allowed the server replies but did not authorize the static router’s ARP claims. In this deliberately controlled single-router design, the planned separate DAI trust admits that router ingress. A verified ARP ACL is another design option, not shown here.",
+    "explanation": "DHCP trust admits server replies and does not authorize the router's ARP. Apply DAI trust to the router's ingress port.",
     "whyWrong": {
-      "0": "No additional source-MAC limit violation is shown.",
-      "2": "Client DHCP trust expands server-message permission and does not fix the router ARP rejection.",
-      "3": "Removing a valid binding would not authorize the static gateway and can break client validation."
+      "0": "No source-MAC limit violation is shown.",
+      "2": "Trusting client ports for DHCP does not fix ARP.",
+      "3": "Removing a valid binding does not authorize the router."
     }
   },
   {
@@ -738,7 +738,7 @@
       "title": "Supplied access-security evidence",
       "text": "VLAN 10 DAI enabled; client ports remain untrusted.\nSTATIC-HOSTS permits only verified printer 10.1.10.20 / 00cc.0000.0020.\nip arp inspection filter STATIC-HOSTS vlan 10 static\nAll DHCP clients have correct fresh snooping bindings but no ACL permit.\nPolicy: permit printer’s exact pair and continue binding validation for DHCP clients."
     },
-    "prompt": "The printer works, but DHCP clients fail fresh ARP after this change. Which correction preserves the intended checks?",
+    "prompt": "The printer works, but DHCP clients fail ARP after the change. Which fix keeps the checks?",
     "options": [
       "Add an ordinary static MAC forwarding entry for each affected DHCP client.",
       "Remove only the static application keyword, retaining the printer permit and binding fallback.",
@@ -748,11 +748,11 @@
     "answer": [
       1
     ],
-    "explanation": "The applied static keyword makes the ACL’s implicit deny final. Removing that keyword retains the explicit printer permit and lets implicit nonmatches use correct DHCP bindings.",
+    "explanation": "static makes the ACL's implicit deny final, so clients lose the binding fallback. Remove the static keyword and keep the printer permit.",
     "whyWrong": {
-      "0": "Forwarding-table entries do not supply DAI IP/MAC authorization.",
-      "2": "A DHCP exclusion does not create a printer binding; removing its permit breaks its authorization.",
-      "3": "This bypasses the intended client inspection instead of preserving it."
+      "0": "Forwarding entries do not authorize ARP.",
+      "2": "A DHCP exclusion creates no binding, so the printer needs its permit.",
+      "3": "Trusting client ports bypasses inspection."
     }
   },
   {
@@ -769,7 +769,7 @@
       "title": "Supplied access-security evidence",
       "text": "Fa0/6 DHCP rate limit: 15 packets/s; observed DHCP traffic below that rate.\nFa0/6 DAI allowance: 15 ARP packets/s, 1-second burst interval.\nDuring a measured ARP burst, log names arp-inspection as the errdisable cause.\nNo MAC-security violation is recorded."
     },
-    "prompt": "Which policy should be investigated first, based on the actual shutdown reason?",
+    "prompt": "A port was err-disabled with an arp-inspection reason. Which policy do you check first?",
     "options": [
       "The sticky MAC limit because every err-disabled port has exceeded it.",
       "The STP root priority because the port is no longer forwarding.",
@@ -779,11 +779,11 @@
     "answer": [
       2
     ],
-    "explanation": "The log names arp-inspection after an observed ARP burst. DHCP and DAI packet-rate limits count different protocols even when their numeric settings match. Examine the load and appropriate ARP policy before recovery.",
+    "explanation": "The log names arp-inspection, so the ARP rate limit was exceeded. Check the ARP inspection rate and the real ARP load.",
     "whyWrong": {
-      "0": "No port-security violation is established by the supplied evidence.",
-      "1": "An STP election does not explain this cause-specific errdisable event.",
-      "3": "DHCP traffic stayed below its limit and the shutdown reason names the other feature."
+      "0": "No port-security violation is shown.",
+      "1": "STP does not explain this errdisable cause.",
+      "3": "DHCP traffic stayed below its limit."
     }
   },
   {
@@ -798,7 +798,7 @@
       "title": "Supplied access-security evidence",
       "text": "Supported Catalyst RA guard implementation.\nGi1/0/24 is the only legitimate IPv6 router link.\nRunning configuration attaches ENDPOINTS, device-role host, on Gi1/0/24.\nFresh RA from fe80::1 is observed before switch ingress but not at the client.\nThe router sends correctly, VLAN path is verified, and IPv4 still works.\nDesign calls for a router-role policy on Gi1/0/24."
     },
-    "prompt": "Which correction and verification fit the IPv6 evidence?",
+    "prompt": "Which fix and check match the IPv6 evidence?",
     "options": [
       "Remove the client’s IPv4 gateway because IPv4 reachability is interfering with router discovery.",
       "Raise the DHCP snooping packet limit until the IPv6 router gains a binding.",
@@ -808,11 +808,11 @@
     "answer": [
       2
     ],
-    "explanation": "The documented router ingress was accidentally classified as a host. Correct that attachment/role and verify fresh authorized RAs while leaving endpoint boundaries protected. Working IPv4 does not validate IPv6 router discovery.",
+    "explanation": "The legitimate router's port was set to the host role. Attach the router-role policy there and verify fresh authorized RAs.",
     "whyWrong": {
-      "0": "The separate working IPv4 gateway is not the demonstrated cause.",
-      "1": "DHCPv4 snooping does not create RA guard authorization.",
-      "3": "Allowing every endpoint to act as a router violates the intended policy."
+      "0": "The IPv4 gateway is not the cause.",
+      "1": "DHCPv4 snooping does not authorize RAs.",
+      "3": "Making every endpoint a router defeats the policy."
     }
   },
   {
@@ -827,7 +827,7 @@
       "title": "Supplied access-security evidence",
       "text": "Isolated supported-switch lab. R1 is the permitted router; R2 is the test router on a host-role ingress. Cables, VLAN and R2 configuration remain unchanged during the comparison."
     },
-    "prompt": "Which two observations together provide the strongest bounded evidence that this test enforces the intended RA policy? Choose two.",
+    "prompt": "Which two observations best show the RA policy works? (Choose two.)",
     "options": [
       "The client retains an address learned before the test began.",
       "The host-policy name appears in the saved configuration.",
@@ -839,11 +839,115 @@
       3,
       4
     ],
-    "explanation": "The permitted/blocked comparison controls for R2 being inactive, and continued R1 reception tests the legitimate path. It is evidence for this topology and traffic, not a universal hardware-security certification.",
+    "explanation": "Legitimate R1 RAs keep arriving, and R2 RAs cross when its host policy is removed and stop when it is restored. The comparison proves R2 transmits and the policy blocks it.",
     "whyWrong": {
-      "0": "Previously learned state does not establish current packet delivery.",
-      "1": "A name establishes configuration existence but not attachment or enforcement.",
-      "2": "An unproven sender and a short negative capture cannot distinguish filtering from no transmitted packet."
+      "0": "Old learned state does not show current delivery.",
+      "1": "A policy name does not prove it is attached.",
+      "2": "A short silent capture could mean R2 sent nothing."
+    }
+  },
+  {
+    "id": "layer2-security-q31",
+    "type": "single",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default DHCP snooping trust state of a port?",
+    "options": [
+      "Trusted",
+      "Untrusted",
+      "Trusted on trunks only",
+      "Trusted on uplinks only"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Every port is untrusted by default. Trust only the ports where the real server's replies enter.",
+    "whyWrong": {
+      "0": "Ports are untrusted until you trust them.",
+      "2": "Trust does not depend on port type.",
+      "3": "Uplinks are untrusted too unless you configure trust."
+    }
+  },
+  {
+    "id": "layer2-security-q32",
+    "type": "single",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default ARP rate limit on an untrusted DAI port?",
+    "options": [
+      "1 packet per second",
+      "15 packets per second",
+      "100 packets per second",
+      "No limit"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "An untrusted DAI port is limited to 15 ARP packets per second. A trusted port has no limit.",
+    "whyWrong": {
+      "0": "1 second is the burst interval, not the rate.",
+      "2": "100 packets per second is not the default.",
+      "3": "Only trusted ports have no limit."
+    }
+  },
+  {
+    "id": "layer2-security-q33",
+    "type": "single",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.e"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command enables automatic recovery of ports err-disabled by port security?",
+    "options": [
+      "errdisable recovery cause psecure-violation",
+      "switchport port-security recovery",
+      "errdisable detect cause psecure",
+      "port-security auto-recover"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "errdisable recovery cause psecure-violation turns on timed recovery for port-security violations. The default interval is 300 seconds.",
+    "whyWrong": {
+      "1": "That is not the recovery command.",
+      "2": "That is not the recovery command.",
+      "3": "That is not the recovery command."
+    }
+  },
+  {
+    "id": "layer2-security-q34",
+    "type": "single",
+    "objectives": [
+      "v1:5.7",
+      "v2:4.7.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which DHCP messages does snooping drop when they arrive on an untrusted port?",
+    "options": [
+      "Discover and Request",
+      "Offer, ACK and NAK",
+      "Discover and Offer",
+      "Request and ACK"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Server messages (Offer, ACK, NAK) are dropped on untrusted ports. Client messages (Discover, Request) are allowed.",
+    "whyWrong": {
+      "0": "Discover and Request are client messages and are allowed.",
+      "2": "Discover is a client message, so it is not dropped.",
+      "3": "Request is a client message, so it is not dropped."
     }
   }
 ]

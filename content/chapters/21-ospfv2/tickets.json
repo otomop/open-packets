@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The displayed MTUs differ while every other parameter agrees. DBD packets carry the interface MTU: B2, with the smaller MTU, rejects R1's DBD packets and stays in ExStart, while R1 waits in Exchange. Small pings succeed because they fit either MTU. Restore the intended value, then verify Full and the remote LAN route.",
-    "fix": "```ios B2\nB2# configure terminal\nB2(config)# interface gigabitethernet0/1\nB2(config-if)# no ip mtu\nB2(config-if)# end\nB2# show ip interface gigabitethernet0/1\nB2# show ip ospf neighbor\nB2# show ip route ospf\n```\nThe link supports 1500, so removing the override is the repair. If a link really needs a smaller MTU, set the same value on both ends rather than bypassing the check with ip ospf mtu-ignore."
+    "explanation": "The MTUs differ and everything else matches. DBD packets carry the MTU, so the smaller-MTU router rejects them and the adjacency stalls in ExStart or Exchange. Small pings still work.",
+    "fix": "```ios B2\nB2# configure terminal\nB2(config)# interface gigabitethernet0/1\nB2(config-if)# no ip mtu\nB2(config-if)# end\nB2# show ip interface gigabitethernet0/1\nB2# show ip ospf neighbor\nB2# show ip route ospf\n```\nThe link supports 1500, so removing the override is the repair. If a link needs a smaller MTU, set the same value on both ends instead of using ip ospf mtu-ignore."
   },
   {
     "id": "ospfv2-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The Hello and dead intervals differ, so each router rejects the other's Hellos. Process IDs may differ, the area already matches, and changing one mask would add a second fault. Remove R3's timer overrides to return it to 10/40.",
-    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/2\nR3(config-if)# no ip ospf hello-interval\nR3(config-if)# no ip ospf dead-interval\nR3(config-if)# end\nR3# show ip ospf interface gigabitethernet0/2\nR3# show ip ospf neighbor\n```\nConfirm the effective timer pair is 10/40 and the expected adjacency reaches Full before saving."
+    "explanation": "The Hello and dead intervals differ, so each router drops the other's Hellos. Remove R3's timer overrides to return to 10 and 40.",
+    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/2\nR3(config-if)# no ip ospf hello-interval\nR3(config-if)# no ip ospf dead-interval\nR3(config-if)# end\nR3# show ip ospf interface gigabitethernet0/2\nR3# show ip ospf neighbor\n```\nConfirm the timers are 10/40 and the neighbor reaches Full before saving."
   }
 ]

@@ -1,10 +1,10 @@
 ---
 title: Watch a switch learn, flood and forget
 environment: packet-tracer
-devices: ["2 × Catalyst 2960 (S1, S2)", "3 × PC-PT (PC-A, PC-B, PC-C)"]
-minutes: 80
+devices: ["2 × Catalyst 2960 (S1; S2 is needed only for the extension)", "3 × PC-PT (PC-A, PC-B, PC-C)"]
+minutes: 40
 ---
-You will watch the lesson's learn, forward and flood rules happen one frame at a time. First a single switch learns three hosts and floods an unknown unicast. Then two hosts move behind a second switch, so one port learns several addresses. Finally a wrong static entry breaks one host, and you find and remove it. Output below is representative, not captured from Packet Tracer; your MAC addresses will differ, so record and use your own.
+You will watch the lesson's learn, forward and flood rules happen one frame at a time. The core lab, Steps 1–7, takes about 40 minutes: a single switch learns three hosts, floods an unknown unicast, and you work out aging and save the result. The optional extension, Steps 8–11, adds about 40 minutes: two hosts move behind a second switch, so one port learns several addresses, and then a wrong static entry breaks one host and you find and remove it. Output below is representative, not captured from Packet Tracer; your MAC addresses will differ, so record and use your own.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
@@ -22,15 +22,15 @@ Practice revised September 2026. If you completed an earlier version, repeat the
     { "from": "A", "to": "S1", "fromLabel": "Fa0", "toLabel": "Fa0/1" },
     { "from": "B", "to": "S1", "fromLabel": "Fa0", "toLabel": "Fa0/2" },
     { "from": "S1", "to": "C", "fromLabel": "Fa0/3", "toLabel": "Fa0" }
-  ], "caption": "All three hosts initially use VLAN 1 on S1; S2 is added in Step 7." }
+  ], "caption": "All three hosts initially use VLAN 1 on S1; S2 is added in the extension, Step 8." }
 ```
 
-| Host | IPv4 / mask | Initial port | Port after Step 7 |
+| Host | IPv4 / mask | Initial port | Port after Step 8 |
 |---|---|---|---|
 | PC-A FastEthernet0 | `192.168.90.10 / 255.255.255.0` | S1 Fa0/1 | S1 Fa0/1 |
 | PC-B FastEthernet0 | `192.168.90.20 / 255.255.255.0` | S1 Fa0/2 | S2 Fa0/2 |
 | PC-C FastEthernet0 | `192.168.90.30 / 255.255.255.0` | S1 Fa0/3 | S2 Fa0/3 |
-| Switch link added in Step 7 | No IP address | Not connected | S1 Fa0/24 ↔ S2 Fa0/24 |
+| Switch link added in Step 8 | No IP address | Not connected | S1 Fa0/24 ↔ S2 Fa0/24 |
 
 Use straight-through copper for PCs. Use copper crossover or Packet Tracer's automatic connection tool for the switch-to-switch link. No host needs a default gateway or DNS server because the entire exercise stays in one subnet. Begin with new switches; do not add a second inter-switch link, which would introduce a spanning-tree exercise beyond this lab.
 
@@ -188,12 +188,34 @@ The frame from A refreshes A, not B. B sends nothing after time 0, so its dynami
 {"status":"Aging worked on paper","focus":["S1"],"rows":[["Worksheet timer","300 s"],["Frame A sends to B","Refreshes A, not B"],["B at 301 s","Eligible to age out"],["Static entry","Does not age · survives clear"]]}
 ```
 
-## Step 7: Add a second switch and watch one port learn two MACs
+## Step 7: Verify and save the one-switch baseline
+
+In Realtime mode, ping B and C from A, then confirm that S1 has learned all three hosts and save the configuration.
+
+```text PC-A
+ping 192.168.90.20
+ping 192.168.90.30
+```
+
+```ios S1
+S1# show mac address-table
+S1# copy running-config startup-config
+```
+
+:::expected
+Both pings succeed. A, B and C appear as DYNAMIC entries on Fa0/1, Fa0/2 and Fa0/3. Press Enter at the destination-filename prompt, then save the project as `07-switching-core.pkt`. This completes the core lab; Steps 8–11 are the optional extension.
+:::
+
+```state
+{"status":"Core baseline saved","tone":"ok","focus":["S1"],"flows":[{"path":["A","S1","B"],"back":true,"label":"Ping A to B"},{"path":["A","S1","C"],"back":true,"label":"Ping A to C"}],"rows":[["S1 Fa0/1–3","A, B, C · DYNAMIC","ok"],["A to B, A to C","Both succeed","ok"],["Saved","07-switching-core.pkt"]]}
+```
+
+## Step 8: Extension: Add a second switch and watch one port learn two MACs
 
 Add a new 2960 named S2. Connect S1 Fa0/24 to S2 Fa0/24, then move B to S2 Fa0/2 and C to S2 Fa0/3. Keep A on S1 Fa0/1. The port setup repeats Step 1. Both ends of the link between the switches are access ports in VLAN 1, which is enough to carry one VLAN.
 
 ```diagram
-{ "type": "topology", "title": "Step 7 topology: B and C behind S2",
+{ "type": "topology", "title": "Step 8 topology: B and C behind S2",
   "nodes": [
     { "id": "A", "kind": "pc", "label": "PC-A", "sub": "192.168.90.10/24", "x": 1, "y": 3 },
     { "id": "S1", "kind": "switch", "label": "S1", "sub": "2960 · VLAN 1", "x": 4, "y": 3 },
@@ -266,7 +288,7 @@ S1 reaches B and C through Fa0/24, so their two different MACs appear on that on
 {"topology":2,"status":"S2 added · B, C moved","tone":"ok","wake":["S2"],"focus":["S1","S2"],"flows":[{"path":["A","S1","S2","B"],"back":true,"label":"Ping A to B","tags":{"S1":"Learn A on Fa0/1","S2":"Learn A on Fa0/24"},"backTags":{"S2":"Learn B on Fa0/2","S1":"Learn B on Fa0/24"}},{"path":["A","S1","S2","C"],"back":true,"label":"Ping A to C","backTags":{"S2":"Learn C on Fa0/3","S1":"Learn C on Fa0/24 · two MACs on one port"}}],"rows":[["S1 Fa0/1","A · DYNAMIC","ok"],["S1 Fa0/24","B and C · two MACs","ok"],["S2","A Fa0/24 · B Fa0/2 · C Fa0/3","ok"],["S1–S2 link","Fa0/24 · access VLAN 1"]]}
 ```
 
-## Step 8: Predict a source move and preserve the baseline
+## Step 9: Extension: Predict a source move and preserve the baseline
 
 You now have A on S1 and B/C behind S2. Before generating more traffic, answer this on paper: if B broadcasts an ARP request for C and C returns a unicast reply, which switch sees each source? Assume both dynamic tables begin empty and no other host transmits.
 
@@ -305,7 +327,7 @@ For the live move, A's first new source frame updates its dynamic entry to Fa0/4
 {"topology":2,"status":"Layout restored and saved","tone":"ok","focus":["S1","S2"],"chips":[{"node":"S1","text":"Does not learn C from this reply","from":2,"until":3}],"flows":[{"path":["B","S2",["C","S1"]],"label":"Paper: B's ARP broadcast for C","tags":{"S2":"Learn B on Fa0/2 · flood broadcast","S1":"Learn B on Fa0/24"}},{"path":["S1","A"],"label":"Paper: S1 floods the broadcast to A"},{"path":["C","S2","B"],"tone":"reply","label":"Paper: C's unicast reply to B","tags":{"S2":"Learn C on Fa0/3 · B known → Fa0/2"}},{"path":["A","S1","S2","B"],"back":true,"label":"Restored: ping A to B","tags":{"S1":"A learned on Fa0/1 again"}}],"rows":[["Paper: B's broadcast","S2 B Fa0/2 · S1 B Fa0/24"],["Paper: C's reply","S1 does not learn C"],["A moved to Fa0/4","Entry moves · ARP can stay"],["Restored","A on Fa0/1 · saved","ok"]]}
 ```
 
-## Step 9: Introduce one incorrect static entry
+## Step 10: Extension: Introduce one incorrect static entry
 
 The lesson said a static entry on the wrong port keeps sending a host's traffic the wrong way. Create that fault: point B's MAC at S1 Fa0/1, which actually leads to A. Substitute **B's actual MAC for `00bb.bbbb.bbbb`**. Change nothing else.
 
@@ -333,7 +355,7 @@ S1 now believes B is on Fa0/1. A frame from A to B arrives on Fa0/1 with a desti
 {"topology":2,"status":"Static entry filters B","tone":"bad","focus":["S1"],"chips":[{"node":"S1","text":"STATIC B's MAC → Fa0/1","tone":"bad"}],"flows":[{"path":["A","S1"],"label":"Unicast frame to B","stop":"S1","stopText":"B maps to ingress Fa0/1 · filter"},{"path":["A","S1","S2","C"],"back":true,"label":"Ping A to C (can still work)"}],"rows":[["STATIC row","B's MAC → Fa0/1","bad"],["A to B","Fails · filtered by S1","bad"],["A to C","Can still work"],["Clear dynamic","Does not remove it"]]}
 ```
 
-## Step 10: Recover the fault and confirm the baseline
+## Step 11: Extension: Recover the fault and confirm the baseline
 
 Remove the static entry with the `no` form of the command that created it, again using B's actual MAC in place of `00bb.bbbb.bbbb`. Then send traffic so the switch relearns the correct path, and verify both hosts before you save.
 
@@ -358,15 +380,15 @@ S1# copy running-config startup-config
 B is learned dynamically through Fa0/24, both pings succeed, and the static row is gone. Accept the destination filename prompt when saving the device. Save the repaired topology as `switching-lab.pkt`.
 :::
 
-Before the challenge, check that you can explain each result from your notes:
+Before the challenge, check that you can explain each result from your notes (Steps 1–7 if you did only the core):
 
 | Step | What you should be able to explain |
 |---|---|
 | 3 and 4 | Which source each frame taught the switch, and which destination chose the egress port |
 | 5 | Why a unicast frame was flooded while PC-A's ARP cache still held B's MAC |
-| 7 | Why S1 shows two MAC addresses on Fa0/24 |
-| 8 | Why A's entry moved as soon as A sent a frame on the new port |
-| 9 and 10 | Why clearing dynamic entries did not fix B, and what did |
+| 8 | Why S1 shows two MAC addresses on Fa0/24 |
+| 9 | Why A's entry moved as soon as A sent a frame on the new port |
+| 10 and 11 | Why clearing dynamic entries did not fix B, and what did |
 
 ```state
 {"topology":2,"status":"Static removed · B relearned","tone":"ok","focus":["S1"],"chips":[{"node":"S1","text":"STATIC B's MAC → Fa0/1","tone":"bad","until":0},{"node":"S1","text":"B DYNAMIC via Fa0/24","tone":"ok","from":2}],"flows":[{"event":["S1"],"wait":1.2,"tags":{"S1":"Static B row removed · dynamic cleared"}},{"path":["A","S1","S2","B"],"back":true,"label":"Ping A to B","backTags":{"S1":"Learn B on Fa0/24 · DYNAMIC"}},{"path":["A","S1","S2","C"],"back":true,"label":"Ping A to C"}],"rows":[["STATIC row","Removed","ok"],["B","DYNAMIC via Fa0/24","ok"],["A to B, A to C","Both succeed","ok"],["Saved","switching-lab.pkt"]]}
@@ -376,14 +398,14 @@ Before the challenge, check that you can explain each result from your notes:
 
 - **Host absent from the MAC table:** verify the link and VLAN, generate traffic from that host, then inspect promptly. Merely connecting or receiving is insufficient evidence of learning.
 - **ARP appears before the intended unknown-unicast test:** A lacks a current mapping for B; refresh ARP, clear only S1's dynamic entries, and repeat immediately.
-- **Multiple hosts appear on Fa0/24:** compare with the final topology; this is expected for B and C behind S2.
+- **Multiple hosts appear on Fa0/24 (extension):** compare with the Step 8 topology; this is expected for B and C behind S2.
 - **A display keyword is unsupported:** use the plain `show mac address-table` and `clear mac address-table dynamic` instead.
 - **Failure persists after clearing dynamic entries:** check for the deliberately configured STATIC row and remove its exact configuration.
 - **Ping fails after moving cables:** check final port assignments, VLAN 1 on both inter-switch ends, and forwarding state. Do not add a second switch link to troubleshoot the first.
 
 ## Challenge
 
-Work in a separate copy of the restored two-switch project. Before moving anything, have B ping C and verify that B knows C's actual MAC with `arp -a`. Move C from S2 Fa0/3 to **S1 Fa0/5**, leaving its IP and MAC unchanged. Configure S1 Fa0/5 as an enabled VLAN 1 access port, and wait for forwarding. Keep A on S1 Fa0/1 and B on S2 Fa0/2.
+The challenge needs the extension. Work in a separate copy of the restored two-switch project from Step 9. Before moving anything, have B ping C and verify that B knows C's actual MAC with `arp -a`. Move C from S2 Fa0/3 to **S1 Fa0/5**, leaving its IP and MAC unchanged. Configure S1 Fa0/5 as an enabled VLAN 1 access port, and wait for forwarding. Keep A on S1 Fa0/1 and B on S2 Fa0/2.
 
 Clear only the dynamic MAC tables on both switches. Generate no other host traffic. Before B sends its next unicast request to C, predict the egress ports and learned rows on each switch. Then predict C's reply and explain whether S2 will learn C this time. Observe in Simulation mode; if a new ARP exchange occurs, record it and repeat the unicast test after confirming B's mapping rather than pretending it matched the intended initial state.
 

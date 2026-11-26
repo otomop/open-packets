@@ -27,8 +27,8 @@
     "answer": [
       0
     ],
-    "explanation": "The errors threshold permits levels 0–3, excluding the displayed level-5 records before remote forwarding. Console and buffer settings are independent. The received level-3 records establish those particular deliveries, not that every datagram or future event must arrive.",
-    "fix": "Change the remote threshold to match the stated requirement.\n\n```ios\nR1# configure terminal\nR1(config)# logging trap informational\nR1(config)# end\nR1# show logging\n```\n\nGenerate a harmless new configuration event in the isolated lab and verify the corresponding record on the collector. The new threshold makes levels 0–6 eligible; it does not replay the old buffer or guarantee transport/retention. Save after verification."
+    "explanation": "The remote threshold is errors, which sends levels 0 to 3 only. Level-5 events are never forwarded. Console and buffer settings are separate.",
+    "fix": "Set the remote threshold to informational.\n\n```ios\nR1# configure terminal\nR1(config)# logging trap informational\nR1(config)# end\nR1# show logging\n```\n\nGenerate a new event and check the collector. The new threshold sends levels 0 to 6 but does not replay the old buffer. Then save."
   },
   {
     "id": "ntp-syslog-snmp-t02",
@@ -65,7 +65,7 @@
     "answer": [
       1
     ],
-    "explanation": "R1’s own stratum-16 status shows that it is not a usable synchronized source at this time. The old-source ping failure does not identify a specific route or filtering cause. Correct R1’s intended source, then separately verify R2’s association and local state.",
-    "fix": "Use the approved alternate source with the successful NTP evidence stated in the scenario.\n\n```ios\nR1# configure terminal\nR1(config)# no ntp server 203.0.113.10\nR1(config)# ntp server 203.0.113.20\nR1(config)# end\nR1# show ntp associations\nR1# show ntp status\n```\n\nWait for actual source selection. R1 should then report stratum 3; R2, if it successfully synchronizes to R1, reports stratum 4. Inspect R2’s associations/status and clock as well. Do not declare R1’s unsourced clock authoritative with ntp master merely to remove an alarm. Investigate the old source separately and save the verified approved configuration."
+    "explanation": "R1 reports stratum 16, so it is unsynchronized and cannot serve usable time to R2. Fix R1's source first.",
+    "fix": "Switch R1 to the approved alternate source.\n\n```ios\nR1# configure terminal\nR1(config)# no ntp server 203.0.113.10\nR1(config)# ntp server 203.0.113.20\nR1(config)# end\nR1# show ntp associations\nR1# show ntp status\n```\n\nWait for source selection. R1 should report stratum 3 and R2 stratum 4. Do not use ntp master just to clear the alarm. Then save."
   }
 ]

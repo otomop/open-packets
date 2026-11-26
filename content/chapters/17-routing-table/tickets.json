@@ -31,8 +31,8 @@
     "answer": [
       1
     ],
-    "explanation": "10.20.30.128/25 covers .128 to .255, so .200 is inside it and .50 is not. The more-specific static route sends .200 to Null0 while the /24 still serves .50. This is longest prefix match; administrative distance is not involved.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ip route 10.20.30.128 255.255.255.128 Null0\nR1(config)# end\nR1# show ip route 10.20.30.200\n```\nConfirm that .200 now matches the /24, then ping both .50 and .200 from the user's PC and save the configuration."
+    "explanation": "10.20.30.128/25 covers .128 to .255, so .200 is inside it and .50 is not. The more specific static sends .200 to Null0 while the /24 still serves .50. This is longest prefix match, not AD.",
+    "fix": "Remove the /25 discard route.\n\n```ios R1\nR1# configure terminal\nR1(config)# no ip route 10.20.30.128 255.255.255.128 Null0\nR1(config)# end\nR1# show ip route 10.20.30.200\n```\n\nConfirm .200 now matches the /24, ping both .50 and .200 from the user's PC and save."
   },
   {
     "id": "routing-table-t02",
@@ -67,7 +67,7 @@
     "answer": [
       2
     ],
-    "explanation": "Both candidates describe the same /16, so administrative distance decides. The static command has no distance at the end, so it uses the default of 1 and beats OSPF's 110. Metrics from different sources are never compared.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ip route 10.60.0.0 255.255.0.0 10.0.99.2\nR1(config)# ip route 10.60.0.0 255.255.0.0 10.0.99.2 130\nR1(config)# end\nR1# show ip route 10.60.0.0\nR1# show running-config | include ^ip route\n```\nOSPF's AD of 110 now beats the static route's 130, so the `O` route is installed and the static route waits in the configuration as a floating backup. Confirm the installed source, then test traffic in both directions."
+    "explanation": "Both routes are for the same /16, so AD decides. The static command has no distance, so it uses AD 1 and beats OSPF's 110. Metrics from different sources are never compared.",
+    "fix": "Give the static route an AD of 130 so OSPF is preferred.\n\n```ios R1\nR1# configure terminal\nR1(config)# no ip route 10.60.0.0 255.255.0.0 10.0.99.2\nR1(config)# ip route 10.60.0.0 255.255.0.0 10.0.99.2 130\nR1(config)# end\nR1# show ip route 10.60.0.0\nR1# show running-config | include ^ip route\n```\n\nOSPF's AD of 110 now beats 130, so the O route is installed and the static route waits as a floating backup. Confirm the installed source and test traffic both ways."
   }
 ]

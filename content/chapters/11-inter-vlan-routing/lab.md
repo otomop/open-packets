@@ -1,12 +1,12 @@
 ---
 title: "Build two inter-VLAN gateway designs"
 environment: packet-tracer
-devices: ["Part A: 1 × 2911 router, 1 × 2960 switch, 2 × PC-PT", "Part B: 1 × 3650 multilayer switch, 1 × 2911 router, 2 × PC-PT", "Optional: 1 additional PC-PT for the challenge"]
-minutes: 80
+devices: ["Part A (core): 1 × 2911 router, 1 × 2960 switch, 2 × PC-PT", "Part B (extension only): 1 × 3650 multilayer switch, 1 × 2911 router, 2 × PC-PT", "Optional: 1 additional PC-PT for the challenge, which builds on Part B"]
+minutes: 45
 ---
-Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
+The core lab, Steps 1–6, takes about 45 minutes: you build router-on-a-stick in Part A, verify routing between two VLANs, introduce one tag-mapping fault, restore it and save. The optional extension, Steps 7–12, adds about 35 minutes: in a separate Packet Tracer file, Part B, you route the same VLANs with SVIs on a multilayer switch, observe one fault, and add a directly connected routed-port test.
 
-Use two separate Packet Tracer files to compare router-on-a-stick with SVI routing. In each design you will verify the baseline, introduce one clearly defined fault, observe it, and restore it. The second file also includes a directly connected routed-port test.
+Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
 Open device CLI tabs for console access. Answer `no` to an initial configuration dialog if offered. Interface names below match the selected Packet Tracer models; inspect yours before cabling. These instructions and representative outcomes were reviewed against Cisco documentation, but this exact lab has not been executed in Packet Tracer. Command support, output formatting and state transitions can vary by simulator release. A 2960 is used as a Layer 2 switch here; the SVI-routing portion specifically requires a multilayer model.
 
@@ -205,14 +205,14 @@ R1# copy running-config startup-config
 Complete the same prompt, then save the Packet Tracer file as `11A-router-stick-complete.pkt`.
 
 :::expected
-Part A is a separate, working file with correct tags and successful tests. Keep it closed or set aside while creating Part B; do not connect the two designs or reuse the configured router in the next topology.
+Part A is a separate, working file with correct tags and successful tests. This completes the core lab; Steps 7–12 are the optional extension. If you continue, keep Part A closed or set aside while creating Part B; do not connect the two designs or reuse the configured router in the next topology.
 :::
 
 ```state
 {"status":"Part A saved","tone":"ok","focus":["s","r"],"chips":[{"node":"s","text":"startup-config saved","tone":"ok"},{"node":"r","text":"startup-config saved","tone":"ok"}],"rows":[["SW1 · R1","copy running-config startup-config","ok"],["File","11A-router-stick-complete.pkt","ok"],["Part B","A separate file · not connected"]]}
 ```
 
-## Step 7: Build Part B with SVIs but no forwarding
+## Step 7: Extension: Build Part B with SVIs but no forwarding
 
 Create a **new** file containing a 3650 multilayer switch named DSW1, two fresh PCs, and a fresh 2911 router named R2. For now leave R2 uncabled. On a 3650 model that requires a power supply in the Physical tab, install the available compatible power supply and power it on before using the CLI.
 
@@ -275,7 +275,7 @@ With both PC links up and forwarding, the two SVIs should be operational. Each P
 {"topology":2,"status":"SVIs up · IPv4 routing off","tone":"warn","absent":["r"],"addressed":["a","b","d"],"focus":["d"],"wake":["a","b"],"flows":[{"path":["a","d"],"back":true,"label":"PC-A pings 192.168.10.1","tags":{"d":"Vlan10 SVI replies"}},{"path":["b","d"],"back":true,"with":true,"tone":"alt","label":"PC-B pings 192.168.20.1","tags":{"d":"Vlan20 SVI replies"}},{"path":["a","d","b"],"label":"PC-A pings 192.168.20.12","stop":"d","stopText":"no ip routing · user packets not routed"}],"chips":[{"node":"d","text":"no ip routing","tone":"warn"}],"prompt":{"node":"d","text":"DSW1#"},"rows":[["Gi1/0/1 · Gi1/0/2","Access VLAN 10 · VLAN 20"],["Own SVI pings","Each PC reaches its gateway","ok"],["PC-A ↔ PC-B","Not a routed service yet","warn"],["R2","Uncabled for now","dim"]]}
 ```
 
-## Step 8: Enable and verify SVI routing
+## Step 8: Extension: Enable and verify SVI routing
 
 Enable IPv4 routing, then repeat the own-gateway and cross-VLAN tests from step 3.
 
@@ -296,7 +296,7 @@ The two connected subnet routes are present and PC-A and PC-B communicate in bot
 {"topology":2,"status":"SVI routing works","tone":"ok","absent":["r"],"addressed":["a","b","d"],"focus":["d"],"flows":[{"event":["d"],"wait":1.2,"tags":{"d":"ip routing enabled"}},{"path":["a","d","b"],"back":true,"label":"PC-A pings 192.168.20.12","tags":{"d":"Connected route · Vlan10 → Vlan20"},"backTags":{"d":"Connected route · Vlan20 → Vlan10"}},{"path":["b","d","a"],"back":true,"tone":"alt","label":"PC-B pings 192.168.10.11"}],"chips":[{"node":"d","text":"no ip routing","tone":"warn","until":0},{"node":"d","text":"ip routing","tone":"ok","from":0}],"rows":[["Connected routes","192.168.10.0/24 · 192.168.20.0/24","ok"],["PC-A ↔ PC-B","Both directions succeed","ok"],["Trunk · static or default route","Not needed"],["R2","Uncabled · not involved","dim"]]}
 ```
 
-## Step 9: Remove VLAN 20's only active member link
+## Step 9: Extension: Remove VLAN 20's only active member link
 
 Save a separate `11B-svi-experiment.pkt`. Before changing anything, predict the port state, SVI protocol state and connected-route entry. Then shut DSW1 Gi1/0/2, the only connected Layer 2 port in VLAN 20. Do not shut the SVI or delete the VLAN; isolating one change makes the observation useful.
 
@@ -319,7 +319,7 @@ PC-B loses its link. Under normal SVI autostate behavior, Vlan20's line protocol
 {"topology":2,"status":"Gi1/0/2 shut · Vlan20 down","tone":"bad","absent":["r"],"addressed":["a","b","d"],"focus":["d"],"cut":[["b","d"]],"flows":[{"event":["d"],"wait":1.2,"tags":{"d":"No VLAN 20 port forwarding · Vlan20 down"}},{"path":["a","d"],"back":true,"label":"PC-A pings 192.168.10.1","tags":{"d":"Vlan10 SVI still replies"}}],"chips":[{"node":"d","text":"Vlan20 protocol down","tone":"bad"},{"node":"d","text":"ip routing"}],"rows":[["Gi1/0/2","Shut down · PC-B link lost","bad"],["Vlan20","Protocol down · not admin shut","bad"],["192.168.20.0/24","Connected route withdrawn","bad"],["VLAN 20","Still exists"],["PC-A → 192.168.10.1","Still replies","ok"]]}
 ```
 
-## Step 10: Restore the access link and route
+## Step 10: Extension: Restore the access link and route
 
 Re-enable the port, allow its startup forwarding transition, then recheck the SVI and routes.
 
@@ -340,7 +340,7 @@ Vlan20 becomes operational and its connected route returns once its member port 
 {"topology":2,"status":"Vlan20 and its route restored","tone":"ok","absent":["r"],"addressed":["a","b","d"],"focus":["d"],"wake":["b"],"flows":[{"event":["d"],"wait":1.2,"tags":{"d":"Gi1/0/2 forwarding · Vlan20 up"}},{"path":["a","d","b"],"back":true,"label":"PC-A pings 192.168.20.12","tags":{"d":"Connected route 192.168.20.0/24 back"}},{"path":["b","d","a"],"back":true,"tone":"alt","label":"PC-B pings 192.168.10.11"}],"chips":[{"node":"d","text":"Vlan20 protocol down","tone":"bad","until":0},{"node":"d","text":"Vlan20 operational","tone":"ok","from":0},{"node":"d","text":"ip routing"}],"rows":[["Gi1/0/2","no shutdown · forwarding","ok"],["Vlan20","Operational · connected route back","ok"],["PC-A ↔ PC-B","Both directions work","ok"],["Not the fix","no shutdown on Vlan20","dim"]]}
 ```
 
-## Step 11: Add a routed connection to R2
+## Step 11: Extension: Add a routed connection to R2
 
 Connect DSW1 Gi1/0/24 to fresh R2 Gi0/0 using a copper straight-through cable. Configure the two ends in separate CLI tabs. This step tests only those directly connected link addresses.
 
@@ -379,7 +379,7 @@ The switch reports that Gi1/0/24 is not a switchport, and its table includes con
 {"topology":2,"status":"Routed link to R2 up","tone":"ok","focus":["d","r"],"flows":[{"path":["r","d"],"back":true,"label":"R2 pings 10.0.12.2","tags":{"d":"Routed port Gi1/0/24 replies"}},{"path":["d","r"],"back":true,"label":"DSW1 pings 10.0.12.1"}],"chips":[{"node":"d","text":"ip routing"}],"prompt":{"node":"r","text":"R2#"},"rows":[["Gi1/0/24","Not a switchport · 10.0.12.2/30"],["DSW1 connected routes","Now include 10.0.12.0/30","ok"],["Link-address pings","Both succeed","ok"],["PC → R2","Not a success test · no return route","dim"]]}
 ```
 
-## Step 12: Save Part B and compare the designs
+## Step 12: Extension: Save Part B and compare the designs
 
 Save the restored configurations one device at a time.
 
@@ -405,20 +405,20 @@ Both designs use the same host subnets and gateway addresses, and both route bet
 
 ## Evidence to keep
 
-For each design, keep the interface and VLAN/tag checks, both own-gateway tests and both inter-VLAN tests. For each fault, record the one change, the affected and unaffected checks, and the same checks after recovery. For the routed link, distinguish a successful neighbor test from evidence of a complete host-to-remote return path. A configuration screenshot alone does not establish forwarding.
+For each design you built, keep the interface and VLAN/tag checks, both own-gateway tests and both inter-VLAN tests. For each fault, record the one change, the affected and unaffected checks, and the same checks after recovery. For the routed link, distinguish a successful neighbor test from evidence of a complete host-to-remote return path. A configuration screenshot alone does not establish forwarding.
 
 ## Troubleshooting
 
 - Own gateway fails on router-on-a-stick: check the PC mask/access VLAN, switch trunk, router parent state, subinterface tag and IP address.
 - Subinterface is up/up but the gateway is unreachable: check tag mapping and delivery; up/up alone is insufficient.
-- SVI protocol is down: verify the VLAN exists, the SVI is enabled and an eligible member port is linked and forwarding.
-- Local SVI replies but cross-VLAN traffic fails: verify `ip routing`, both connected routes and both PC gateways.
-- Routed-port neighbor ping fails: compare masks and addresses, check `no switchport` and administrative state at both ends.
+- SVI protocol is down (extension): verify the VLAN exists, the SVI is enabled and an eligible member port is linked and forwarding.
+- Local SVI replies but cross-VLAN traffic fails (extension): verify `ip routing`, both connected routes and both PC gateways.
+- Routed-port neighbor ping fails (extension): compare masks and addresses, check `no switchport` and administrative state at both ends.
 - Some commands are absent in a simulator: record the exact model and limitation. Use the lesson's documented evidence for interpretation rather than treating a simulated omission as an IOS rule.
 
 ## Challenge
 
-In a copy of Part B, add PC-C on unused DSW1 Gi1/0/3 using a straight-through cable. Create VLAN 30 and gateway `192.168.30.1/24`. Give PC-C `192.168.30.11/24` and that gateway. Prove that all three PCs communicate in both directions while the routed-port neighbor test still passes. Do not add a trunk or a default route. Before opening the answer, write the required VLAN, access-port, SVI and host changes yourself, and choose one verification for each. Re-test the existing VLANs as well as the new service.
+This challenge needs the extension. In a copy of Part B, add PC-C on unused DSW1 Gi1/0/3 using a straight-through cable. Create VLAN 30 and gateway `192.168.30.1/24`. Give PC-C `192.168.30.11/24` and that gateway. Prove that all three PCs communicate in both directions while the routed-port neighbor test still passes. Do not add a trunk or a default route. Before opening the answer, write the required VLAN, access-port, SVI and host changes yourself, and choose one verification for each. Re-test the existing VLANs as well as the new service.
 
 :::solution Check your design
 The new VLAN needs its Layer 2 membership, an operational SVI, and the correct host settings. IPv4 routing is already enabled from step 8.

@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The MX target mail.lab.example has no name data, although the intended mail service works by address. Add its intended A record at 10.1.1.25, with AAAA only if a usable IPv6 service is intended. Changing the working web record breaks another service; changing preference or clearing a cache does not create the missing target. After correction, account for any cached negative answer and test the full mail chain.",
-    "fix": "In the lab zone worksheet, retain `lab.example. MX 10 mail.lab.example.` and add `mail.lab.example. A 10.1.1.25`. On a real lab service, perform the equivalent edit with that product’s supported zone editor.\n\nQuery the responsible service for `lab.example MX`, then query the returned exchanger’s A/AAAA as applicable. Repeat through the affected client’s resolver and test the intended mail service. If the earlier NXDOMAIN remains in cache, inspect its remaining negative lifetime or clear only the relevant lab cache using supported controls. Clearing a PC cache does not clear a remote resolver."
+    "explanation": "The MX target mail.lab.example has no address record, although the mail service works by address. Add its A record. Changing the web record or MX preference does not help.",
+    "fix": "Keep `lab.example. MX 10 mail.lab.example.` and add `mail.lab.example. A 10.1.1.25` in the lab zone.\n\nQuery lab.example MX, then query the exchanger's A record, and repeat through the client's resolver. If the old NXDOMAIN stays cached, wait for its TTL or clear the relevant resolver cache."
   },
   {
     "id": "dns-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The explicit disabling command prevents the router’s DNS client lookup even though a resolver address is present. The full requested name has no matching local entry. DNS service success from another client supports the server data, and address pings support basic reachability, but the router’s own lookup setting still needs correction. The resolver address is configured, no static entry matches the name, and both address pings succeed, which rules out the other three options.",
-    "fix": "Enable the router’s DNS client, then inspect settings and repeat the exact name test.\n\n```ios\nR1# configure terminal\nR1(config)# ip domain-lookup\nR1(config)# end\nR1# show hosts\nR1# ping app.lab.example\n```\n\nVerify that the selected address is 10.1.1.80. If name lookup still fails, inspect the actual request and response path rather than changing already-correct records without evidence. Save the correction after verifying service."
+    "explanation": "no ip domain-lookup turns off the router's DNS client, even though a resolver is configured. Other DNS clients and address pings work.",
+    "fix": "Enable the router's DNS client and retest.\n\n```ios\nR1# configure terminal\nR1(config)# ip domain-lookup\nR1(config)# end\nR1# show hosts\nR1# ping app.lab.example\n```\n\nConfirm the name resolves to 10.1.1.80, then save."
   }
 ]

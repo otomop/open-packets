@@ -18,11 +18,11 @@
     "answer": [
       2
     ],
-    "explanation": "Authentication accepted the identity claim. Authorization decides permitted actions; accounting can record the result without being the permission decision.",
+    "explanation": "Authorization decides which actions a user may perform, such as running configure terminal. Authentication only proved who the user is.",
     "whyWrong": {
-      "0": "The identity check already succeeded.",
-      "1": "Session records do not decide this command permission.",
-      "3": "Command accounting records an action; command authorization decides permission."
+      "0": "Authentication already succeeded.",
+      "1": "Session accounting records activity and does not decide permissions.",
+      "3": "Command accounting records commands; it does not permit or deny them."
     }
   },
   {
@@ -34,7 +34,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "What role does the separately deployed central AAA service perform in this device-management design?",
+    "prompt": "What does the central AAA service do in this design?",
     "options": [
       "It evaluates the configured central identity and policy requests from R1.",
       "It is R1's local username database and exists only inside that router.",
@@ -44,11 +44,11 @@
     "answer": [
       0
     ],
-    "explanation": "R1 is the AAA client and sends requests to the central service. That role is separate from the administrator's SSH client, R1's local account database and ordinary packet forwarding.",
+    "explanation": "R1 is the AAA client and sends authentication, authorization and accounting requests to the central server. The server decides, but it does not forward user traffic.",
     "whyWrong": {
-      "1": "A separate service is not the router's local username table.",
-      "2": "An AAA decision does not make the service a mandatory data-plane next hop.",
-      "3": "The administrator's client initiates SSH to R1, not the central AAA exchange."
+      "1": "The local username database is stored on R1, not on the central service.",
+      "2": "The AAA server makes policy decisions and does not forward data packets.",
+      "3": "The administrator's PC is the SSH client, and R1 is the AAA client."
     }
   },
   {
@@ -70,11 +70,11 @@
     "answer": [
       1
     ],
-    "explanation": "TACACS+ carries its separate AAA exchanges over TCP port 49. SSH to the router is a different client/server relationship.",
+    "explanation": "TACACS+ runs over TCP port 49.",
     "whyWrong": {
-      "0": "TCP 22 is SSH rather than the router-to-TACACS+ exchange.",
-      "2": "UDP 1812 is conventional RADIUS authentication.",
-      "3": "UDP 1813 is conventional RADIUS accounting."
+      "0": "TCP 22 is SSH.",
+      "2": "UDP 1812 is RADIUS authentication.",
+      "3": "UDP 1813 is RADIUS accounting."
     }
   },
   {
@@ -86,7 +86,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements correctly describe conventional RADIUS/UDP? Select two.",
+    "prompt": "Which two statements correctly describe RADIUS? Select two.",
     "options": [
       "Its ordinary User-Password protection encrypts the entire IP packet.",
       "An Access-Accept can carry authorization attributes with its successful result.",
@@ -97,10 +97,10 @@
       1,
       3
     ],
-    "explanation": "Conventional RADIUS combines the successful access decision with associated attributes, while accounting has separate messages/port. The ordinary password-hiding comparison does not mean whole-packet encryption.",
+    "explanation": "RADIUS uses UDP 1812 for authentication and 1813 for accounting. Its Access-Accept can carry authorization attributes with the successful result.",
     "whyWrong": {
-      "0": "The conventional User-Password hiding mechanism does not protect the entire packet.",
-      "2": "RADIUS is not the TACACS+ command protocol."
+      "0": "RADIUS hides only the password, not the whole packet.",
+      "2": "Per-command authorization over TCP 49 is TACACS+, not RADIUS."
     }
   },
   {
@@ -112,7 +112,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements explain the documented classic TACACS+ device-administration model accurately? Select two.",
+    "prompt": "Which two statements about TACACS+ device administration are correct? Select two.",
     "options": [
       "It has separate authorization exchanges that support command policy.",
       "Its UDP transport is what supplies per-command authorization.",
@@ -123,10 +123,10 @@
       0,
       3
     ],
-    "explanation": "Separate exchanges support TACACS+ command control on relevant IOS configurations. RFC 8907 calls the classic body mechanism obfuscation and requires a secure deployment; do not equate it with modern authenticated transport encryption.",
+    "explanation": "TACACS+ separates authorization from authentication, which enables per-command policy. Its body obfuscation does not replace a protected management path.",
     "whyWrong": {
-      "1": "TACACS+ uses TCP, and the command policy comes from its protocol/application model.",
-      "2": "A shared key is still required for the documented protected client/server exchange."
+      "1": "TACACS+ uses TCP, and the command policy comes from its separate authorization exchange.",
+      "2": "TACACS+ still needs a shared key between the device and the server."
     }
   },
   {
@@ -148,11 +148,11 @@
     "answer": [
       3
     ],
-    "explanation": "The shared key belongs to the NAS-to-server relationship. User credentials and enable access are separate decisions; forcing them to equal the shared key would conflate independent secrets.",
+    "explanation": "The shared key is configured on the NAS (R1) and in the server's client entry for R1. User passwords and local secrets are separate.",
     "whyWrong": {
-      "0": "The SSH host identity belongs to a different connection.",
-      "1": "These administrative login secrets are unrelated to the NAS-to-server key.",
-      "2": "The user password and the device/server shared secret serve different checks."
+      "0": "The SSH host key and a user password are unrelated to the shared key.",
+      "1": "Local recovery and admin passwords are unrelated to the NAS-server key.",
+      "2": "A user password is not the NAS shared key."
     }
   },
   {
@@ -174,11 +174,11 @@
     "answer": [
       0
     ],
-    "explanation": "The login authentication line command selects a login list. Authorization and accounting are separate list types and do not bind login authentication.",
+    "explanation": "`login authentication VTY-AUTH` under the line binds the named login list to that line. The list itself is defined with `aaa authentication login` in global configuration.",
     "whyWrong": {
-      "1": "This selects an EXEC authorization list, not login authentication.",
-      "2": "AAA list definition commands belong to global configuration and use different syntax.",
-      "3": "This selects accounting rather than the login check."
+      "1": "`authorization exec` selects an EXEC authorization list, not login authentication.",
+      "2": "That is not valid line syntax; lists are defined in global configuration.",
+      "3": "`accounting exec` selects an accounting list."
     }
   },
   {
@@ -204,11 +204,11 @@
     "answer": [
       1
     ],
-    "explanation": "The explicitly configured port keywords select the legacy pair. Do not infer standard ports from the RADIUS name or rely on an image default when the configuration gives the values.",
+    "explanation": "The client definition lists explicit ports 1645 and 1646, so the server must listen on UDP 1645 for authentication and UDP 1646 for accounting. 1812 and 1813 are the standard ports.",
     "whyWrong": {
-      "0": "SSH is a different management transport.",
-      "2": "TCP 49 is TACACS+, not this RADIUS definition.",
-      "3": "Those are the standard pair but not the shown explicit values."
+      "0": "TCP 22 is SSH, not RADIUS.",
+      "2": "TCP 49 is TACACS+.",
+      "3": "1812 and 1813 are the standard ports, not the configured values."
     }
   },
   {
@@ -230,11 +230,11 @@
     "answer": [
       0
     ],
-    "explanation": "EXEC start-stop accounting requests session lifecycle records. Verify delivery at the server; this does not automatically record every command.",
+    "explanation": "`aaa accounting exec default start-stop group MGMT-TAC` sends a record when an EXEC session starts and another when it ends. It does not log every command.",
     "whyWrong": {
-      "1": "Stop-only requests a stop record rather than both lifecycle points.",
-      "2": "Login authentication checks identity rather than recording the session lifecycle.",
-      "3": "Authorization decides permitted shell access, not the requested accounting events."
+      "1": "`stop-only` sends a record only at session end.",
+      "2": "That is a login authentication list, not accounting.",
+      "3": "That is an authorization list, not accounting."
     }
   },
   {
@@ -250,7 +250,7 @@
       "title": "Supplied AAA state and configuration",
       "text": "aaa new-model\naaa authentication login default local\nline vty 0 4\n login authentication default\n transport input ssh\nNo username entries"
     },
-    "prompt": "No local usernames exist in the complete relevant configuration. Why do these VTY logins fail?",
+    "prompt": "No local usernames exist anywhere in the configuration. Why do these VTY logins fail?",
     "options": [
       "The VTY line password automatically replaces the absent username database.",
       "A central server definition must precede any local AAA account.",
@@ -260,11 +260,11 @@
     "answer": [
       2
     ],
-    "explanation": "The explicit selected list is local, so valid local account data is required. AAA can operate without a central server; enabling its framework is not a substitute for creating accounts.",
+    "explanation": "The VTY list uses the local method, which authenticates against local username entries. With none configured, nothing can match.",
     "whyWrong": {
-      "0": "The selected local method requires username data, not the separate line-password method.",
-      "1": "An explicit local-only AAA design does not need a central server.",
-      "3": "A named VTY list can use local accounts without becoming the console list."
+      "0": "The line password is a separate method and does not replace local usernames.",
+      "1": "A local-only list needs no AAA server.",
+      "3": "A named list can be used on VTY lines, and the console list is not required."
     }
   },
   {
@@ -290,11 +290,11 @@
     "answer": [
       2
     ],
-    "explanation": "FAIL is a completed denial and stops authentication. ERROR is the result that can advance to the next method; reachability is not itself permission.",
+    "explanation": "A FAIL is a final rejection, so authentication stops without trying local. Only ERROR, meaning no answer, moves to the next method.",
     "whyWrong": {
-      "0": "The enable method is not part of this list.",
-      "1": "A rejection is different from a method that cannot complete its decision.",
-      "3": "A reachable service can explicitly deny access."
+      "0": "The enable method is not in this list.",
+      "1": "Only an ERROR moves to the next method, not a FAIL.",
+      "3": "A reachable server can still reject the login."
     }
   },
   {
@@ -310,7 +310,7 @@
       "title": "Supplied AAA state and configuration",
       "text": "Selected: VTY-AUTH = group MGMT-TAC local\nGroup result: ERROR\nLocal recovery account exists and credentials are valid"
     },
-    "prompt": "All eligible group methods return ERROR and the supplied recovery credentials match a local account. What happens next?",
+    "prompt": "Every group method returns ERROR, and the credentials match a local account. What happens next?",
     "options": [
       "The next local method can authenticate the recovery account.",
       "An ERROR is always an explicit credential rejection, so the attempt must stop there.",
@@ -320,11 +320,11 @@
     "answer": [
       0
     ],
-    "explanation": "ERROR permits advancement to the next method. Local still must accept valid account credentials; the line does not inherit the console list and does not become unauthenticated.",
+    "explanation": "An ERROR means the method could not complete, so authentication moves to the next method, local. The local method then checks the credentials.",
     "whyWrong": {
-      "1": "FAIL is the explicit-denial branch; ERROR means this method could not complete authentication.",
-      "2": "The remaining local method still makes a real check.",
-      "3": "A console binding does not automatically replace a VTY binding."
+      "1": "An ERROR is not a rejection; only a FAIL stops authentication.",
+      "2": "The local method still checks the credentials.",
+      "3": "A VTY line uses its own list, not the console list."
     }
   },
   {
@@ -340,7 +340,7 @@
       "title": "Supplied AAA state and configuration",
       "text": "aaa authentication login CONSOLE local\naaa authentication login VTY-AUTH group MGMT-TAC local\nline con 0\n login authentication CONSOLE\nline vty 0 4\n login authentication VTY-AUTH"
     },
-    "prompt": "While the central group returns ERROR, which access behavior follows from these explicit bindings?",
+    "prompt": "The central group returns ERROR. Which access behavior follows from the bindings?",
     "options": [
       "Both paths allow access without validating credentials.",
       "Console waits on MGMT-TAC; VTY ignores its bound list and uses CONSOLE.",
@@ -350,11 +350,11 @@
     "answer": [
       3
     ],
-    "explanation": "The console is explicitly bound to a local-only list. VTY-AUTH contains a central group followed by local, so the ERROR branch can select local there; both still require accepted credentials.",
+    "explanation": "The console list is local only, so the console uses local right away. The VTY list tries the central group and, on ERROR, falls back to local.",
     "whyWrong": {
-      "0": "Local is an authentication method, not no authentication.",
-      "1": "The named bindings specify the opposite relationship.",
-      "2": "The VTY list expressly includes the local ERROR fallback, and console has no central method."
+      "0": "Local is an authentication method, so credentials are still checked.",
+      "1": "Each line uses its own bound list; VTY does not use CONSOLE.",
+      "2": "The console list has no central method, and VTY falls back to local on ERROR."
     }
   },
   {
@@ -370,7 +370,7 @@
       "title": "Supplied AAA state and configuration",
       "text": "Admin-PC SSH source: 10.0.0.50\nR1 configured AAA source: Loopback0 10.255.0.1\nAAA server: 10.0.0.100\nRouting to/from Loopback0 is verified."
     },
-    "prompt": "Which server-side client address must be recognized for these management AAA requests?",
+    "prompt": "Which source address must the AAA server recognize as a client for these requests?",
     "options": [
       "10.255.0.1, the selected and reachable NAS source.",
       "10.0.0.50, because it initiates the SSH connection.",
@@ -380,11 +380,11 @@
     "answer": [
       0
     ],
-    "explanation": "The AAA service recognizes the NAS/router request source. The source also needs return reachability and matching client/key policy; the SSH user’s address is a different endpoint.",
+    "explanation": "The AAA server identifies the NAS by the source address of its requests, here R1's 10.255.0.1. The SSH user's address does not matter.",
     "whyWrong": {
-      "1": "That is the SSH client address, not this AAA request source.",
-      "2": "A matching shared key does not justify arbitrary unregistered client sources.",
-      "3": "That is the server’s own address."
+      "1": "10.0.0.50 is the SSH client, not the AAA client.",
+      "2": "The server only accepts registered clients, so a shared key does not replace the source address.",
+      "3": "10.0.0.100 is the server itself."
     }
   },
   {
@@ -404,11 +404,11 @@
     "answer": [
       2
     ],
-    "explanation": "The line chooses LOCAL-ONLY, so the correctly defined central list is not used for this login. Apply the intended named list to each relevant VTY range while keeping the tested console local.",
+    "explanation": "The VTY line uses the local-only list, so the central-first list is never consulted. Bind `login authentication VTY-AUTH` on the VTY lines.",
     "whyWrong": {
-      "0": "No key exchange occurs through the currently selected local list.",
-      "1": "An unselected method does not become active by adding servers.",
-      "3": "The fault concerns VTY selection; moving console recovery to central would add risk."
+      "0": "The server key is never used while the line selects the local-only list.",
+      "1": "A server added to an unselected list is never used.",
+      "3": "Changing the console binding does not affect VTY logins."
     },
     "exhibit": {
       "kind": "cli",
@@ -433,11 +433,11 @@
     "answer": [
       1
     ],
-    "explanation": "The existing TAC1 object must be a member of the selected MGMT-TAC group. A server, group and login list are separate configuration objects.",
+    "explanation": "The existing TAC1 server must be listed as a member of the MGMT-TAC group with `server name TAC1`. Servers, groups and login lists are separate objects.",
     "whyWrong": {
-      "0": "That defines a separate login list and does not add the server.",
-      "2": "A group name is not a server IP address in the classic definition.",
-      "3": "That is a line authentication command, not server-group membership."
+      "0": "That defines a login list, not group membership.",
+      "2": "A group name is not a server in the classic definition.",
+      "3": "That is a line command, not group membership."
     },
     "exhibit": {
       "kind": "cli",
@@ -462,11 +462,11 @@
     "answer": [
       3
     ],
-    "explanation": "The client is sending authentication to 1645 while this service listens on 1812. Correct that explicit mismatch and verify a fresh login; neither a user secret nor the SSH client identity changes the destination port.",
+    "explanation": "The client sends authentication to port 1645, but the service listens on 1812. Change the authentication port to 1812 and keep the accounting port.",
     "whyWrong": {
-      "0": "Authentication and accounting have distinct configured service ports.",
-      "1": "The NAS remains R1, and the port mismatch would persist.",
-      "2": "The request is addressed to the wrong service port before credentials can be evaluated."
+      "0": "Authentication and accounting use different ports, so the accounting port is not the one to change.",
+      "1": "The NAS is R1, and the wrong port would remain.",
+      "2": "The request reaches the wrong port, so no password change can help."
     },
     "exhibit": {
       "kind": "cli",
@@ -487,7 +487,7 @@
       "title": "Supplied AAA state and configuration",
       "text": "VTY-AUTH = group MGMT-TAC local\nBefore fresh attempt: requests 10, timeouts 2\nAfter: requests 11, timeouts 3\nObserved method result: ERROR; local recovery accepted"
     },
-    "prompt": "Which conclusion is supported by the current controlled test?",
+    "prompt": "What does this controlled test show?",
     "options": [
       "The device has proved the exact fault is a wrong user password.",
       "No central requests were sent because the counter increased only historically.",
@@ -497,11 +497,11 @@
     "answer": [
       3
     ],
-    "explanation": "The test correlates new requests and timeouts with the selected method’s ERROR and local success. Investigate service/path/client/key settings; these counters do not identify one unique cause.",
+    "explanation": "New requests and timeouts show the central method returned ERROR, so the list moved on to local, which succeeded. Check the server, path and key settings.",
     "whyWrong": {
-      "0": "A timeout does not prove an incorrect user secret.",
-      "1": "The exhibit provides a before/after change for this fresh attempt.",
-      "2": "An explicit rejection would stop this authentication list."
+      "0": "A timeout does not show a wrong user password.",
+      "1": "The counters rose during this attempt, so requests were sent.",
+      "2": "An explicit rejection would have stopped the list; this was a timeout."
     }
   },
   {
@@ -527,11 +527,11 @@
     "answer": [
       0
     ],
-    "explanation": "Authentication and EXEC authorization have separate method lists. A local EXEC fallback can enforce the stated local-account policy after central ERROR; if-authenticated is a different, broader decision and is not interchangeable.",
+    "explanation": "Authentication and EXEC authorization use separate method lists. Add `local` as the fallback in the EXEC authorization list so local accounts and their privilege levels apply.",
     "whyWrong": {
-      "1": "Console authorization does not fix server reachability.",
-      "2": "Removing recovery authentication does not meet the required outage access policy.",
-      "3": "It does not perform the same local-user authorization policy check."
+      "1": "Console authorization does not restore reachability to the server.",
+      "2": "Removing local from login authentication removes the recovery path.",
+      "3": "`if-authenticated` grants access to any authenticated user and does not apply local privileges."
     }
   },
   {
@@ -552,10 +552,10 @@
     "answer": [
       1
     ],
-    "explanation": "Authentication and authorization are distinct stages. Inspect the configured EXEC policy and current authorization result rather than repeatedly changing a password the authentication method accepted.",
+    "explanation": "Authentication and EXEC authorization are separate steps. A user can pass authentication and still be denied a shell by authorization policy.",
     "whyWrong": {
-      "0": "Successful authentication does not promise shell permission.",
-      "2": "Bindings do not switch to the console list automatically.",
+      "0": "Passing authentication does not guarantee authorization.",
+      "2": "A line does not switch lists on its own.",
       "3": "Accounting records do not change passwords."
     },
     "exhibit": {
@@ -582,11 +582,11 @@
     "answer": [
       3
     ],
-    "explanation": "Access-Challenge asks for further authentication information. It is neither final acceptance nor evidence that the method is unavailable; the client must support the requested exchange.",
+    "explanation": "A RADIUS Access-Challenge asks for more information, so the dialogue continues. It is not an accept, a reject or an ERROR.",
     "whyWrong": {
-      "0": "The challenge is not an Access-Accept.",
-      "1": "A challenge is an ongoing authentication exchange, not method ERROR.",
-      "2": "It is not an explicit rejection or a reason to remove the account."
+      "0": "A challenge is not an Access-Accept.",
+      "1": "A challenge is part of the exchange, not an ERROR.",
+      "2": "A challenge is not an Access-Reject."
     },
     "exhibit": {
       "kind": "cli",
@@ -601,7 +601,7 @@
       "v2:4.1"
     ],
     "difficulty": 2,
-    "prompt": "Which configuration should be compared with the server's observed source before changing credentials?",
+    "prompt": "Before changing credentials, which configuration do you compare with the source address the server sees?",
     "options": [
       "The user's shell-command policy and requested privilege level.",
       "The NAS source selection and its server-side client registration.",
@@ -611,11 +611,11 @@
     "answer": [
       1
     ],
-    "explanation": "The server receives an unregistered NAS source even though a different client entry has the intended key. Verify how R1 selected that source and register the approved actual source with return reachability; do not substitute the administrator's SSH address.",
+    "explanation": "The server sees a source that is not a registered client. Check the source address R1 uses and the matching client entry on the server.",
     "whyWrong": {
-      "0": "The service cannot yet associate the request with the approved device client.",
-      "2": "Idle timeout does not change the AAA source identity.",
-      "3": "The browser profile does not select the router's AAA source."
+      "0": "The command policy is applied after the server accepts the NAS.",
+      "2": "An idle timeout does not change the AAA source address.",
+      "3": "The administrator's PC does not choose R1's AAA source."
     },
     "exhibit": {
       "kind": "cli",
@@ -631,7 +631,7 @@
       "v2:4.1"
     ],
     "difficulty": 2,
-    "prompt": "Which two separate checks are required before claiming the change meets the stated acceptance criteria? Choose two.",
+    "prompt": "Which two checks are needed to confirm the change meets the acceptance criteria? Choose two.",
     "options": [
       "Remove the local console list to make both paths use the new central method.",
       "Treat the preexisting session as proof that the new method accepted it.",
@@ -643,11 +643,11 @@
       2,
       3
     ],
-    "explanation": "A session established before the edit does not exercise the new login path. Accounting has its own configured scope and delivery, so inspect the required records independently while preserving recovery.",
+    "explanation": "An existing session does not test the changed binding, so make a new login through the VTY. Accounting delivery is separate, so confirm the records arrive at the server.",
     "whyWrong": {
-      "0": "That removes the independent recovery path without establishing either criterion.",
-      "1": "The session's original authentication predates the change.",
-      "4": "EXEC start/stop accounting is not per-command accounting."
+      "0": "Removing the local console list removes the recovery path.",
+      "1": "An existing session was authenticated before the change.",
+      "4": "EXEC start-stop accounting does not log every command."
     },
     "exhibit": {
       "kind": "cli",
@@ -662,7 +662,7 @@
       "v2:4.1"
     ],
     "difficulty": 3,
-    "prompt": "Which next investigation is justified without replacing the user password yet?",
+    "prompt": "The server logs a reply but R1 recorded no usable response, and the password is not yet suspect. What do you check next?",
     "options": [
       "Assume the configured local fallback means the server sent Access-Reject.",
       "Replace the SSH host key because the AAA response is missing.",
@@ -672,16 +672,120 @@
     "answer": [
       2
     ],
-    "explanation": "The server reports a response, but the NAS did not record a usable one for this attempt. Follow the reverse path and client/key/protocol validation rather than equating a sent response with a completed NAS decision.",
+    "explanation": "The server sent a reply, but R1 did not accept one. Check the return path to R1 and whether the client, key and protocol settings let R1 validate it.",
     "whyWrong": {
-      "0": "Fallback after ERROR is not evidence of a completed reject.",
-      "1": "The SSH transport already reached the separate AAA stage.",
-      "3": "Local account removal does not deliver or validate the central response."
+      "0": "Fallback after ERROR does not mean the server rejected the user.",
+      "1": "The SSH session already worked, so the host key is not the issue.",
+      "3": "Removing local accounts does not fix reply delivery."
     },
     "exhibit": {
       "kind": "cli",
       "title": "Correlated fresh authentication attempt",
       "text": "R1 selected MGMT-RAD; one request counter increment.\nServer capture: matching Access-Request arrives; Access-Accept sent.\nR1: no usable response recorded, timeout increases; group result ERROR.\nAn existing console remains local and available."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q25",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which AAA function records what a user did?",
+    "options": [
+      "Accounting",
+      "Authentication",
+      "Authorization",
+      "Administration"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Authentication shows who you are, authorization decides what you may do, and accounting records what you did.",
+    "whyWrong": {
+      "1": "Authentication verifies identity.",
+      "2": "Authorization decides what is permitted.",
+      "3": "Administration is not an AAA function."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q26",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command enables AAA on an IOS device?",
+    "options": [
+      "aaa new-model",
+      "aaa enable",
+      "login authentication default",
+      "tacacs-server host"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "`aaa new-model` turns on AAA. After that you build method lists with `aaa authentication login` and bind them to lines.",
+    "whyWrong": {
+      "1": "`aaa enable` is not an IOS command.",
+      "2": "That binds a list to a line and needs AAA enabled first.",
+      "3": "That defines a TACACS+ server and does not enable AAA."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q27",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does RADIUS encrypt in a packet?",
+    "options": [
+      "Only the password",
+      "The whole packet body",
+      "Nothing",
+      "Only the accounting records"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "RADIUS encrypts only the password. TACACS+ encrypts the whole packet body.",
+    "whyWrong": {
+      "1": "Encrypting the whole body is what TACACS+ does.",
+      "2": "The password is protected.",
+      "3": "RADIUS accounting records are not encrypted."
+    }
+  },
+  {
+    "id": "aaa-tacacs-radius-q28",
+    "type": "single",
+    "objectives": [
+      "v1:5.8",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which AAA protocol is typically used for network access such as 802.1X?",
+    "options": [
+      "RADIUS",
+      "TACACS+",
+      "SNMP",
+      "Syslog"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "RADIUS is the open standard used for network access such as 802.1X. TACACS+ is used for device administration.",
+    "whyWrong": {
+      "1": "TACACS+ is used for device administration.",
+      "2": "SNMP is a management protocol, not an AAA protocol.",
+      "3": "Syslog carries log messages."
     }
   }
 ]

@@ -5,7 +5,7 @@ title: Configuration and software files
 subtitle: Back up safely, choose the correct transfer protocol, and distinguish a staged file from an active configuration.
 part: services
 domain: services
-minutes: { lesson: 65, lab: 110 }
+minutes: { lesson: 65, lab: 60 }
 summary: Read IOS storage and copy destinations, explain TFTP and FTP, perform isolated SCP/SFTP backups and staging, and verify files without blindly replacing configuration or activating software.
 objectives:
   v1: ["4.9"]
@@ -151,7 +151,7 @@ Copying into startup-config replaces the saved startup file without immediately 
 
 On supporting platforms, `configure replace` compares the active configuration with a **complete** replacement configuration and applies differences, including removals. It is more than a file copy and can interrupt access. Validate platform compatibility, keep console recovery available, inspect errors and compare the resulting configuration. The feature has restrictions; it is not a universal transactional guarantee for every subsystem.
 
-The `archive` feature can keep configuration snapshots at a configured path, optionally on saves or at intervals. It helps preserve checkpoints, but on-device archives still share the device's failure risks. Detailed rollback automation and destructive password-recovery procedures are outside this chapter's required transfer task.
+The `archive` feature can keep configuration snapshots at a configured path, optionally on saves or at intervals. It helps preserve checkpoints, but on-device archives still share the device's failure risks. Detailed rollback automation is outside this chapter.
 
 :::trap A backup can be correct while its restoration method is wrong
 If the intended outcome is to remove a temporary setting absent from a backup, merging that backup may leave the setting in place. Compare the active result with the intended state before claiming recovery.
@@ -170,6 +170,8 @@ A mismatch means stop: check the expected filename and hash, the transfer destin
 Older IOS routers boot a single image file. `boot system flash:FILENAME` in global configuration names the image to load at the next reload; without it the router loads the first image it finds in flash. IOS XE install mode may boot a provisioning file such as `packages.conf` that references multiple package files; copying only that manifest is not a complete software backup. Bundle and install workflows differ. Read the running image information with `show version` and the supported boot display, such as `show boot` or `show bootvar`.
 
 The **configuration register** on classic routers controls how the device starts. The normal value is `0x2102`. `0x2142` tells the router to ignore startup-config at boot. Password recovery uses it to get past a forgotten password, and it explains a router that comes up with an empty configuration although startup-config is intact. `show version` displays the current value on its last line.
+
+Password recovery on a classic router follows from that. Interrupt startup with a break to reach ROMMON, enter `confreg 0x2142` and `reset`. The router boots without its saved configuration, so no password is asked for. Enter privileged mode, load the saved settings with `copy startup-config running-config`, set a new enable secret, and bring the interfaces back up with `no shutdown`, because a merged configuration leaves them administratively down. Then put the register back with `config-register 0x2102` and save. If you forget that last step, the router ignores its configuration again at the next reload.
 
 ## Verify and troubleshoot transfers
 

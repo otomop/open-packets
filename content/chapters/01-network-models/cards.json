@@ -64,22 +64,6 @@
     ]
   },
   {
-    "id": "network-models-c14",
-    "front": "Which commands display the ARP table on an IOS router and on a Windows or Packet Tracer PC?",
-    "back": "IOS: `show arp`. PC: `arp -a`.",
-    "tags": [
-      "diagnostics"
-    ]
-  },
-  {
-    "id": "network-models-c19",
-    "front": "What does a switch record in its MAC address table when a frame arrives?",
-    "back": "The frame's source MAC address, with the VLAN and the port it arrived on.",
-    "tags": [
-      "switching"
-    ]
-  },
-  {
     "id": "network-models-c22",
     "front": "Which protocol does ping use, and how is it carried?",
     "back": "ICMP Echo Request and Echo Reply, carried directly in IP. Ping uses no TCP or UDP ports.",
@@ -105,10 +89,10 @@
   },
   {
     "id": "network-models-c25",
-    "front": "Why must you check the far host's gateway when a remote ping fails?",
-    "back": "A ping succeeds only if the reply returns. The far host needs a correct gateway of its own to answer a sender in another subnet.",
+    "front": "Why does Server-B need a default gateway to answer a ping from PC-A on another subnet?",
+    "back": "Its reply goes to PC-A, which is outside Server-B's subnet, so the reply must go to Server-B's gateway. A ping succeeds only if the reply returns.",
     "tags": [
-      "diagnostics"
+      "routing"
     ]
   },
   {
@@ -130,7 +114,7 @@
   {
     "id": "network-models-c28",
     "front": "Which question does each table answer: routing table, ARP table, MAC address table?",
-    "back": "Routing table: where to send a packet for this IP destination. ARP table: which MAC has this local IP. MAC address table: which switch port leads to this MAC.",
+    "back": "Routing table: which interface leads to this destination subnet. ARP table: which MAC has this local IP. MAC address table: which switch port leads to this MAC.",
     "tags": [
       "diagnostics"
     ]
@@ -141,6 +125,22 @@
     "back": "A switch forwards at Layer 2, by destination MAC address. A router forwards at Layer 3, by destination IP address.",
     "tags": [
       "models"
+    ]
+  },
+  {
+    "id": "network-models-c30",
+    "front": "What is encapsulation, and what is de-encapsulation?",
+    "back": "Encapsulation: each layer wraps the data from the layer above in its own header on the way down to the cable. De-encapsulation: the receiver reads and removes each header on the way up to the application.",
+    "tags": [
+      "encapsulation"
+    ]
+  },
+  {
+    "id": "network-models-c31",
+    "front": "What is a broadcast domain, and which device marks its edge?",
+    "back": "The set of devices that one broadcast reaches: one LAN. Switches pass broadcasts on; a router does not, so each router interface starts a new broadcast domain.",
+    "tags": [
+      "switching"
     ]
   }
 ]

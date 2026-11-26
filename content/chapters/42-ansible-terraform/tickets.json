@@ -26,8 +26,8 @@
     "answer": [
       2
     ],
-    "explanation": "The supposedly equivalent tests selected different usernames. Address, host identity and manual permissions were checked; the explicit authentication error occurs before command output. A timeout or command edit does not correct that account difference, and no host-key mismatch was observed.",
-    "fix": "Change the applicable inventory variable to `ansible_user: labreader`; do not recreate the retired account. Verify the effective nonsecret settings and run `ansible-playbook -i inventory.yml collect.yml --limit r1 --list-hosts`. Then execute the same approved collection with `--limit r1 --ask-pass`, supplying the labreader password. Retain the returned version/interface output and compare it with the manual result. Keep host-key checking enabled and record that this repair changed the collection identity, not router configuration."
+    "explanation": "The two tests used different usernames. Host identity and permissions were checked, and the authentication error occurs before any command output. A timeout or command edit does not fix the account difference.",
+    "fix": "Set the inventory variable to `ansible_user: labreader`; do not recreate the retired account. Verify the effective settings, then run `ansible-playbook -i inventory.yml collect.yml --limit r1 --list-hosts`. Run the same collection with `--limit r1 --ask-pass` and the labreader password, and compare the version and interface output with the manual result. Keep host-key checking on."
   },
   {
     "id": "ansible-terraform-t04",
@@ -56,7 +56,7 @@
     "answer": [
       1
     ],
-    "explanation": "The device rejected a mistyped command. The unchanged index 1 correctly refers to the second command once that command succeeds. Ignoring a failure does not supply the expected result, and the device parser response does not indicate rejected authentication.",
-    "fix": "In the fault copy, change only the line to `- show ip interface brief`. Run the syntax check, inspect `--limit r1 --list-hosts`, and execute the repaired file with the same limit and `--ask-pass`. Verify that the IOS command task succeeds and its following display contains the actual interface output from r1. Compare its address/state with the manual baseline. Preserve the failure record and note that show version may have executed before the bad second command."
+    "explanation": "The device rejected a mistyped command. Index 1 is still correct once that command succeeds, and ignoring the failure would not produce the expected result.",
+    "fix": "In the fault copy, change only the line to `- show ip interface brief`. Run the syntax check and `--limit r1 --list-hosts`, then run the repaired file with the same limit and `--ask-pass`. Verify the command task succeeds and the display shows r1's real interface output. Compare it with the manual baseline. `show version` may have run before the bad command failed."
   }
 ]

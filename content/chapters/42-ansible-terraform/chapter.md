@@ -5,7 +5,7 @@ title: "Ansible & Terraform"
 subtitle: "Build an inventory, run verified commands, and understand what a plan and its results mean."
 part: automation
 domain: aiops
-minutes: { lesson: 70, lab: 100 }
+minutes: { lesson: 70, lab: 40 }
 summary: "Recognize configuration management capabilities, use Ansible to collect IOS command output, and follow a local Terraform plan/apply cycle. Learn the setup, authentication, state, and verification checks that make the results useful."
 objectives:
   v1: ["6.6"]

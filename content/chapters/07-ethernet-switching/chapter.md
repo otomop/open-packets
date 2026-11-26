@@ -5,7 +5,7 @@ title: Ethernet switching
 subtitle: How source addresses build the MAC table and destination addresses determine forwarding.
 part: foundations
 domain: switching
-minutes: { lesson: 60, lab: 80 }
+minutes: { lesson: 60, lab: 40 }
 summary: Follow frames through a switched LAN, distinguish learning from forwarding, read the MAC address table, and investigate flooding, aging, and an incorrect static entry.
 objectives:
   v1: ["1.13", "1.13.a", "1.13.b", "1.13.c", "1.13.d"]

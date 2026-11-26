@@ -28,8 +28,8 @@
     "answer": [
       1
     ],
-    "explanation": "SW2’s logical trunk excludes the client VLAN. The functioning local guest and healthy router trunk help isolate the failed path to the inter-switch link; a local VLAN entry alone does not place it in the trunk’s allowed list.",
-    "fix": "On this lab switch, restore the intended list and inspect member/logical consistency:\n\n```ios\nSW2# configure terminal\nSW2(config)# interface port-channel1\nSW2(config-if)# switchport trunk allowed vlan 10,20,99,999\nSW2(config-if)# end\nSW2# show interfaces trunk\nSW2# show etherchannel summary\nSW2# show spanning-tree vlan 20\n```\n\nVerify the VLAN is forwarding, renew the SW2 client and confirm the actual lease and gateway. Do not change the working DHCP server. Then confirm a fresh guest external HTTP request succeeds and a guest-initiated staff ping remains denied. Record the new client address if renewal changed it."
+    "explanation": "SW2's logical trunk does not allow the guest VLAN. The local guest and healthy router trunk point to the inter-switch link, and a VLAN entry on SW2 does not put VLAN 20 in the trunk's allowed list.",
+    "fix": "Restore the intended allowed list and check consistency:\n\n```ios\nSW2# configure terminal\nSW2(config)# interface port-channel1\nSW2(config-if)# switchport trunk allowed vlan 10,20,99,999\nSW2(config-if)# end\nSW2# show interfaces trunk\nSW2# show etherchannel summary\nSW2# show spanning-tree vlan 20\n```\n\nVerify the VLAN is forwarding, renew the SW2 client and confirm its lease and gateway. Do not change the working DHCP server. Then confirm a fresh guest HTTP request succeeds and a guest-initiated staff ping stays denied."
   },
   {
     "id": "capstone-branch-network-t02",
@@ -60,8 +60,8 @@
     "answer": [
       2
     ],
-    "explanation": "The interfaces disagree about the OSPF topology model. Cisco documents route-calculation failures with such mismatches even when a FULL relationship is observed. The conclusion relies on the displayed types and intended design, not FULL alone.",
-    "fix": "Restore the intended type on R2:\n\n```ios\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# ip ospf network point-to-point\nR2(config-if)# end\nR2# show ip ospf interface gigabitethernet0/0\nR2# show ip ospf neighbor\nR2# show ip route\n```\n\nAllow convergence, compare R1’s type and routes, then test HQ and its return path. If the route remains absent, continue with advertisement and route-selection evidence instead of assuming this one change proves service. From the authorized staff client, repeat the original HQ ping and numeric/name HTTP to the external server. Keep the guest-to-HQ denial intact."
+    "explanation": "The two interfaces disagree on the OSPF network type. This can stop route calculation even when the neighbor shows FULL.",
+    "fix": "Restore the intended type on R2:\n\n```ios\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# ip ospf network point-to-point\nR2(config-if)# end\nR2# show ip ospf interface gigabitethernet0/0\nR2# show ip ospf neighbor\nR2# show ip route\n```\n\nAllow convergence, compare R1's type and routes, then test HQ and the return path. If the route is still absent, check advertisement and route selection. From the staff client, repeat the HQ ping and numeric and name HTTP, and keep the guest-to-HQ denial intact."
   },
   {
     "id": "capstone-branch-network-t03",
@@ -92,8 +92,8 @@
     "answer": [
       0
     ],
-    "explanation": "The broad sequence 35 matches the failing requests before the intended entries. DHCP survives because an earlier permit matches it. Removing the whole list would also remove the required staff protection.",
-    "fix": "```ios\nR1# configure terminal\nR1(config)# ip access-list extended GUEST-IN\nR1(config-ext-nacl)# no 35\nR1(config-ext-nacl)# end\nR1# show access-lists GUEST-IN\n```\n\nRepeat a new gateway ping and HTTP request, renew DHCP, and confirm a guest-initiated staff ping remains denied. Existing NAT rows may outlive the fault; evaluate new traffic and counters."
+    "explanation": "The broad sequence 35 matches the failing requests before the intended entries, while an earlier permit lets DHCP through. Removing the whole list would also remove the staff protection.",
+    "fix": "```ios\nR1# configure terminal\nR1(config)# ip access-list extended GUEST-IN\nR1(config-ext-nacl)# no 35\nR1(config-ext-nacl)# end\nR1# show access-lists GUEST-IN\n```\n\nRepeat a new gateway ping and HTTP request, renew DHCP, and confirm a guest-initiated staff ping stays denied. Existing NAT rows can outlive the fault, so judge new traffic and counters."
   },
   {
     "id": "capstone-branch-network-t04",
@@ -125,7 +125,7 @@
     "answer": [
       3
     ],
-    "explanation": "R2 has no default route, so default-information originate without always has nothing to advertise. HQ reachability and the FULL neighbor isolate the missing external route from the functioning internal routing relationship.",
-    "fix": "```ios\nR2# configure terminal\nR2(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.2\nR2(config)# end\nR2# show ip route 0.0.0.0\n```\n\nAfter OSPF convergence, verify R1 learns the default and repeat numeric/name HTTP from both clients. Restoring a route is necessary here but still does not by itself prove the external service is healthy."
+    "explanation": "R2 has no default route, so `default-information originate` without `always` has nothing to advertise. HQ reachability and the FULL neighbor show the OSPF relationship works.",
+    "fix": "```ios\nR2# configure terminal\nR2(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.2\nR2(config)# end\nR2# show ip route 0.0.0.0\n```\n\nAfter OSPF converges, verify R1 learns the default and repeat numeric and name HTTP from both clients. Restoring the route does not by itself show the external service is healthy."
   }
 ]

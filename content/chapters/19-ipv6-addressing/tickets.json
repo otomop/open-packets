@@ -27,8 +27,8 @@
     "answer": [
       0
     ],
-    "explanation": "The complete configuration lacks global IPv6 router operation. Interface addressing already enables local IPv6 processing; EUI-64 is an address-generation choice, and the managed flag describes DHCPv6 behavior. None supplies the missing forwarding/advertising prerequisite.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# ipv6 unicast-routing\nR1(config)# end\nR1# show ipv6 interface gigabitethernet0/0\n```\nConfirm the /64 and RA settings. Allow clients to receive a new RA, or refresh Automatic mode if supported. Verify their actual prefix and learned gateway, then test numeric-address connectivity. A DHCPv6 address server is not required for this SLAAC exercise."
+    "explanation": "R1 has no ipv6 unicast-routing, so it neither sends RAs nor forwards IPv6. The interface addresses already work, and neither EUI-64 nor the M flag fixes this.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# ipv6 unicast-routing\nR1(config)# end\nR1# show ipv6 interface gigabitethernet0/1\n```\nOnce R1 sends RAs, the clients build global addresses with SLAAC and learn R1 as their gateway. No DHCPv6 server is needed."
   },
   {
     "id": "ipv6-addressing-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The complete address display contains the derived address but not ::1. A working ping to the actual address supports local connectivity. Cache refresh or a wider prefix cannot assign the missing address, and manually assigned link-local and derived global suffixes can differ.",
-    "fix": "Choose and document a consistent addressing plan. To retain the intended ::1 gateway in this isolated lab, add it explicitly:\n```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# ipv6 address 2001:db8:acad:2::1/64\nR1(config-if)# end\nR1# show ipv6 interface gigabitethernet0/1\n```\nThis adds the manual address alongside the existing derived address; it does not remove it. Verify no duplicate is reported and test the configured gateway. Alternatively, update the manual PC gateway to the correctly scoped fe80::1, then verify that chosen design before saving."
+    "explanation": "R1 has the EUI-64 address on Gi0/1 but not ::1. Clearing the cache or widening the prefix cannot add the missing address.",
+    "fix": "Either add ::1 on R1 or change the PC gateway to match. To keep ::1:\n```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# ipv6 address 2001:db8:acad:2::1/64\nR1(config-if)# end\nR1# show ipv6 interface gigabitethernet0/1\n```\nThis adds ::1 beside the derived address. Check that no duplicate is reported, then ping the gateway. Alternatively, set the PC gateway to R1's link-local address fe80::1."
   }
 ]

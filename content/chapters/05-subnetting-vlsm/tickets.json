@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "Operations was configured as 10.44.8.128/25, spanning .128–.255 and including the proposed Devices range .192–.223. The intended /26 ends at .191, so correcting that mask removes the overlap. Address .192 is not a valid Devices gateway; widening Devices would worsen the overlap. Shrinking Devices to .192/28 would still place its entire range inside the incorrect Operations /25 and would abandon the approved Devices size.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# ip address 10.44.8.129 255.255.255.192\nR1(config-if)# no shutdown\nR1(config-if)# exit\nR1(config)# interface gigabitethernet0/2\nR1(config-if)# ip address 10.44.8.193 255.255.255.224\nR1(config-if)# no shutdown\nR1(config-if)# end\nR1# show ip route\n```\nWith both links operational, verify C prefixes `10.44.8.128/26` and `10.44.8.192/27`. Also compare Operations clients with the planned /26; the router correction does not update their static masks."
+    "explanation": "Operations was configured as 10.44.8.128/25, which spans .128–.255 and swallows the Devices range .192–.223. The planned /26 ends at .191, so correcting that mask removes the overlap.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# ip address 10.44.8.129 255.255.255.192\nR1(config-if)# no shutdown\nR1(config-if)# exit\nR1(config)# interface gigabitethernet0/2\nR1(config-if)# ip address 10.44.8.193 255.255.255.224\nR1(config-if)# no shutdown\nR1(config-if)# end\nR1# show ip route\n```\nConfirm connected routes `10.44.8.128/26` and `10.44.8.192/27`. Operations clients keep their static masks, so correct them to the /26 too."
   },
   {
     "id": "subnetting-vlsm-t02",
@@ -62,7 +62,7 @@
     "answer": [
       2
     ],
-    "explanation": "The host’s /24 covers .0–.255, so both .20 and .200 appear local even though they are on R1’s other LANs. The observed ARP targets support that incorrect decision. The PC cannot resolve either target on Operations, and R1 is not acting as a proxy. Its .129 gateway is valid, and the correctly configured peer plus R1’s directly connected LANs rule out the proposed need for new static routes.",
-    "fix": "Set PC-OPS to `10.44.8.140`, mask `255.255.255.192`, gateway `10.44.8.129`. Read the settings and repeat the local-peer, gateway, printer and scanner tests. Under the correct /26, .20 and .200 are remote and use .129 as next hop. Keep the router’s approved prefixes and proxy-ARP policy unchanged."
+    "explanation": "The host’s /24 covers .0–.255, so it treats the printer (.20) and scanner (.200) as local and ARPs for them on Operations. They sit on R1’s other LANs and R1 is not proxying, so ARP fails. The gateway .129 and R1’s connected routes are fine.",
+    "fix": "Set PC-OPS to `10.44.8.140`, mask `255.255.255.192`, gateway `10.44.8.129`. Retest the local peer, gateway, printer and scanner. Under the /26, .20 and .200 are remote and use .129. Leave R1’s prefixes and proxy-ARP policy unchanged."
   }
 ]

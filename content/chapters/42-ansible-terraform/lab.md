@@ -1,310 +1,198 @@
 ---
-title: "Prepare a control node, collect IOS output, and inspect a local Terraform plan"
-environment: mixed
-devices: ["Ubuntu 24.04 LTS control node (native Linux or WSL)", "Optional reachable Cisco ISR 4331 with IOS XE 17.12.x and console access", "Ethernet adapter and isolated Ethernet link", "Terraform CLI for the optional local state exercise"]
-minutes: 100
+title: "Predict Ansible runs and read a Terraform plan"
+environment: worksheet
+devices: ["Core: this page and a notebook; no device or software needed", "Optional extension: Ubuntu 24.04 control node (native or WSL), an isolated IOS XE router such as an ISR 4331 or a CML IOS XE node, and the Terraform CLI"]
+minutes: 40
 ---
+Practice revised November 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks. **Steps 1–6 are the core and take about 40 minutes with no device:** you read an inventory and a playbook, predict what a first and a second run change, diagnose a task that never stops reporting changes, and read a Terraform plan. **Steps 7–8 are an optional extension** of about an hour: run a playbook against a real IOS XE router and run the Terraform cycle locally. Packet Tracer cannot be an Ansible target, so the extension needs real equipment or Cisco Modeling Labs.
 
-Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
-
-This lab has two levels. Everyone can install the control-node tools, validate files, and run the localhost exercise. To complete the network execution portion of v2.0 preparation, use a real, authorized IOS/IOS XE SSH target. The specified baseline is an isolated ISR 4331 running IOS XE 17.12.x. A licensed CML IOS XE target is also suitable once you have established host-to-guest IP reachability and substituted its actual interface name. Installing CML and bridging its management network are platform-specific prerequisites; do not assume an internal CML address is reachable from WSL.
-
-Packet Tracer devices cannot serve as ordinary external SSH targets for this exercise. If no reachable target is available, read Steps 3–8 as a worksheet and perform Steps 1–2 and 9–11 locally. Record that remote execution remains to be practiced. All displayed output is representative and was not captured in a simulator or hardware run for this guide.
+Write each prediction down before you open its answer. The exhibits show realistic output; your own runs in the extension will differ in spacing and version details.
 
 ## Topology
 
-| Endpoint | Port/address | Connection or purpose |
-|---|---|---|
-| Control computer | Dedicated Ethernet, `10.42.0.10/24` | Direct Ethernet cable to R1; no gateway or DNS on this isolated adapter |
-| R1 | `GigabitEthernet0/0/0`, `10.42.0.2/24` | SSH target, directly connected to control computer |
-| R1 console | USB/serial console | Initial configuration and recovery |
-| WSL Ubuntu | Its existing virtual interface | Initiates outbound connections through Windows networking; do not assign the Windows adapter's address inside WSL |
-
-Use a straight-through Ethernet patch cable with the ISR's auto-MDIX interface. A native Ubuntu computer can use its Ethernet adapter instead of Windows/WSL. Choose an unused isolated subnet: if `10.42.0.0/24` overlaps another adapter, VPN, or route, change both endpoints and the inventory consistently. Install packages through your normal Internet connection before disconnecting it if needed. R1 does not need an Internet default route for this directly connected exercise.
-
 ```diagram
-{"type":"topology","title":"A reachable SSH target","nodes":[{"id":"CTRL","kind":"laptop","label":"Control computer","sub":"10.42.0.10/24","x":2,"y":3},{"id":"R1","kind":"router","label":"R1","sub":"Gi0/0/0 · 10.42.0.2/24","x":9,"y":3}],"links":[{"from":"CTRL","to":"R1","label":"Isolated Ethernet · SSH TCP 22","accent":true}],"caption":"The lab has one automation target. Terraform's local exercise does not contact R1."}
+{"type":"topology","title":"One control node, three routers in the inventory","caption":"The control node opens SSH to each selected router. r1 and r2 are branch routers; r3 is a core router.","nodes":[{"id":"CTRL","kind":"laptop","label":"Control node","sub":"10.42.0.10","x":1,"y":3},{"id":"r1","kind":"router","label":"r1","sub":"10.42.0.2","x":9,"y":0.5},{"id":"r2","kind":"router","label":"r2","sub":"10.42.0.3","x":9,"y":3},{"id":"r3","kind":"router","label":"r3","sub":"10.42.0.4","x":9,"y":5.5}],"links":[{"from":"CTRL","to":"r1"},{"from":"CTRL","to":"r2"},{"from":"CTRL","to":"r3"}]}
 ```
 
-## Step 1: Prepare Ubuntu and the isolated Python environment
+The routers exist only on paper for Steps 1–6. Before the first run, r1 has no NTP server configured, and r2 already has `ntp server 10.42.0.10`. The account `netops` has privilege 15 on all three.
 
-On Windows, open an administrator PowerShell window and install the named distribution. Restart if Windows requests it, then open Ubuntu and complete its Linux username/password setup.
-
-```powershell
-wsl --install -d Ubuntu-24.04
-```
-
-On native Ubuntu 24.04, start here. Use the Ubuntu terminal for all remaining shell commands, not PowerShell. These commands create a project under your Linux home, avoiding Windows-mounted directory permission differences:
-
-Read the preparation commands before running them. `sudo apt` installs Ubuntu packages with administrative permission. `mkdir -p` creates a directory, `cd` enters it, and `~` means your Linux user's home directory. `python3 -m venv .venv` creates the isolated Python environment; `source` activates it in this terminal. `python -m pip` installs Python packages there, while `ansible-galaxy collection install` adds Ansible's modules and plugins. Run one line at a time and stop at an error rather than continuing with an incomplete installation. `pwd` shows the current directory if you need to verify where files will be saved.
-
-```bash
-sudo apt update
-sudo apt install -y python3-venv python3-pip python3-dev openssh-client build-essential libssh-dev pkg-config
-mkdir -p ~/ccna-automation
-cd ~/ccna-automation
-python3 --version
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install 'ansible-core>=2.21,<2.22' ansible-pylibssh
-ansible-galaxy collection install cisco.ios:11.5.1 ansible.netcommon:8.6.2
-ansible --version
-ansible-galaxy collection list
-```
-
-These are the documented release families checked for this guide, not timeless requirements. Ubuntu 24.04 provides Python 3.12, which is within ansible-core 2.21's supported controller range. If using a different OS or future package versions, check the official support matrix and collection requirements first. In a later terminal, return to this folder and run `source .venv/bin/activate` again.
-
-:::expected
-Ansible reports a 2.21.x core and a Python interpreter under `~/ccna-automation/.venv`. The collection list includes `cisco.ios` and `ansible.netcommon` at the requested versions. Installation needs working DNS and Internet access; it does not contact a router. If a dependency fails, resolve that installation error before continuing.
-:::
-
-```state
-{"status":"Control node ready","tone":"ok","addressed":false,"focus":["CTRL"],"chips":[{"node":"CTRL","text":"ansible-core 2.21.x · .venv","tone":"ok"},{"node":"R1","text":"Not contacted","tone":"dim"}],"rows":[["Ansible core","2.21.x in ~/ccna-automation/.venv","ok"],["Collections","cisco.ios · ansible.netcommon","ok"],["Needed","DNS and Internet access"],["Router contact","None","dim"]]}
-```
-
-## Step 2: Prove the local execution path
-
-Use `nano intent.yml`, paste the following, then save with Ctrl+O, Enter, and exit with Ctrl+X:
-
-```yaml
----
-- name: Display local study intent
-  hosts: localhost
-  connection: local
-  gather_facts: false
-  vars:
-    site: BR-01
-  tasks:
-    - name: Print the intended site
-      ansible.builtin.debug:
-        msg: "Collect operational evidence for {{ site }}"
-```
-
-```bash
-ansible-playbook -i localhost, intent.yml --syntax-check
-ansible-playbook -i localhost, intent.yml
-```
-
-:::expected
-The comma makes `localhost,` an inline inventory. One debug task prints the intended site, with a representative recap of `ok=1 changed=0 failed=0`. No IOS commands or SSH connection are involved. This proves the local Ansible runtime works, not that a router can be managed.
-:::
-
-```state
-{"status":"Local run works","tone":"ok","addressed":false,"focus":["CTRL"],"chips":[{"node":"CTRL","text":"localhost, · connection: local","tone":"ok"},{"node":"R1","text":"Not contacted","tone":"dim"}],"rows":[["Inventory","localhost, · inline"],["Debug message","Collect operational evidence for BR-01","ok"],["Recap","ok=1 changed=0 failed=0","ok"],["SSH or IOS commands","Not involved","dim"]]}
-```
-
-## Step 3: Build the router's SSH baseline
-
-Use only a spare lab router with an initial/default configuration and no AAA policy already applied. Keep the console connected. When presented with the initial configuration dialog, decline it. Use a unique lab password in place of the displayed example; record it privately for the SSH prompt.
-
-```ios
-Router> enable
-Router# configure terminal
-Router(config)# hostname R1
-R1(config)# ip domain name ccna.test
-R1(config)# username labreader privilege 1 secret LabReadOnly42!
-R1(config)# interface gigabitethernet0/0/0
-R1(config-if)# ip address 10.42.0.2 255.255.255.0
-R1(config-if)# no shutdown
-R1(config-if)# exit
-R1(config)# crypto key generate rsa general-keys modulus 2048
-R1(config)# ip ssh version 2
-R1(config)# line vty 0 4
-R1(config-line)# login local
-R1(config-line)# transport input ssh
-R1(config-line)# end
-R1# show ip interface brief
-R1# show ip ssh
-R1# copy running-config startup-config
-```
-
-Accept the default destination filename when saving. If a router already has keys, do not blindly replace them; first confirm it is your disposable lab instance. Configure the computer's dedicated Ethernet adapter with the address in the topology table. In Windows, open the adapter's IPv4 properties, select a manual address and mask, and leave its gateway/DNS empty. Native Ubuntu users can set the same manual IPv4 values in Settings → Network → Wired → IPv4.
-
-:::expected
-R1's connected interface should be `up/up` with `10.42.0.2`. SSH version 2 is enabled. The example account has user EXEC privilege and no enable credential. That limits access but is not a complete command-authorization design; this lab additionally restricts the playbook to three specific read-only commands. Production command permissions require the organization's authorization policy.
-:::
-
-```state
-{"status":"SSH baseline built","tone":"ok","focus":["R1","CTRL"],"chips":[{"node":"R1","text":"R1#"},{"node":"R1","text":"SSH v2 · login local","tone":"ok"},{"node":"CTRL","text":"No gateway or DNS"}],"rows":[["R1 Gi0/0/0","10.42.0.2 · up/up","ok"],["VTY 0 4","transport input ssh · SSH v2","ok"],["labreader","User EXEC · no enable credential"],["Control adapter","10.42.0.10/24 · manual"]]}
-```
-
-## Step 4: Establish and verify SSH identity manually
-
-From the same Ubuntu account that will run Ansible:
-
-```bash
-ping -c 3 10.42.0.2
-ssh labreader@10.42.0.2
-```
-
-On first connection, SSH displays a host-key fingerprint. Validate it through an independent trusted record from the lab administrator. For your own newly initialized, directly cabled, isolated router, confirm the console address and physical endpoint before making the first-use trust decision; record the displayed fingerprint for later comparisons. Do not accept a changed fingerprint on a previously known device without investigating the change.
-
-After accepting the verified first-use key, enter the labreader password. At `R1>` run `show version`, `show ip interface brief`, and `show ip route`. Exit back to Ubuntu and check the stored entry:
-
-```bash
-ssh-keygen -F 10.42.0.2
-```
-
-:::expected
-The three commands work manually under the account that Ansible will use, and the Linux account has a matching `~/.ssh/known_hosts` entry. Windows' own SSH known-host file is different from Ubuntu's. If there is an algorithm-negotiation failure on an older image, use a current supported lab image; do not globally enable obsolete algorithms to hide the mismatch.
-:::
-
-```state
-{"status":"Manual SSH verified","tone":"ok","focus":["CTRL","R1"],"flows":[{"path":["CTRL","R1"],"back":true,"label":"ping -c 3 10.42.0.2"},{"path":["CTRL","R1"],"label":"ssh labreader@10.42.0.2","tags":{"CTRL":"Same Ubuntu account as Ansible","R1":"Presents its host key"},"back":true,"backTags":{"CTRL":"Verify fingerprint · add known_hosts"}},{"path":["CTRL","R1"],"back":true,"label":"show version · ip int brief · ip route","tags":{"R1":"R1> runs the three commands"}}],"chips":[{"node":"R1","text":"SSH v2 · login local","tone":"ok"},{"node":"R1","text":"R1> · labreader","from":2},{"node":"CTRL","text":"known_hosts · 10.42.0.2","tone":"ok","from":2}],"rows":[["Host key","Verified independently, then accepted","ok"],["At R1>","show version · ip int brief · ip route","ok"],["ssh-keygen -F 10.42.0.2","Matching Ubuntu known_hosts entry","ok"]]}
-```
-
-## Step 5: Save the connection settings and collection files
-
-In `~/ccna-automation`, create `ansible.cfg` with `nano`:
-
-```ini
-[defaults]
-host_key_checking = true
-
-[libssh_connection]
-host_key_auto_add = false
-look_for_keys = false
-
-[paramiko_connection]
-host_key_auto_add = false
-```
-
-The lab selects libssh explicitly; the extra auto-add setting prevents silent trust if the backend is later changed. `look_for_keys = false` keeps this password-based exercise from trying unrelated user keys first. Do not store the password in these files.
-
-Save `inventory.yml`:
+## Step 1: Read the inventory
 
 ```yaml
 all:
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: cisco.ios.ios
+    ansible_user: netops
   children:
     branch_routers:
       hosts:
         r1:
           ansible_host: 10.42.0.2
-      vars:
-        ansible_connection: ansible.netcommon.network_cli
-        ansible_network_os: cisco.ios.ios
-        ansible_network_cli_ssh_type: libssh
-        ansible_user: labreader
-        ansible_become: false
-        ansible_host_key_checking: true
+        r2:
+          ansible_host: 10.42.0.3
+    core_routers:
+      hosts:
+        r3:
+          ansible_host: 10.42.0.4
 ```
 
-Before opening the complete collection below, write down which module collects operational commands and which output index should display the second command. The complete file is supplied for checking; installation and SSH preparation are setup, while selecting targets, running the commands and interpreting their results are the assessed task.
+1. Which groups exist, and which hosts belong to each?
+2. Which address does Ansible use for `r2`?
+3. How does Ansible reach the routers, and what is installed on them for it?
+4. A play targets `branch_routers`. Which hosts run it with no limit, with `--limit r1`, and with `--limit r3`?
 
-:::solution Check and save collect.yml
+:::expected
+1. `branch_routers` holds r1 and r2; `core_routers` holds r3. All three are also in `all`.
+2. `10.42.0.3`. `r2` is an alias; `ansible_host` gives the address.
+3. Over SSH with the `network_cli` connection, using IOS behaviour from `cisco.ios.ios`. Nothing is installed on the routers; Ansible is agentless.
+4. r1 and r2; only r1; no host at all. A limit narrows the play's selection and cannot add r3.
+:::
+
+```state
+{"status":"Inventory read","addressed":true,"focus":["CTRL","r1","r2"],"chips":[{"node":"r3","text":"core_routers","tone":"dim"}],"rows":[["branch_routers","r1, r2","ok"],["core_routers","r3"],["Connection","network_cli · SSH · agentless"]]}
+```
+
+## Step 2: Read the playbook
+
+Save nothing; just read `ntp.yml`:
 
 ```yaml
 ---
-- name: Collect router evidence
+- name: Apply the branch NTP baseline
   hosts: branch_routers
   gather_facts: false
   tasks:
-    - name: Read version, interfaces, and routes
+    - name: Ensure the approved NTP server line exists
+      cisco.ios.ios_config:
+        lines:
+          - ntp server 10.42.0.10
+        save_when: changed
+
+    - name: Read the configured NTP line and associations
       cisco.ios.ios_command:
         commands:
-          - show version
-          - show ip interface brief
-          - show ip route
-      register: result
+          - show running-config | include ntp
+          - show ntp associations
+      register: ntp_check
 
-    - name: Display the interface table
+    - name: Display the configured NTP line
       ansible.builtin.debug:
-        var: result.stdout_lines[1]
-
-    - name: Display all collected evidence in command order
-      ansible.builtin.debug:
-        var: result.stdout_lines
+        var: ntp_check.stdout_lines[0]
 ```
-:::
+
+1. How many plays and how many tasks does the file contain?
+2. Which task can change a router, and which only reads?
+3. What does `register: ntp_check` do? Is it sent to IOS?
+4. Which command's output does `ntp_check.stdout_lines[0]` display?
+5. When does `save_when: changed` copy running-config to startup-config?
 
 :::expected
-The inventory targets only `r1`, and the play does not request privilege escalation. The result has three ordered output entries. Interface output is entry `1`; routes are entry `2`. Ansible's version output should identify this directory's `ansible.cfg` as the configuration file in use.
+1. One play with three tasks.
+2. The `ios_config` task can change configuration. The `ios_command` task sends two EXEC commands and the `debug` task prints a value on the control node.
+3. It stores the task's result under the name `ntp_check` on the control node. It is not an IOS command.
+4. Index 0 is the first command, `show running-config | include ntp`.
+5. Only on a host where that task actually changed the configuration.
+:::
+
+## Step 3: Predict the first run
+
+Before reading the output, predict for each host whether the first task reports `changed` or `ok`, whether the router saves its configuration, and the `ok=` and `changed=` numbers in the recap.
+
+```output
+$ ansible-playbook -i inventory.yml ntp.yml --ask-pass
+
+PLAY [Apply the branch NTP baseline] *******************************************
+
+TASK [Ensure the approved NTP server line exists] ******************************
+changed: [r1]
+ok: [r2]
+
+TASK [Read the configured NTP line and associations] ***************************
+ok: [r1]
+ok: [r2]
+
+TASK [Display the configured NTP line] *****************************************
+ok: [r1] => {
+    "ntp_check.stdout_lines[0]": [
+        "ntp server 10.42.0.10"
+    ]
+}
+ok: [r2] => {
+    "ntp_check.stdout_lines[0]": [
+        "ntp server 10.42.0.10"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+r1   : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+r2   : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+1. Why does r1 report `changed` and r2 `ok` for the same task?
+2. Which router saved its configuration?
+3. r1 shows `ok=3 changed=1`. How many tasks ran on r1?
+4. Why does r3 not appear?
+
+:::expected
+1. `ios_config` compares the requested line with each running configuration. r1 lacked it, so the module sent it; r2 already had it, so nothing was sent.
+2. Only r1, because `save_when: changed` saves only where the task changed something.
+3. Three. `changed` is a subset of the successful tasks, not an extra count.
+4. The play targets `branch_routers`, and r3 is only in `core_routers`.
 :::
 
 ```state
-{"status":"Files saved","focus":["CTRL"],"chips":[{"node":"CTRL","text":"inventory · r1 → 10.42.0.2"},{"node":"CTRL","text":"host_key_checking = true"},{"node":"R1","text":"SSH v2 · login local","tone":"ok"}],"rows":[["Target","r1 only · group branch_routers"],["Connection","network_cli · libssh · labreader"],["Privilege escalation","ansible_become: false"],["Result indexes","0 version · 1 interfaces · 2 routes"]]}
+{"status":"First run · r1 changed","tone":"ok","addressed":true,"focus":["CTRL","r1","r2"],"flows":[{"path":["CTRL","r1"],"label":"Adds ntp server · saves","tags":{"r1":"changed=1"}},{"path":["CTRL","r2"],"label":"Line already present","tags":{"r2":"changed=0"}}],"rows":[["r1","ok=3 changed=1 · saved","warn"],["r2","ok=3 changed=0","ok"],["r3","Not selected","dim"]]}
 ```
 
-## Step 6: Validate scope, then collect the evidence
+## Step 4: Predict the second run
 
-Before running, predict the host intersection and map all three commands to result indexes. State which checks can establish syntax, selected targets and actual router output respectively. Stop if the listed host is not the intended isolated router.
-
-```bash
-ansible-playbook -i inventory.yml collect.yml --syntax-check
-ansible-playbook -i inventory.yml collect.yml --limit r1 --list-hosts
-ansible-playbook -i inventory.yml collect.yml --limit r1 --ask-pass
-```
-
-Read the command list before running the last command. The first display isolates the requested interface table; the following display exposes all three collected outputs in command order. Compare the version/device identity, interface table and routes with your manual SSH check. Registered data otherwise remains internal to the play and is not automatically printed.
+Nobody touches the routers. You run the same command again. Predict both recap lines, then check.
 
 :::expected
-The host list contains one host, `r1`. A successful three-task run normally has `ok=3 changed=0 unreachable=0 failed=0`. Interface names and output spacing depend on the image. The useful verification is that the expected address and interface state were returned from the intended router, not that a recap exactly matches an illustration.
+Both hosts report `ok=3 changed=0`, and the first task shows `ok: [r1]` and `ok: [r2]`. That is idempotence: once the intended state is in place, repeating the run changes nothing. Neither router saves again.
+
+`changed=0` does not prove NTP works. Only the `show ntp associations` output, read in the registered result, says whether the router has reached the server.
 :::
 
 ```state
-{"status":"Evidence collected","tone":"ok","focus":["CTRL","R1"],"flows":[{"event":["CTRL"],"tags":{"CTRL":"Syntax check · --list-hosts: r1"}},{"path":["CTRL","R1"],"label":"collect.yml --limit r1","tags":{"CTRL":"network_cli · libssh · labreader","R1":"Runs 3 show commands in order"},"back":true,"backTags":{"CTRL":"Registers result · 3 entries"}}],"chips":[{"node":"R1","text":"SSH v2 · login local","tone":"ok"},{"node":"CTRL","text":"collect.yml"}],"rows":[["Host list","r1 only","ok"],["Recap","ok=3 changed=0 unreachable=0 failed=0","ok"],["stdout_lines[1]","Interface table","ok"],["Compare with","Manual SSH baseline"]]}
+{"status":"Second run · nothing changes","tone":"ok","addressed":true,"focus":["CTRL","r1","r2"],"flows":[{"path":["CTRL","r1"],"label":"Line already present","tags":{"r1":"changed=0"}},{"path":["CTRL","r2"],"label":"Line already present","tags":{"r2":"changed=0"}}],"rows":[["r1","ok=3 changed=0","ok"],["r2","ok=3 changed=0","ok"],["Idempotence","Repeat run changes nothing","ok"]]}
 ```
 
-## Step 7: Introduce one command error and observe it
+## Step 5: Diagnose a task that always reports a change
 
-Copy the working file, then edit only the copied command list:
+A colleague added this task to set r1's WAN interface description. r1 runs IOS XE, and its running configuration shows the interface as `interface GigabitEthernet0/0/0`.
 
-```bash
-cp collect.yml collect-fault.yml
-nano collect-fault.yml
+```yaml
+    - name: Describe the WAN interface
+      cisco.ios.ios_config:
+        parents: int gi0/0/0
+        lines:
+          - description WAN to HQ
 ```
 
-Replace `show ip interface brief` with the deliberately invalid `show ccna-invalid-command`. Save, then run:
+The colleague ran the play three times without touching r1 in between. Every run printed:
 
-```bash
-ansible-playbook -i inventory.yml collect-fault.yml --syntax-check
-ansible-playbook -i inventory.yml collect-fault.yml --limit r1 --ask-pass
+```output
+TASK [Describe the WAN interface] **********************************************
+changed: [r1]
 ```
 
-Before execution, predict whether YAML checking can find the IOS typo. Do not repair the file until its result is recorded. Write down whether syntax validation detects the IOS error, what message comes back, and whether the later debug tasks execute.
+`show running-config interface GigabitEthernet0/0/0` on r1 shows the description exactly once.
+
+1. IOS accepted the commands. Why does the module report a change every time?
+2. What is the narrow fix?
+3. After the fix, what should the second run report?
 
 :::expected
-The YAML remains valid. IOS rejects the invalid command during execution, and the task should report a failure with device-error evidence; wording varies with versions. Under normal error handling, the later debug tasks do not run for the failed host. Commands earlier in the list may already have executed. This failure therefore does not imply that the task did nothing.
+1. `ios_config` compares text. It looks for a section called `int gi0/0/0` in the running configuration, never finds one because IOS stores `interface GigabitEthernet0/0/0`, and so sends the lines again on every run. IOS accepts the abbreviation, so the description is correct, but the task is not idempotent.
+2. Write the parent exactly as the running configuration stores it: `parents: interface GigabitEthernet0/0/0`.
+3. `ok: [r1]` with `changed=0` for that task. A task that reports a change on every unchanged run is a signal to compare the strings, not to ignore the recap.
 :::
 
-```state
-{"status":"IOS rejects the command","tone":"bad","focus":["CTRL","R1"],"flows":[{"event":["CTRL"],"tags":{"CTRL":"--syntax-check passes · YAML valid"}},{"path":["CTRL","R1"],"label":"collect-fault.yml --limit r1","tags":{"R1":"Rejects show ccna-invalid-command"}},{"path":["R1","CTRL"],"tone":"warn","label":"Device error returned","tags":{"CTRL":"Task fails · debug tasks do not run"}}],"chips":[{"node":"R1","text":"SSH v2 · login local","tone":"ok"},{"node":"CTRL","text":"collect-fault.yml","tone":"warn"}],"rows":[["--syntax-check","Passes · cannot see the IOS typo"],["IOS","Rejects the invalid command","bad"],["Later debug tasks","Do not run for r1","bad"],["Earlier commands","May already have executed","warn"]]}
-```
+## Step 6: Read a Terraform plan
 
-## Step 8: Repair and verify the separate fault file
-
-Edit `collect-fault.yml` and restore the exact command `show ip interface brief`. Repeat the syntax check and the limited run from Step 7. Then run a one-off clock check:
-
-```bash
-ansible branch_routers -i inventory.yml -m cisco.ios.ios_command -a 'commands="show clock"' --limit r1 --ask-pass
-```
-
-:::expected
-The repaired collection succeeds and displays the interface table. The ad-hoc task returns a clock string, but its presence does not prove that NTP is synchronized or that the displayed date is correct. Record which file you repaired; the original `collect.yml` was preserved throughout.
-:::
-
-```state
-{"status":"Fault file repaired","tone":"ok","focus":["CTRL","R1"],"flows":[{"event":["CTRL"],"wait":1.6,"tags":{"CTRL":"Restored show ip interface brief"}},{"path":["CTRL","R1"],"back":true,"label":"collect-fault.yml, repaired","tags":{"R1":"Runs 3 show commands in order"},"backTags":{"CTRL":"Displays the interface table"}},{"path":["CTRL","R1"],"back":true,"label":"Ad hoc: show clock","tags":{"CTRL":"ansible -m cisco.ios.ios_command","R1":"Returns a clock string"}}],"chips":[{"node":"R1","text":"SSH v2 · login local","tone":"ok"},{"node":"CTRL","text":"collect-fault.yml","tone":"warn","until":0},{"node":"CTRL","text":"collect-fault.yml repaired","tone":"ok","from":0}],"rows":[["Repaired run","Interface table displayed","ok"],["show clock","A clock string · not NTP proof"],["collect.yml","Preserved throughout","ok"]]}
-```
-
-## Step 9: Install Terraform for the optional local exercise
-
-Terraform practice supports the v1.1 capability objective; it is not a replacement for executing the Ansible network task. Use the official HashiCorp installation page's Ubuntu/Debian instructions. For a fresh Ubuntu 24.04 installation, the following sets up that signed package repository:
-
-```bash
-sudo apt install -y wget gpg lsb-release
-wget -O hashicorp-signing-key.asc https://apt.releases.hashicorp.com/gpg
-sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg hashicorp-signing-key.asc
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update
-sudo apt install terraform
-terraform version
-mkdir -p ~/ccna-automation/terraform-local
-cd ~/ccna-automation/terraform-local
-```
-
-If the signing-key file already exists, consult the official installation instructions before replacing it. Create `main.tf` in this otherwise empty exercise directory:
+This configuration uses Terraform's built-in `terraform_data` resource, which only stores values in Terraform state:
 
 ```hcl
 terraform {
@@ -321,87 +209,213 @@ output "intended_site" {
 }
 ```
 
+After `terraform init`, the first `terraform plan` shows:
+
+```output
+Terraform will perform the following actions:
+
+  # terraform_data.lab_intent will be created
+  + resource "terraform_data" "lab_intent" {
+      + id     = (known after apply)
+      + input  = {
+          + hostname = "R1"
+          + site     = "BR-01"
+        }
+      + output = (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + intended_site = "BR-01"
+```
+
+The plan is applied. Later the site is edited to `BR-02`, and the next plan shows:
+
+```output
+  # terraform_data.lab_intent will be updated in-place
+  ~ resource "terraform_data" "lab_intent" {
+        id     = "3f1c9a52-6b0e-4d2a-9c7e-0b8d7e5a1f44"
+      ~ input  = {
+          ~ site     = "BR-01" -> "BR-02"
+            # (1 unchanged attribute hidden)
+        }
+      ~ output = {
+          - hostname = "R1"
+          - site     = "BR-01"
+        } -> (known after apply)
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+```
+
+1. What do `+` and `~` mean, and what would `-/+` mean?
+2. Does either plan contact or configure a router called R1?
+3. After the first apply, what would a plan with no edits show?
+4. Where does Terraform record that `terraform_data.lab_intent` exists?
+5. If you saved the first plan with `-out=first.tfplan`, can you apply that file to get BR-02?
+
 :::expected
-A stable Terraform 1.x release at least 1.4 satisfies this configuration. The resource uses the built-in provider and has no device address, cloud account, credential, or external provisioner. Only local Terraform state is managed. Keep this directory separate from any real infrastructure project.
+1. `+` creates, `~` updates in place, and `-/+` destroys and re-creates (replacement), which can interrupt a real service.
+2. No. `R1` is only a string; this resource has no provider that talks to a device.
+3. `No changes.` The configuration and state already agree, the Terraform equivalent of `changed=0`.
+4. In the state file, `terraform.tfstate` in the working directory for this local backend.
+5. No. A saved plan contains only the actions calculated when it was made. Plan again after every edit.
 :::
 
 ```state
-{"status":"Terraform installed","focus":["CTRL"],"chips":[{"node":"CTRL","text":"Terraform 1.x · at least 1.4"},{"node":"R1","text":"Not contacted by Terraform","tone":"dim"}],"rows":[["main.tf","terraform_data.lab_intent"],["Provider","Built-in · no device address"],["Managed","Local Terraform state only"],["Directory","terraform-local · kept separate"]]}
+{"status":"Plan read","focus":["CTRL"],"chips":[{"node":"r1","text":"Not contacted by Terraform","tone":"dim"}],"rows":[["First plan","1 to add","ok"],["After edit","1 to change · in place","warn"],["State","terraform.tfstate · local"]]}
 ```
 
-## Step 10: Review and apply the first plan
+## Step 7: Extension: Collect output from a real router with Ansible
+
+You need an isolated IOS XE router you are allowed to change, such as an ISR 4331 or a CML IOS XE node reachable from your computer, plus Ubuntu 24.04 (native or WSL). Keep the router console connected. These steps use one router, `r1`, at `10.42.0.2/24` on interface `GigabitEthernet0/0/0`, directly cabled to a dedicated computer adapter set to `10.42.0.10/24` with no gateway. Change the names and addresses to match your equipment.
+
+Install the control node in a Python virtual environment:
+
+```bash
+sudo apt update
+sudo apt install -y python3-venv python3-pip python3-dev openssh-client build-essential libssh-dev pkg-config
+mkdir -p ~/ccna-automation && cd ~/ccna-automation
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install 'ansible-core>=2.21,<2.22' ansible-pylibssh
+ansible-galaxy collection install cisco.ios:11.5.1 ansible.netcommon:8.6.2
+ansible --version
+```
+
+On the router, build an SSH baseline with a read-only account. Use your own lab password:
+
+```ios R1
+Router> enable
+Router# configure terminal
+Router(config)# hostname R1
+R1(config)# ip domain name ccna.test
+R1(config)# username labreader privilege 1 secret LabReadOnly42!
+R1(config)# interface gigabitethernet0/0/0
+R1(config-if)# ip address 10.42.0.2 255.255.255.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+R1(config)# crypto key generate rsa general-keys modulus 2048
+R1(config)# ip ssh version 2
+R1(config)# line vty 0 4
+R1(config-line)# login local
+R1(config-line)# transport input ssh
+R1(config-line)# end
+R1# copy running-config startup-config
+```
+
+From Ubuntu, run `ssh labreader@10.42.0.2` once, check the host-key fingerprint against the console's `show ip ssh` output before accepting it, and exit. In `~/ccna-automation`, save `ansible.cfg`:
+
+```ini
+[defaults]
+host_key_checking = true
+
+[libssh_connection]
+host_key_auto_add = false
+look_for_keys = false
+```
+
+Save `inventory.yml`:
+
+```yaml
+all:
+  children:
+    branch_routers:
+      hosts:
+        r1:
+          ansible_host: 10.42.0.2
+      vars:
+        ansible_connection: ansible.netcommon.network_cli
+        ansible_network_os: cisco.ios.ios
+        ansible_network_cli_ssh_type: libssh
+        ansible_user: labreader
+        ansible_become: false
+```
+
+Save `collect.yml`:
+
+```yaml
+---
+- name: Collect router evidence
+  hosts: branch_routers
+  gather_facts: false
+  tasks:
+    - name: Read version, interfaces and routes
+      cisco.ios.ios_command:
+        commands:
+          - show version
+          - show ip interface brief
+          - show ip route
+      register: result
+
+    - name: Display the interface table
+      ansible.builtin.debug:
+        var: result.stdout_lines[1]
+```
+
+Run it twice:
+
+```bash
+ansible-playbook -i inventory.yml collect.yml --syntax-check
+ansible-playbook -i inventory.yml collect.yml --limit r1 --list-hosts
+ansible-playbook -i inventory.yml collect.yml --limit r1 --ask-pass
+ansible-playbook -i inventory.yml collect.yml --limit r1 --ask-pass
+```
+
+:::expected
+The host list is `r1` only. Each run ends `ok=2 changed=0 unreachable=0 failed=0` and displays the interface table with `GigabitEthernet0/0/0` at `10.42.0.2` up/up. Compare it with what you see on the console. `changed=0` here means `ios_command` never reports a change; it does not prove the commands were harmless, so approve the command list itself. Do not disable host-key checking to get past a connection error.
+:::
+
+## Step 8: Extension: Run the Terraform cycle locally
+
+Install Terraform from HashiCorp's Ubuntu repository:
+
+```bash
+sudo apt install -y wget gpg lsb-release
+wget -O hashicorp-signing-key.asc https://apt.releases.hashicorp.com/gpg
+sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg hashicorp-signing-key.asc
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install terraform
+mkdir -p ~/ccna-automation/terraform-local && cd ~/ccna-automation/terraform-local
+```
+
+Save the Step 6 configuration as `main.tf`, then:
 
 ```bash
 terraform init
-terraform fmt
 terraform validate
 terraform plan -out=first.tfplan
-terraform show first.tfplan
-```
-
-Before applying anything, predict whether this resource contacts a router and whether a later unchanged plan should propose another addition. Stop and inspect the saved plan. It must identify only `terraform_data.lab_intent` and one addition. Once that is confirmed, execute:
-
-```bash
 terraform apply first.tfplan
-terraform state list
 terraform output
 terraform plan
 ```
 
-:::expected
-The first plan proposes one addition. Applying a saved plan does not ask for another confirmation. State then lists `terraform_data.lab_intent` and the output is `BR-01`. The next unchanged plan proposes no changes. No router was configured; “R1” is only a string in this local resource.
-:::
-
-```state
-{"status":"Local state applied","tone":"ok","focus":["CTRL"],"flows":[{"event":["CTRL"],"tags":{"CTRL":"first.tfplan · 1 to add"}},{"event":["CTRL"],"tags":{"CTRL":"Apply saved plan · no prompt"}},{"event":["CTRL"],"tags":{"CTRL":"Plan again · no changes"}}],"chips":[{"node":"CTRL","text":"state: lab_intent · BR-01","tone":"ok","from":1},{"node":"R1","text":"Not configured · just a string","tone":"dim"}],"rows":[["Saved plan","1 to add · terraform_data.lab_intent"],["terraform output","BR-01","ok"],["Unchanged plan","No changes","ok"],["R1","Not configured by Terraform","dim"]]}
-```
-
-## Step 11: Change an input and distinguish update from deletion
-
-Edit only the site value in `main.tf` to `BR-02`. Run `terraform plan` and inspect it before using `terraform apply`. When its details show only the intended update, type `yes` at the apply prompt. Run `terraform output` and `terraform plan` again.
+Edit the site to `BR-02`, run `terraform plan`, then `terraform apply` and type `yes`. Finish with `terraform destroy` and `terraform state list`.
 
 :::expected
-For `terraform_data`, changing `input` updates the existing resource in place: zero additions, one change, zero destructions. After apply, the output is `BR-02` and an unchanged plan has no further changes. Leave this resource present for the challenge. A previously saved `first.tfplan` is not the plan for your new edit.
+Your plans match the Step 6 exhibits apart from the `id`. Applying the saved plan asks no question; the unedited plan reports `No changes.`; the edit is one in-place update; `terraform apply` without a plan file asks for `yes`. Destroy proposes removing only `terraform_data.lab_intent`, and the state list is then empty. No router was configured at any point.
 :::
-
-```state
-{"status":"Updated in place","tone":"warn","focus":["CTRL"],"flows":[{"event":["CTRL"],"wait":1.6,"tags":{"CTRL":"main.tf site BR-01 → BR-02"}},{"event":["CTRL"],"tags":{"CTRL":"Plan: 0 add · 1 change · 0 destroy"}},{"event":["CTRL"],"tags":{"CTRL":"Apply after yes · output BR-02"}}],"chips":[{"node":"CTRL","text":"state: lab_intent · BR-01","tone":"ok","until":2},{"node":"CTRL","text":"state: lab_intent · BR-02","tone":"warn","from":2},{"node":"R1","text":"Not configured · just a string","tone":"dim"}],"rows":[["Plan","0 to add · 1 to change · 0 to destroy","warn"],["terraform output","BR-02","ok"],["Next unchanged plan","No further changes","ok"],["first.tfplan","Not the plan for this edit","dim"]]}
-```
-
-## Step 12: Submit evidence at the level actually completed
-
-Keep the local-runtime result distinct from the remote collection. For remote execution, submit the selected host list, approved command list, actual returned device identity/interface/route output, the bad-command observation, the repaired rerun and its comparison with the manual baseline. Do not submit passwords, private keys or unreviewed configuration dumps.
-
-If you used only a worksheet, supply the completed playbook and predicted selection/output indexes, but state “remote IOS execution not completed.” If you performed Terraform, keep its reviewed resource/action summary and resulting local output as a separate capability demonstration.
-
-:::expected
-The record identifies where each task ran, which target was contacted, which command produced each result and which fault was corrected. A successful localhost debug or Terraform data update is not counted as remote IOS command execution.
-:::
-
-```state
-{"status":"Evidence recorded","focus":["CTRL","R1"],"chips":[{"node":"R1","text":"The one automation target"},{"node":"CTRL","text":"Local runs recorded separately"}],"rows":[["Remote IOS","Hosts · commands · output · fault · repair"],["Localhost and Terraform","Not remote IOS execution","dim"],["Worksheet only","Remote IOS execution not completed"],["Never submit","Passwords · private keys"]]}
-```
 
 ## Troubleshooting
 
-If Ansible is unavailable, reactivate the virtual environment and inspect `ansible --version`. If a collection is missing, check `ansible-galaxy collection list` under the same account. A library import error requires installing the SSH dependency inside that environment.
-
-For a network failure, first confirm the selected address and manual SSH from Ubuntu. Windows reachability alone does not prove the WSL path works; VPN or firewall policy can differ. A host-key mismatch requires verification of the router's identity and any legitimate key replacement. Replace only the affected stale known-host entry after verification, then establish trust again. Do not disable host-key checking as a general repair.
-
-For an authorization error, test the same command manually as `labreader`. Do not add privilege 15 simply to make every possible command work. The IOS exercise intentionally uses user EXEC commands. For parser errors, compare the platform, command spelling, YAML indentation, and network connection variables.
-
-For Terraform, use `pwd` and `terraform state list` before diagnosing unexpected additions. Being in a different directory or using different state changes what Terraform manages. Do not delete state to repair a bad plan.
+- A host you expected is missing from a run: check group membership in the inventory, then the play's `hosts:` line and any `--limit`. Use `--list-hosts` before running.
+- A configuration task reports `changed` on every run: compare `parents` and `lines` with the exact text in the running configuration. Abbreviations never match.
+- `changed=0` but the service still fails: the recap reports what the task sent, not whether the feature works. Read the registered `show` output.
+- Extension, `UNREACHABLE` or a connection failure: test manual SSH from the same Ubuntu account first, then check the address, `known_hosts` and the inventory variables.
+- Extension, Terraform proposes an unexpected addition: run `pwd` and `terraform state list`. A different directory means different state. Never delete state to fix a plan.
 
 ## Challenge
 
-Keep the original successful files. Create a new `handover.yml` that collects, in this order, `show ip route`, `show clock` and `show version` from the approved `branch_routers` group. Register the result, first display only the route output, then display all collected outputs for the handover record. Use `inventory.yml`, inspect the target set with a limit of `r1`, then run only that host. Compare the returned connected route and device identity with your manual baseline. Do not enable configuration access for this task.
+Answer on paper.
 
-Before execution, complete this separate scope worksheet: another inventory has `branch_routers = r1,r2` and `core_routers = r3`. A play targets `branch_routers`. Predict the eligible hosts under `--limit r1` and under `--limit r3`. These worksheet hosts do not need to exist in your actual lab.
+1. Write `handover.yml` for the Step 1 inventory: target `branch_routers`, collect `show ip route`, `show clock` and `show version` in that order, register the result as `handover`, and display only the route output.
+2. Predict the recap for r1 and r2 on the first and second run of your playbook.
+3. Using the Step 6 configuration after the BR-02 apply, predict the plan if you change the site back to `BR-01`, and the plan for `terraform destroy`.
 
-Optional Terraform continuation: from the known Step 11 state, change the local site input back to `BR-01`. Predict the plan, review/apply it, and verify its output. Then remove only this exercise's local data resource with a reviewed destroy. State why none of these local Terraform results proves that R1 changed.
-
-:::solution Check the independent collection and scope
-Use this complete playbook for comparison after your own attempt:
+:::solution
+For question 1:
 
 ```yaml
 ---
@@ -416,25 +430,14 @@ Use this complete playbook for comparison after your own attempt:
           - show clock
           - show version
       register: handover
+
     - name: Display routes
       ansible.builtin.debug:
         var: handover.stdout_lines[0]
-    - name: Display all handover evidence in command order
-      ansible.builtin.debug:
-        var: handover.stdout_lines
 ```
 
-From `~/ccna-automation`:
+The route output is index 0 because it is the first command.
 
-```bash
-ansible-playbook -i inventory.yml handover.yml --syntax-check
-ansible-playbook -i inventory.yml handover.yml --limit r1 --list-hosts
-ansible-playbook -i inventory.yml handover.yml --limit r1 --ask-pass
-```
-
-The first command result has index 0. The second display exposes entries 0, 1 and 2, so the route, clock and version observations are available to compare; the register alone would not print them. The returned connected route should include the isolated `10.42.0.0/24` network on the actual lab interface. Inspect actual command output and compare the device information with the baseline; a clock string does not establish NTP synchronization. If remote execution was unavailable, submit your playbook and reasoned result separately and mark the device task outstanding.
-
-For the separate host worksheet, the intersections are `{r1}` and the empty set respectively. A limit cannot add r3 to a play that excludes it.
-
-For optional Terraform, run from `~/ccna-automation/terraform-local`. Changing `input.site` from BR-02 to BR-01 proposes one in-place update for `terraform_data.lab_intent`. Review `terraform plan`, use `terraform apply` and approve only that update, then inspect `terraform output`. For cleanup, `terraform destroy` must propose only removal of `terraform_data.lab_intent`; confirm that exact local removal and check `terraform state list` is empty. No real device provider or provisioner was present, so R1 was never configured by Terraform.
+2. Both runs, both hosts: `ok=2 changed=0`. `ios_command` does not report changes, so the second run looks identical to the first.
+3. Changing the site back is `0 to add, 1 to change, 0 to destroy`, an in-place update with `~ site = "BR-02" -> "BR-01"`. Destroy is `0 to add, 0 to change, 1 to destroy` for `terraform_data.lab_intent`. Neither touches a router.
 :::

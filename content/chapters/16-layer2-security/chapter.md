@@ -5,7 +5,7 @@ title: Layer 2 security
 subtitle: Control endpoint traffic with port security, DHCP snooping, ARP inspection, storm control and RA guard.
 part: switching
 domain: services
-minutes: { lesson: 75, lab: 110 }
+minutes: { lesson: 75, lab: 60 }
 summary: Build an access-port policy from the traffic it must permit. Configure and verify MAC limits, DHCP and ARP trust boundaries, storm thresholds and IPv6 router-advertisement protection, then diagnose failures without disabling every control.
 objectives:
   v1: ["5.7"]

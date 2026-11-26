@@ -28,8 +28,8 @@
     "answer": [
       0
     ],
-    "explanation": "The configured B entry points to Fa0/1 rather than the actual path through Fa0/24. B-destined unicast from A therefore encounters same-port filtering, and the static entry survives a dynamic clear. This is not an old dynamic timer, destination-based learning or a host-ARP decision; remove the exact static configuration and verify the newly learned path.",
-    "fix": "```ios S1\nS1# configure terminal\nS1(config)# no mac address-table static 00bb.bbbb.bbbb vlan 1 interface fastethernet0/1\nS1(config)# end\nS1# clear mac address-table dynamic\n```\nPing B from A, then run `show mac address-table` on S1. Confirm B is learned dynamically on Fa0/24 and connectivity returns before saving. On a different topology, substitute the actual host MAC and configured interface rather than copying this example blindly."
+    "explanation": "The configured static entry for B points at Fa0/1, but B is really on Fa0/24, so A’s traffic hits same-port filtering. A static entry survives `clear mac address-table dynamic`.",
+    "fix": "```ios S1\nS1# configure terminal\nS1(config)# no mac address-table static 00bb.bbbb.bbbb vlan 1 interface fastethernet0/1\nS1(config)# end\nS1# clear mac address-table dynamic\n```\nPing B from A, then check `show mac address-table` for B learned dynamically on Fa0/24. Save after connectivity returns. On another topology, use the actual host MAC and interface."
   },
   {
     "id": "ethernet-switching-t02",
@@ -64,7 +64,7 @@
     "answer": [
       3
     ],
-    "explanation": "A knows B’s MAC, so it can send an ordinary unicast frame immediately. S1 lacks B’s entry and floods within the eligible VLAN ports while learning A from the request. B’s reply teaches B on Fa0/2, so later requests use known-unicast forwarding; the frame never needs a broadcast destination.",
-    "fix": "No repair is required for this controlled clear/relearn behavior. Confirm the destination MAC stays unicast, observe B’s reply creating the Fa0/2 entry, and verify subsequent requests use that port. If flooding continues unexpectedly, investigate why source learning is not retained rather than assuming the host ARP table and switch MAC table are the same."
+    "explanation": "A already knows B’s MAC, so it sends an ordinary unicast frame. S1 has no entry for B, so it floods the frame while learning A. B’s reply then teaches S1 that B is on Fa0/2.",
+    "fix": "No repair is needed; this is normal clear and relearn behavior. Confirm the destination MAC stays unicast, that B’s reply creates the Fa0/2 entry, and that later requests use that port. If flooding continues, find out why learning is not retained. Remember the host ARP table and the switch MAC table are different."
   }
 ]

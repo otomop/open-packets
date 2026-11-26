@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The line selects the local username method and the complete configuration contains no such account. A server definition, line password or accounting list does not populate that database. Correct the local identity through the retained console, then test a new VTY session and console recovery before saving.",
-    "fix": "In the disposable lab, from the retained privileged console:\n```ios\nBR1# configure terminal\nBR1(config)# username recovery privilege 15 secret Lab-Recovery-2026!\nBR1(config)# aaa authentication login CONSOLE local\nBR1(config)# line console 0\nBR1(config-line)# login authentication CONSOLE\nBR1(config-line)# end\n```\nTest a fresh recovery SSH login. Keep it open while verifying a fresh console login, then inspect every VTY range and save the intended configuration. Replace public examples with approved unique secrets outside a disposable lab."
+    "explanation": "The line selects the local method, and no local user exists. A server definition, line password or accounting list does not create local accounts.",
+    "fix": "From the privileged console in the lab:\n```ios\nBR1# configure terminal\nBR1(config)# username recovery privilege 15 secret Lab-Recovery-2026!\nBR1(config)# aaa authentication login CONSOLE local\nBR1(config)# line console 0\nBR1(config-line)# login authentication CONSOLE\nBR1(config-line)# end\n```\nTest a new SSH login, and keep it open while you test a new console login. Check every VTY range, then save. Use your own unique secrets outside a lab."
   },
   {
     "id": "aaa-tacacs-radius-t02",
@@ -62,7 +62,7 @@
     "answer": [
       0
     ],
-    "explanation": "The VTY explicitly selects default, which is local-only. The central-first VTY-AUTH list exists but does not participate. Binding that intended list preserves the separate local default and console policy; changing credentials or an unused group would not select it. Replacing the default list would change the scope of other users of default rather than implement the specified named binding.",
-    "fix": "Keep the tested local console session open:\n```ios\nR2# configure terminal\nR2(config)# line vty 0 4\nR2(config-line)# login authentication VTY-AUTH\nR2(config-line)# end\n```\nApply the intended binding to any additional existing VTY ranges. Test a fresh central success, explicit rejection, and controlled ERROR fallback while keeping console recovery. Save only after those results match policy."
+    "explanation": "The VTY lines use the default local-only list, so the central VTY-AUTH list is never used. Bind VTY-AUTH to the VTY lines. Changing the default list would affect other users of it.",
+    "fix": "Keep the console session open:\n```ios\nR2# configure terminal\nR2(config)# line vty 0 4\nR2(config-line)# login authentication VTY-AUTH\nR2(config-line)# end\n```\nApply the binding to any other VTY ranges. Test a central success, a rejection and an ERROR fallback while keeping the console open, then save."
   }
 ]

@@ -11,7 +11,7 @@
       "title": "Bounded ping result",
       "text": "Sending 5, 100-byte ICMP Echos; timeout 2 seconds:\n.!!!!\nSuccess rate: 80 percent (4/5)"
     },
-    "prompt": "What does this ping result establish?",
+    "prompt": "What does this ping result show?",
     "options": [
       "The destination enforced a four-reply ICMP limit for this source.",
       "One request did not receive a reply within its wait; the cause needs more evidence.",
@@ -21,11 +21,11 @@
     "answer": [
       1
     ],
-    "explanation": "The period reports a timeout and the four exclamation marks report replies. ARP startup delay is one possible explanation; repeat the test and correlate a current ARP/capture observation before assigning that cause.",
+    "explanation": "The period means one request timed out and each exclamation mark is an echo reply. The cause of the timeout needs more evidence.",
     "whyWrong": {
-      "0": "Four replies do not establish a configured response limit.",
-      "2": "No routing change is shown.",
-      "3": "The output contains no ARP observation."
+      "0": "Four replies do not show a configured reply limit.",
+      "2": "The output shows no routing change.",
+      "3": "The output contains no ARP information."
     }
   },
   {
@@ -40,7 +40,7 @@
       "title": "Ping response characters",
       "text": "R1# ping 10.0.50.1\nU.U.U\nSuccess rate: 0 percent"
     },
-    "prompt": "What conclusion follows from the U characters?",
+    "prompt": "What do the U characters in this ping mean?",
     "options": [
       "Destination-unreachable responses were reported for some probes.",
       "The source router had no usable interface for every probe.",
@@ -50,11 +50,11 @@
     "answer": [
       0
     ],
-    "explanation": "U indicates unreachable evidence, unlike a period indicating a wait expired. Inspect the ICMP source and code, then routing/policy, rather than infer one device or a fixed rate limiter from the pattern.",
+    "explanation": "U means a destination-unreachable message came back for that probe, unlike a period, which is a timeout. Check the source of the ICMP message and its code.",
     "whyWrong": {
-      "1": "The display does not establish all interfaces were unusable.",
-      "2": "Echo testing does not create an application connection.",
-      "3": "The pattern alone supplies neither the timer nor its location."
+      "1": "U does not mean every interface on the source router was unusable.",
+      "2": "A ping does not open an application connection.",
+      "3": "A U is an unreachable message, not a rate limiter."
     }
   },
   {
@@ -65,7 +65,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements correctly compare conventional IOS traceroute and Windows tracert? Select two.",
+    "prompt": "Which two statements correctly compare IOS traceroute and Windows tracert? Select two.",
     "options": [
       "IOS normally uses ICMP echo while Windows normally uses UDP.",
       "Windows tracert normally uses ICMP echo requests.",
@@ -76,10 +76,10 @@
       1,
       2
     ],
-    "explanation": "Both use increasing TTL to obtain transit time-exceeded responses. Their probe protocols differ, which matters when comparing source and policy paths.",
+    "explanation": "Both tools increase the TTL one hop at a time and collect time-exceeded replies. IOS traceroute sends UDP probes to high ports and Windows tracert sends ICMP echo requests.",
     "whyWrong": {
-      "0": "This reverses the conventional implementations described here.",
-      "3": "Different probe transports can elicit TTL-expiry responses; their policies may differ."
+      "0": "This reverses the two defaults.",
+      "3": "Both tools find hops with different probe types because each hop answers with time exceeded."
     }
   },
   {
@@ -101,10 +101,10 @@
       1,
       2
     ],
-    "explanation": "The tables describe different current mappings. Aging, clearing, and recent traffic affect their contents; neither alone certifies host addressing or all historical communication.",
+    "explanation": "A dynamic MAC table entry shows which port and VLAN learned a source MAC. An incomplete ARP entry means no reply has arrived yet.",
     "whyWrong": {
-      "0": "Entries can age or be cleared after earlier successful communication.",
-      "3": "MAC learning does not inspect the host mask/gateway as proof of correctness."
+      "0": "ARP entries age out or are cleared, so a missing entry does not show a reply was never received.",
+      "3": "MAC learning says nothing about the host's mask or gateway."
     }
   },
   {
@@ -120,7 +120,7 @@
       "title": "Routed Ethernet state",
       "text": "Gi0/1 10.0.99.1 YES manual down down"
     },
-    "prompt": "On this routed Ethernet interface, what should be investigated first?",
+    "prompt": "What should you check first on this routed Ethernet interface?",
     "options": [
       "Remove a local shutdown command, which this status explicitly proves.",
       "Change the IP mask before checking whether either end has carrier.",
@@ -130,11 +130,11 @@
     "answer": [
       3
     ],
-    "explanation": "Down/down directs attention to physical/link availability and the peer. It does not uniquely identify a cable defect; a local shutdown normally has the distinct administratively-down status.",
+    "explanation": "Down/down means the physical layer is down. Check the local media and the peer's link state; a local `shutdown` appears as administratively down instead.",
     "whyWrong": {
-      "0": "A local shutdown normally has the distinct administratively-down state.",
-      "1": "The IP mask does not restore physical link detection.",
-      "2": "The peer may be disabled or unpowered; this display does not isolate the cable."
+      "0": "A local shutdown shows administratively down, not down/down.",
+      "1": "A mask error does not affect carrier.",
+      "2": "Down/down can come from a disabled or unpowered peer, so it does not prove a bad cable."
     }
   },
   {
@@ -150,7 +150,7 @@
       "title": "Both-end duplex and current counters",
       "text": "SW1 Fa0/24: 100 Mb/s, half duplex; late collisions rose 40→65\nR1 Gi0/0: speed 100; duplex full"
     },
-    "prompt": "Which demonstrated problem should be corrected before further performance testing?",
+    "prompt": "Which problem should you fix first?",
     "options": [
       "Late collisions establish damaged copper regardless of the peer settings.",
       "The displayed half/full settings establish a duplex mismatch.",
@@ -160,11 +160,11 @@
     "answer": [
       1
     ],
-    "explanation": "Half duplex at SW1 and full duplex at R1 establishes a mismatch. Coordinate matching supported settings at both ends, then compare new error increments; clean CRC alone does not certify media.",
+    "explanation": "The exhibit shows half duplex on SW1 and full duplex on R1, which is a duplex mismatch. Set matching duplex on both ends.",
     "whyWrong": {
-      "0": "The configuration directly establishes duplex disagreement; the counter alone cannot isolate copper damage.",
+      "0": "Late collisions here result from the mismatch, not damaged copper.",
       "2": "Late collisions are not output-queue drops.",
-      "3": "Both displayed speeds match at 100 Mb/s."
+      "3": "Both ends show 100 Mb/s, so the speeds match."
     }
   },
   {
@@ -179,7 +179,7 @@
       "title": "Trace with a silent intermediate hop",
       "text": "1 10.0.99.2 1 ms\n2 * * *\n3 203.0.113.10 4 ms"
     },
-    "prompt": "A web application is slow. Which interpretation of this trace is justified?",
+    "prompt": "A web application is slow. What does this traceroute show?",
     "options": [
       "The destination replies certify that HTTP performance is normal.",
       "The three stars establish three seconds of forwarding delay for each user packet.",
@@ -189,11 +189,11 @@
     "answer": [
       3
     ],
-    "explanation": "A star is a missing probe response within the wait. Later replies weaken the claim of a complete path break, but load sharing, response policy, and application behavior still require investigation.",
+    "explanation": "A star means a probe got no reply within the wait, and later hops answered. Stars in the middle therefore do not show a forwarding break.",
     "whyWrong": {
-      "0": "Traceroute does not test the HTTP transaction.",
-      "1": "A response timeout is not a measurement of per-packet forwarding delay.",
-      "2": "Later responses contradict an assertion that all traffic necessarily stops there."
+      "0": "Traceroute does not test HTTP performance.",
+      "1": "A timeout is not a measurement of forwarding delay.",
+      "2": "Later hops replied, so traffic is not stopping at the third router."
     }
   },
   {
@@ -209,7 +209,7 @@
       "title": "Logging threshold and two messages",
       "text": "logging trap warnings\n%LINK-3-UPDOWN: Gi0/1 changed state to down\n%LINEPROTO-5-UPDOWN: Gi0/1 line protocol changed state to down"
     },
-    "prompt": "Which shown message is eligible for remote syslog at the configured threshold?",
+    "prompt": "Which message does this threshold send to the remote syslog server?",
     "options": [
       "Neither message is selected because warnings means exactly severity 4.",
       "Only the severity-5 LINEPROTO message is selected by this threshold.",
@@ -219,10 +219,10 @@
     "answer": [
       3
     ],
-    "explanation": "Warnings admits severity 4 and lower-numbered, more severe messages. This selects the severity-3 message; actual receipt still requires a working logging path.",
+    "explanation": "A logging threshold includes the named level and all more severe (lower-numbered) levels. Warnings is severity 4, so the severity-3 message is sent.",
     "whyWrong": {
-      "0": "The threshold includes more severe levels, not just exact level 4.",
-      "1": "Severity 5 is less severe than the configured level 4 threshold.",
+      "0": "The threshold includes severities 0 to 4, not only 4.",
+      "1": "Severity 5 is less severe than the warnings threshold.",
       "2": "Each message is filtered by its own severity."
     }
   },
@@ -238,7 +238,7 @@
       "title": "Client-side TCP exchange",
       "text": "10.0.10.50:49153 → 10.0.20.10:8080 SYN\n10.0.20.10:8080 → 10.0.10.50:49153 RST,ACK"
     },
-    "prompt": "What does this client-side TCP observation support?",
+    "prompt": "What does this client-side TCP capture show?",
     "options": [
       "A matching reset was received; identify the generating endpoint or intermediary before attributing the refusal.",
       "The reset proves the client cannot receive any packet from that direction.",
@@ -248,11 +248,11 @@
     "answer": [
       0
     ],
-    "explanation": "The reset is an active response, unlike silence. A firewall or intermediary can generate resets using the endpoint address, so correlate server-side capture and service status before declaring the server process at fault.",
+    "explanation": "A matching reset is an active reply, unlike a silent drop. A firewall can send resets too, so check the server side before blaming the server.",
     "whyWrong": {
       "1": "The reset itself arrived from that direction.",
-      "2": "The matching RST is an observed response.",
-      "3": "The observed source address alone does not exclude an intermediary."
+      "2": "A matching RST is a response, not silence.",
+      "3": "The source address of a reset does not prove the server sent it."
     }
   },
   {
@@ -267,7 +267,7 @@
       "title": "Received ICMP error",
       "text": "10.0.99.2 → 10.0.10.50\nICMP Destination Unreachable: communication administratively prohibited (type 3, code 13)"
     },
-    "prompt": "Which next check is supported by the received ICMP error?",
+    "prompt": "What should you check next, given this received ICMP error?",
     "options": [
       "Replace the missing default route that this code uniquely identifies.",
       "Correct the expired TTL that is explicitly reported in this message.",
@@ -277,10 +277,10 @@
     "answer": [
       2
     ],
-    "explanation": "Type 3 code 13 reports administrative prohibition. It supports investigating policy, but does not identify one exact ACL line without further configuration/counter evidence.",
+    "explanation": "Type 3 code 13 means communication is administratively prohibited. Look at the access policy on the reporting device.",
     "whyWrong": {
-      "0": "No-route evidence would be a different unreachable reason.",
-      "1": "TTL expiry uses time-exceeded rather than this administrative prohibition.",
+      "0": "A missing route gives a different unreachable code.",
+      "1": "TTL expiry is a time-exceeded message, not this one.",
       "3": "Host unreachable is a different code."
     }
   },
@@ -292,7 +292,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "On supporting IOS, which bounded command compares a 1500-byte IPv4 datagram with the path MTU?",
+    "prompt": "Which IOS ping tests whether a 1500-byte IPv4 packet passes the path without fragmenting?",
     "options": [
       "ping 10.0.20.10 source 10.0.10.1 repeat 5 size 1500 df-bit",
       "ping 10.0.20.10 source 10.0.10.1 repeat 5 size 1472",
@@ -302,11 +302,11 @@
     "answer": [
       0
     ],
-    "explanation": "IOS size specifies the datagram size in this command and df-bit prevents fragmentation. A received fragmentation-needed error is informative; a timeout alone does not prove the MTU value.",
+    "explanation": "`size 1500` sets the datagram size and `df-bit` forbids fragmentation, so a smaller path MTU produces an error or a timeout.",
     "whyWrong": {
-      "1": "That requests a different IOS datagram size, not 1500.",
-      "2": "A 100-byte datagram does not perform the requested large-size comparison.",
-      "3": "Without DF, IPv4 fragmentation can occur."
+      "1": "Size 1472 is not a 1500-byte datagram, and DF is not set.",
+      "2": "A 100-byte packet does not test a large size.",
+      "3": "Without DF, the router can fragment the packet."
     }
   },
   {
@@ -321,7 +321,7 @@
       "title": "Two independent switch-port conditions",
       "text": "Fa0/3: err-disabled\nFa0/4: inactive, configured access VLAN 30\nshow vlan brief: VLAN 30 absent"
     },
-    "prompt": "The design requires VLAN 30 on Fa0/4. Which action pair follows the supplied evidence?",
+    "prompt": "The design requires VLAN 30 on Fa0/4, and Fa0/3 is err-disabled. Which pair of actions fits the evidence?",
     "options": [
       "Move both ports to an existing VLAN without checking their intended subnets.",
       "Replace both cables before inspecting the recorded state and VLAN database.",
@@ -331,11 +331,11 @@
     "answer": [
       2
     ],
-    "explanation": "Err-disabled requires its recorded cause and corrective action before controlled recovery. The explicit VLAN inventory identifies the missing intended VLAN for Fa0/4; do not move clients into an unrelated network.",
+    "explanation": "Find out why Fa0/3 was err-disabled before bringing it back up. The VLAN list shows VLAN 30 is missing, so create it for Fa0/4.",
     "whyWrong": {
-      "0": "That changes the documented VLAN design without repairing its missing object.",
-      "1": "The two displayed conditions do not establish physical cable damage.",
-      "3": "Recovery without resolving the triggering cause can repeat the failure."
+      "0": "Moving ports to another VLAN changes the design and leaves VLAN 30 missing.",
+      "1": "The evidence does not point to cable damage.",
+      "3": "Re-enabling without finding the cause can trigger the same err-disable again."
     }
   },
   {
@@ -346,7 +346,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which statement describes errors during the measured interval?",
+    "prompt": "What happened to CRC errors during the measured interval?",
     "options": [
       "There were 900 new CRC errors during this transfer.",
       "The retained total proves that the present cable must be replaced.",
@@ -356,11 +356,11 @@
     "answer": [
       3
     ],
-    "explanation": "The CRC counter remained 900, so its delta is zero. Preserve that distinction between history and this test; a clean delta on one interface is not an end-to-end certification.",
+    "explanation": "The CRC counter stayed at 900, so there were no new CRC errors during the test. The 900 is the retained total.",
     "whyWrong": {
-      "0": "Nine hundred is the retained total, not the difference.",
-      "1": "The retained count lacks evidence of a current cable fault.",
-      "2": "One receive count cannot prove delivery across the whole path."
+      "0": "900 is the retained total, not new errors.",
+      "1": "An old total does not prove a present cable fault.",
+      "2": "One interface's counter does not show loss elsewhere on the path."
     },
     "exhibit": {
       "kind": "cli",
@@ -375,7 +375,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "What should the investigation focus on next for this transaction?",
+    "prompt": "The TCP connection completes and the server returns an application error. Where should you investigate next?",
     "options": [
       "Inspect the responding application and its dependencies for the reported failure.",
       "Change the client resolver and repeat the same lookup before examining the service.",
@@ -385,11 +385,11 @@
     "answer": [
       0
     ],
-    "explanation": "The completed connection and received application response prove more than a ping. The service reports temporary unavailability for this request; investigate that service and its dependencies without declaring unrelated traffic healthy.",
+    "explanation": "A completed connection and an application response show the network path works. Investigate the service and its dependencies.",
     "whyWrong": {
-      "1": "The observed lookup already returned the approved address.",
-      "2": "A complete TCP exchange and HTTP response do not justify this route change.",
-      "3": "The request received an explicit response; this is not an uncompleted TCP connection attempt."
+      "1": "The lookup already returned the approved address.",
+      "2": "A complete TCP exchange does not need a new route.",
+      "3": "The request got a response, so it did not time out."
     },
     "exhibit": {
       "kind": "cli",
@@ -404,7 +404,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which evidence is still required before closing the incident?",
+    "prompt": "Which evidence do you still need before closing the incident?",
     "options": [
       "A repeat of R1's successful directly connected peer ping.",
       "A screenshot showing the exact intended configuration line.",
@@ -414,11 +414,11 @@
     "answer": [
       2
     ],
-    "explanation": "A route change and router test do not cover the affected client's whole path or application. Retest its original service and record the source, destination/name, result and any remaining limitation.",
+    "explanation": "A router test and a route change do not prove the client's whole path works. Retest the original service from the affected client and record the result.",
     "whyWrong": {
-      "0": "The local router test exercises a narrower path.",
-      "1": "Configuration shows intent, not successful delivery.",
-      "3": "A restart is not an acceptance test and may erase useful evidence."
+      "0": "A router's own ping tests a narrower path.",
+      "1": "A configuration line shows intent, not delivery.",
+      "3": "A restart is not an acceptance test and can erase useful evidence."
     },
     "exhibit": {
       "kind": "cli",
@@ -438,7 +438,7 @@
       "title": "Same DHCP attempt at two capture points",
       "text": "Server-side: relayed Discover received; Offer sent to giaddr 10.0.10.1\nClient-side: Discover transmitted; no Offer observed in the same interval"
     },
-    "prompt": "Which conclusion is justified by these captures from the same fresh DHCP attempt?",
+    "prompt": "These captures come from the same DHCP attempt. What should you investigate?",
     "options": [
       "Investigate delivery of the Offer from the server through the relay to the client.",
       "The client certainly received the ACK but lost its default gateway setting.",
@@ -448,11 +448,11 @@
     "answer": [
       0
     ],
-    "explanation": "The server-side observation shows an outgoing Offer while the client-side view does not show receipt. Narrow the investigation to return and relay delivery, including capture coverage; do not assert a unique fault yet.",
+    "explanation": "The server sent an Offer, but the client never saw it. Check the relay and the return path for the Offer.",
     "whyWrong": {
-      "1": "No ACK receipt is shown.",
-      "2": "A forwarded Discover and outgoing reply have already been observed.",
-      "3": "An outgoing Offer contradicts the claim that none was constructed."
+      "1": "No ACK was received.",
+      "2": "The Discover was forwarded and a reply left the server, so the helper works.",
+      "3": "The server did send an Offer, so its pool matched."
     }
   },
   {
@@ -462,7 +462,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which follow-up preserves the useful distinction between the two probe results?",
+    "prompt": "A DF-bit ping returns a fragmentation-needed error, and a smaller ping succeeds. Which follow-up fits?",
     "options": [
       "Treat the error as evidence of a size constraint; inspect the reported MTU and a smaller DF probe.",
       "Treat both tests as proof that the server is down at every packet size.",
@@ -472,11 +472,11 @@
     "answer": [
       0
     ],
-    "explanation": "A received fragmentation-needed error positively reports a constraint for that DF packet. Correlate its source and any next-hop MTU value, then compare a smaller packet with the same source and destination; fragmentation-permitted success answers a different question.",
+    "explanation": "A fragmentation-needed error reports an MTU limit on the path. Note the reporting device and its MTU, then retest with a smaller DF packet.",
     "whyWrong": {
-      "1": "The smaller probe already received replies.",
-      "2": "The test already uses a numeric address.",
-      "3": "Fragmented delivery does not verify the original unfragmented requirement."
+      "1": "The smaller probe got replies, so the server is up.",
+      "2": "The test already uses a numeric address, so DNS is not involved.",
+      "3": "A reply after removing DF does not show the original unfragmented size passes."
     },
     "exhibit": {
       "kind": "cli",
@@ -492,7 +492,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which incident note is defensible before comparing these event times?",
+    "prompt": "Two devices' logs show events with different clock times. What should you do before ordering them?",
     "options": [
       "R2 must have caused R1's event because its printed time is earlier.",
       "Record each clock's uncertainty and correlate a shared observation before ordering the events.",
@@ -502,11 +502,11 @@
     "answer": [
       1
     ],
-    "explanation": "Different unverified clocks do not provide a reliable cross-device timeline. Preserve their original text and obtain synchronization/offset or a shared observation before asserting which event preceded the other.",
+    "explanation": "Device clocks that are not synchronized cannot order events across devices. Record each clock's offset or find a shared event first.",
     "whyWrong": {
-      "0": "Printed times on unverified clocks do not establish causality.",
-      "2": "Collection paths and buffering can change arrival order.",
-      "3": "The difference includes unknown clock offsets."
+      "0": "An earlier time on an unverified clock does not prove cause.",
+      "2": "Arrival order at the collector depends on buffering and paths.",
+      "3": "The difference includes unknown clock offset, so it is not propagation delay."
     },
     "exhibit": {
       "kind": "cli",
@@ -521,7 +521,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which narrow next action fits the remaining failure?",
+    "prompt": "The route is fixed and the numeric-address service works, but the name still resolves wrongly. What is the next action?",
     "options": [
       "Undo the route repair and return to investigating the original missing route.",
       "Correct the stale DNS record, then test a fresh answer and the named application.",
@@ -531,11 +531,11 @@
     "answer": [
       1
     ],
-    "explanation": "The restored numeric-address service and fresh wrong answer identify a separate DNS-data problem. Preserve both findings and validate the original name-based service after correcting the record.",
+    "explanation": "The numeric service works and the DNS answer is still wrong, so the DNS record is a separate fault. Correct the record, then test a fresh answer and the named service.",
     "whyWrong": {
-      "0": "The repaired path now carries the numeric-address service, and the DNS data shows a separate fault.",
-      "2": "A fresh direct response from the resolver is already wrong; a client cache clear does not repair that configured record.",
-      "3": "The approved server remains .10, so renumbering it to match stale DNS changes the design unnecessarily."
+      "0": "The route fix worked, so the original route problem is solved.",
+      "2": "The resolver itself returns the wrong answer, so a client cache clear does not fix it.",
+      "3": "The server stays at .10, and renumbering it to match stale DNS changes the design."
     },
     "exhibit": {
       "kind": "cli",
@@ -551,7 +551,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which two conclusions are supported before a repair is chosen? Choose two.",
+    "prompt": "Which two conclusions does the evidence support? Choose two.",
     "options": [
       "This interface has counted new outgoing drops during the interval.",
       "The clean CRC count certifies every cable in the network.",
@@ -563,11 +563,11 @@
       0,
       4
     ],
-    "explanation": "Current outgoing drops and a full egress queue point toward congestion at this observation point. They do not uniquely identify its source, prescribe one fix, or certify the rest of the path.",
+    "explanation": "New outgoing drops and a full egress queue indicate congestion on this interface's output. They do not show the source of the load or prove the rest of the path is clean.",
     "whyWrong": {
-      "1": "A clean receive counter on one interface does not certify all media.",
-      "2": "Traffic demand, scheduling and downstream capacity still matter.",
-      "3": "The stated duplex settings agree."
+      "1": "A clean counter on one interface does not certify other cables.",
+      "2": "A larger buffer does not guarantee recovery.",
+      "3": "Both ends show full duplex, so there is no mismatch."
     },
     "exhibit": {
       "kind": "cli",
@@ -587,7 +587,7 @@
       "title": "Tests with different source addresses",
       "text": "R1 source 10.0.99.1 → 10.0.20.10: success\nR1 source 10.0.10.1 → 10.0.20.10: failure\nPC-A 10.0.10.50/24: local gateway ping succeeds"
     },
-    "prompt": "R1 can ping the server from its transit source, but not from its LAN source. What should the engineer check next?",
+    "prompt": "R1 can ping the server from its transit source but not from its LAN source. What should you check next?",
     "options": [
       "Retest from the transit source and close the issue if it succeeds again.",
       "Add another R1 route to the server subnet before checking the reply destination.",
@@ -597,11 +597,11 @@
     "answer": [
       2
     ],
-    "explanation": "Changing the source changes the return destination and may change policy handling. The failed sourced test supports investigating those differences; it does not alone prove a missing route.",
+    "explanation": "The source address becomes the reply destination, so a different source can use a different return route or policy. Check the server's return route and any source-based policy for the LAN source.",
     "whyWrong": {
-      "0": "The transit source does not test replies toward the failed LAN source.",
-      "1": "The successful transit-source test and changed reply destination call for return/policy investigation before another forward-route change.",
-      "3": "The failed router-originated LAN-source test does not traverse the PC access cable."
+      "0": "A second pass from the transit source does not test the LAN source.",
+      "1": "The forward route works for the transit source, so check the return path first.",
+      "3": "A router-originated test does not use the PC's access cable."
     }
   },
   {
@@ -611,7 +611,7 @@
       "v2:2.4"
     ],
     "difficulty": 3,
-    "prompt": "Which next measurement best tests whether the observed capture gap is actual path loss?",
+    "prompt": "An analyzer shows gaps in a TCP capture. Which measurement best tests whether packets were actually lost on the path?",
     "options": [
       "Count the analyzer warnings and report that count as packets lost on the server link.",
       "Run a short ping after the transfer and use its loss percentage as the TCP loss rate.",
@@ -621,11 +621,11 @@
     "answer": [
       3
     ],
-    "explanation": "The analyzer reports what its captured sequence history lacks. The capture itself dropped packets, so corroborate the same flow elsewhere before attributing loss to a network link.",
+    "explanation": "Gaps in a capture can mean the capture itself missed packets. Compare a complete capture of the same flow at a second point.",
     "whyWrong": {
-      "0": "The capture dropped packets itself, so missing sequence history does not count losses on an identified network link.",
-      "1": "A later ICMP sample is not the same TCP flow or observation interval.",
-      "2": "A different flow may take different treatment and does not corroborate the missing sequence history."
+      "0": "Analyzer warnings count missing capture data, not packets lost on a link.",
+      "1": "A later ping is not the same flow or time.",
+      "2": "A different flow can be treated differently."
     },
     "exhibit": {
       "kind": "cli",
@@ -640,7 +640,7 @@
       "v2:2.4"
     ],
     "difficulty": 3,
-    "prompt": "Which next check most directly separates a wrong server return next hop from a forward-path failure?",
+    "prompt": "The request reaches the server but no reply returns. Which check best separates a wrong return next hop from a forward-path failure?",
     "options": [
       "Install another R2 route to the client subnet before examining the server route.",
       "Inspect the server's selected route and neighbor resolution for the client reply.",
@@ -650,11 +650,11 @@
     "answer": [
       1
     ],
-    "explanation": "The server-side capture confirms the tested request arrived. Its route and selected next-hop resolution are now useful discriminators for the missing reply; the capture alone does not establish whether the application generated one.",
+    "explanation": "The server received the request, so check the server's route and neighbor entry for the reply to the client.",
     "whyWrong": {
-      "0": "A matching R2 return route is already supplied; the server next-hop choice is the missing dependency under investigation.",
-      "2": "A reply to R2 uses a different destination and does not settle how the server returns to the client.",
-      "3": "The request reached the server, so the unresolved return next hop is more directly discriminating here."
+      "0": "R2 already has a return route, and the server's next hop is the open question.",
+      "2": "A ping to R2 uses a different destination than the client reply.",
+      "3": "The request arrived, so the client gateway's ARP is not the issue."
     },
     "exhibit": {
       "kind": "cli",
@@ -669,7 +669,7 @@
       "v2:2.4"
     ],
     "difficulty": 3,
-    "prompt": "What is the most useful next test for the original client failure?",
+    "prompt": "A service test works from the router source but fails for the client. What should you check next?",
     "options": [
       "Capture only R1-originated replies and use them to clear the client access path.",
       "Repeat the router-source service test until five successive attempts pass.",
@@ -679,16 +679,117 @@
     "answer": [
       2
     ],
-    "explanation": "The router-source test does not traverse the client-facing ingress path and uses a different source address. Compare the actual client flow and both policy directions before concluding the paths are equivalent.",
+    "explanation": "The router test uses a different source address and skips the client-facing ingress path. Compare the policy and ingress path that the client's traffic uses.",
     "whyWrong": {
-      "0": "Router-originated replies do not establish treatment of the actual client source or ingress.",
-      "1": "Repeated router tests still omit client ingress and use a different source.",
-      "3": "The supplied source/path difference deserves investigation before changing a client timer."
+      "0": "Router-originated replies say nothing about the client's source or ingress.",
+      "1": "Repeating the router test still avoids the client path.",
+      "3": "A timer change does not address the source and path difference."
     },
     "exhibit": {
       "kind": "cli",
       "title": "Different-origin test paths",
       "text": "PC-A reaches its gateway but cannot reach a remote service.\nR1 reaches that service with source set to its LAN interface address.\nPC-A's address, mask and gateway match the plan.\nClient-source policy and ingress handling have not been checked."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q27",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What are the IOS ping defaults?",
+    "options": [
+      "Five 100-byte packets with a two-second timeout",
+      "Four 32-byte packets with a four-second timeout",
+      "Five 1500-byte packets with a one-second timeout",
+      "Ten 64-byte packets with a two-second timeout"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "IOS ping sends five 100-byte ICMP echo packets and waits two seconds for each reply.",
+    "whyWrong": {
+      "1": "Four 32-byte packets is the Windows default.",
+      "2": "IOS defaults to 100-byte packets and a two-second timeout.",
+      "3": "IOS sends five packets by default."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q28",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What happens to a link when the two ends are set to different fixed speeds?",
+    "options": [
+      "The link stays down",
+      "The link comes up with late collisions",
+      "The link comes up and runs at the lower speed",
+      "The link comes up with CRC errors only"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A speed mismatch leaves the link down. A duplex mismatch brings the link up with late collisions on the half-duplex end.",
+    "whyWrong": {
+      "1": "Late collisions are the sign of a duplex mismatch, not a speed mismatch.",
+      "2": "Mismatched fixed speeds do not negotiate down to the lower speed.",
+      "3": "CRC errors on the full-duplex end belong to a duplex mismatch."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q29",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An interface was shut down with the `shutdown` command. Which status pair does it show?",
+    "options": [
+      "administratively down/down",
+      "down/down (no carrier)",
+      "up/down (protocol down)",
+      "up/up (working link)"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A locally shut interface shows administratively down/down. Down/down means no carrier, and up/down means a Layer 2 problem.",
+    "whyWrong": {
+      "1": "Down/down means the physical layer is down, not that the interface was shut down by command.",
+      "2": "Up/down means the physical link is up but the line protocol is down.",
+      "3": "Up/up is a working interface."
+    }
+  },
+  {
+    "id": "troubleshooting-toolkit-q30",
+    "type": "single",
+    "objectives": [
+      "v2:2.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which syslog severity is level 0?",
+    "options": [
+      "Emergencies",
+      "Alerts",
+      "Critical",
+      "Debugging"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Severity 0 is emergencies, the most severe. Severity 7 is debugging.",
+    "whyWrong": {
+      "1": "Alerts is severity 1.",
+      "2": "Critical is severity 2.",
+      "3": "Debugging is severity 7."
     }
   }
 ]

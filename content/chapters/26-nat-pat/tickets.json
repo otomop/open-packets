@@ -31,8 +31,8 @@
     "answer": [
       1
     ],
-    "explanation": "The NAT interface lists match the intended LAN and outside paths. ACL 1 instead selects 10.20.3.0/24, so fresh 10.20.30.x sources do not match it. The explicit mismatch establishes the error; zero counters alone would not. Untranslated traffic lacks the stated return route. The outside address is present and the confirmed reachable next hop rules out the other proposed forwarding cause.",
-    "fix": "Because this lab confirms ACL 1 is used only by NAT, replace its incorrect selector.\n\n```ios\nEDGE# configure terminal\nEDGE(config)# no access-list 1\nEDGE(config)# access-list 1 permit 10.20.30.0 0.0.0.255\nEDGE(config)# end\nEDGE# show access-lists 1\n```\n\nGenerate a fresh request from a LAN client, then run `show ip nat translations`. Verify that its global address is 198.51.100.1 and that the actual application receives its expected response before saving."
+    "explanation": "ACL 1 permits 10.20.3.0/24, but the clients are on 10.20.30.0/24, so their traffic does not match and is not translated. The interface roles are correct.",
+    "fix": "Replace the incorrect ACL entry.\n\n```ios\nEDGE# configure terminal\nEDGE(config)# no access-list 1\nEDGE(config)# access-list 1 permit 10.20.30.0 0.0.0.255\nEDGE(config)# end\nEDGE# show access-lists 1\n```\n\nSend a fresh request from a LAN client and run show ip nat translations. Confirm the global address is 198.51.100.1 and the application responds, then save."
   },
   {
     "id": "nat-pat-t02",
@@ -66,7 +66,7 @@
     "answer": [
       2
     ],
-    "explanation": "The pool addresses are outside the connected .0/30. Without a more specific route, CORE selects its upstream default for the confirmed arriving replies, sending them away from EDGE. The capture and routing evidence establish that forwarding error; one-sided NAT debug alone would not prove it. The supplied outside /30 identifies EDGE's address, and fresh mappings contradict selector exclusion. The /30 covers .0–.3, so it does not include .20–.23.",
-    "fix": "Install the route to the pool block through the directly connected EDGE address.\n\n```ios\nCORE# configure terminal\nCORE(config)# ip route 198.51.100.16 255.255.255.240 198.51.100.1\nCORE(config)# end\nCORE# show ip route 198.51.100.20\n```\n\nRepeat the same client request. Verify CORE now selects the /28 toward EDGE, the reply is reverse-translated, and the application succeeds. Save after verification. No counter or debug line by itself substitutes for these observations."
+    "explanation": "The pool .20 to .23 is outside the connected /30, so CORE sends replies to its default route instead of EDGE. Add a route for the pool block toward EDGE.",
+    "fix": "Add the route to the pool block.\n\n```ios\nCORE# configure terminal\nCORE(config)# ip route 198.51.100.16 255.255.255.240 198.51.100.1\nCORE(config)# end\nCORE# show ip route 198.51.100.20\n```\n\nRepeat the client request. Confirm CORE now routes the /28 toward EDGE and the application works, then save."
   }
 ]

@@ -5,7 +5,7 @@ title: EtherChannel
 subtitle: Build and verify LACP bundles without confusing aggregate capacity with one flow.
 part: switching
 domain: switching
-minutes: { lesson: 55, lab: 75 }
+minutes: { lesson: 55, lab: 40 }
 summary: Explain LACP negotiation, compatible member settings, Layer 2 and Layer 3 port channels, endpoint teaming requirements, and traffic distribution; configure, verify, fault, and restore both bundle types.
 objectives:
   v1: ["2.4"]

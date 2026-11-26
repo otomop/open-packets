@@ -45,10 +45,10 @@ There is no account and no server. Your progress is saved in your browser, and y
 |---|---|---|
 | **Lessons** | Chapters in nine parts, from network models to automation, each split into short sections with diagrams and key facts | 46 chapters |
 | **Guided labs** | A step-by-step Packet Tracer lab in every chapter, with a topology, the commands to type and what you should see | 46 labs |
-| **Practice** | Exam-style questions with an explanation for every option. Questions you miss come back until you get them right | 1,009 questions |
+| **Practice** | Exam-style questions with an explanation for every option. Questions you miss come back until you get them right | 1,182 questions |
 | **Flashcards** | Spaced repetition: grade each card and it returns when you are about to forget it | 1,012 cards |
-| **Command drill** | Type the IOS command for a task, with the prompt and mode shown | 245 drills |
-| **Tickets** | Troubleshooting scenarios: read the evidence, then name the cause | 94 tickets |
+| **Command drill** | Type the IOS command for a task, with the prompt and mode shown | 254 drills |
+| **Tickets** | Troubleshooting scenarios: read the evidence, then name the cause | 93 tickets |
 | **Subnetting trainer** | Generated IPv4 and IPv6 problems with a worked walkthrough for each | Unlimited |
 | **Study plan and blueprint map** | A weekly plan paced to your exam date, and every exam objective linked to the chapters that teach it | Both exam versions |
 

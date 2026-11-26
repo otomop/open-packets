@@ -2,9 +2,9 @@
 title: Configure local accounts and SSH, diagnose a refusal, and restore access
 environment: packet-tracer
 devices: ["1 × ISR 2911 (R1)", "1 × Catalyst 2960-24TT (SW1)", "1 × PC-PT (ADMIN)", "1 × Laptop-PT (CONSOLE)"]
-minutes: 70
+minutes: 45
 ---
-You will take a new router from "no password, console only" to the policy the lesson described: named users, a protected console, and SSH-only remote access. Then you break remote access on purpose and repair it from the console, which is why the console session stays open throughout. Build this as a new Packet Tracer project. The credentials shown are for this lab only. Outputs are representative; your release may word them differently.
+You will take a new router from "no password, console only" to the policy the lesson described: named users, a protected console, and SSH-only remote access. The core lab, Steps 1–8, takes about 45 minutes: you build and test that policy, verify both access paths and save. The optional extension, Steps 9–11, adds about 25 minutes: you change the remote idle timeout, then break remote access on purpose and repair it from the console. Keep the console session open throughout; it is your way back in. Build this as a new Packet Tracer project. The credentials shown are for this lab only. Outputs are representative; your release may word them differently.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
@@ -200,7 +200,62 @@ Finally try `telnet 10.8.0.1` from ADMIN.
 {"status":"Both users verified","tone":"ok","focus":["P","R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"SSHv2 · VTY ssh only","tone":"ok"}],"flows":[{"path":["P","S","R"],"back":true,"label":"ssh -l trainee 10.8.0.1","tags":{"R":"trainee · level 1, enable → 15"}},{"path":["P","S","R"],"back":true,"label":"ssh -l admin 10.8.0.1","tags":{"R":"admin · privilege 15 at login"}},{"path":["P","S","R"],"label":"telnet 10.8.0.1","stop":"R","stopText":"No Telnet session · SSH-only VTY"}],"rows":[["trainee","Level 1, then 15 after enable","ok"],["admin","Level 15 at login","ok"],["Telnet","No terminal session","ok"]]}
 ```
 
-## Step 7: Complete a changed line requirement
+## Step 7: Verify the complete access policy
+
+Open a new SSH session from ADMIN as `admin`. From the console, inspect the active sessions while that SSH session is open.
+
+```ios R1
+R1# show users
+R1# show ssh
+R1# show ip ssh
+R1# show running-config | section line vty
+```
+
+Note the user, the line and the client address shown. Now test a fresh console login while ADMIN's SSH session stays open as your way back in. At the console, enter `exit` at `R1#`, press Enter to start a new session, and sign in as `admin` with `AdminLabSecret8`. Closing and reopening the terminal window is not a logout. If either session reaches its idle timeout first, log in again. When both paths are verified, log out of the SSH session on ADMIN.
+
+:::expected
+`show users` lists the console and the VTY session with ADMIN's address, `show ssh` lists the SSH session, `show ip ssh` shows the server state, and the last command shows the line settings. The new console login accepts the `admin` account.
+:::
+
+```state
+{"status":"Both paths verified","tone":"ok","focus":["L","P","R"],"chips":[{"node":"R","text":"SSHv2 · VTY ssh only","tone":"ok"}],"flows":[{"path":["P","S","R"],"back":true,"label":"ADMIN's open SSH session","tags":{"R":"admin on a VTY line"}},{"path":["L","R"],"back":true,"with":true,"tone":"alt","label":"Fresh console login","tags":{"R":"login local · admin accepted"}}],"rows":[["show users","User, line, any client address"],["show ssh · show ip ssh","Sessions · server state"],["Console login","admin accepted","ok"],["VTY review","Every range, not just one"]]}
+```
+
+## Step 8: Save the verified configuration
+
+Save only after both access paths work.
+
+```ios R1
+R1# copy running-config startup-config
+```
+
+Press Enter at the destination filename prompt and wait for the command to finish. Once `R1#` returns, inspect the saved configuration:
+
+```ios R1
+R1# show startup-config
+```
+
+Save the Packet Tracer project as `08-secure-device-access.pkt`.
+
+:::expected
+The saved configuration includes the users, the interface address, the SSH settings and the line settings, with `transport input ssh` on every VTY range. This completes the core lab; Steps 9–11 are the optional extension.
+:::
+
+Before the challenge, check that you saw each of these yourself:
+
+| Requirement | What you observed |
+|---|---|
+| Console recovery | A new console login while the SSH session was still open |
+| Two privilege levels | `trainee` at 1 and `admin` at 15 in new sessions |
+| SSH only | A new SSH login accepted and Telnet refused |
+| Every line covered | All VTY ranges set to `login local` and `transport input ssh` |
+| Saved | The repaired settings in `show startup-config` |
+
+```state
+{"status":"Configuration saved","tone":"ok","focus":["R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"Saved · startup-config","tone":"ok"}],"rows":[["startup-config","Users, interface, SSH, lines","ok"],["VTY lines","transport input ssh","ok"],["Project","08-secure-device-access.pkt"]]}
+```
+
+## Step 9: Extension: Complete a changed line requirement
 
 The administrator now requires a **three-minute remote EXEC idle timeout**, while the console must remain at five minutes. Keep SSH-only transport and local-user authentication. Write the commands yourself before you open the reference below, then apply them through the console to every VTY range.
 
@@ -224,7 +279,7 @@ The VTY ranges show `exec-timeout 3 0`, while the console still shows `exec-time
 {"status":"VTY timeout 3 minutes","tone":"ok","focus":["R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"SSHv2 · VTY ssh only","tone":"ok"}],"flows":[{"event":["R"],"wait":1.6,"tags":{"R":"VTY exec-timeout 3 0"}},{"path":["P","S","R"],"back":true,"label":"Fresh admin login","tags":{"R":"Fresh admin login succeeds"}}],"rows":[["Every VTY range","exec-timeout 3 0","ok"],["Console","exec-timeout 5 0","ok"],["Unchanged","login local · transport input ssh"],["Fresh login","Not a timer measurement","dim"]]}
 ```
 
-## Step 8: Introduce a remote-transport fault
+## Step 10: Extension: Introduce a remote-transport fault
 
 Confirm that ADMIN has exited its SSH session. On the console, set the incoming transport to `none` on every VTY range, which makes the lines accept no remote protocol at all. Do not save this fault.
 
@@ -250,7 +305,7 @@ Ping still succeeds, and on the console `show ip ssh` still reports the server e
 {"status":"SSH refused","tone":"bad","focus":["R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"SSHv2 · VTY ssh only","tone":"ok","until":0},{"node":"R","text":"SSH server on · VTY none","tone":"bad","from":0}],"flows":[{"event":["R"],"wait":1.6,"tags":{"R":"VTY transport input none"}},{"path":["P","S","R"],"back":true,"label":"ping 10.8.0.1","tags":{"R":"IP interface still up"}},{"path":["P","S","R"],"label":"ssh -l admin 10.8.0.1","stop":"R","stopText":"Refused · transport input none"}],"rows":[["Ping 10.8.0.1","Still succeeds","ok"],["New SSH session","Refused","bad"],["show ip ssh","Can still report enabled"],["Every VTY range","transport input none","bad"]]}
 ```
 
-## Step 9: Restore the intended transport
+## Step 11: Extension: Restore the intended transport and save
 
 Use the console to restore SSH on every VTY range.
 
@@ -267,64 +322,21 @@ Apply the same recovery to VTY 5–15 if present. Open a new SSH session from AD
 The new login succeeds with privilege 15. Telnet remains disallowed. If SSH still fails, compare all VTY ranges, user entries and the SSH server state before changing the interface address or regenerating keys.
 :::
 
-```state
-{"status":"SSH restored","tone":"ok","focus":["R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"SSH server on · VTY none","tone":"bad","until":0},{"node":"R","text":"SSHv2 · VTY ssh only","tone":"ok","from":0}],"flows":[{"event":["R"],"wait":1.6,"tags":{"R":"VTY transport input ssh"}},{"path":["P","S","R"],"back":true,"label":"New SSH session as admin","tags":{"R":"admin · privilege 15"}}],"rows":[["Every VTY range","transport input ssh","ok"],["New admin login","Privilege 15","ok"],["Telnet","Still disallowed"]]}
-```
-
-## Step 10: Verify the complete access policy
-
-From the console, inspect the active sessions while ADMIN's SSH session is open.
-
-```ios R1
-R1# show users
-R1# show ssh
-R1# show ip ssh
-R1# show running-config | section line vty
-```
-
-Note the user, the line and the client address shown. Now test a fresh console login while ADMIN's SSH session stays open as your way back in. At the console, enter `exit` at `R1#`, press Enter to start a new session, and sign in as `admin` with `AdminLabSecret8`. Closing and reopening the terminal window is not a logout. If either session reaches its idle timeout first, log in again. When both paths are verified, log out of the SSH session on ADMIN.
-
-:::expected
-`show users` lists the console and the VTY session with ADMIN's address, `show ssh` lists the SSH session, `show ip ssh` shows the server state, and the last command shows the line settings. The new console login accepts the `admin` account.
-:::
-
-```state
-{"status":"Both paths verified","tone":"ok","focus":["L","P","R"],"chips":[{"node":"R","text":"SSHv2 · VTY ssh only","tone":"ok"}],"flows":[{"path":["P","S","R"],"back":true,"label":"ADMIN's open SSH session","tags":{"R":"admin on a VTY line"}},{"path":["L","R"],"back":true,"with":true,"tone":"alt","label":"Fresh console login","tags":{"R":"login local · admin accepted"}}],"rows":[["show users","User, line, any client address"],["show ssh · show ip ssh","Sessions · server state"],["Console login","admin accepted","ok"],["VTY review","Every range, not just one"]]}
-```
-
-## Step 11: Save the verified configuration
-
-Save only after the fault has been removed and both access paths work.
+Log out of the SSH session on ADMIN, then save the repaired configuration and read it back:
 
 ```ios R1
 R1# copy running-config startup-config
-```
-
-Press Enter at the destination filename prompt and wait for the command to finish. Once `R1#` returns, inspect the saved configuration:
-
-```ios R1
 R1# show startup-config
 ```
 
-Save the Packet Tracer project as `08-secure-device-access.pkt`.
+Press Enter at the destination filename prompt, then save the Packet Tracer project again.
 
 :::expected
-The saved configuration includes the users, the interface address, the SSH settings and the line settings, with `transport input ssh` on every VTY range and no `transport input none`.
+The saved configuration has `transport input ssh` and `exec-timeout 3 0` on every VTY range, `exec-timeout 5 0` on the console, and no `transport input none`. You should be able to explain the fault: ping and the SSH server were fine; the VTY transport was not.
 :::
 
-Before the challenge, check that you saw each of these yourself:
-
-| Requirement | What you observed |
-|---|---|
-| Console recovery | A new console login while the SSH session was still open |
-| Two privilege levels | `trainee` at 1 and `admin` at 15 in new sessions |
-| SSH only | A new SSH login accepted and Telnet refused |
-| Every line covered | All VTY ranges set; console five minutes, VTY three minutes |
-| The fault | Ping and the SSH server were fine; the VTY transport was not |
-| Saved | The repaired settings in `show startup-config` |
-
 ```state
-{"status":"Configuration saved","tone":"ok","focus":["R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"Saved · startup-config","tone":"ok"}],"rows":[["startup-config","Users, interface, SSH, lines","ok"],["VTY lines","No transport input none","ok"],["Project","08-secure-device-access.pkt"]]}
+{"status":"SSH restored","tone":"ok","focus":["R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"SSH server on · VTY none","tone":"bad","until":0},{"node":"R","text":"SSHv2 · VTY ssh only","tone":"ok","from":0}],"flows":[{"event":["R"],"wait":1.6,"tags":{"R":"VTY transport input ssh"}},{"path":["P","S","R"],"back":true,"label":"New SSH session as admin","tags":{"R":"admin · privilege 15"}}],"rows":[["Every VTY range","transport input ssh","ok"],["New admin login","Privilege 15","ok"],["Telnet","Still disallowed"]]}
 ```
 
 ## Troubleshooting
@@ -332,7 +344,7 @@ Before the challenge, check that you saw each of these yourself:
 - **No console prompt:** check the serial connection and terminal settings; the Ethernet IP address is not the first check.
 - **Repeated ping failure:** check host addressing, cable endpoints and R1 Gi0/0 before changing user accounts.
 - **SSH server disabled:** check support, RSA-key configuration and SSH settings.
-- **Server enabled but session refused:** inspect every VTY range and its accepted transports; a reachable server can still reject terminal access.
+- **Server enabled but session refused (the Step 10 fault):** inspect every VTY range and its accepted transports; a reachable server can still reject terminal access.
 - **Password rejected:** check exact username, secret and line authentication method. Do not assume an enable secret is the login password.
 - **Unexpected privilege:** inspect the user entry and `show privilege`; an authenticated level-1 session is different from a failed login.
 - **Change disappears after restart:** inspect the saved configuration and boot state rather than assuming the earlier save succeeded.

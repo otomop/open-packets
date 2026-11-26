@@ -1,12 +1,14 @@
 ---
 title: Build, fault, and restore Layer 2 and Layer 3 LACP bundles
 environment: packet-tracer
-devices: ["2 × Catalyst 2960-24TT (SW1, SW2)", "2 × PC-PT (PC-A, PC-B)", "2 × Catalyst 3560-24PS (D1, D2) for a separate Layer 3 topology"]
-minutes: 75
+devices: ["2 × Catalyst 2960-24TT (SW1, SW2)", "2 × PC-PT (PC-A, PC-B)", "2 × Catalyst 3560-24PS (D1, D2), extension only, for a separate Layer 3 topology"]
+minutes: 40
 ---
+The core lab, Steps 1–5, takes about 40 minutes: you build a two-member Layer 2 LACP trunk, verify each member, fail one member, restore it and save. The optional extension, Steps 6–9, adds about 35 minutes: you create and repair a passive/passive negotiation fault, diagnose a static/LACP mismatch on paper, and build a routed port channel in a second file.
+
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build a two-member Layer 2 trunk, verify each member, and observe a member failure separately from a negotiation failure. Then create a routed port channel in a second file. These instructions and representative states have been checked against Cisco configuration guidance; this exercise has not been executed in Packet Tracer during this review.
+These instructions and representative states have been checked against Cisco configuration guidance; this exercise has not been executed in Packet Tracer during this review.
 
 ## Topology
 
@@ -20,8 +22,8 @@ Build a two-member Layer 2 trunk, verify each member, and observe a member failu
 | PC-B FastEthernet0 | SW2 Fa0/1 | Copper straight-through | VLAN 10 endpoint |
 | SW1 Fa0/23 | SW2 Fa0/23 | Copper crossover | First Po1 member |
 | SW1 Fa0/24 | SW2 Fa0/24 | Copper crossover | Second Po1 member |
-| D1 Fa0/1 | D2 Fa0/1 | Copper crossover | Separate Layer 3 topology, first member |
-| D1 Fa0/2 | D2 Fa0/2 | Copper crossover | Separate Layer 3 topology, second member |
+| D1 Fa0/1 | D2 Fa0/1 | Copper crossover | Extension: separate Layer 3 topology, first member |
+| D1 Fa0/2 | D2 Fa0/2 | Copper crossover | Extension: separate Layer 3 topology, second member |
 
 Use the named models so that these interfaces exist. Auto-connect is acceptable if you inspect the chosen ports afterward. Do not substitute 3650 interface names into the 3560 instructions. Begin with new, empty devices. All physical members in this lab are FastEthernet: each is 100 Mbps, not 1 Gbps.
 
@@ -29,8 +31,8 @@ Use the named models so that these interfaces exist. Auto-connect is acceptable 
 |---|---|---|---|
 | PC-A FastEthernet0 | 10.13.10.11 | 255.255.255.0 | Leave blank |
 | PC-B FastEthernet0 | 10.13.10.12 | 255.255.255.0 | Leave blank |
-| D1 Port-channel1, second file | 10.13.12.1 | 255.255.255.252 | Not applicable |
-| D2 Port-channel1, second file | 10.13.12.2 | 255.255.255.252 | Not applicable |
+| D1 Port-channel1, extension file | 10.13.12.1 | 255.255.255.252 | Not applicable |
+| D2 Port-channel1, extension file | 10.13.12.2 | 255.255.255.252 | Not applicable |
 
 The PCs share a subnet, so this exercise needs no default gateway. The Layer 2 trunk carries VLAN 10 and uses VLAN 99 as its native VLAN. The Layer 3 bundle carries an IP subnet directly and has no trunk or native VLAN configuration.
 
@@ -220,14 +222,14 @@ SW2# show etherchannel summary
 First verify both members are bundled on both switches and repeat both PC pings. Then run `copy running-config startup-config` on SW1, complete its destination prompt, and wait for completion. Do the same on SW2 in its own CLI window. Save a Packet Tracer checkpoint as `13-lacp-l2-working.pkt`.
 
 :::expected
-Both members return to `(P)` and Po1 remains in use on both switches. PC-A and PC-B communicate. Keep this checkpoint before changing negotiation modes.
+Both members return to `(P)` and Po1 remains in use on both switches. PC-A and PC-B communicate. This completes the core lab; Steps 6–9 are the optional extension. Keep this checkpoint before changing negotiation modes.
 :::
 
 ```state
 {"status":"Both members back","tone":"ok","focus":["S1"],"flows":[{"event":["S1","S2"],"wait":1.2,"tags":{"S1":"Fa0/23 no shutdown · rejoins Po1","S2":"Fa0/23 bundled again"}},{"path":["A","S1","S2","B"],"back":true,"label":"PC-A pings 10.13.10.12"},{"path":["B","S2","S1","A"],"back":true,"label":"PC-B pings 10.13.10.11"}],"chips":[{"node":"S1","text":"Po1 in use · Fa0/24 only","tone":"warn","until":0},{"node":"S1","text":"Po1(SU) · Fa0/23(P) Fa0/24(P)","tone":"ok","from":0},{"node":"S2","text":"Po1 in use · Fa0/24 only","tone":"warn","until":0},{"node":"S2","text":"Po1(SU) · Fa0/23(P) Fa0/24(P)","tone":"ok","from":0}],"rows":[["Members, both ends","Fa0/23(P) Fa0/24(P)","ok"],["PC-A ↔ PC-B","Both pings succeed","ok"],["Saved","Both switches · 13-lacp-l2-working.pkt","ok"]]}
 ```
 
-## Step 6: Create a passive/passive negotiation fault
+## Step 6: Extension: Create a passive/passive negotiation fault
 
 Before changing modes, predict whether the physical links can be up while no LACP bundle forms. This is an intentional fault in the isolated lab. On both switches, shut the members before removing and reapplying their group membership. Complete both blocks, then enable the members in the two subsequent blocks.
 
@@ -275,7 +277,7 @@ Neither side starts LACP, so no bundle forms. The summary no longer shows `(P)` 
 {"status":"Passive/passive: no bundle","tone":"bad","focus":["S1","S2"],"flows":[{"event":["S1","S2"],"wait":1.2,"tags":{"S1":"mode passive · does not initiate","S2":"mode passive · does not initiate"}}],"chips":[{"node":"S1","text":"Po1(SU) · Fa0/23(P) Fa0/24(P)","tone":"ok","until":0},{"node":"S1","text":"LACP passive · no bundle","tone":"bad","from":0},{"node":"S2","text":"Po1(SU) · Fa0/23(P) Fa0/24(P)","tone":"ok","until":0},{"node":"S2","text":"LACP passive · no bundle","tone":"bad","from":0}],"rows":[["Both ends","channel-group 1 mode passive","bad"],["LACP bundle","Cannot form: neither side initiates","bad"],["Members","Individual, suspended or down"],["User traffic","Platform dependent · not assumed","dim"]]}
 ```
 
-## Step 7: Diagnose a static/LACP mismatch on paper
+## Step 7: Extension: Diagnose a static/LACP mismatch on paper
 
 Do not apply this asymmetric configuration to the live topology. Consider a separate record in which SW1 uses `channel-group 1 mode on` on both members and SW2 uses `channel-group 1 mode active`. All VLAN, speed, and duplex settings otherwise match. Explain why changing a timer cannot make this an LACP bundle.
 
@@ -287,7 +289,7 @@ SW1 is using static aggregation and does not negotiate LACP. SW2 expects an LACP
 {"status":"Paper diagnosis only","tone":"dim","focus":["S1","S2"],"chips":[{"node":"S1","text":"LACP passive · no bundle","tone":"bad"},{"node":"S2","text":"LACP passive · no bundle","tone":"bad"}],"rows":[["Paper record","SW1 mode on · SW2 mode active"],["Other settings","VLAN, speed and duplex match"],["To explain","Why a timer change cannot help","dim"],["Live lab","Unchanged · still passive/passive","bad"]]}
 ```
 
-## Step 8: Restore LACP and save the Layer 2 exercise
+## Step 8: Extension: Restore LACP and save the Layer 2 exercise
 
 Keep both pairs shut while changing their membership. Complete the configuration blocks before enabling either pair.
 
@@ -335,7 +337,7 @@ Both members return to `(P)` on both ends, and the original trunk settings remai
 {"status":"LACP restored · saved","tone":"ok","focus":["S1","S2"],"flows":[{"event":["S1","S2"],"wait":1.2,"tags":{"S1":"mode active · members rejoin Po1","S2":"mode active · members rejoin Po1"}},{"path":["A","S1","S2","B"],"back":true,"label":"PC-A pings 10.13.10.12","tags":{"S1":"Po1 forwards VLAN 10 · tagged"}},{"path":["B","S2","S1","A"],"back":true,"label":"PC-B pings 10.13.10.11"}],"chips":[{"node":"S1","text":"LACP passive · no bundle","tone":"bad","until":0},{"node":"S1","text":"Po1(SU) · Fa0/23(P) Fa0/24(P)","tone":"ok","from":0},{"node":"S2","text":"LACP passive · no bundle","tone":"bad","until":0},{"node":"S2","text":"Po1(SU) · Fa0/23(P) Fa0/24(P)","tone":"ok","from":0}],"rows":[["Both ends","LACP active · Fa0/23(P) Fa0/24(P)","ok"],["Po1 trunk","Native 99 · allowed 10,99","ok"],["PC pings","Both directions succeed","ok"],["Saved","Startup configs · 13-lacp-l2-complete.pkt","ok"]]}
 ```
 
-## Step 9: Build and verify a routed port channel in a separate file
+## Step 9: Extension: Build and verify a routed port channel in a separate file
 
 Create `13-lacp-l3.pkt` with two new Catalyst 3560-24PS switches. Connect Fa0/1 to Fa0/1 and Fa0/2 to Fa0/2 with crossover cables only after the member shutdown commands have been entered. The following blocks keep the members shut throughout configuration. Create the logical routed interface first, then add routed members. Addresses belong to Po1, not to Fa0/1 or Fa0/2.
 
@@ -427,20 +429,20 @@ A representative summary is `Po1(RU) LACP Fa0/1(P) Fa0/2(P)`: routed and in use,
 
 ## Evidence to keep
 
-Keep both-end summaries, participating-member counts and the separate VLAN or IP service checks. Compare your predictions with the observed member-failure and negotiation-failure states. Explain why a passing ping does not establish full capacity. Mark any supplied-evidence fallback clearly; neither ping nor a representative summary is a throughput measurement.
+Keep both-end summaries, participating-member counts and the separate VLAN or IP service checks. Compare your predictions with the observed member-failure state and, if you did the extension, the negotiation-failure state. Explain why a passing ping does not establish full capacity. Mark any supplied-evidence fallback clearly; neither ping nor a representative summary is a throughput measurement.
 
 ## Troubleshooting
 
 - **Po1 is up but only one member has `(P)`:** inspect both ends of the missing link. Check shutdown state, physical connectivity, speed/duplex, group membership, and local compatibility. A successful ping does not clear this fault.
-- **Both ends are passive:** choose an active initiator. Do not try to repair the pairing by changing VLANs or group numbers.
+- **Both ends are passive (extension):** choose an active initiator. Do not try to repair the pairing by changing VLANs or group numbers.
 - **Members are suspended after a trunk change:** compare the logical interface and all members. Restore the intended native VLAN and allowed list consistently, then verify the far-end trunk too.
 - **Po1 is bundled but PC ping fails:** verify PC addresses/masks, access VLAN 10, VLAN existence, and allowed/forwarding VLANs. LACP formation does not configure those services.
-- **Routed Po1 is down or lacks its connected route:** confirm both Po1 and members use `no switchport`, member flags are correct, the logical interface is enabled, and its address/mask is correct.
+- **Routed Po1 is down or lacks its connected route (extension):** confirm both Po1 and members use `no switchport`, member flags are correct, the logical interface is enabled, and its address/mask is correct.
 - **A show command is unsupported:** use the stated simulator fallback for that observation, and record the limit. An unavailable command is different from an observed protocol failure.
 
 ## Challenge
 
-If routed EtherChannel is unavailable in your environment, continue the Step 9 worksheet fallback: write both endpoint command sequences and predict the summary, IP ownership, connected route and capacity checks. Label the submission as a plan, not an executed test. Otherwise, work from a copy of the successful Layer 3 project. Add a third physical member using Fa0/3 on each 3560, keeping the same Po1 addresses. Plan the cable, configuration mode, and verification before entering commands. Predict aggregate capacity and the limit for one flow when the load-balancing inputs consistently choose one member.
+This challenge builds on the extension's Layer 3 project. If routed EtherChannel is unavailable in your environment, continue the Step 9 worksheet fallback: write both endpoint command sequences and predict the summary, IP ownership, connected route and capacity checks. Label the submission as a plan, not an executed test. Otherwise, work from a copy of the successful Layer 3 project. Add a third physical member using Fa0/3 on each 3560, keeping the same Po1 addresses. Plan the cable, configuration mode, and verification before entering commands. Predict aggregate capacity and the limit for one flow when the load-balancing inputs consistently choose one member.
 
 :::solution Check your third-member design
 Use a crossover cable from D1 Fa0/3 to D2 Fa0/3. On each switch, enter privileged EXEC, then global configuration and `interface fastethernet0/3`. Apply `shutdown`, `no switchport`, `no ip address`, and `channel-group 1 mode active`. After both ends are ready and connected, apply `no shutdown` on each new member. Leave the existing Po1 addresses unchanged. Verify `Po1(RU)` with Fa0/1, Fa0/2, and Fa0/3 all `(P)`, then repeat peer pings. Three 100-Mbps members provide up to 300 Mbps aggregate link capacity per direction across appropriately distributed traffic; one stable hash-selected flow remains limited to one 100-Mbps member before overhead. Adding members does not require another IP subnet.

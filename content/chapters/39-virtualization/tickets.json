@@ -22,8 +22,8 @@
     "answer": [
       1
     ],
-    "explanation": "The static route has no `vrf BLUE` keyword, so it sits in the global table, and BLUE's table still shows no gateway of last resort. BLUE reaches its next hop, which rules out a broken WAN link. Move the route into BLUE, then retest the service from the client.",
-    "fix": "```ios\nR1# configure terminal\nR1(config)# no ip route 0.0.0.0 0.0.0.0 198.51.100.1\nR1(config)# ip route vrf BLUE 0.0.0.0 0.0.0.0 198.51.100.1\nR1(config)# end\nR1# show ip route vrf BLUE\n```\nConfirm that BLUE now shows a gateway of last resort. Then, from client 10.10.10.10, open http://203.0.113.20 again: test the original service, not only a ping from the router."
+    "explanation": "The static route has no `vrf BLUE` keyword, so it sits in the global table and BLUE still shows no gateway of last resort. BLUE reaches its next hop, so the WAN link is fine.",
+    "fix": "Move the route into BLUE:\n\n```ios\nR1# configure terminal\nR1(config)# no ip route 0.0.0.0 0.0.0.0 198.51.100.1\nR1(config)# ip route vrf BLUE 0.0.0.0 0.0.0.0 198.51.100.1\nR1(config)# end\nR1# show ip route vrf BLUE\n```\n\nConfirm BLUE now shows a gateway of last resort. Then, from client 10.10.10.10, open http://203.0.113.20 to test the original service, not only a ping from the router."
   },
   {
     "id": "virtualization-t02",
@@ -49,7 +49,7 @@
     "answer": [
       0
     ],
-    "explanation": "The host tags VLAN 20, but SW1's trunk allows only VLANs 10 and 999, so SW1 drops VLAN 20 frames on Gi0/1. The scenario rules out a missing VLAN and port security. Add VLAN 20 to the allowed list with the `add` keyword so that VLAN 10 keeps working.",
-    "fix": "```ios\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# switchport trunk allowed vlan add 20\nSW1(config-if)# end\nSW1# show interfaces trunk\nSW1# show mac address-table\n```\nPing the gateway from a VLAN 20 guest, then repeat the VLAN 10 guest's test to confirm that it still works."
+    "explanation": "The host tags VLAN 20, but SW1's trunk allows only VLANs 10 and 999, so SW1 drops VLAN 20 frames on Gi0/1. Use the `add` keyword so VLAN 10 keeps working.",
+    "fix": "Add VLAN 20 to the trunk's allowed list:\n\n```ios\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# switchport trunk allowed vlan add 20\nSW1(config-if)# end\nSW1# show interfaces trunk\nSW1# show mac address-table\n```\n\nPing the gateway from a VLAN 20 guest, then repeat the VLAN 10 guest's test to confirm it still works."
   }
 ]

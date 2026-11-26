@@ -9,7 +9,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "In `O 10.1.1.0/24 [110/35] via 10.0.0.2`, what do the bracketed numbers mean?",
+    "prompt": "In O 10.1.1.0/24 [110/35] via 10.0.0.2, what do the bracketed numbers mean?",
     "options": [
       "110 is cost; 35 is the number of hops",
       "110 is administrative distance; 35 is the metric",
@@ -19,11 +19,11 @@
     "answer": [
       1
     ],
-    "explanation": "Route brackets display administrative distance first, then metric. Here the metric is OSPF cost, not necessarily a hop count.",
+    "explanation": "The brackets show administrative distance first, then the metric. For OSPF the metric is cost, not hops.",
     "whyWrong": {
-      "0": "The order and units are incorrect; OSPF cost is not a fixed hop count.",
-      "2": "Process and router IDs are not these two fields.",
-      "3": "The bracket does not directly report bandwidth and delay."
+      "0": "110 is the AD, and OSPF cost is not a hop count.",
+      "2": "Process ID and router ID are not shown in the brackets.",
+      "3": "The brackets do not show bandwidth and delay."
     }
   },
   {
@@ -36,7 +36,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "No installed route matches a packet's destination, and there is no default route. What does the router do with the packet?",
+    "prompt": "No installed route matches a packet's destination and there is no default route. What does the router do?",
     "options": [
       "The router discards the packet",
       "The router broadcasts it to all routed interfaces",
@@ -46,11 +46,11 @@
     "answer": [
       0
     ],
-    "explanation": "With no matching route and no default, the router drops the packet. It normally sends an ICMP destination unreachable message back to the source.",
+    "explanation": "With no matching route and no default, the router drops the packet. It normally returns an ICMP destination unreachable.",
     "whyWrong": {
-      "1": "Routers do not flood unmatched unicast traffic across routed interfaces to discover a path.",
-      "2": "An arriving data packet does not automatically install a route to its destination.",
-      "3": "A low distance does not make a nonmatching prefix applicable."
+      "1": "Routers do not flood unmatched unicast packets.",
+      "2": "A data packet does not install a route.",
+      "3": "A prefix that does not match is not used, whatever its AD."
     }
   },
   {
@@ -63,7 +63,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An ordinary IOS IPv4 interface is up/up with address 192.168.1.1/24. Which pair describes its connected subnet and local address?",
+    "prompt": "An interface is up/up with address 192.168.1.1/24. Which routing-table entries does it create?",
     "options": [
       "S 192.168.1.0/24 and O 192.168.1.1/32",
       "C 192.168.1.0/24 and L 192.168.1.255/32",
@@ -73,11 +73,11 @@
     "answer": [
       2
     ],
-    "explanation": "The `C` entry covers the whole subnet, and the `L` /32 is the router's own interface address.",
+    "explanation": "The C entry is the whole subnet. The L entry is a /32 for the router's own interface address.",
     "whyWrong": {
-      "0": "Interface-derived entries are not static and OSPF routes.",
-      "1": "The local address is .1; .255 is the subnet's directed broadcast address.",
-      "3": "The connected and local meanings are reversed."
+      "0": "Interface routes are C and L, not S and O.",
+      "1": "The local address is .1, and .255 is the broadcast address.",
+      "3": "C and L are swapped."
     }
   },
   {
@@ -102,11 +102,11 @@
       3,
       4
     ],
-    "explanation": "Connected routes have AD 0, and static routes default to AD 1.",
+    "explanation": "Connected is AD 0 and static is AD 1. External EIGRP is 170, RIP is 120 and OSPF is 110.",
     "whyWrong": {
-      "0": "EIGRP external defaults to 170; 20 is external BGP.",
-      "1": "RIP defaults to 120.",
-      "2": "OSPF defaults to 110; 90 is the common EIGRP internal default."
+      "0": "External EIGRP is 170, and 20 is eBGP.",
+      "1": "RIP is 120.",
+      "2": "OSPF is 110, and 90 is internal EIGRP."
     }
   },
   {
@@ -123,7 +123,7 @@
       "title": "R1 route excerpt",
       "text": "O 10.20.30.0/24 [110/20] via 10.0.12.2, 00:00:10, GigabitEthernet0/0\n                [110/20] via 10.0.13.2, 00:00:10, GigabitEthernet0/2"
     },
-    "prompt": "What is established by this installed route?",
+    "prompt": "What does this installed route show?",
     "options": [
       "Two equal-cost next hops are available for the same prefix",
       "Two different prefixes will be alternated for every packet",
@@ -133,11 +133,11 @@
     "answer": [
       0
     ],
-    "explanation": "Both lines belong to one OSPF prefix and show the same `[110/20]`, so this is equal-cost multipath. CEF shares traffic per flow, which does not guarantee an equal byte split or faster single transfers.",
+    "explanation": "Both lines are the same OSPF prefix with the same [110/20], so this is equal-cost multipath with two next hops. Traffic is shared per flow, not in equal bytes.",
     "whyWrong": {
-      "1": "Both paths serve one prefix; the exhibit does not specify per-packet alternation.",
-      "2": "Equal-cost eligibility does not establish a 50/50 byte distribution.",
-      "3": "One flow can remain on one selected path."
+      "1": "Both paths serve one prefix, not two.",
+      "2": "Equal-cost paths do not guarantee a 50/50 byte split.",
+      "3": "A single flow stays on one path."
     }
   },
   {
@@ -150,7 +150,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An installed nondefault route covers 10.20.30.150. Which command requests matching route details, including the source, distance and metric?",
+    "prompt": "Which command shows the route that matches 10.20.30.150, with its source, distance and metric?",
     "options": [
       "show running-config interface gigabitethernet0/0",
       "show ip route 10.20.30.150",
@@ -160,11 +160,11 @@
     "answer": [
       1
     ],
-    "explanation": "`show ip route` followed by an address displays the longest matching installed route, with its source, distance, metric and next hop.",
+    "explanation": "show ip route followed by an address shows the longest matching route with its source, AD, metric and next hop.",
     "whyWrong": {
-      "0": "An interface configuration block does not identify the matching installed route.",
-      "2": "ARP reports neighbor resolution, not the route source and distance.",
-      "3": "This reports interface addresses and states, not route-selection detail."
+      "0": "The interface configuration does not show the installed route.",
+      "2": "ARP shows neighbor resolution, not routes.",
+      "3": "show ip interface brief shows interface addresses and status."
     }
   },
   {
@@ -177,7 +177,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An IPv4 table contains an L /32 for an address owned by this router. What does a packet addressed to that entry require?",
+    "prompt": "A route table has an L /32 for an address owned by this router. How is a packet to that address handled?",
     "options": [
       "Forwarding to the neighbor with the lowest address",
       "Selecting a less-specific default instead",
@@ -187,11 +187,11 @@
     "answer": [
       3
     ],
-    "explanation": "The local route identifies the router itself. Local delivery is different from forwarding a packet through the router.",
+    "explanation": "The local /32 marks the router's own address. Packets to it are delivered to the router itself, not forwarded.",
     "whyWrong": {
-      "0": "No next router is required to reach the router’s own address.",
-      "1": "The local /32 is the exact destination match.",
-      "2": "A local unicast destination is not a subnet broadcast."
+      "0": "No other router is involved for the router's own address.",
+      "1": "The /32 is the exact match, so the default is not used.",
+      "2": "A local unicast address is not a broadcast."
     }
   },
   {
@@ -214,11 +214,11 @@
     "answer": [
       2
     ],
-    "explanation": "A next-hop IP directs the next routing step. Resolution and the outgoing interface determine how that router is reached.",
+    "explanation": "The next hop is the IP address of the neighboring router, or the router it resolves to, that leads toward the destination.",
     "whyWrong": {
-      "0": "An IP next hop and its resolved Layer 2 address are separate values.",
-      "1": "A route may cover many final hosts; its next hop is an intermediate router.",
-      "3": "Ordinary destination routing does not replace every source with the next hop."
+      "0": "The next hop is an IP address, and the MAC is resolved separately.",
+      "1": "A route can cover many hosts, and the next hop is an intermediate router.",
+      "3": "The packet's source address does not change."
     }
   },
   {
@@ -235,7 +235,7 @@
       "title": "R1 installed routes (excerpt)",
       "text": "O 10.20.30.0/24 [110/10] via 10.0.12.2\nO 10.20.30.128/25 [110/40] via 10.0.13.2\nS 10.20.0.0/16 [1/0] via 10.0.14.2"
     },
-    "prompt": "Which next hop is selected for 10.20.30.150 by ordinary destination-based routing?",
+    "prompt": "Which next hop does the router use for 10.20.30.150?",
     "options": [
       "10.0.12.2, because its route has a smaller OSPF cost",
       "Both OSPF neighbors, because both routes start with O",
@@ -245,11 +245,11 @@
     "answer": [
       3
     ],
-    "explanation": "The address is in 10.20.30.128/25. That prefix is more specific than the matching /24 and /16, so it determines this lookup.",
+    "explanation": "10.20.30.150 falls inside 10.20.30.128/25, which is longer than the matching /24 and /16. The longest match wins, so the next hop is 10.0.13.2.",
     "whyWrong": {
-      "0": "OSPF cost does not override longest prefix match between different installed prefixes.",
-      "1": "These are different prefixes, not equal-cost paths for one prefix.",
-      "2": "The static /16 is less specific than the installed /25."
+      "0": "OSPF cost does not override a longer prefix.",
+      "1": "These are different prefixes, so they are not equal-cost paths.",
+      "2": "The static /16 is shorter than the /25."
     }
   },
   {
@@ -262,7 +262,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "OSPF offers 10.1.0.0/16 with cost 10; RIP offers the same /16 with two hops. Both are eligible and use default ADs. Which two statements are correct? (Choose two.)",
+    "prompt": "OSPF offers 10.1.0.0/16 with cost 10 and RIP offers the same /16 with two hops. Both use default ADs. Which two statements are correct? (Choose two.)",
     "options": [
       "The router compares both metrics in the same units",
       "RIP wins because 2 is less than 10",
@@ -274,11 +274,11 @@
       3,
       4
     ],
-    "explanation": "The destination prefix and length are identical, so the eligible sources compete by AD. The metrics have different meanings and are not compared directly.",
+    "explanation": "For the same prefix, the lowest AD wins, and OSPF's 110 beats RIP's 120. Metrics from different protocols are not compared.",
     "whyWrong": {
-      "0": "Protocol metrics are not a common unit across RIP and OSPF.",
-      "1": "Two hops and OSPF cost 10 are unlike measurements.",
-      "2": "Equal-cost multipath is not established merely by having two different route sources."
+      "0": "RIP and OSPF metrics use different units.",
+      "1": "2 hops and cost 10 cannot be compared.",
+      "2": "Two different sources do not make equal-cost paths."
     }
   },
   {
@@ -295,7 +295,7 @@
       "title": "R1 configuration and installed entry",
       "text": "ip route 10.20.30.0 255.255.255.0 10.0.99.2 130\n\nO 10.20.30.0/24 [110/20] via 10.0.12.2"
     },
-    "prompt": "The static next hop is operationally reachable. Why is the configured /24 static absent from the installed route table?",
+    "prompt": "The static next hop is reachable. Why is the configured /24 static not in the routing table?",
     "options": [
       "OSPF is preferred over the static route's AD of 130",
       "The next hop must be an address on the destination subnet",
@@ -305,11 +305,11 @@
     "answer": [
       0
     ],
-    "explanation": "Both candidates describe the same /24. OSPF's 110 is preferred over the explicitly configured static distance 130, so the static is a floating candidate.",
+    "explanation": "Both routes are for the same /24, so AD decides. OSPF's 110 beats the static route's AD of 130, so the static is a floating route.",
     "whyWrong": {
-      "1": "A next-hop router can be on a transit network separate from the destination subnet.",
-      "2": "Both masks are /24.",
-      "3": "A static candidate can coexist in configuration with a preferred dynamic route."
+      "1": "A next hop can be on any reachable network.",
+      "2": "Both routes are /24.",
+      "3": "A static route can be configured alongside a dynamic route."
     }
   },
   {
@@ -326,7 +326,7 @@
       "title": "Installed prefix worksheet",
       "text": "172.16.32.0/19  via 10.0.0.2\n172.16.40.0/21  via 10.0.0.3\n172.16.44.0/23  via 10.0.0.4\n172.16.44.128/25 via 10.0.0.5"
     },
-    "prompt": "All listed routes are installed. Which next hop is selected for 172.16.44.9?",
+    "prompt": "All listed routes are installed. Which next hop is used for 172.16.44.9?",
     "options": [
       "10.0.0.4",
       "10.0.0.3",
@@ -336,11 +336,11 @@
     "answer": [
       0
     ],
-    "explanation": "The /19, /21 and /23 contain the address. The /25 begins at 172.16.44.128, so it does not. The /23 is the longest match.",
+    "explanation": "The /19, /21 and /23 all contain the address, and the /25 does not (it starts at 172.16.44.128). The /23 is the longest match.",
     "whyWrong": {
-      "1": "The /21 matches but is less specific than the matching /23.",
-      "2": "The /19 matches but is less specific than the matching /23.",
-      "3": "The destination's last octet is 9, outside this /25's 128–255 range."
+      "1": "The /21 matches but is shorter than the /23.",
+      "2": "The /19 matches but is shorter than the /23.",
+      "3": "The last octet 9 is outside the /25 range 128 to 255."
     }
   },
   {
@@ -357,7 +357,7 @@
       "title": "R1 configuration and table",
       "text": "ip route 172.16.0.0 255.255.0.0 Null0\n\nS 172.16.0.0/16 is directly connected, Null0"
     },
-    "prompt": "What is this route's AD, and what happens to ordinary traffic for 172.16.9.9 when it is the longest match?",
+    "prompt": "What is this route's AD, and what happens to traffic for 172.16.9.9 when it is the longest match?",
     "options": [
       "AD 0; forward through the connected LAN",
       "AD 1; discard through Null0",
@@ -367,11 +367,11 @@
     "answer": [
       1
     ],
-    "explanation": "The configuration omits an AD override, so this static uses its default distance of 1. Its selected action is Null0 discard. The phrase 'directly connected' does not change the S source to C.",
+    "explanation": "A static route with no distance configured uses AD 1, and Null0 discards matching traffic. The source is S, not C.",
     "whyWrong": {
-      "0": "The source is static, and Null0 is not a live attached LAN.",
+      "0": "The source is static, and Null0 is not a LAN.",
       "2": "There is no OSPF route in this exhibit.",
-      "3": "The route is installed with its static default; a selected Null0 match does not trigger retry through a less-specific default."
+      "3": "The AD is 1, and a Null0 match is not retried against a default."
     }
   },
   {
@@ -384,7 +384,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 has three candidates for exactly 10.5.0.0/16: two OSPF paths with costs 10 and 25, and a static route with the default AD and a reachable next hop. Which route is installed?",
+    "prompt": "R1 has two OSPF paths (costs 10 and 25) and a static route for 10.5.0.0/16 with default AD. Which is installed?",
     "options": [
       "The static source because AD 1 is preferred over 110",
       "Both OSPF paths because their route codes match",
@@ -394,11 +394,11 @@
     "answer": [
       0
     ],
-    "explanation": "All three describe the same prefix. OSPF first picks its own best path, cost 10. That path then competes with the static route on AD, and static 1 beats OSPF 110.",
+    "explanation": "Static has AD 1, which beats OSPF's 110. OSPF's own best path, cost 10, loses to the static route.",
     "whyWrong": {
-      "1": "Different OSPF costs are not equal-cost paths, and the static source is preferred.",
-      "2": "Higher OSPF cost is not better, and source AD still matters here.",
-      "3": "A lower OSPF cost does not override the better AD of an eligible source for the same prefix."
+      "1": "OSPF paths with different costs are not equal-cost, and static wins anyway.",
+      "2": "A higher OSPF cost is not better.",
+      "3": "A metric never overrides AD between different sources."
     }
   },
   {
@@ -425,11 +425,11 @@
     "answer": [
       0
     ],
-    "explanation": "The address matches 10.20.0.0/16, but not 10.20.30.0/24. The /16 is more specific than the default, so its OSPF next hop is selected.",
+    "explanation": "10.20.31.7 matches 10.20.0.0/16 but not 10.20.30.0/24. The /16 is longer than the default, so its next hop wins.",
     "whyWrong": {
-      "1": "The default loses to the matching /16 regardless of its lower AD.",
-      "2": "The /24 contains 10.20.30.x, not 10.20.31.x.",
-      "3": "Both the /16 and default match."
+      "1": "The default is shorter than the /16 and loses.",
+      "2": "The /24 covers 10.20.30.x, not 10.20.31.x.",
+      "3": "The /16 and the default both match."
     }
   },
   {
@@ -442,7 +442,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 has the expected route to a remote PC. Which two observations could still explain why a ping from the user's PC fails? (Choose two.)",
+    "prompt": "R1 has the expected route to a remote PC, but the user's ping fails. Which two causes are possible? (Choose two.)",
     "options": [
       "The route's source code is S rather than O",
       "ARP for the Ethernet next-hop router remains incomplete",
@@ -454,11 +454,11 @@
       1,
       2
     ],
-    "explanation": "The forward RIB entry is only part of the path. Unresolved next-hop adjacency can prevent transmission, and a missing return route can prevent replies.",
+    "explanation": "A route in the table does not prove the path works. ARP for the next hop can be incomplete, and the remote router can lack a return route.",
     "whyWrong": {
-      "0": "Static routing can forward correctly; the source code alone is not a failure.",
-      "3": "A more-specific match is normal routing behavior.",
-      "4": "An outgoing interface is expected forwarding information, not evidence of failure."
+      "0": "A static route forwards normally.",
+      "3": "A longer prefix is normal.",
+      "4": "An outgoing interface is normal forwarding information."
     }
   },
   {
@@ -475,7 +475,7 @@
       "title": "Connected, local and default entries",
       "text": "C 192.0.2.0/24 is directly connected, GigabitEthernet0/1\nL 192.0.2.1/32 is directly connected, GigabitEthernet0/1\nS* 0.0.0.0/0 [1/0] via 10.0.12.2"
     },
-    "prompt": "Which action is selected for a packet addressed to 192.0.2.1?",
+    "prompt": "Which action applies to a packet for 192.0.2.1?",
     "options": [
       "Drop it because two prefixes contain the address",
       "Forward it to 10.0.12.2 using the default",
@@ -485,11 +485,11 @@
     "answer": [
       3
     ],
-    "explanation": "The local /32 is the longest match for the router’s own interface address.",
+    "explanation": "The L /32 is the longest match for the router's own address. The packet is delivered locally.",
     "whyWrong": {
       "0": "Overlapping connected and local routes are normal.",
-      "1": "The /0 is less specific than both matching entries.",
-      "2": "The connected /24 covers other addresses too, but loses to the exact local /32."
+      "1": "The /0 default is shorter than both matches.",
+      "2": "The connected /24 is shorter than the local /32."
     }
   },
   {
@@ -506,7 +506,7 @@
       "title": "A discard and a default",
       "text": "S 10.4.8.128/25 is directly connected, Null0\nS* 0.0.0.0/0 [1/0] via 10.0.12.2"
     },
-    "prompt": "These are all relevant installed routes. What happens to ordinary traffic for 10.4.8.200?",
+    "prompt": "What happens to traffic for 10.4.8.200?",
     "options": [
       "It uses both entries because their static distances match",
       "It is discarded by the /25; the default is not retried",
@@ -516,11 +516,11 @@
     "answer": [
       1
     ],
-    "explanation": "The destination matches the /25 Null0 entry. Its selected action is discard; a less-specific route does not provide fallback after that action.",
+    "explanation": "The destination matches the /25 Null0 route and is discarded. A shorter route such as the default is not tried after a discard.",
     "whyWrong": {
-      "0": "These are different destination prefixes, not ECMP paths to one prefix.",
-      "2": "Null0 is a valid configured discard action.",
-      "3": "Ordinary lookup does not reverse the packet’s addresses to rescue it."
+      "0": "These are different prefixes, not equal-cost paths.",
+      "2": "Null0 is a valid discard route.",
+      "3": "Routers do not return the packet to the sender."
     }
   },
   {
@@ -537,7 +537,7 @@
       "title": "Complete table with an explicit next hop",
       "text": "C 10.0.12.0/30 is directly connected, GigabitEthernet0/0\nL 10.0.12.1/32 is directly connected, GigabitEthernet0/0\nS* 0.0.0.0/0 [1/0] via 10.0.12.2"
     },
-    "prompt": "Which action applies to 198.51.100.10 under the complete table shown?",
+    "prompt": "Which action applies to 198.51.100.10 in the table shown?",
     "options": [
       "Use the connected entry because its AD is zero",
       "ARP directly for 198.51.100.10 because the default uses Ethernet",
@@ -547,11 +547,11 @@
     "answer": [
       2
     ],
-    "explanation": "A default is a valid /0 match for a destination outside every installed more-specific prefix.",
+    "explanation": "No more specific prefix matches, so the default route (/0) is used.",
     "whyWrong": {
       "0": "The connected 10.0.12.0/30 does not contain the destination.",
-      "1": "The explicit next hop is the adjacent router; the default does not make the remote destination directly attached.",
-      "3": "A destination need not have its own /24 when a usable default matches."
+      "1": "The default points to a next-hop router, so the destination is not directly attached.",
+      "3": "A destination does not need its own route when a default matches."
     }
   },
   {
@@ -564,7 +564,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 Gi0/1 is administratively shut. Its configured address remains 192.0.2.1/24, with no other interface or route covering that LAN. What should the ordinary IPv4 RIB show?",
+    "prompt": "R1 Gi0/1 is administratively shut, but 192.0.2.1/24 stays configured. What does the routing table show?",
     "options": [
       "Only the connected /24 remains because configuration persists",
       "Neither the connected /24 nor the local /32 is installed",
@@ -574,11 +574,11 @@
     "answer": [
       1
     ],
-    "explanation": "`C` and `L` routes exist only while the interface is up/up. A shut interface supplies neither, even though its address stays in the configuration.",
+    "explanation": "C and L routes exist only while the interface is up/up. A shut interface gives neither.",
     "whyWrong": {
-      "0": "The connected subnet also depends on the interface being operational.",
-      "2": "The configuration alone does not establish operational interface routes.",
-      "3": "Interface failure does not convert the source to a configured static route."
+      "0": "The connected route also needs the interface to be up.",
+      "2": "The configuration alone does not install them.",
+      "3": "A failed interface does not turn into a static route."
     }
   },
   {
@@ -595,7 +595,7 @@
       "title": "IP destination and Ethernet recipient",
       "text": "Packet destination: 198.51.100.200\nS 198.51.100.0/24 [1/0] via 10.0.12.2, GigabitEthernet0/0\nR1 Gi0/0: 10.0.12.1/30; neighbor: 10.0.12.2"
     },
-    "prompt": "The route in the exhibit is selected. Which address does R1 resolve with ARP for this packet?",
+    "prompt": "R1 uses the route shown. Which address does R1 ARP for?",
     "options": [
       "198.51.100.0, the remote network identifier",
       "10.0.12.2, the Ethernet next hop",
@@ -605,11 +605,11 @@
     "answer": [
       1
     ],
-    "explanation": "The Ethernet frame goes to the adjacent next router. The packet’s destination remains the remote host.",
+    "explanation": "R1 ARPs for the next hop, 10.0.12.2, because the frame goes to the adjacent router. The packet's destination IP stays the remote host.",
     "whyWrong": {
-      "0": "The network identifier is not the neighbor’s interface address.",
-      "2": "R1 does not need ARP to discover its own interface MAC.",
-      "3": "The remote PC is beyond a routed hop, not on this directly connected Ethernet."
+      "0": "A network ID is not a host address.",
+      "2": "10.0.12.1 is R1's own address.",
+      "3": "The remote host is beyond a routed hop."
     }
   },
   {
@@ -626,7 +626,7 @@
       "title": "Request and reply destinations",
       "text": "PC: 192.0.2.10/24, gateway R1 192.0.2.1\nServer: 10.90.5.20, with a verified return path to R1\nR1 installed: C 192.0.2.0/24 Gi0/1; L 192.0.2.1/32 Gi0/1;\nS 10.90.0.0/16 via 10.0.12.2 Gi0/0\nNo policy routing or filtering."
     },
-    "prompt": "The PC pings the server and the server replies. Which two statements describe R1's lookups for this exchange? (Choose two.)",
+    "prompt": "The PC pings the server and the server replies. Which two statements describe R1's lookups? (Choose two.)",
     "options": [
       "The reply uses R1’s local 192.0.2.1/32 because it entered this router",
       "The request must match the route to the PC’s own source subnet",
@@ -638,11 +638,11 @@
       3,
       4
     ],
-    "explanation": "Each packet has its own destination lookup. The request destination is 10.90.5.20; the returning reply destination is the client 192.0.2.10.",
+    "explanation": "Each packet gets its own lookup on its destination. The request matches the route to 10.90.0.0/16, and the reply to 192.0.2.10 matches the connected /24.",
     "whyWrong": {
-      "0": "192.0.2.10 is not R1’s own .1 address.",
-      "1": "Ordinary destination routing looks up the destination, not the client’s source.",
-      "2": "The reply is routed toward its destination; the forward interface need not be reused."
+      "0": "192.0.2.10 is not R1's own address.",
+      "1": "Routers look up the destination, not the source.",
+      "2": "The reply is routed on its destination, not the request's interface."
     }
   },
   {
@@ -659,7 +659,7 @@
       "title": "Same-prefix candidates and an independent discard",
       "text": "Eligible 10.50.0.0/16 candidates:\nOSPF AD 110, cost 20, via 10.0.12.2\nStatic AD 130, via 10.0.13.2\nIndependent installed route: 10.50.1.128/25 to Null0\nBoth next hops remain resolvable."
     },
-    "prompt": "The OSPF candidate is withdrawn. Which two consequences follow after selection settles? (Choose two.)",
+    "prompt": "The OSPF route is withdrawn. Which two results follow? (Choose two.)",
     "options": [
       "Traffic to 10.50.1.200 must use the /16 because its AD is lower",
       "The /25 disappears because its covering OSPF route is gone",
@@ -671,11 +671,11 @@
       3,
       4
     ],
-    "explanation": "Source withdrawal changes the /16 winner. The independent installed /25 continues to win for addresses it covers, including .200.",
+    "explanation": "The AD 130 static becomes the best source for that /16. The independent /25 discard still wins for addresses it covers, such as 10.50.1.200.",
     "whyWrong": {
-      "0": "Longest match still favors /25 over /16.",
-      "1": "The question states the /25 is an independent installed Null0 route; it does not require the OSPF /16.",
-      "2": "The stated same-prefix source comparison uses AD, not unlike metrics."
+      "0": "Longest match still prefers the /25.",
+      "1": "The /25 is an independent route and stays installed.",
+      "2": "Different sources are compared by AD, not by metric."
     }
   },
   {
@@ -692,7 +692,7 @@
       "title": "Installed prefixes before withdrawal",
       "text": "Initially installed:\nA: 172.20.0.0/20 [1/0] via 10.0.12.2\nB: 172.20.8.0/23 [110/10] via 10.0.13.2\nC: 172.20.9.128/26 [200/0] via 10.0.14.2\nOnly C is withdrawn; A and B remain."
     },
-    "prompt": "Initially traffic to 172.20.9.130 uses path C. Only the /26 route is then withdrawn. What is the resulting decision?",
+    "prompt": "Traffic to 172.20.9.130 uses path C, then only the /26 route is withdrawn. What happens?",
     "options": [
       "Path B, because the remaining /23 is the longest match",
       "Discard, because a previous more-specific route existed",
@@ -702,11 +702,11 @@
     "answer": [
       0
     ],
-    "explanation": "172.20.9.130 matches 172.20.8.0/23 (8.0–9.255). Once /26 is removed, this /23 is longer than /20 and supplies the current action.",
+    "explanation": "172.20.9.130 is in 172.20.8.0/23 (8.0 to 9.255). With the /26 gone, the /23 is longer than the /20, so path B is used.",
     "whyWrong": {
-      "1": "A usable covering route remains.",
-      "2": "A withdrawn installed route no longer participates in this lookup.",
-      "3": "AD does not override the remaining more-specific /23."
+      "1": "A covering route remains, so there is no discard.",
+      "2": "A withdrawn route no longer takes part in lookups.",
+      "3": "AD does not override a longer match."
     }
   },
   {
@@ -723,7 +723,7 @@
       "title": "A selected route and unresolved neighbor",
       "text": "Intended route: O 10.80.0.0/24 [110/20] via 10.0.12.2, Gi0/0\nActual selected route: exactly that entry\nGi0/0: up/up, correct transit subnet\nRepeated ARP for 10.0.12.2: incomplete\nNo forwarding adjacency to that next hop"
     },
-    "prompt": "An engineer proposes reducing the OSPF AD to fix the failed packet. Which next step follows from the supplied evidence?",
+    "prompt": "An engineer proposes lowering the OSPF AD to fix a failed packet, but the intended /24 is already selected. What is the next step?",
     "options": [
       "Remove the destination /24 so the unrelated default becomes preferred",
       "Add another route for the same /24 at distance 1",
@@ -733,11 +733,11 @@
     "answer": [
       2
     ],
-    "explanation": "The intended /24 is already selected. The unresolved neighbor is the immediate forwarding problem supplied by the evidence; changing source preference does not resolve that adjacency.",
+    "explanation": "The right route is already selected, and the problem is the unresolved neighbor. Check the Ethernet neighbor and the Layer 2 path.",
     "whyWrong": {
-      "0": "Removing a correct route avoids the symptom without addressing the failing selected path.",
-      "1": "A duplicate forwarding direction does not make the neighbor’s MAC resolve.",
-      "3": "The selected source is already intended, and 20 is its OSPF metric."
+      "0": "Removing the correct route only hides the symptom.",
+      "1": "A duplicate route does not resolve the neighbor.",
+      "3": "OSPF is already the intended source."
     }
   },
   {
@@ -754,7 +754,7 @@
       "title": "Equal-cost paths and unequal flow sizes",
       "text": "One prefix has two installed OSPF paths, both [110/20].\nThe device uses flow-based hashing.\nPath A carried one 800 MB flow; path B carried eight 2 MB flows.\nBoth paths pass independent bidirectional tests."
     },
-    "prompt": "With the stated forwarding behavior, what do these measurements justify?",
+    "prompt": "Two equal-cost paths carry unequal byte counts under per-flow sharing. What does that show?",
     "options": [
       "The smaller byte count means its route has a larger AD",
       "Unequal byte totals alone do not establish an ECMP failure",
@@ -764,11 +764,119 @@
     "answer": [
       1
     ],
-    "explanation": "Two equal-cost entries establish eligible paths. Per-flow selection can put a large flow on one link and small flows on the other, producing unequal bytes without a route fault.",
+    "explanation": "Equal-cost entries make both paths eligible. Per-flow sharing can put a large flow on one link, so unequal bytes are not a fault.",
     "whyWrong": {
-      "0": "Both next hops belong to the same installed equal-cost entry.",
-      "2": "Per-flow sharing is a valid mechanism; changing it is not required by these measurements.",
-      "3": "The table and successful tests establish both installed paths; equal bytes are not required."
+      "0": "Both next hops belong to one equal-cost entry.",
+      "2": "Per-flow sharing is valid for ECMP.",
+      "3": "Both paths are installed, so none is missing."
+    }
+  },
+  {
+    "id": "routing-table-q29",
+    "type": "single",
+    "objectives": [
+      "v1:3.1",
+      "v1:3.2",
+      "v2:3.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default administrative distance of internal EIGRP?",
+    "options": [
+      "90",
+      "100",
+      "110",
+      "170"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Internal EIGRP has AD 90. External EIGRP is 170.",
+    "whyWrong": {
+      "1": "100 is not a default AD for these protocols.",
+      "2": "110 is OSPF.",
+      "3": "170 is external EIGRP."
+    }
+  },
+  {
+    "id": "routing-table-q30",
+    "type": "single",
+    "objectives": [
+      "v1:3.1",
+      "v1:3.2",
+      "v2:3.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does an administrative distance of 255 mean?",
+    "options": [
+      "The route is the most trusted",
+      "The route is never installed in the routing table",
+      "The route is a floating static route",
+      "The route is a default route"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "AD 255 means the source is never trusted, so its routes are not installed.",
+    "whyWrong": {
+      "0": "The most trusted source has the lowest AD, which is 0.",
+      "2": "A floating static uses a raised AD such as 130, not 255.",
+      "3": "A default route is identified by 0.0.0.0/0, not by AD."
+    }
+  },
+  {
+    "id": "routing-table-q31",
+    "type": "single",
+    "objectives": [
+      "v1:3.1",
+      "v1:3.2",
+      "v2:3.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Several installed routes match a packet's destination. Which does the router use?",
+    "options": [
+      "The one with the lowest AD",
+      "The one with the lowest metric",
+      "The one learned first",
+      "The one with the longest matching prefix"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "For each packet the router uses the longest matching prefix among installed routes. AD and metric choose which route is installed for a prefix.",
+    "whyWrong": {
+      "0": "AD decides which source is installed for the same prefix, not which prefix matches.",
+      "1": "Metric picks the best path within one protocol for a prefix.",
+      "2": "Order of learning does not matter."
+    }
+  },
+  {
+    "id": "routing-table-q32",
+    "type": "single",
+    "objectives": [
+      "v1:3.1",
+      "v1:3.2",
+      "v2:3.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does the code S* in a routing table mean?",
+    "options": [
+      "A static route marked as a default candidate",
+      "A summary route learned from OSPF",
+      "A secure static route with authentication",
+      "A static route that points to Null0"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "S* is a static route marked as a candidate default. It sets the gateway of last resort.",
+    "whyWrong": {
+      "1": "Summary routes are not shown with S*.",
+      "2": "S* has nothing to do with security.",
+      "3": "Null0 routes show the interface name Null0, not an asterisk."
     }
   }
 ]

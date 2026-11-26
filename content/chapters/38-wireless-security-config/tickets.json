@@ -32,8 +32,8 @@
     "answer": [
       1
     ],
-    "explanation": "The WLAN has 802.1X enabled and PSK disabled, while the clients expect a pre-shared key. WPA2 and AES already match. With no RADIUS server or local EAP, an 802.1X WLAN cannot authenticate anyone.",
-    "fix": "In the AireOS-style GUI, disable WLAN 2 while you edit it. Open Security → Layer 2, untick 802.1X, tick PSK and enter the ASCII key StudyLab-2026!. Keep WPA2 Policy and AES on and WPA/TKIP off. Apply, enable the WLAN and Save Configuration.\n\nReconnect a client. Verify that it completes security, receives an address in the intended VLAN and reaches a known server."
+    "explanation": "The WLAN has 802.1X enabled and PSK disabled, while clients expect a PSK. WPA2 and AES already match, and with no RADIUS or local EAP service an 802.1X WLAN cannot authenticate anyone.",
+    "fix": "In the AireOS-style GUI, disable WLAN 2 while you edit it. Open Security → Layer 2, untick 802.1X, tick PSK and enter the ASCII key StudyLab-2026!. Keep WPA2 Policy and AES on and WPA/TKIP off. Apply, enable the WLAN and Save Configuration.\n\nReconnect a client. Verify that it completes security, gets an address in the intended VLAN and reaches a known server."
   },
   {
     "id": "wireless-security-config-t02",
@@ -67,7 +67,7 @@
     "answer": [
       2
     ],
-    "explanation": "Security has completed, but the central client VLAN is absent from the controller uplink's allowed list. In the explicitly stated DHCP-bridging design, VLAN 10's requests and replies cannot cross that link. The successful wired test establishes that the separate VLAN 10 service path exists.",
-    "fix": "On the lab switch add the client VLAN without removing management:\n\n```ios\nSW1# configure terminal\nSW1(config)# interface fastethernet0/24\nSW1(config-if)# switchport trunk allowed vlan add 10\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nConfirm 10,99 are allowed/active/forwarding. Have the wireless client request a fresh lease, then verify its 10.0.10.x/24 address, gateway and server access. Retest controller management."
+    "explanation": "Security completed, but the controller uplink does not allow the client VLAN. DHCP requests and replies for VLAN 10 cannot cross that link, and the wired test shows the VLAN 10 service itself works.",
+    "fix": "Add the client VLAN to the lab switch trunk without removing management:\n\n```ios\nSW1# configure terminal\nSW1(config)# interface fastethernet0/24\nSW1(config-if)# switchport trunk allowed vlan add 10\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nConfirm 10,99 are allowed, active and forwarding. Have the client request a fresh lease, then verify a 10.0.10.x/24 address, gateway and server access. Retest controller management."
   }
 ]

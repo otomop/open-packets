@@ -8,7 +8,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "With ordinary Catalyst SVI autostate behavior and the SVI administratively enabled, which two conditions are required for Vlan20 to operate? (Choose two.)",
+    "prompt": "With the SVI administratively enabled, which two conditions must be true for interface Vlan20 to come up? (Choose two.)",
     "options": [
       "IPv4 routing is enabled globally.",
       "VLAN 20 exists and is active locally.",
@@ -20,11 +20,11 @@
       1,
       3
     ],
-    "explanation": "The VLAN must exist and have an eligible forwarding member link. Neither IPv4 forwarding nor an external route determines whether an ordinary management SVI can be operational.",
+    "explanation": "An SVI comes up (autostate) only when its VLAN exists and at least one Layer 2 port in that VLAN is up and STP forwarding. IP routing and routes are not required.",
     "whyWrong": {
-      "0": "An SVI can be operational for switch management while IPv4 routing is disabled.",
-      "2": "A connected forwarding access port is sufficient; a trunk is not mandatory.",
-      "4": "Default routing is unrelated to the local VLAN's SVI line-state prerequisites."
+      "0": "An SVI can come up for management with IP routing disabled.",
+      "2": "One forwarding access port is enough, so no trunk is required.",
+      "4": "A default route does not affect SVI line state."
     }
   },
   {
@@ -48,11 +48,11 @@
       0,
       2
     ],
-    "explanation": "The command is a global host-style setting used when the switch is not routing. A switch with IP routing enabled uses its routing table instead; directly connected VLANs do not require a default route.",
+    "explanation": "ip default-gateway is a global, host-style next hop used when IP routing is off, for the switch's own traffic to other subnets. It does not forward user traffic and does not add a route to the table.",
     "whyWrong": {
-      "1": "The host-mode gateway command is not a static routing-table entry.",
-      "3": "Enabling user packet forwarding requires the relevant routing functionality.",
-      "4": "The command is global, not a per-SVI configuration."
+      "1": "It is a host-style setting and does not create an S* route.",
+      "3": "Forwarding between SVIs needs ip routing.",
+      "4": "It is a global command, not a per-SVI command."
     }
   },
   {
@@ -68,7 +68,7 @@
       "title": "Representative abbreviated interface status",
       "text": "Port       Status       Vlan     Duplex  Speed\nGi1/0/1    connected    10       a-full  a-100\nGi1/0/2    connected    20       a-full  a-100\nGi1/0/24   connected    routed   a-full  a-1000"
     },
-    "prompt": "What does the routed entry for Gi1/0/24 establish?",
+    "prompt": "What does the routed entry for Gi1/0/24 show?",
     "options": [
       "It is a Layer 3 physical interface rather than a VLAN switchport.",
       "It is a trunk that carries every VLAN with an SVI.",
@@ -78,11 +78,11 @@
     "answer": [
       0
     ],
-    "explanation": "The port is operating as a routed interface, normally configured with no switchport on this platform. It can use Ethernet and ARP for its IP neighbor while remaining outside Layer 2 VLAN membership.",
+    "explanation": "The port is a routed interface, configured with no switchport. It has its own IP address and is not a member of any VLAN.",
     "whyWrong": {
-      "1": "A trunk is a Layer 2 switchport and would be identified as a trunk.",
+      "1": "A trunk is a Layer 2 port and would show as a trunk.",
       "2": "An access port would show its VLAN membership.",
-      "3": "A routed port does not become a management access port in VLAN 1."
+      "3": "A routed port is not a Layer 2 port in VLAN 1."
     }
   },
   {
@@ -94,7 +94,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A host can ping its local management SVI. Which conclusion is justified by this test alone?",
+    "prompt": "A host pings its local management SVI and gets a reply. What does that test alone prove?",
     "options": [
       "The switch routes all other connected VLANs.",
       "The switch has a working default route.",
@@ -104,11 +104,11 @@
     "answer": [
       3
     ],
-    "explanation": "A local SVI reply confirms that tested local exchange. It does not test forwarding between VLANs, remote routes or every trunk in the network.",
+    "explanation": "A reply from the SVI proves only that the host and the SVI can exchange IP packets in that VLAN. It does not test routing between VLANs, remote routes or trunks.",
     "whyWrong": {
-      "0": "A switch can answer at an SVI while IPv4 forwarding is disabled.",
-      "1": "No remote next hop is needed for this local exchange.",
-      "2": "The tested path need not cross every trunk."
+      "0": "A switch answers at an SVI even when IP routing is disabled.",
+      "1": "This local exchange needs no default route.",
+      "2": "The path does not cross every trunk."
     }
   },
   {
@@ -120,7 +120,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "The router rejects an IP address on a new Ethernet subinterface because VLAN encapsulation has not been configured. The intended VLAN is 30. What should you do?",
+    "prompt": "The router rejects an IP address on a new subinterface because no VLAN encapsulation is configured. The VLAN is 30. What do you do?",
     "options": [
       "Enable the switch's VLAN 30 SVI and leave the router unchanged.",
       "Assign the same IP address to the physical parent interface.",
@@ -130,11 +130,11 @@
     "answer": [
       2
     ],
-    "explanation": "Configure the subinterface's VLAN encapsulation before its address. An address command that was rejected is not queued for later application; enter it again after correcting the prerequisite.",
+    "explanation": "A subinterface needs encapsulation dot1Q before it accepts an IP address. A rejected address command is not saved, so enter it again after the encapsulation.",
     "whyWrong": {
-      "0": "This would change the gateway design rather than complete the router subinterface.",
-      "1": "The intended service uses tagged VLAN 30 on a subinterface, not untagged parent addressing.",
-      "3": "The suffix does not configure a VLAN association."
+      "0": "An SVI on the switch does not finish the router subinterface.",
+      "1": "The design uses tagged VLAN 30 on a subinterface, not an address on the parent.",
+      "3": "The subinterface number does not set the VLAN."
     }
   },
   {
@@ -146,7 +146,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 routes an echo request from PC-A (192.168.10.11) to PC-B (192.168.20.12), without NAT. What is in the outgoing Ethernet frame toward PC-B?",
+    "prompt": "R1 routes an echo request from PC-A (192.168.10.11) to PC-B (192.168.20.12) with no NAT. What does the frame sent toward PC-B contain?",
     "options": [
       "Source MAC R1's VLAN 20 interface; destination MAC PC-B; destination IP 192.168.20.12.",
       "Source MAC PC-A; destination MAC PC-B; destination IP 192.168.20.12.",
@@ -156,11 +156,11 @@
     "answer": [
       0
     ],
-    "explanation": "R1 builds a new Ethernet frame for the outgoing VLAN. Ordinary routing keeps the packet's destination IP while changing the Layer 2 addressing for the next link.",
+    "explanation": "A router builds a new Ethernet frame on each link. The IP addresses stay the same and the MAC addresses change.",
     "whyWrong": {
-      "1": "PC-A's original Ethernet source is not retained across the routed boundary.",
-      "2": "The destination IP remains PC-B's address, not R1's outgoing address.",
-      "3": "This describes the incoming frame toward R1, not the outgoing one."
+      "1": "PC-A's MAC is not kept across the router.",
+      "2": "The destination IP stays PC-B's address.",
+      "3": "That is the frame PC-A sent to R1, not the one R1 sends out."
     }
   },
   {
@@ -176,7 +176,7 @@
       "title": "Representative abbreviated DSW1 evidence",
       "text": "show vlan brief:\n20   USERS20   active   Gi1/0/2\n\nshow interfaces status:\nGi1/0/2    notconnect    20    auto    auto\n\nshow ip interface brief:\nVlan20   192.168.20.1   YES manual   up   down"
     },
-    "prompt": "VLAN 20 is active, Vlan20 is not shut down, and Gi1/0/2 is its only member port. What best explains the unusable SVI?",
+    "prompt": "VLAN 20 is active, Vlan20 is not shut down, and Gi1/0/2 is its only member port. Why is the SVI down?",
     "options": [
       "IPv4 forwarding is disabled globally.",
       "VLAN 20 is missing from the VLAN database.",
@@ -186,11 +186,11 @@
     "answer": [
       3
     ],
-    "explanation": "The supplied evidence shows no linked forwarding port in VLAN 20. Restore the intended member link, then allow forwarding convergence and verify the SVI and connected route.",
+    "explanation": "An SVI needs at least one up and forwarding Layer 2 port in its VLAN. Gi1/0/2 is the only port in VLAN 20 and it is down.",
     "whyWrong": {
-      "0": "Forwarding configuration does not supply the missing active Layer 2 member required by SVI autostate.",
-      "1": "The display explicitly shows active VLAN 20.",
-      "2": "The question establishes that the SVI is not shut down."
+      "0": "IP routing has no effect on SVI autostate.",
+      "1": "The exhibit shows VLAN 20 active.",
+      "2": "The question states the SVI is not shut down."
     }
   },
   {
@@ -202,7 +202,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A 2960 port toward a router-on-a-stick is explicitly dynamic auto. The router uses Ethernet subinterfaces and sends no DTP. What is the correct switch-side remedy?",
+    "prompt": "A 2960 port toward a router-on-a-stick is set to dynamic auto. The router sends no DTP. What fixes the switch side?",
     "options": [
       "Assign the router's gateway address to the switch's access port.",
       "Configure a static trunk with the required VLANs and native treatment.",
@@ -212,11 +212,11 @@
     "answer": [
       1
     ],
-    "explanation": "This peer will not negotiate the trunk. Configure the switch port explicitly as a trunk and match the subinterfaces' VLAN requirements.",
+    "explanation": "The router never negotiates, so the switch port must be set to trunk statically. Allow the VLANs the subinterfaces use.",
     "whyWrong": {
-      "0": "A Layer 2 switchport address is not the missing trunk configuration.",
-      "2": "The stated router subinterfaces do not provide DTP negotiation.",
-      "3": "A native-VLAN setting does not make an access port operate as a trunk."
+      "0": "A switchport takes no gateway address.",
+      "2": "Router subinterfaces do not run DTP.",
+      "3": "A native VLAN does not turn an access port into a trunk."
     }
   },
   {
@@ -232,7 +232,7 @@
       "title": "Representative host-mode routing display",
       "text": "Default gateway is not set\n\nHost               Gateway           Last Use    Total Uses  Interface\nICMP redirect cache is empty"
     },
-    "prompt": "SW2 is intentionally operating without IP routing. Its management SVI is 192.168.99.10/24, and reachable router 192.168.99.1 has the necessary remote routes. Remote SSH packets arrive, but SW2 lacks a return next hop. Which command supplies it?",
+    "prompt": "SW2 does not route IP. Its SVI is 192.168.99.10/24 and router 192.168.99.1 has the remote routes. SW2 has no next hop for return traffic. Which command supplies it?",
     "options": [
       "ip default-gateway 192.168.99.1",
       "ip route 0.0.0.0 0.0.0.0 192.168.99.1",
@@ -242,11 +242,11 @@
     "answer": [
       0
     ],
-    "explanation": "A non-routing switch uses ip default-gateway for its own traffic to remote subnets. The prompt establishes the other connectivity and routing prerequisites, isolating this missing host-style next hop.",
+    "explanation": "A non-routing switch uses ip default-gateway as the next hop for its own traffic to other subnets. ip route would work only with ip routing enabled.",
     "whyWrong": {
-      "1": "A routing-table static default is not the host-mode gateway setting being used here.",
-      "2": "Shutting the management interface would remove working local connectivity.",
-      "3": "Native tagging does not supply a next hop for the switch's IP replies."
+      "1": "A static default route is not used while IP routing is disabled.",
+      "2": "Shutting the SVI removes management access.",
+      "3": "The native VLAN does not supply a next hop."
     }
   },
   {
@@ -258,7 +258,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "On a supporting multilayer switch, which sequence converts Gi1/0/24 from Layer 2 to an enabled physical Layer 3 interface at 10.0.12.2/30?",
+    "prompt": "Which sequence turns Gi1/0/24 on a multilayer switch into a Layer 3 interface at 10.0.12.2/30?",
     "options": [
       "interface vlan 24 → ip address 10.0.12.2 255.255.255.252 → no shutdown",
       "interface gi1/0/24 → switchport mode trunk → ip address 10.0.12.2 255.255.255.252",
@@ -268,11 +268,11 @@
     "answer": [
       2
     ],
-    "explanation": "No switchport changes the supported physical interface's role. It can then receive an IP address directly and be enabled with no shutdown.",
+    "explanation": "no switchport turns the physical port into a routed port. You can then address it directly and enable it with no shutdown.",
     "whyWrong": {
-      "0": "That configures a logical SVI, not the physical port.",
-      "1": "Trunk mode remains Layer 2 and is not converted by adding an address command.",
-      "3": "Access membership and a host-mode gateway do not create a routed port."
+      "0": "That configures an SVI, not the physical port.",
+      "1": "A trunk stays Layer 2 when you add an address.",
+      "3": "An access VLAN and ip default-gateway do not create a routed port."
     }
   },
   {
@@ -288,7 +288,7 @@
       "title": "Representative excerpt — R1# show ip interface brief",
       "text": "GigabitEthernet0/0       unassigned      YES unset   up                    up\nGigabitEthernet0/0.10    192.168.10.1    YES manual  up                    up\nGigabitEthernet0/0.20    192.168.20.1    YES manual  administratively down down\nGigabitEthernet0/1       unassigned      YES unset   administratively down down"
     },
-    "prompt": "VLAN 10 works. The switch trunk carries VLANs 10 and 20, and R1's running configuration has correct encapsulation and addresses. Which change directly addresses the displayed VLAN 20 fault?",
+    "prompt": "VLAN 10 works. The trunk carries VLANs 10 and 20, and R1's encapsulation and addresses are correct. Which change fixes the VLAN 20 fault shown?",
     "options": [
       "Add an IP address to the parent Gi0/0.",
       "Enable unused Gi0/1 as a return interface.",
@@ -298,11 +298,11 @@
     "answer": [
       3
     ],
-    "explanation": "The subinterface is explicitly administratively down. Enable that subinterface, then verify its connected route and VLAN 20 gateway reachability.",
+    "explanation": "Gi0/0.20 is administratively down. Enter no shutdown on that subinterface.",
     "whyWrong": {
-      "0": "An unaddressed parent is intentional in this subinterface design.",
-      "1": "The VLANs use Gi0/0; an unused physical port is not their return path.",
-      "2": "The address is correct and changing it would introduce another fault."
+      "0": "The parent is intentionally unaddressed in router-on-a-stick.",
+      "1": "The VLANs use Gi0/0, not Gi0/1.",
+      "2": "The VLAN 20 address is already correct."
     }
   },
   {
@@ -314,7 +314,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A switch must provide gateways for several local VLANs without sending all inter-VLAN traffic over a separate router trunk. Which design meets that requirement?",
+    "prompt": "A switch must give several VLANs a gateway and route between them without a separate router trunk. Which design does that?",
     "options": [
       "A router-on-a-stick with one shared trunk.",
       "One access uplink with all hosts configured in different VLANs.",
@@ -324,11 +324,11 @@
     "answer": [
       3
     ],
-    "explanation": "SVIs can provide the local VLAN gateways while the multilayer switch routes internally. Actual forwarding capacity and supported features still depend on the selected platform.",
+    "explanation": "SVIs on a multilayer switch with ip routing enabled give each VLAN a gateway. The switch routes between them internally.",
     "whyWrong": {
-      "0": "This design explicitly depends on the separate shared router trunk.",
-      "1": "An access uplink does not supply gateways for several VLANs.",
-      "2": "A trunk extends VLANs but does not perform the required routing."
+      "0": "Router-on-a-stick depends on the separate router trunk.",
+      "1": "An access uplink does not give several VLANs a gateway.",
+      "2": "A trunk extends VLANs but does not route."
     }
   },
   {
@@ -340,7 +340,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "Vlan30 is configured with an address and no shutdown, but is not operational. The complete local VLAN list does not contain VLAN 30, while the intended access port remains assigned to VLAN 30. What should be corrected first?",
+    "prompt": "Vlan30 has an address and no shutdown but is down. VLAN 30 is missing from the VLAN list, though the access port is still assigned to it. What do you fix first?",
     "options": [
       "Apply no shutdown to Vlan30 again.",
       "Create and activate VLAN 30 in the VLAN database.",
@@ -350,11 +350,11 @@
     "answer": [
       1
     ],
-    "explanation": "The missing VLAN database entry is established by the supplied evidence. Restore VLAN 30, then check that an eligible port is connected and forwarding; the SVI state alone would not uniquely prove this cause.",
+    "explanation": "An SVI stays down while its VLAN is missing from the VLAN database. Create VLAN 30, then check that a port in it is up and forwarding.",
     "whyWrong": {
-      "0": "The SVI is already enabled; its missing Layer 2 VLAN is the established problem.",
-      "2": "IPv4 forwarding cannot substitute for the absent VLAN database entry.",
-      "3": "Host settings cannot create the switch's missing VLAN."
+      "0": "The SVI is already enabled.",
+      "2": "IP routing does not replace a missing VLAN.",
+      "3": "A host setting cannot create a VLAN on the switch."
     }
   },
   {
@@ -366,7 +366,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "SW1 sends ordinary native VLAN 99 traffic untagged to R1. Which subinterface command explicitly associates that untagged traffic with VLAN 99 on the router?",
+    "prompt": "SW1 sends native VLAN 99 traffic untagged to R1. Which subinterface command tells the router that untagged traffic is VLAN 99?",
     "options": [
       "encapsulation dot1Q 99",
       "switchport trunk native vlan 99",
@@ -376,11 +376,11 @@
     "answer": [
       2
     ],
-    "explanation": "The native keyword selects the subinterface's handling of untagged native-VLAN traffic. Whether that VLAN also needs a gateway IP address depends on the design.",
+    "explanation": "encapsulation dot1Q 99 native makes the subinterface handle untagged frames as VLAN 99. Without native, it matches only tagged VLAN 99.",
     "whyWrong": {
-      "0": "Without native, the subinterface identifies tagged VLAN 99 traffic.",
-      "1": "This is a switchport command rather than a router subinterface command.",
-      "3": "An access-port VLAN command does not configure router subinterface encapsulation."
+      "0": "Without native, the subinterface matches only tagged VLAN 99.",
+      "1": "That is a switch command, not a router subinterface command.",
+      "3": "That is a switch access-port command."
     }
   },
   {
@@ -392,7 +392,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "PC-A (192.168.10.11/24, gateway 192.168.10.1) starts a ping to 192.168.20.12. Its ARP cache is empty and no other traffic is involved. What is the destination MAC of its initial ARP request?",
+    "prompt": "PC-A (192.168.10.11/24, gateway 192.168.10.1) pings 192.168.20.12 with an empty ARP cache. What is the destination MAC of its first ARP request?",
     "options": [
       "The broadcast address ffff.ffff.ffff.",
       "PC-B's MAC, obtained from the remote destination IP.",
@@ -402,11 +402,11 @@
     "answer": [
       0
     ],
-    "explanation": "PC-A needs the local gateway's MAC for this off-subnet destination. It first broadcasts an ARP request within its VLAN; after the reply, it can send the echo request to the gateway's MAC.",
+    "explanation": "A host sends an off-subnet packet to its gateway, so it ARPs for the gateway's MAC. An ARP request is a broadcast to ffff.ffff.ffff.",
     "whyWrong": {
-      "1": "An IP address does not reveal a remote Ethernet MAC.",
-      "2": "Ordinary switching does not make the local switch port the IP next hop.",
-      "3": "An empty ARP cache means the gateway's MAC must first be resolved."
+      "1": "PC-B is on another subnet and the host never ARPs for it.",
+      "2": "The switch port is not the next hop.",
+      "3": "With an empty cache, the gateway's MAC is not yet known."
     }
   },
   {
@@ -422,7 +422,7 @@
       "title": "Representative DSW1 evidence",
       "text": "Vlan10   192.168.10.1   YES manual   up   up\nVlan20   192.168.20.1   YES manual   up   up\n\nshow ip route:\nDefault gateway is not set"
     },
-    "prompt": "DSW1 has operational, correctly addressed SVIs for VLANs 10 and 20. Both hosts reach their own SVI, but the complete configuration contains no ip routing and the display is host mode. What is missing for forwarding between the two connected subnets?",
+    "prompt": "DSW1 has working SVIs for VLANs 10 and 20, but ip routing is not configured. What is missing for the two subnets to reach each other?",
     "options": [
       "A static default route toward the other SVI.",
       "The global ip routing command.",
@@ -432,11 +432,11 @@
     "answer": [
       1
     ],
-    "explanation": "The switch has local IP interfaces but is not forwarding IPv4 between them. Enable IP routing, then verify the connected routes and host-to-host tests.",
+    "explanation": "A multilayer switch forwards IPv4 between its SVIs only after the global ip routing command. Without it the switch acts as a host.",
     "whyWrong": {
-      "0": "A default route does not replace enabling forwarding and is unnecessary between these connected VLANs.",
-      "2": "The gateway addresses belong on the SVIs, not the access ports.",
-      "3": "A host-mode next hop supports the switch's own remote traffic, not forwarding user traffic between SVIs."
+      "0": "The subnets are directly connected, so no default route is needed.",
+      "2": "The gateway addresses belong on the SVIs, not on access ports.",
+      "3": "ip default-gateway helps only the switch's own traffic."
     }
   },
   {
@@ -448,7 +448,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "DSW1 routes connected VLANs 10 and 20 successfully. It has no default route. Which conclusion follows?",
+    "prompt": "DSW1 routes connected VLANs 10 and 20 and has no default route. What follows?",
     "options": [
       "The VLAN traffic is being switched without a Layer 3 decision.",
       "The hosts must use the routed uplink address as their gateway.",
@@ -458,11 +458,11 @@
     "answer": [
       2
     ],
-    "explanation": "Each destination subnet already has a connected route, so a default route is unnecessary for that exchange. A default or more specific route may be needed for other destinations, with a valid return path as well.",
+    "explanation": "Each VLAN's subnet has a connected route, so DSW1 needs no default route for those subnets. Other destinations need their own routes.",
     "whyWrong": {
-      "0": "Cross-subnet communication still involves Layer 3 forwarding.",
-      "1": "Each host uses a reachable gateway in its own subnet.",
-      "3": "The existing correct subnet masks and connected routes support routing; widening host masks would make hosts try local resolution for remote destinations."
+      "0": "Traffic between subnets is routed, not just switched.",
+      "1": "Each host uses a gateway in its own subnet.",
+      "3": "Widening the mask would make hosts ARP for remote hosts directly."
     }
   },
   {
@@ -478,7 +478,7 @@
       "title": "Supplied link evidence after a cable move",
       "text": "Gi0/0       unassigned      down  down\nGi0/0.10    192.168.10.1    down  down\nGi0/0.20    192.168.20.1    down  down\nGi0/0 configuration: no shutdown; unchanged valid subinterface settings"
     },
-    "prompt": "All subinterfaces use Gi0/0. What should be checked first, before editing each VLAN's encapsulation?",
+    "prompt": "Every subinterface on Gi0/0 is down. What do you check first?",
     "options": [
       "The physical Gi0/0 connection and its switch peer.",
       "The IP mask on every host at the same time.",
@@ -488,11 +488,11 @@
     "answer": [
       0
     ],
-    "explanation": "The shared parent link is down, so each dependent subinterface lacks its physical transport. Inspect the parent cable and peer state, restore that link, and then recheck individual VLANs.",
+    "explanation": "All subinterfaces depend on the parent interface. If the parent is down, they are all down, so check its cable and switch port first.",
     "whyWrong": {
-      "1": "Changing correct host masks cannot restore the displayed router link.",
-      "2": "Native settings concern trunk treatment and do not explain the physical link state shown.",
-      "3": "A route cannot restore a down physical interface."
+      "1": "Host masks do not affect the router's interface state.",
+      "2": "Native VLAN settings do not cause a down physical link.",
+      "3": "A route cannot bring up a down interface."
     }
   },
   {
@@ -508,7 +508,7 @@
       "title": "Supplied complete relevant SVI state",
       "text": "VLAN 20 exists and is active; Vlan20 is enabled\nAll local VLAN 20 access ports: down\nGi1/0/24: operational Layer 2 trunk, link up\nVLAN 20: allowed, active and forwarding on Gi1/0/24\nNo autostate overrides are configured"
     },
-    "prompt": "Under normal autostate behavior, can Vlan20 remain operational with this state?",
+    "prompt": "Under normal autostate, can Vlan20 stay up with this state?",
     "options": [
       "No; only a local access port counts toward SVI state.",
       "Yes; an SVI stays operational whenever it has an IP address.",
@@ -518,11 +518,11 @@
     "answer": [
       3
     ],
-    "explanation": "An eligible linked Layer 2 trunk can satisfy the member requirement for VLAN 20. The active VLAN and enabled SVI must also exist, as the question states.",
+    "explanation": "An SVI needs at least one up and forwarding Layer 2 port in its VLAN. A trunk port that carries VLAN 20 counts.",
     "whyWrong": {
-      "0": "An eligible access or trunk port can count.",
-      "1": "An address alone does not satisfy the VLAN and forwarding-member conditions.",
-      "2": "There is no universal requirement for both kinds simultaneously."
+      "0": "Access and trunk ports both count.",
+      "1": "An IP address alone does not bring an SVI up.",
+      "2": "One eligible port is enough, so no mix is required."
     }
   },
   {
@@ -538,7 +538,7 @@
       "title": "Supplied host and switch checks",
       "text": "PC-B: 192.168.20.12/24; default gateway blank\nPC-B pings local peer 192.168.20.13 and SVI 192.168.20.1\nDSW1: ip routing; correct connected VLAN 10 and 20 routes\nOther correctly configured hosts communicate between those VLANs"
     },
-    "prompt": "PC-B cannot exchange traffic with remote VLAN 10 hosts. Which correction follows from the combined checks?",
+    "prompt": "PC-B cannot reach VLAN 10 hosts. Which fix follows from the checks?",
     "options": [
       "Replace PC-B's /24 mask with /16.",
       "Assign the gateway address directly to PC-B.",
@@ -548,11 +548,11 @@
     "answer": [
       2
     ],
-    "explanation": "PC-B's local path works, but it lacks a next hop for destinations outside its /24. Set the reachable local SVI as its gateway, then repeat remote tests in both directions.",
+    "explanation": "PC-B reaches its own subnet but has no default gateway for other subnets. Set it to the VLAN 20 SVI at 192.168.20.1.",
     "whyWrong": {
-      "0": "A wider mask would make PC-B try local ARP for the remote VLAN instead of using its gateway.",
-      "1": "The SVI already owns that address; assigning it to PC-B creates an address conflict.",
-      "3": "Moving VLAN membership would break the documented addressing design."
+      "0": "A /16 mask would make PC-B ARP directly for the remote VLAN.",
+      "1": "The SVI already owns that address, so PC-B would conflict with it.",
+      "3": "Moving PC-B breaks the addressing design."
     }
   },
   {
@@ -564,7 +564,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A Layer 2 access switch has no IP-forwarding capability. An available router has one Ethernet interface allocated to serve three VLANs. Which design meets those constraints?",
+    "prompt": "A Layer 2 access switch cannot route. A router has one Ethernet interface for three VLANs. Which design fits?",
     "options": [
       "Three gateway SVIs on the Layer 2-only switch.",
       "A switch trunk to three addressed router subinterfaces.",
@@ -574,11 +574,11 @@
     "answer": [
       1
     ],
-    "explanation": "Router-on-a-stick carries the separate VLANs over the one allocated Ethernet link. Each router subinterface supplies the correct VLAN mapping and gateway for its subnet.",
+    "explanation": "Router-on-a-stick runs all VLANs over one trunk to the router. Each subinterface gives one VLAN its gateway.",
     "whyWrong": {
-      "0": "Management SVIs do not give a Layer 2-only switch the missing routing capability.",
-      "2": "The switch lacks routing capability, and the allocated router connection is singular.",
-      "3": "One ordinary untagged interface does not provide the required separate VLAN mappings in this design."
+      "0": "A Layer 2 switch cannot route between its SVIs.",
+      "2": "The switch cannot route, and the router has only one link.",
+      "3": "One untagged interface cannot separate three VLANs."
     }
   },
   {
@@ -594,7 +594,7 @@
       "title": "Supplied new-VLAN acceptance evidence",
       "text": "Plan: VLAN 30, subnet 192.168.30.0/24, gateway 192.168.30.1\nPC-C: 192.168.30.11/24, gateway 192.168.30.254 (unused)\nPC-C access port: VLAN 30; VLAN active\nSW1 trunk: VLANs 10,20,30,99 allowed/active/forwarding\nR1 Gi0/0.30: encapsulation dot1Q 300; IP 192.168.30.1/24; up/up\nExisting VLAN 10 and 20 tests pass"
     },
-    "prompt": "Two independent mistakes prevent the new VLAN 30 host from meeting the approved design. Which two changes correct them while preserving working VLANs 10 and 20? Choose two.",
+    "prompt": "Two mistakes stop the new VLAN 30 host from working while VLANs 10 and 20 work. Which two changes fix them? (Choose two.)",
     "options": [
       "Set the router's .30 encapsulation to VLAN 30.",
       "Replace the switch uplink's allowed list with VLAN 30 only.",
@@ -606,11 +606,11 @@
       0,
       2
     ],
-    "explanation": "The router is listening for the wrong VLAN tag, and PC-C points to an unused gateway address. Correct both, then test PC-C to its own gateway and to the other VLANs; the suffix alone does not determine tag handling.",
+    "explanation": "The router's .30 subinterface has the wrong VLAN tag, and PC-C points to the wrong gateway. Fix the encapsulation and set the gateway to 192.168.30.1.",
     "whyWrong": {
-      "1": "The current list already includes VLAN 30; replacing it would disrupt the required existing VLANs.",
-      "3": "The router's physical interface carries the subinterfaces and must retain this trunk design.",
-      "4": "Renaming the suffix does not change the configured tag or the host's gateway."
+      "1": "The allowed list already includes VLAN 30, and replacing it would break VLANs 10 and 20.",
+      "3": "The router's parent interface must stay a trunk-facing routed interface for the subinterfaces.",
+      "4": "The subinterface number does not set the VLAN tag."
     }
   },
   {
@@ -626,7 +626,7 @@
       "title": "Supplied complete relevant evidence",
       "text": "DSW1: ip routing; Vlan10 192.168.10.1/24 up/up\nDSW1 routed Gi1/0/24 10.0.12.2/30 up/up; R2 peer 10.0.12.1/30\nPC-A 192.168.10.11/24 gateway 192.168.10.1; local gateway ping passes\nDSW1 ping sourced from 10.0.12.2 to 10.0.12.1 passes\nR2 complete routes: only 10.0.12.0/30 connected and its local address; no default\nNo traffic filters in this lab"
     },
-    "prompt": "DSW1 pings R2 successfully from its link address, but a VLAN 10 host's ping to R2 fails. Which next investigation best fits the supplied evidence?",
+    "prompt": "DSW1 pings R2 from its link address, but a VLAN 10 host's ping to R2 fails. What do you check next?",
     "options": [
       "Change the working routed port into a trunk.",
       "Check R2's return route to the host subnet.",
@@ -636,11 +636,115 @@
     "answer": [
       1
     ],
-    "explanation": "The successful link-address test uses a source in R2's connected /30. The host uses a source in 192.168.10.0/24, for which R2 has no matching return route in the supplied complete table. Verify the return-path design before changing the working link.",
+    "explanation": "DSW1's ping uses a source in R2's connected /30, which works. The host's source is in 192.168.10.0/24, and R2 has no return route to it.",
     "whyWrong": {
-      "0": "The point-to-point routed link is already operational and reaches R2.",
-      "2": "The host needs its reachable local SVI, not an off-subnet gateway.",
-      "3": "A routed link's network number does not require a corresponding switch VLAN."
+      "0": "The routed link already works.",
+      "2": "The host should use its local SVI as its gateway.",
+      "3": "A routed link's network does not need a matching VLAN."
+    }
+  },
+  {
+    "id": "inter-vlan-routing-q29",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.c",
+      "v2:2.1.d"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is an SVI?",
+    "options": [
+      "A physical routed port with no switchport",
+      "A logical Layer 3 interface for a VLAN",
+      "A trunk subinterface on a router",
+      "A static route to a VLAN"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "An SVI is a switch virtual interface. It gives a VLAN a logical Layer 3 interface.",
+    "whyWrong": {
+      "0": "That describes a routed port made with no switchport.",
+      "2": "That describes a router subinterface.",
+      "3": "An SVI is an interface, not a route."
+    }
+  },
+  {
+    "id": "inter-vlan-routing-q30",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.c",
+      "v2:2.1.d"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Does an ordinary trunk between two switches route traffic between VLANs?",
+    "options": [
+      "Yes, because tagging adds a gateway to the link.",
+      "Yes, but only for traffic in VLAN 1.",
+      "No, it only carries VLANs; a Layer 3 device routes.",
+      "No, because trunks drop frames from other VLANs."
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A trunk preserves VLANs and does not route between them. A router or multilayer switch must route.",
+    "whyWrong": {
+      "0": "Tagging labels frames and adds no gateway.",
+      "1": "Trunks route no VLAN, including VLAN 1.",
+      "3": "A trunk carries frames from many VLANs."
+    }
+  },
+  {
+    "id": "inter-vlan-routing-q31",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.c",
+      "v2:2.1.d"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A host sends a packet to an off-subnet destination. Which destination MAC is in the Ethernet frame?",
+    "options": [
+      "The destination host's MAC",
+      "The broadcast address",
+      "The default gateway's MAC",
+      "The switch's MAC"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A host sends an off-subnet packet to a gateway in its own subnet. The frame uses the gateway's MAC.",
+    "whyWrong": {
+      "0": "The remote host's MAC is not reachable from this subnet.",
+      "1": "A broadcast is used for ARP, not for data.",
+      "3": "The switch forwards the frame and is not its destination."
+    }
+  },
+  {
+    "id": "inter-vlan-routing-q32",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.c",
+      "v2:2.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which router feature carries several VLANs over one physical interface in router-on-a-stick?",
+    "options": [
+      "Subinterfaces",
+      "Port channels",
+      "SVIs",
+      "Loopback interfaces"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Each router subinterface uses encapsulation dot1Q to map one VLAN on the shared trunk link.",
+    "whyWrong": {
+      "1": "A port channel bundles links and does not split VLANs.",
+      "2": "SVIs are logical interfaces on a multilayer switch.",
+      "3": "A loopback is not tied to a physical link."
     }
   }
 ]

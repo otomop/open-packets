@@ -18,11 +18,11 @@
     "answer": [
       1
     ],
-    "explanation": "The VID is a 12-bit field. Values 0 and 4095 have special or reserved meaning, leaving identifiers 1–4094; individual platforms can impose additional restrictions.",
+    "explanation": "The VID is a 12-bit field. Values 0 and 4095 are reserved, which leaves 1–4094.",
     "whyWrong": {
       "0": "The 16-bit TPID identifies the tag format, not the VLAN.",
-      "2": "The VID has 12 bits, not eight.",
-      "3": "The complete tag is 32 bits; VLAN identification is only part of it."
+      "2": "The VID is 12 bits, not 8.",
+      "3": "The whole tag is 32 bits, and the VID is only part of it."
     }
   },
   {
@@ -34,7 +34,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Two operational Cisco switch ports are explicitly set to dynamic auto, with no other trunk-forcing configuration. What does their DTP interaction normally produce?",
+    "prompt": "Two switch ports are both set to dynamic auto. What is the DTP result?",
     "options": [
       "A trunk because each side advertises willingness to trunk.",
       "An error-disabled link caused by a negotiation conflict.",
@@ -44,11 +44,11 @@
     "answer": [
       2
     ],
-    "explanation": "Dynamic auto is a passive negotiation mode. Auto paired with auto does not initiate the exchange needed to make the link a trunk.",
+    "explanation": "Dynamic auto only responds to a trunk request and never sends one. Two auto ports leave the link as an access link.",
     "whyWrong": {
-      "0": "Willingness alone is insufficient when both sides are passive.",
-      "1": "This combination is a normal nontrunking outcome, not an error-disable trigger.",
-      "3": "A single native VLAN is not the result of a partly negotiated trunk."
+      "0": "Auto is passive, so neither side advertises a request to trunk.",
+      "1": "Auto with auto is a normal access link, not an error-disable trigger.",
+      "3": "There is no partial trunk that carries only the native VLAN."
     }
   },
   {
@@ -60,7 +60,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements correctly describe switchport nonegotiate on a supported statically configured trunk? (Choose two.)",
+    "prompt": "Which two statements describe switchport nonegotiate on a static trunk? (Choose two.)",
     "options": [
       "It suppresses DTP messages sent by the port.",
       "It removes 802.1Q tags from all transmitted frames.",
@@ -72,11 +72,11 @@
       0,
       4
     ],
-    "explanation": "The command controls DTP transmission, not the data-plane tag format. A static trunk can continue carrying its configured VLANs without negotiating them with a peer.",
+    "explanation": "The command stops the port from sending DTP messages. It does not change 802.1Q tagging, so the static trunk keeps carrying tagged VLANs.",
     "whyWrong": {
       "1": "Disabling DTP does not disable 802.1Q tagging.",
-      "2": "A trunk's allowed and native VLAN settings matter; matching access VLANs is not this command's requirement.",
-      "3": "The native VLAN remains whatever the trunk configuration specifies."
+      "2": "The command has no access VLAN requirement.",
+      "3": "The native VLAN stays whatever the trunk is configured with."
     }
   },
   {
@@ -88,7 +88,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An engineer removes VLAN 1 from a Catalyst trunk's allowed list. Which conclusion is justified?",
+    "prompt": "An engineer removes VLAN 1 from a Catalyst trunk's allowed list. What is the result?",
     "options": [
       "All Cisco discovery and negotiation messages stop on the link.",
       "The trunk's native VLAN automatically becomes the lowest allowed VLAN.",
@@ -98,11 +98,11 @@
     "answer": [
       2
     ],
-    "explanation": "The allowed list controls VLAN forwarding eligibility. Cisco documents continued operation of several link-control protocols when VLAN 1 is removed; use each feature's own configuration to control it.",
+    "explanation": "The allowed list controls which VLANs the trunk forwards. Link-control protocols such as CDP, PAgP and DTP still run in VLAN 1 even when VLAN 1 is removed.",
     "whyWrong": {
-      "0": "Removing a user VLAN does not disable every control protocol.",
-      "1": "Native VLAN selection is a separate setting.",
-      "3": "An allowed-list modification does not change static trunk mode."
+      "0": "Control protocols such as CDP, PAgP and DTP keep running.",
+      "1": "The native VLAN is a separate setting and does not change.",
+      "3": "Editing the allowed list does not change the port mode."
     }
   },
   {
@@ -118,7 +118,7 @@
       "title": "Representative excerpt — SW1# show interfaces trunk",
       "text": "Port        Mode         Encapsulation  Status        Native vlan\nGi0/1       on           802.1q         trunking      99\n\nPort        Vlans allowed on trunk\nGi0/1       10,20,30,99\n\nPort        Vlans allowed and active in management domain\nGi0/1       10,20,99\n\nPort        Vlans in spanning tree forwarding state and not pruned\nGi0/1       10,20,99"
     },
-    "prompt": "VLAN 30 cannot cross SW1's trunk. Which local condition does the exhibit establish?",
+    "prompt": "VLAN 30 cannot cross SW1's trunk. What does the exhibit show?",
     "options": [
       "VLAN 30 is allowed but is not active locally.",
       "VLAN 30 is missing from the configured allowed list.",
@@ -128,11 +128,11 @@
     "answer": [
       0
     ],
-    "explanation": "The first list includes VLAN 30, while the active list does not. Check the local VLAN database for an absent or inactive VLAN before changing the allowed list.",
+    "explanation": "VLAN 30 is in the allowed list but missing from the active list. A VLAN that is allowed but not active is missing or inactive in the local VLAN database.",
     "whyWrong": {
-      "1": "VLAN 30 is explicitly present in the allowed list.",
-      "2": "It is absent from the active list, so the exhibit does not isolate STP as the cause.",
-      "3": "The configured native VLAN is 99, not 30."
+      "1": "VLAN 30 is in the allowed list.",
+      "2": "The exhibit shows no STP state, and VLAN 30 is already missing from the active list.",
+      "3": "The native VLAN is 99, not 30."
     }
   },
   {
@@ -144,7 +144,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A compatible Cisco peer is in dynamic auto with DTP enabled. Which two local modes can make that link become a trunk through DTP? (Choose two.)",
+    "prompt": "The peer is in dynamic auto with DTP enabled. Which two local modes can form a trunk? (Choose two.)",
     "options": [
       "Static access",
       "Dynamic auto",
@@ -156,11 +156,11 @@
       2,
       3
     ],
-    "explanation": "Dynamic desirable actively negotiates. Static trunk with DTP running advertises a trunking state that a compatible auto peer can accept; manual trunk mode on both ends remains the clearer operational design.",
+    "explanation": "Dynamic desirable sends trunk requests that an auto peer accepts. A static trunk with DTP enabled also advertises trunking, so an auto peer joins it.",
     "whyWrong": {
-      "0": "Static access keeps the local port nontrunking.",
-      "1": "Two auto ports are both passive.",
-      "4": "Changing an access VLAN does not change the port into a trunk."
+      "0": "Static access never trunks.",
+      "1": "Auto with auto is passive on both sides.",
+      "4": "The access VLAN value does not change the port mode."
     }
   },
   {
@@ -176,7 +176,7 @@
       "title": "Configuration excerpts from the two trunk ports",
       "text": "SW1 Gi0/1:\n switchport mode trunk\n switchport trunk native vlan 99\n switchport trunk allowed vlan 10,20,99,999\n\nSW2 Gi0/1:\n switchport mode trunk\n switchport trunk native vlan 999\n switchport trunk allowed vlan 10,20,99,999"
     },
-    "prompt": "The intended unused native VLAN is 99 at both ends. Which single change restores that agreement?",
+    "prompt": "The design calls for native VLAN 99 at both ends. Which single change fixes the mismatch?",
     "options": [
       "On SW1, change its allowed list to VLAN 999 only.",
       "On SW2, add VLAN 99 as an access VLAN.",
@@ -186,11 +186,11 @@
     "answer": [
       3
     ],
-    "explanation": "Native membership is configured per trunk port. Restoring SW2's native value to 99 makes its treatment of ordinary untagged data agree with SW1 and the stated design.",
+    "explanation": "The native VLAN is set per trunk port. Setting SW2's native VLAN to 99 makes both ends match.",
     "whyWrong": {
-      "0": "An allowed-list change does not set the intended native VLAN.",
-      "1": "An access-VLAN command does not select the operational trunk's native VLAN.",
-      "2": "Changing negotiation mode does not repair native VLAN agreement."
+      "0": "The allowed list does not set the native VLAN.",
+      "1": "An access VLAN does not set the trunk's native VLAN.",
+      "2": "The port mode does not set the native VLAN."
     }
   },
   {
@@ -212,11 +212,11 @@
     "answer": [
       2
     ],
-    "explanation": "The add keyword modifies the existing list. A bare allowed-vlan list replaces the current selection, potentially interrupting existing users.",
+    "explanation": "The add keyword extends the existing allowed list. A bare list replaces the whole list and can cut off other VLANs.",
     "whyWrong": {
-      "0": "This selects access-port membership, not the trunk's allowed list.",
-      "1": "This replaces the list with only VLAN 30.",
-      "3": "This changes the native VLAN and does not add VLAN 30 to the allowed list."
+      "0": "This assigns an access VLAN and does not touch the trunk's allowed list.",
+      "1": "This replaces the list with VLAN 30 only.",
+      "3": "This changes the native VLAN, not the allowed list."
     }
   },
   {
@@ -232,7 +232,7 @@
       "title": "Representative older-platform configuration rejection",
       "text": "SW1(config-if)# switchport mode trunk\nCommand rejected: An interface whose trunk encapsulation is \"Auto\" can not be configured to \"trunk\" mode."
     },
-    "prompt": "On this older interface, command help confirms an encapsulation selector is supported. Which command addresses the displayed rejection before retrying static trunk mode?",
+    "prompt": "This interface supports a choice of encapsulation and rejected static trunk mode. Which command fixes the rejection?",
     "options": [
       "switchport trunk native vlan 1",
       "switchport trunk encapsulation dot1q",
@@ -242,11 +242,11 @@
     "answer": [
       1
     ],
-    "explanation": "An interface that supports an encapsulation choice may require a fixed encapsulation before static trunk mode. This is a platform-specific selector; a 2960's 802.1Q-only interface does not need it.",
+    "explanation": "Interfaces that support more than one encapsulation need switchport trunk encapsulation dot1q before switchport mode trunk. A 2960 supports only 802.1Q and does not need it.",
     "whyWrong": {
-      "0": "The native VLAN does not select the trunk encapsulation.",
-      "2": "Suppressing DTP does not choose the encapsulation required by this rejection.",
-      "3": "Access membership does not resolve an encapsulation choice."
+      "0": "The native VLAN does not select the encapsulation.",
+      "2": "nonegotiate stops DTP and does not select the encapsulation.",
+      "3": "An access VLAN does not resolve the encapsulation error."
     }
   },
   {
@@ -258,7 +258,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A trunk uses default native-VLAN treatment with native VLAN 99. It receives an ordinary untagged data frame. How does the switch classify that frame?",
+    "prompt": "A trunk has native VLAN 99. It receives an untagged data frame. Which VLAN does the switch put it in?",
     "options": [
       "Into VLAN 1 because the frame has no explicit VID.",
       "Into the access VLAN configured on that same trunk port.",
@@ -268,11 +268,11 @@
     "answer": [
       3
     ],
-    "explanation": "Under the specified default behavior, the native VLAN supplies the membership for ordinary untagged data. The receiving port's configuration determines that classification.",
+    "explanation": "An untagged frame on a trunk belongs to the receiving port's native VLAN. Here that is VLAN 99.",
     "whyWrong": {
-      "0": "VLAN 1 is a default native value, not an override of a configured native VLAN.",
-      "1": "The native setting, not the access-VLAN setting, classifies ordinary untagged data on an operational trunk.",
-      "2": "A frame is not assigned simultaneously to all allowed VLANs."
+      "0": "VLAN 1 is only the default native VLAN, and this port is set to 99.",
+      "1": "A trunk port uses its native VLAN, not an access VLAN, for untagged frames.",
+      "2": "A frame belongs to exactly one VLAN."
     }
   },
   {
@@ -288,7 +288,7 @@
       "title": "Configured trunk settings",
       "text": "SW1 Gi0/1: mode trunk; native 99; allowed 10,99\nSW2 Gi0/1: mode trunk; native 99; allowed 10,20,99"
     },
-    "prompt": "VLANs 10 and 20 exist and are active on both switches, and the PC access assignments are correct. VLAN 10 works across the link, but VLAN 20 does not. What does this configuration show?",
+    "prompt": "VLANs 10 and 20 are active on both switches and the PC ports are correct. VLAN 10 crosses the link and VLAN 20 does not. What is the cause?",
     "options": [
       "SW1 classifies all tagged VLAN 20 data into native VLAN 99.",
       "SW1's trunk omits VLAN 20 from its allowed list.",
@@ -298,11 +298,11 @@
     "answer": [
       1
     ],
-    "explanation": "The two ends do not both permit VLAN 20. Add 20 to SW1's existing list, then verify forwarding and repeat the VLAN 20 traffic test.",
+    "explanation": "VLAN 10 works and VLAN 20 does not, so the trunk is up and one allowed list leaves out VLAN 20. Add VLAN 20 to SW1's list with add and retest.",
     "whyWrong": {
-      "0": "The native rule applies to the stated ordinary untagged traffic, not every tagged VLAN.",
-      "2": "Static compatible trunks can carry data without DTP negotiation.",
-      "3": "The question verifies VLAN 20 active on both switches."
+      "0": "The native VLAN rule applies only to untagged frames, not to tagged VLAN 20 traffic.",
+      "2": "Static trunks carry VLANs without DTP.",
+      "3": "The question states that VLAN 20 is active on both switches."
     }
   },
   {
@@ -314,7 +314,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A standard untagged Ethernet frame is 1,518 bytes from destination MAC through FCS. What is its length after one four-byte 802.1Q tag is added, with the payload unchanged?",
+    "prompt": "An untagged Ethernet frame is 1,518 bytes, destination MAC through FCS. How long is it with one 802.1Q tag added?",
     "options": [
       "1,522 bytes",
       "1,514 bytes",
@@ -324,11 +324,11 @@
     "answer": [
       0
     ],
-    "explanation": "Adding one four-byte tag produces 1,522 bytes. The IP payload does not become four bytes larger, and the count given excludes preamble and start delimiter.",
+    "explanation": "An 802.1Q tag adds 4 bytes, so 1,518 becomes 1,522. The count excludes preamble and start delimiter.",
     "whyWrong": {
-      "1": "The tag adds bytes instead of removing four.",
-      "2": "That adds eight bytes rather than the single tag's four.",
-      "3": "1,500 bytes describes the usual maximum payload in this example, not the complete frame."
+      "1": "The tag adds 4 bytes, so the frame gets longer.",
+      "2": "That adds 8 bytes, which is two tags.",
+      "3": "1,500 bytes is the usual maximum payload, not the frame length."
     }
   },
   {
@@ -340,7 +340,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An ordinary PC should use only untagged VLAN 10 traffic and must not negotiate a trunk. Which port configuration fits?",
+    "prompt": "A PC must use untagged VLAN 10 only and must not negotiate a trunk. Which configuration fits?",
     "options": [
       "switchport mode dynamic desirable; switchport access vlan 10",
       "switchport mode access; switchport access vlan 10",
@@ -350,11 +350,11 @@
     "answer": [
       1
     ],
-    "explanation": "Static access mode defines a nontrunking port, and the access-VLAN command assigns ordinary data to VLAN 10. This matches the PC's single untagged network requirement.",
+    "explanation": "switchport mode access makes the port a static access port, and switchport access vlan 10 puts it in VLAN 10. Static access also disables DTP negotiation.",
     "whyWrong": {
-      "0": "Desirable actively attempts to form a trunk.",
-      "2": "A trunk remains a trunk even if its native VLAN matches the PC's intended VLAN.",
-      "3": "Dynamic auto leaves trunk negotiation possible with a suitable peer."
+      "0": "Desirable actively tries to form a trunk.",
+      "2": "A trunk stays a trunk whatever its native VLAN.",
+      "3": "Dynamic auto can still become a trunk if the peer asks."
     }
   },
   {
@@ -370,7 +370,7 @@
       "title": "AP requirements and switch port configuration",
       "text": "AP: management untagged in VLAN 100; staff tagged 110; guests tagged 120.\nSwitch interface:\n switchport mode trunk\n switchport trunk native vlan 99\n switchport trunk allowed vlan 100,110,120\n switchport nonegotiate"
     },
-    "prompt": "The AP requires untagged management VLAN 100 and tagged local client VLANs 110 and 120. Which switch-side change fixes the shown configuration?",
+    "prompt": "The AP needs untagged management VLAN 100 and tagged client VLANs 110 and 120. Which switch change fixes the configuration shown?",
     "options": [
       "Set the port to access VLAN 100.",
       "Remove VLAN 100 from the allowed list.",
@@ -380,11 +380,11 @@
     "answer": [
       3
     ],
-    "explanation": "The port already permits all required VLANs, but ordinary untagged management traffic must be classified into VLAN 100. Client VLANs 110 and 120 remain tagged.",
+    "explanation": "Untagged frames from the AP are classified into the native VLAN. Setting the native VLAN to 100 puts management in VLAN 100 while 110 and 120 stay tagged.",
     "whyWrong": {
-      "0": "One access VLAN would not carry the two specified tagged client VLANs.",
-      "1": "Removing management VLAN eligibility would not correct its classification.",
-      "2": "That would classify untagged management traffic into the staff client VLAN."
+      "0": "An access port cannot carry tagged VLANs 110 and 120.",
+      "1": "Removing VLAN 100 from the allowed list would block management traffic.",
+      "2": "Native VLAN 110 would put untagged management traffic into a client VLAN."
     }
   },
   {
@@ -400,7 +400,7 @@
       "title": "Virtual-host uplink requirements supplied by its administrator",
       "text": "Management interface: VLAN 100 tagged\nVM group A: VLAN 110 tagged\nVM group B: VLAN 120 tagged\nNo service uses untagged traffic; unused native VLAN 999 agreed."
     },
-    "prompt": "A virtual host expects management VLAN 100 and VM VLANs 110 and 120 to remain tagged on its uplink. With default native treatment, which matching switch profile avoids untagging a required VLAN?",
+    "prompt": "A virtual host needs VLANs 100, 110 and 120 all tagged on its uplink. Which switch profile keeps all three tagged?",
     "options": [
       "Allow 100,110,120 and use an agreed unused native VLAN 999.",
       "Allow 100,110,120 and make management VLAN 100 native.",
@@ -410,11 +410,11 @@
     "answer": [
       0
     ],
-    "explanation": "The host explicitly expects all three required VLANs tagged. Keeping the native VLAN outside that set preserves their tagging under the specified default behavior.",
+    "explanation": "Default native treatment removes the tag from native VLAN frames. Using an unused native VLAN such as 999 keeps VLANs 100, 110 and 120 tagged.",
     "whyWrong": {
-      "1": "Management frames in the native VLAN would leave the switch untagged.",
-      "2": "A single access VLAN cannot transport the required three tagged networks.",
-      "3": "The required VLANs are absent from that allowed list."
+      "1": "Native VLAN 100 would send management frames untagged.",
+      "2": "One access VLAN cannot carry three tagged VLANs.",
+      "3": "VLANs 100, 110 and 120 are missing from that allowed list."
     }
   },
   {
@@ -426,7 +426,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A firewall's Ethernet interface is configured with logical interfaces for tagged VLANs 10 and 20. It does not use DTP. What should you configure on the connected switch port?",
+    "prompt": "A firewall has logical interfaces for tagged VLANs 10 and 20 and does not use DTP. What goes on the switch port?",
     "options": [
       "Dynamic auto with access VLAN 10.",
       "A routed switch port with no switchport and no IP address.",
@@ -436,10 +436,10 @@
     "answer": [
       2
     ],
-    "explanation": "The peer requires multiple tagged VLANs, so the switch must provide a compatible static trunk. The appliance's documented tagging requirements determine the profile; its product category alone does not.",
+    "explanation": "Tagged VLANs from a device need a static trunk that allows those VLANs. The firewall does not use DTP, so the switch must be set to trunk statically.",
     "whyWrong": {
-      "0": "Auto relies on negotiation that this peer does not provide.",
-      "1": "A routed port is not the Layer 2 trunk required by the peer's tagged logical interfaces.",
+      "0": "Auto needs a peer that negotiates, and the firewall does not.",
+      "1": "A routed port is not a Layer 2 trunk.",
       "3": "An allowed list does not turn an access port into a trunk."
     }
   },
@@ -456,7 +456,7 @@
       "title": "Representative local trunk excerpt",
       "text": "Gi0/1: trunking, native VLAN 99\nVlans allowed: 10,20,99\nVlans allowed and active: 10,20,99\nVlans forwarding and not pruned: 10,99"
     },
-    "prompt": "What does the absence of VLAN 20 from only the last list establish?",
+    "prompt": "VLAN 20 is missing from only the last list. What does that show?",
     "options": [
       "VLAN 20 is not currently eligible to forward on this port.",
       "VLAN 20 was removed from the configured allowed list.",
@@ -466,11 +466,11 @@
     "answer": [
       0
     ],
-    "explanation": "The VLAN is allowed and active but missing from the effective forwarding list. Inspect its forwarding state and pruning evidence before naming the cause; the list alone does not distinguish them.",
+    "explanation": "The last list shows VLANs that are allowed, active and forwarding. Missing from it only means VLAN 20 is not forwarding on this port, so check spanning-tree or pruning next.",
     "whyWrong": {
-      "1": "It appears in the configured allowed list.",
-      "2": "It appears in the allowed-and-active list.",
-      "3": "The lists do not make VLAN 20 native; the native VLAN is 99."
+      "1": "VLAN 20 is in the configured allowed list.",
+      "2": "VLAN 20 is in the allowed-and-active list.",
+      "3": "The native VLAN is 99, so VLAN 20 is not untagged."
     }
   },
   {
@@ -486,7 +486,7 @@
       "title": "Supplied relevant local checks",
       "text": "show interfaces trunk: Gi0/2 absent\nGi0/2 switchport: administrative mode trunk\nGi0/2 interface state: administratively down\nVLANs 10,20,99: active; allowed list 10,20,99"
     },
-    "prompt": "The new link is approved for service, its peer is configured compatibly, and the cable is connected. Which next action follows from these checks?",
+    "prompt": "The link is approved, the peer is configured to match and the cable is connected. What is the next action?",
     "options": [
       "Recreate VLANs 10 and 20 because native VLAN 99 prevents trunking.",
       "Replace the allowed list with all VLANs to make the port operational.",
@@ -496,11 +496,11 @@
     "answer": [
       3
     ],
-    "explanation": "Administrative shutdown explains why a configured trunk is not operational. Enable the approved port, then check physical connection, trunk state and required VLANs rather than assuming the command itself proves success.",
+    "explanation": "A port that is administratively shut down will not come up. Enter no shutdown on Gi0/2, then check the operational state.",
     "whyWrong": {
-      "0": "An unused native VLAN does not prevent the configured static trunk.",
-      "1": "Expanding the list does not remove shutdown.",
-      "2": "A Layer 2 trunk does not need a routed-interface IP address."
+      "0": "An unused native VLAN does not stop a static trunk.",
+      "1": "Allowing more VLANs does not remove a shutdown.",
+      "2": "A Layer 2 trunk takes no IP address."
     }
   },
   {
@@ -512,7 +512,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "Assume ordinary default native treatment and no protective blocking. SW1 sends a data frame from its native VLAN 99. SW2's native VLAN is 999; both IDs are allowed and active at both ends. Which two statements follow? Choose two.",
+    "prompt": "SW1 sends a frame from native VLAN 99 and SW2's native VLAN is 999. Both VLANs are allowed and active. Which two statements are true? (Choose two.)",
     "options": [
       "SW1 sends this native-VLAN frame without an 802.1Q tag.",
       "SW1 changes the frame's source MAC to identify VLAN 99.",
@@ -524,11 +524,11 @@
       0,
       3
     ],
-    "explanation": "The sending port omits the native tag under the stated rule, and the receiving port assigns ordinary untagged data to its own native VLAN. The frame has no hidden VID that corrects the mismatch.",
+    "explanation": "A trunk sends native VLAN frames untagged. The receiver puts untagged frames into its own native VLAN, here 999.",
     "whyWrong": {
-      "1": "VLAN tagging does not require replacing the source MAC.",
-      "2": "An untagged frame does not carry the sender's VLAN ID.",
-      "4": "Ordinary ingress classification selects the receiving native VLAN."
+      "1": "Tagging never rewrites the source MAC.",
+      "2": "An untagged frame carries no VLAN ID, so VLAN 99 is lost.",
+      "4": "A frame goes into one VLAN, the receiver's native VLAN."
     }
   },
   {
@@ -540,7 +540,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "SW1 uses static trunk mode and nonegotiate. SW2 is dynamic auto and remains nontrunking. Both must carry VLANs 10 and 20 with native 99. Which design correction establishes the intended trunk without relying on DTP?",
+    "prompt": "SW1 is a static trunk with nonegotiate and SW2 is dynamic auto, so SW2 stays an access port. Which change builds the trunk without DTP?",
     "options": [
       "Configure SW2 as a static trunk with the matching native/allowed settings.",
       "Change SW1's native VLAN to SW2's access VLAN without changing modes.",
@@ -550,11 +550,11 @@
     "answer": [
       0
     ],
-    "explanation": "SW1 is not sending DTP, so a passive auto peer has no negotiation that makes it a trunk. Configure the peer explicitly and verify both ends; MAC state and management addressing cannot substitute for the mode.",
+    "explanation": "SW1 sends no DTP, so a passive auto port never trunks. Configure SW2 as a static trunk with the matching native and allowed VLANs.",
     "whyWrong": {
-      "1": "Matching an access VLAN does not make SW2 a multi-VLAN trunk.",
-      "2": "A MAC-table clear does not change negotiation or administrative mode.",
-      "3": "SVIs do not configure the physical link as a trunk."
+      "1": "Matching an access VLAN does not make SW2 a trunk.",
+      "2": "Clearing the MAC table does not change the port mode.",
+      "3": "SVIs do not change the port mode."
     }
   },
   {
@@ -570,7 +570,7 @@
       "title": "Supplied operational trunk summaries; native 99 at both ends",
       "text": "SW1 Gi0/1: trunking\n allowed: 10,20,30,40,99\n allowed and active: 10,20,30,99\n forwarding and not pruned: 10,20,99\nSW2 Gi0/1: trunking\n allowed: 10,20,30,40,99\n allowed and active: 10,20,30,40,99\n forwarding and not pruned: 20,30,40,99"
     },
-    "prompt": "Considering only the supplied trunk eligibility state, which user VLAN can cross this link in both directions now?",
+    "prompt": "Which VLAN can cross this link in both directions?",
     "options": [
       "VLANs 10 and 20",
       "VLAN 20",
@@ -580,11 +580,11 @@
     "answer": [
       1
     ],
-    "explanation": "Only VLAN 20 is forwarding and eligible at both ends. Local permission alone is insufficient; intersect the effective forwarding sets, then test correctly connected hosts separately.",
+    "explanation": "A VLAN crosses only if it is forwarding on both ends. Only VLAN 20 is in the forwarding list at both ends.",
     "whyWrong": {
       "0": "VLAN 10 is not forwarding on SW2.",
       "2": "VLAN 30 is not forwarding on SW1.",
-      "3": "Several listed VLANs fail a local activity or forwarding check."
+      "3": "Several of those VLANs are not active or forwarding at one end."
     }
   },
   {
@@ -600,7 +600,7 @@
       "title": "Supplied rollout verification",
       "text": "New PCs: 192.168.30.11/24 on SW1 Fa0/3; 192.168.30.12/24 on SW2 Fa0/3\nSW1 Fa0/3: access VLAN 10\nSW2 Fa0/3: access VLAN 30\nVLANs 10,20,30,99 active on both switches\nBoth uplinks: static trunk, native 99\nSW1 uplink allowed: 10,20,30,99\nSW2 uplink allowed: 10,20,99\nExisting VLAN 10 and 20 client pairs work"
     },
-    "prompt": "The new VLAN 30 pair must communicate while existing VLANs 10 and 20 keep working. Which two corrections are required by the combined evidence? Choose two.",
+    "prompt": "The VLAN 30 pair must communicate and VLANs 10 and 20 must keep working. Which two corrections are required? (Choose two.)",
     "options": [
       "Set SW1 Fa0/3 to access VLAN 30.",
       "Replace SW1's uplink allowed list with VLAN 30 only.",
@@ -612,11 +612,115 @@
       0,
       3
     ],
-    "explanation": "SW1's new endpoint is in the wrong access VLAN, and SW2's trunk excludes the new VLAN. Correct both while preserving the existing trunk list and native agreement, then verify all three client pairs.",
+    "explanation": "SW1's new endpoint is in the wrong access VLAN, and SW2's trunk does not allow VLAN 30. Use add on the trunk so VLANs 10 and 20 stay allowed.",
     "whyWrong": {
-      "1": "That disrupts the required existing VLANs and does not fix the endpoint membership.",
-      "2": "Changing native membership fixes neither the wrong access port nor the missing allowed VLAN.",
-      "4": "The documented new pair belongs to VLAN 30."
+      "1": "Replacing the list with VLAN 30 breaks VLANs 10 and 20.",
+      "2": "The native VLAN does not fix the access port or the allowed list.",
+      "4": "The new pair belongs in VLAN 30, not VLAN 10."
+    }
+  },
+  {
+    "id": "trunks-dtp-q28",
+    "type": "single",
+    "objectives": [
+      "v1:2.2.a",
+      "v2:2.1.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default mode of a Catalyst 2960 switch port?",
+    "options": [
+      "Static access",
+      "Dynamic auto",
+      "Dynamic desirable",
+      "Static trunk"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A 2960 port defaults to dynamic auto. It becomes a trunk only if the other end asks.",
+    "whyWrong": {
+      "0": "Access is a configured mode, not the default.",
+      "2": "Desirable actively asks for a trunk and is not the default.",
+      "3": "A static trunk must be configured."
+    }
+  },
+  {
+    "id": "trunks-dtp-q29",
+    "type": "single",
+    "objectives": [
+      "v1:2.2.a",
+      "v2:2.1.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default native VLAN on a Cisco switch trunk?",
+    "options": [
+      "VLAN 0",
+      "VLAN 1",
+      "VLAN 99",
+      "VLAN 1002"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The native VLAN is VLAN 1 by default. Its frames cross the trunk untagged.",
+    "whyWrong": {
+      "0": "VLAN 0 is reserved and is not a usable VLAN.",
+      "2": "VLAN 99 is a common choice for a custom native VLAN, not the default.",
+      "3": "VLAN 1002 is a reserved legacy VLAN."
+    }
+  },
+  {
+    "id": "trunks-dtp-q30",
+    "type": "single",
+    "objectives": [
+      "v1:2.2.b",
+      "v2:2.1.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two VLAN IDs are reserved and not usable?",
+    "options": [
+      "1 and 1005",
+      "0 and 4095",
+      "1 and 4094",
+      "0 and 1001"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Usable VLAN IDs are 1–4094. VLAN IDs 0 and 4095 are reserved.",
+    "whyWrong": {
+      "0": "VLAN 1 is usable, and 1005 is a legacy range VLAN.",
+      "2": "VLAN 1 and VLAN 4094 are both usable.",
+      "3": "VLAN 1001 is a normal VLAN."
+    }
+  },
+  {
+    "id": "trunks-dtp-q31",
+    "type": "single",
+    "objectives": [
+      "v1:2.2.a",
+      "v2:2.1.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does 802.1Q tagging do?",
+    "options": [
+      "It routes traffic between VLANs.",
+      "It identifies the VLAN a frame belongs to.",
+      "It encrypts frames on the trunk.",
+      "It chooses the spanning-tree root."
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A tag carries the frame's VLAN ID across a shared link. Routing between VLANs needs a Layer 3 device.",
+    "whyWrong": {
+      "0": "Tagging preserves VLANs and does not route between them.",
+      "2": "802.1Q does not encrypt anything.",
+      "3": "The root is chosen by bridge ID, not by tags."
     }
   }
 ]

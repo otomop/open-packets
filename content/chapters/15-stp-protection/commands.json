@@ -199,5 +199,78 @@
       ],
       "focus": "supporting"
     }
+  },
+  {
+    "id": "stp-protection-d13",
+    "task": "Ports err-disabled by BPDU guard should come back on their own once the recovery interval passes. Enable automatic recovery for that cause only.",
+    "mode": "SW1(config)#",
+    "answer": "errdisable recovery cause bpduguard",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bpdu-guard-a-bpdu-on-an-edge-port-is-a-violation",
+      "hint": "Recovery is enabled per cause, and every cause is off by default.",
+      "takeaway": "The port retries after the interval, 300 seconds by default. If the switch that sent the BPDU is still connected, the port err-disables again, so remove the cause first.",
+      "syntax": [
+        {
+          "text": "errdisable recovery cause",
+          "kind": "keyword"
+        },
+        {
+          "text": "bpduguard",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d14",
+    "task": "Automatic recovery for BPDU guard is already enabled. Shorten the wait before err-disabled ports are retried to 60 seconds.",
+    "mode": "SW1(config)#",
+    "answer": "errdisable recovery interval 60",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bpdu-guard-a-bpdu-on-an-edge-port-is-a-violation",
+      "hint": "One global timer serves every cause; the range is 30 to 86400 seconds.",
+      "takeaway": "The interval applies to all causes and replaces the 300-second default. Changing it does not enable recovery for any cause; that still needs errdisable recovery cause.",
+      "syntax": [
+        {
+          "text": "errdisable recovery interval",
+          "kind": "keyword"
+        },
+        {
+          "text": "60",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "supporting",
+        "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "stp-protection-d15",
+    "task": "Before waiting for an err-disabled port to return, check which causes have automatic recovery enabled and the current recovery interval.",
+    "mode": "SW1#",
+    "answer": "show errdisable recovery",
+    "accept": [],
+    "teaching": {
+      "sectionId": "bpdu-guard-a-bpdu-on-an-edge-port-is-a-violation",
+      "hint": "Inspect the recovery settings, not the interface status list.",
+      "takeaway": "Each cause is listed as Enabled or Disabled with the shared timer. If bpduguard shows Disabled, the port stays down until you enter shutdown and then no shutdown.",
+      "syntax": [
+        {
+          "text": "show errdisable recovery",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
   }
 ]

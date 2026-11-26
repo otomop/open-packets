@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "Channels 1 and 3 overlap, so each AP hears the other as noise it cannot decode. That is adjacent-channel interference: frames are damaged and retried, which matches the rising retries. The on/off test confirms the test AP as the source. A strong signal does not rule interference out.",
-    "fix": "Move the test AP to a channel that does not overlap channel 1: channel 6 or 11 in the 1/6/11 plan. Change one radio only, then repeat the same transfer and compare the retry rate with the baseline."
+    "explanation": "Channels 1 and 3 overlap, so each AP's frames look like noise to the other and cause retries. The retries rise only when the test AP is on, which points to it.",
+    "fix": "Move the test AP to channel 6 or 11. Change only that radio, repeat the transfer and compare the retry rate with the baseline."
   },
   {
     "id": "wireless-principles-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "WPA3-Personal authenticates with SAE, and this laptop's driver does not support SAE. Supporting CCMP and PMF is not enough, and the radio standard (802.11ac) has nothing to do with the security method.",
-    "fix": "Update the laptop's OS or wireless driver if a version with WPA3 support exists; otherwise replace the adapter. If the laptop must stay, the WLAN has to accept WPA2-Personal again on 2.4 or 5 GHz, where that client still gets only WPA2 protection. WPA2 cannot be enabled on a 6 GHz WLAN."
+    "explanation": "WPA3-Personal authenticates with SAE, and this laptop's driver does not support SAE. CCMP and PMF support do not help, and 802.11ac is unrelated.",
+    "fix": "Update the laptop's OS or wireless driver to one with WPA3 support, or replace the adapter. If it must stay, let the WLAN accept WPA2-Personal on 2.4 or 5 GHz, with WPA2-level protection. WPA2 cannot be used on 6 GHz."
   }
 ]

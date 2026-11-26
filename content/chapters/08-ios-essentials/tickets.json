@@ -26,8 +26,8 @@
     "answer": [
       1
     ],
-    "explanation": "The VTY range explicitly selects transport input none; the reachable interface and enabled server do not override it. There is no evidence that the unchanged key needs replacement, and login local does not require a second shared line password. Saving the current configuration would preserve the fault rather than change active admission.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# line vty 0 4\nR1(config-line)# transport input ssh\nR1(config-line)# end\nR1# show running-config | section line vty\n```\nOpen a new SSH session from the management PC and verify its privilege. Save after the intended access works."
+    "explanation": "The VTY range has `transport input none`, which refuses all remote sessions even though the server and interface are up. A new key, a line password or a save would not change that.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# line vty 0 4\nR1(config-line)# transport input ssh\nR1(config-line)# end\nR1# show running-config | section line vty\n```\nOpen a new SSH session from the management PC and check its privilege. Save once access works."
   },
   {
     "id": "ios-essentials-t02",
@@ -57,7 +57,7 @@
     "answer": [
       2
     ],
-    "explanation": "The selected login local method depends on the local username database, and the complete check shows no entries. Restore the intended account through the working console, then test a new session. Changing transport, using an enable secret or saving does not create the missing login identity.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# username admin privilege 15 secret AdminLabSecret8\nR1(config)# end\n```\nUse this example secret only in the isolated lab. Verify a new SSH login, check show privilege, and save the corrected configuration."
+    "explanation": "`login local` uses the local username database, and it has no entries. Create the account at the console. Telnet, the enable secret or a save will not supply a missing login.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# username admin privilege 15 secret AdminLabSecret8\nR1(config)# end\n```\nUse this example secret only in the isolated lab. Verify a new SSH login, check `show privilege`, and save."
   }
 ]

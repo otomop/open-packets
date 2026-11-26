@@ -7,7 +7,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An unnecessary management service still accepts its publicly known default credential. Which term best describes that condition?",
+    "prompt": "A management service still accepts its publicly known default credential. What is this condition called?",
     "options": [
       "A vulnerability that exposes the service to unauthorized use.",
       "A completed mitigation because the service requires a password.",
@@ -17,11 +17,11 @@
     "answer": [
       0
     ],
-    "explanation": "The condition is a weakness, not evidence that an attack already occurred. Unauthorized use is a potential threat; using the credential would be a way to exploit the weakness.",
+    "explanation": "A weakness that can be used to gain access is a vulnerability. An exploit is the act of using it.",
     "whyWrong": {
-      "1": "A publicly known credential does not provide the intended protection.",
-      "2": "The weakness does not prove that anyone has exploited it.",
-      "3": "The account name does not identify a person or group."
+      "1": "A publicly known credential gives no real protection, so nothing is mitigated.",
+      "2": "The condition does not show that anyone has used the credential.",
+      "3": "An account name does not identify a threat actor."
     }
   },
   {
@@ -31,7 +31,7 @@
       "v1:5.1"
     ],
     "difficulty": 1,
-    "prompt": "An unauthorized change replaces a supplier's bank-account number while the record remains readable and the service stays available. Which security property is directly affected by that change?",
+    "prompt": "An unauthorized change replaces a supplier's bank-account number. The record stays readable and the service stays up. Which security property is affected?",
     "options": [
       "Integrity of the payment data.",
       "Availability of the application.",
@@ -41,11 +41,11 @@
     "answer": [
       0
     ],
-    "explanation": "The demonstrated harm is improper modification of the record. The scenario does not establish that reading was blocked or that the record was disclosed to an unauthorized reader.",
+    "explanation": "Improper modification of data breaks integrity. The record was neither disclosed nor made unavailable.",
     "whyWrong": {
-      "1": "The service remains available in the stated facts.",
-      "2": "The demonstrated action is unauthorized data modification, not a failed reader identity check.",
-      "3": "The specific evidence concerns modification rather than disclosure."
+      "1": "The service stays available.",
+      "2": "Authentication of a reader is not what was attacked.",
+      "3": "The record was modified, not disclosed."
     }
   },
   {
@@ -56,7 +56,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which server behavior is targeted by a conventional TCP SYN-flood mechanism?",
+    "prompt": "What does a TCP SYN flood target on a server?",
     "options": [
       "A receiver's advertised window for already established data transfers.",
       "Application resources used only after the requested file transfer finishes.",
@@ -66,11 +66,11 @@
     "answer": [
       2
     ],
-    "explanation": "A SYN flood can pressure resources associated with incomplete handshakes. Source spoofing is common but not mandatory, and the first exhausted resource depends on implementation and load.",
+    "explanation": "A SYN flood opens many half-open connections that wait for the final ACK. This ties up the server's connection resources.",
     "whyWrong": {
-      "0": "An established-flow receive window is different from half-open connection state.",
-      "1": "The mechanism targets incomplete connection establishment, before that transfer.",
-      "3": "The described server pressure is not the client's normal closed-connection state."
+      "0": "The receive window applies to established transfers, not half-open connections.",
+      "1": "The attack happens during the handshake, before any transfer.",
+      "3": "TIME-WAIT belongs to a connection that closed normally."
     }
   },
   {
@@ -81,7 +81,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Malware spreads automatically from one file server to twelve others through an unpatched service, without anyone opening an infected file. Which propagation category best fits?",
+    "prompt": "Malware spreads on its own from one file server to twelve others through an unpatched service, with no one opening a file. What is it?",
     "options": [
       "A Trojan identified solely by its useful-looking installer.",
       "A file-infecting virus requiring the infected host file to execute.",
@@ -91,11 +91,11 @@
     "answer": [
       3
     ],
-    "explanation": "A worm can replicate and spread between systems without a user running a host file. The scenario identifies automated propagation through a service; this example does not mean every worm uses the same vulnerability.",
+    "explanation": "A worm replicates across systems by itself, here through a vulnerable service. A virus needs a host file to run.",
     "whyWrong": {
-      "0": "The evidence describes replication through a service, not a disguised installer.",
-      "1": "The supplied propagation does not depend on opening an infected host file.",
-      "2": "No reused credential pairs are described."
+      "0": "A Trojan relies on a disguised installer, which is not described.",
+      "1": "A virus needs an infected host file to execute.",
+      "2": "Credential stuffing reuses stolen username/password pairs, which is not described."
     }
   },
   {
@@ -116,11 +116,11 @@
     "answer": [
       0
     ],
-    "explanation": "The password is knowledge and the authenticator provides possession evidence. Distinct categories matter; a username identifies an account and is not itself an authenticator.",
+    "explanation": "A password is knowledge and a code from a separate authenticator is possession, so these are two different factor categories. Two knowledge secrets are still one factor.",
     "whyWrong": {
-      "1": "Both are knowledge factors.",
-      "2": "Both are knowledge-based evidence.",
-      "3": "The username is an identifier; only the passphrase is an authentication factor."
+      "1": "A password and a PIN are both knowledge factors.",
+      "2": "A password and a security answer are both knowledge factors.",
+      "3": "A username is an identifier, not an authentication factor."
     }
   },
   {
@@ -141,11 +141,11 @@
     "answer": [
       2
     ],
-    "explanation": "The public certificate supplies a signed binding; authentication also requires proof of its matching private key. Private-key protection and certificate validation are both necessary.",
+    "explanation": "A certificate login proves possession of the private key that matches the certified public key. The certificate itself is public.",
     "whyWrong": {
-      "0": "A public certificate copy alone does not prove private-key possession.",
-      "1": "The client must not possess the CA’s signing key.",
-      "3": "A public certificate is not a container for the user password."
+      "0": "A copy of the public certificate does not prove possession of the private key.",
+      "1": "Clients never hold the CA's private key.",
+      "3": "A certificate does not contain a password."
     }
   },
   {
@@ -167,10 +167,10 @@
       0,
       1
     ],
-    "explanation": "These are definitions of history and expiry, not a recommendation to impose routine expiry. Current NIST guidance in its scope rejects periodic forced changes without compromise evidence.",
+    "explanation": "History blocks reuse of previous passwords and expiry sets a maximum password age.",
     "whyWrong": {
-      "2": "Lockout concerns failed attempts/access restriction, not length.",
-      "3": "Complexity concerns composition rules, not the watch window."
+      "2": "Lockout restricts access after failed attempts; it does not set length.",
+      "3": "Complexity sets composition rules, not a failure window."
     }
   },
   {
@@ -181,7 +181,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A short monthly reminder tells staff how to recognize unexpected credential requests and where to report them. Which program element is its primary purpose?",
+    "prompt": "A short monthly reminder tells staff how to spot unexpected credential requests and where to report them. Which program element is this?",
     "options": [
       "An audit proving that every recipient followed the required process.",
       "User awareness through recognition and reporting guidance.",
@@ -191,11 +191,11 @@
     "answer": [
       1
     ],
-    "explanation": "The reminder maintains attention and a reporting route. Formal practice can add training; program activities can overlap, so classify the stated primary purpose rather than a rigid delivery format.",
+    "explanation": "Short, repeated messages that build recognition and a reporting habit are user awareness. Training teaches a skill with practice.",
     "whyWrong": {
-      "0": "Sending a reminder is not evidence that each person performed the procedure.",
-      "2": "The stated reminder does not include a practiced role-specific task.",
-      "3": "The message does not enforce entry."
+      "0": "A reminder is not an audit.",
+      "2": "The reminder has no practiced, role-specific task, which training requires.",
+      "3": "The reminder does not control who enters a building."
     }
   },
   {
@@ -205,7 +205,7 @@
       "v1:5.2"
     ],
     "difficulty": 1,
-    "prompt": "Staff practise verifying a caller through the approved directory and an instructor checks each person's execution of the account-recovery procedure. What is the primary program outcome?",
+    "prompt": "Staff practice verifying a caller through the approved directory while an instructor checks their procedure. Which program element is this?",
     "options": [
       "Replacing the technical authentication service.",
       "Enforcing physical admission through a badge reader.",
@@ -215,11 +215,11 @@
     "answer": [
       2
     ],
-    "explanation": "The activity provides practice and checks procedure execution, so training is its primary outcome. It may also improve awareness without proving immunity to future deception.",
+    "explanation": "Practicing a role-specific procedure with an instructor checking the result is training.",
     "whyWrong": {
-      "0": "The exercise does not replace authentication controls.",
-      "1": "No physical entry control is being enforced.",
-      "3": "A completed exercise cannot guarantee every future response."
+      "0": "The exercise does not replace technical authentication.",
+      "1": "A badge reader is physical access control, which is not involved.",
+      "3": "No exercise can guarantee that future phishing fails."
     }
   },
   {
@@ -230,7 +230,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An office wants to reduce visitors following staff through a controlled door. Which control most directly addresses that entry behavior?",
+    "prompt": "Which control best stops visitors following staff through a controlled door?",
     "options": [
       "Retain camera footage without changing how people enter.",
       "Review room-entry records monthly without enforcing individual entry.",
@@ -240,10 +240,10 @@
     "answer": [
       3
     ],
-    "explanation": "Individual admission and visitor procedures address tailgating prevention. Detection and recovery controls remain useful but do not replace the entry control itself.",
+    "explanation": "Tailgating is prevented by admitting one person at a time and checking visitor authorization. Cameras and logs only help after the fact.",
     "whyWrong": {
-      "0": "A recording helps detection but does not prevent following through the door.",
-      "1": "Review can identify incidents later but does not directly prevent this entry behavior.",
+      "0": "Footage helps detection but does not stop anyone following through.",
+      "1": "Reviewing records finds incidents later but does not prevent them.",
       "2": "Signs do not enforce one-person admission."
     }
   },
@@ -269,11 +269,11 @@
     "answer": [
       1
     ],
-    "explanation": "The forged source makes the third-party reply target the victim, which is reflection. The larger response is amplification; neither property requires one universal DNS multiplier.",
+    "explanation": "Reflection sends the replies to the forged source address, which is the victim. Amplification is a reply much larger than the request.",
     "whyWrong": {
-      "0": "UDP services can be used for reflection.",
-      "2": "The exhibit does not describe a cache change.",
-      "3": "This reverses the two mechanisms."
+      "0": "Reflection works over UDP services as well as TCP.",
+      "2": "Neither term describes a cache change.",
+      "3": "This reverses the two terms."
     }
   },
   {
@@ -288,7 +288,7 @@
       "title": "Supplied security scenario evidence",
       "text": "Configured: login block-for 120 attempts 3 within 60\nTimes shown as HH:MM:SS\n02:00:00 admin failed\n02:15:00 operator failed\n02:30:00 support failed"
     },
-    "prompt": "The investigation also confirms that the same candidate password was tried against each listed account. Which attack pattern and threshold result fit?",
+    "prompt": "The same candidate password was tried against each listed account. Which attack and threshold result fit?",
     "options": [
       "Credential stuffing; the successful pairs must therefore have bypassed failure logging.",
       "Password spraying; the shown attempts do not meet three failures within 60 seconds.",
@@ -298,11 +298,11 @@
     "answer": [
       1
     ],
-    "explanation": "Trying one candidate across many accounts is spraying. The stated times keep the failures outside the configured watch window. Usernames alone would not reveal the candidate passwords; the investigation supplies that missing evidence.",
+    "explanation": "One password tried against many accounts is password spraying. The attempts are spread out, so they stay below three failures in 60 seconds.",
     "whyWrong": {
-      "0": "The records are failures, and the scenario identifies one shared candidate rather than exposed pairs.",
-      "2": "No account expiry is demonstrated.",
-      "3": "Several distinct usernames are listed."
+      "0": "Credential stuffing uses stolen pairs, and these records are failures.",
+      "2": "No account expiry is shown.",
+      "3": "Brute force targets one account, but several usernames are listed."
     }
   },
   {
@@ -317,7 +317,7 @@
       "title": "Supplied security scenario evidence",
       "text": "Approved gateway: 10.0.10.1 at 0011.2233.4455\nUnauthorized laptop claim: 10.0.10.1 at aaaa.bbbb.cccc"
     },
-    "prompt": "An unauthorized laptop sends the shown gateway claim. Which intended control validates the ARP binding?",
+    "prompt": "An unauthorized laptop sends the shown ARP claim for the gateway address. Which control validates ARP bindings?",
     "options": [
       "DAI using approved dynamic bindings or static ARP policy.",
       "An SSH banner stating authorized use.",
@@ -327,11 +327,11 @@
     "answer": [
       0
     ],
-    "explanation": "DAI addresses ARP validation on its inspected ports. The legitimate gateway binding must be covered by the approved trust/static policy; a one-MAC allowance alone does not establish the claimed IP ownership.",
+    "explanation": "Dynamic ARP inspection (DAI) checks ARP messages against approved bindings. Port security counts MAC addresses and does not check IP claims.",
     "whyWrong": {
       "1": "A banner does not inspect ARP.",
-      "2": "Root guard handles BPDUs, not ARP bindings.",
-      "3": "One MAC can make a false IP claim without exceeding its allowed count."
+      "2": "Root guard protects the spanning-tree root and does not inspect ARP.",
+      "3": "One MAC can still claim a false IP address."
     }
   },
   {
@@ -346,7 +346,7 @@
       "title": "Supplied security scenario evidence",
       "text": "Representative labels; values omitted:\nenable password 7 [value]\nusername admin password 7 [value]\nline password 7 [value]"
     },
-    "prompt": "What exposure is established if the following configuration is broadly readable?",
+    "prompt": "What is exposed if this configuration is broadly readable?",
     "options": [
       "The type-7 values are strong one-way password verifiers.",
       "The type-7 credentials are recoverable from their reversible representation.",
@@ -356,11 +356,11 @@
     "answer": [
       1
     ],
-    "explanation": "Type 7 is reversible obfuscation. Restrict the exposed file and rotate affected secrets under the incident process; conversion to a hash alone does not undo disclosure.",
+    "explanation": "Type 7 is reversible obfuscation, so anyone who reads the file can recover the passwords. Restrict the file and rotate the passwords.",
     "whyWrong": {
-      "0": "Type 7 is not a one-way verifier.",
-      "2": "Type-7 recovery does not require a unique device-held key.",
-      "3": "All shown credentials have the same type label."
+      "0": "Type 7 is not a one-way hash.",
+      "2": "Type 7 needs no device key; the algorithm is public.",
+      "3": "All the shown credentials use type 7."
     }
   },
   {
@@ -375,7 +375,7 @@
       "title": "Supplied security scenario evidence",
       "text": "show login:\nRouter presently in Quiet-Mode.\nWill remain in Quiet-Mode for 87 seconds.\nNo Quiet-Mode access list has been configured."
     },
-    "prompt": "On the documented IOS login-block feature, why can a correct new SSH attempt be refused in this state?",
+    "prompt": "On the IOS login-block feature, why can a correct new SSH login be refused?",
     "options": [
       "The console must also be unavailable for the same interval.",
       "The SSH RSA key pair must be expired.",
@@ -385,11 +385,11 @@
     "answer": [
       2
     ],
-    "explanation": "Quiet mode restricts new remote login attempts under this feature. The console remains a separate recovery path; the output does not identify account lockout or a cryptographic key problem.",
+    "explanation": "Quiet mode blocks new remote login attempts for a set time after too many failures, unless an ACL exempts the source. The console stays available.",
     "whyWrong": {
-      "0": "The documented feature retains console access.",
+      "0": "Quiet mode applies to remote logins, so the console stays usable.",
       "1": "No key expiry is shown.",
-      "3": "Remote quiet mode is distinct from per-user AAA lockout."
+      "3": "Quiet mode is a temporary device-wide block, not a permanent AAA lockout."
     }
   },
   {
@@ -400,7 +400,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A covered password service already meets its approved length requirement. Which response to a confirmed exposed password matches the current NIST guidance described here?",
+    "prompt": "An exposed password is confirmed. What does current NIST guidance say to do?",
     "options": [
       "Retain the exposed value and require one extra character class only at the next routine change.",
       "Disable blocked-password screening because a longer replacement makes screening redundant.",
@@ -410,11 +410,11 @@
     "answer": [
       3
     ],
-    "explanation": "Compromise evidence calls for a change, even though arbitrary periodic changes are not recommended in this guidance. Length alone does not replace blocked-value screening, safe recovery or investigation of the exposure.",
+    "explanation": "Evidence of compromise requires changing the password. Screen the replacement against a blocklist and review the recovery process.",
     "whyWrong": {
-      "0": "A later composition rule does not revoke the exposed password.",
-      "1": "Long passwords can still be known or compromised values.",
-      "2": "A routine schedule is not a reason to leave a compromised authenticator active."
+      "0": "A later composition rule does not remove the exposed password.",
+      "1": "A longer password can still be a known or compromised one.",
+      "2": "A routine expiry date is no reason to leave an exposed password active."
     }
   },
   {
@@ -425,7 +425,7 @@
       "v1:5.2"
     ],
     "difficulty": 2,
-    "prompt": "A caller knows your manager's name and asks for your one-time login code to fix an urgent account problem. What is the best response?",
+    "prompt": "A caller knows your manager's name and asks for your one-time login code to fix an urgent problem. What should you do?",
     "options": [
       "Decline the code request and verify through the independently known helpdesk channel.",
       "Share only the newest code because older codes may already have expired.",
@@ -435,11 +435,11 @@
     "answer": [
       0
     ],
-    "explanation": "Correct personal details do not authenticate the caller. Use an independently established contact path and the reporting process without handing over an authenticator.",
+    "explanation": "Knowing personal details does not prove identity. Refuse and verify through a contact path you already know, such as the helpdesk.",
     "whyWrong": {
-      "1": "A fresh code may be exactly what the claimant needs.",
-      "2": "A contact route supplied by the same claimant is not independent verification.",
-      "3": "Public or leaked context can make impersonation convincing."
+      "1": "A new code is exactly what an attacker needs.",
+      "2": "A number given by the caller is not independent verification.",
+      "3": "A project name can be learned from public or leaked information."
     }
   },
   {
@@ -449,7 +449,7 @@
       "v1:5.1"
     ],
     "difficulty": 3,
-    "prompt": "Which priority best follows the combined exposure and business-impact evidence?",
+    "prompt": "Which finding should you address first?",
     "options": [
       "Treat both as equal because each row contains exactly one weakness.",
       "Defer both because neither record proves that an attack already succeeded.",
@@ -459,16 +459,116 @@
     "answer": [
       3
     ],
-    "explanation": "Risk assessment uses exposure, likelihood and impact, not simply issue count or age. The reachable privileged credential on a business-critical service warrants prompt containment; that does not make the test-device weakness irrelevant.",
+    "explanation": "Risk depends on exposure, likelihood and impact. A reachable privileged credential on a business-critical service comes before a low-impact weakness on an isolated test device.",
     "whyWrong": {
-      "0": "One weakness can have very different likelihood and impact from another.",
-      "1": "Controls should reduce risk before confirmed exploitation, not only after harm.",
-      "2": "Report recency alone does not outweigh the stated exposure and consequence."
+      "0": "Weaknesses differ in likelihood and impact.",
+      "1": "You should reduce risk before an attack succeeds.",
+      "2": "How recently an issue was reported does not outweigh exposure and impact."
     },
     "exhibit": {
       "kind": "cli",
       "title": "Two documented risks in a small branch",
       "text": "A: public default administrator credential on a reachable business-critical router.\nB: an unpatched unused feature on an isolated, powered-off disposable test device.\nNo exploitation is confirmed. Both have an assigned owner."
+    }
+  },
+  {
+    "id": "security-concepts-q21",
+    "type": "single",
+    "objectives": [
+      "v1:5.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which CIA property does a service outage harm?",
+    "options": [
+      "Availability",
+      "Confidentiality",
+      "Integrity",
+      "Authenticity"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "An outage harms availability. Disclosure harms confidentiality and modification harms integrity.",
+    "whyWrong": {
+      "1": "Confidentiality is harmed by unauthorized disclosure.",
+      "2": "Integrity is harmed by improper modification.",
+      "3": "Authenticity is not one of the three CIA properties."
+    }
+  },
+  {
+    "id": "security-concepts-q22",
+    "type": "single",
+    "objectives": [
+      "v1:5.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which attack reuses stolen username and password pairs on other sites?",
+    "options": [
+      "Credential stuffing",
+      "Password spraying",
+      "Dictionary attack",
+      "Brute force"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Credential stuffing tries username and password pairs stolen elsewhere. Spraying tries a few common passwords across many accounts.",
+    "whyWrong": {
+      "1": "Spraying uses a few common passwords against many accounts.",
+      "2": "A dictionary attack tries a list of likely passwords against an account.",
+      "3": "Brute force tries every possible combination."
+    }
+  },
+  {
+    "id": "security-concepts-q23",
+    "type": "single",
+    "objectives": [
+      "v1:5.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which Cisco IOS password type is reversible?",
+    "options": [
+      "Type 7",
+      "Type 5",
+      "Type 8",
+      "Type 9"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Type 7 is reversible obfuscation. `secret` stores a one-way hash (types 5, 8 or 9).",
+    "whyWrong": {
+      "1": "Type 5 is a hash.",
+      "2": "Type 8 is a hash.",
+      "3": "Type 9 is a hash."
+    }
+  },
+  {
+    "id": "security-concepts-q24",
+    "type": "single",
+    "objectives": [
+      "v1:5.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is an exploit?",
+    "options": [
+      "A method that uses a vulnerability",
+      "A weakness in a system",
+      "A potential adverse event",
+      "An action that reduces risk"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "An exploit is the method that uses a weakness. The weakness is the vulnerability, the potential adverse event is the threat and risk reduction is mitigation.",
+    "whyWrong": {
+      "1": "A weakness is a vulnerability.",
+      "2": "A potential adverse event is a threat.",
+      "3": "An action that reduces risk is a mitigation."
     }
   }
 ]

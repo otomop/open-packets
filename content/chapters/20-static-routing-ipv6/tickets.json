@@ -31,8 +31,8 @@
     "answer": [
       0
     ],
-    "explanation": "The live backup peer is FE80::3 on Gi0/1. Lowering distance cannot resolve the wrong neighbor, omitting scope is invalid for a link-local next hop, and selecting the still-down primary interface abandons the working backup link.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::2 5\nR1(config)# ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::3 5\nR1(config)# end\nR1# show ipv6 route static\nR1# show ipv6 neighbors\n```\nKeep the primary down long enough to test the repaired backup with endpoint pings. The route should identify FE80::3 on Gi0/1 and neighbor resolution should work. Restore the primary separately, verify preferred-route recovery, then save."
+    "explanation": "The live backup peer is FE80::3 on Gi0/1, but the route points to FE80::2. Change the next hop; distance, scope and the down primary interface are not the problem.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::2 5\nR1(config)# ipv6 route 2001:db8:20::/64 gigabitethernet0/1 fe80::3 5\nR1(config)# end\nR1# show ipv6 route static\nR1# show ipv6 neighbors\n```\nWith the primary still down, ping the remote LAN to test the backup. Then restore the primary, confirm it is preferred again, and save."
   },
   {
     "id": "static-routing-ipv6-t03",
@@ -68,7 +68,7 @@
     "answer": [
       3
     ],
-    "explanation": "R2 can return to the R1 transit source using its connected /64, but it cannot return to PC-A LAN. The missing reverse route is on R2. Duplicating R1 outbound route does not supply it; a remote host gateway is not on-link; overlapping /48 LANs abandon the stated plan.",
-    "fix": "On R2, confirm the missing prefix before adding the scoped return route.\n```ios R2\nR2# show ipv6 route\nR2# configure terminal\nR2(config)# ipv6 route 2001:db8:10::/64 gigabitethernet0/0 fe80::1\nR2(config)# end\nR2# show ipv6 route static\nR2# show ipv6 neighbors\n```\nRetest PC-A to PC-B and PC-B to PC-A, retaining each source address in the notes. A successful endpoint test verifies more of this path than the earlier transit-sourced router test. Save R2 only after the intended route and both endpoint results are confirmed."
+    "explanation": "R2 can reply to the R1 transit source by its connected /64 but has no route to PC-A's LAN. Add the return route on R2.",
+    "fix": "On R2, add the return route.\n```ios R2\nR2# show ipv6 route\nR2# configure terminal\nR2(config)# ipv6 route 2001:db8:10::/64 gigabitethernet0/0 fe80::1\nR2(config)# end\nR2# show ipv6 route static\nR2# show ipv6 neighbors\n```\nPing between PC-A and PC-B in both directions, then save R2."
   }
 ]

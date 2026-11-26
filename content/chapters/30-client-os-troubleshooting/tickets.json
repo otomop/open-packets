@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The plan, default route and fresh ARP requests agree: the client attempts to resolve the wrong next hop. The numeric test does not require DNS. A remote listener failure would not explain selecting an unused local gateway, and the shown /24 includes .1.",
-    "fix": "On this approved isolated/static client, open its adapter's IPv4 settings and retain 10.1.20.57 with mask 255.255.255.0 and DNS 10.1.10.5; correct only the default gateway to 10.1.20.1. Then test:\n\n```text\nping 10.1.20.1\narp -a\nping 10.1.50.20\n```\nInspect the fresh neighbor/route evidence and then test the intended DNS/application operation. A ping timeout alone would not have proven this cause; the configuration plan and ARP evidence support it."
+    "explanation": "The configured default gateway is the unused .254, so the client ARPs for it and gets no reply. Numeric tests need no DNS, and the /24 mask correctly includes .1.",
+    "fix": "On the client's IPv4 settings, keep 10.1.20.57, mask 255.255.255.0 and DNS 10.1.10.5, and change only the default gateway to 10.1.20.1. Then test:\n\n```text\nping 10.1.20.1\narp -a\nping 10.1.50.20\n```\nCheck that ARP now resolves the gateway, then test DNS and the application."
   },
   {
     "id": "client-os-troubleshooting-t03",
@@ -58,8 +58,8 @@
     "answer": [
       2
     ],
-    "explanation": "The selected resolver matches the plan and responds, but its current record disagrees with the approved working service address. The numeric HTTP test supplies a control for the application path. Public DNS, gateway changes and DHCP renewal do not correct the demonstrated record.",
-    "fix": "In the isolated DNS service or through its authorized administrator, correct only intranet.example’s A record to 192.168.50.20. Query the same resolver again and confirm the new answer. If a client/application still uses cached data, use its supported refresh procedure or wait for expiration rather than changing routes. Then reopen the named intranet page and compare it with the known numeric service response. Keep the correct address, prefix, gateway and resolver selection."
+    "explanation": "The client reaches the intended resolver, but the intranet A record holds the wrong address. The numeric HTTP test shows the service itself works, so fix the record.",
+    "fix": "On the DNS server, correct the A record for intranet.example to 192.168.50.20. Query the same resolver again to confirm the new answer, and clear the client cache if it still holds the old one. Then open the intranet page. Leave the client's address, gateway and resolver unchanged."
   },
   {
     "id": "client-os-troubleshooting-t04",
@@ -88,7 +88,7 @@
     "answer": [
       0
     ],
-    "explanation": "The profile change, current key-exchange failure and approved credential mismatch identify the client security fault. A retained lease and a working wired control do not prove the current WLAN data path works.",
-    "fix": "On this isolated laptop, restore the approved WPA2-Personal profile credential without changing the AP or DHCP pool. Reconnect to the intended SSID and check the current security/connection state. If necessary, request a lease with the client’s supported procedure; inspect the actual address/prefix/gateway/DNS. Repeat the previously failing gateway and routed numeric tests, issue a fresh name query and open the required application. Record current observations, not just the old displayed address."
+    "explanation": "The profile changed and the new connection fails key exchange, so the client has the wrong WPA2 credential. The retained lease is old and the wired client does not test wireless.",
+    "fix": "Restore the approved WPA2-Personal passphrase in the laptop's profile and reconnect to the SSID. Request a new lease if needed and check the address, mask, gateway and DNS. Then repeat the gateway ping, a routed ping, a name query and the application test."
   }
 ]

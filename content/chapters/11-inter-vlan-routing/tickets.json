@@ -31,8 +31,8 @@
     "answer": [
       1
     ],
-    "explanation": "The complete VLAN check proves that VLAN 30 is missing, while its SVI and access assignment remain configured. The SVI is enabled, the supplied host address and mask match the plan, and other VLANs still route. Its nonadministrative down state supports investigation but does not uniquely prove a cause by itself. Restore the missing VLAN and then verify forwarding membership; enabling routing or changing the host mask cannot replace that database entry.",
-    "fix": "Re-create VLAN 30 without changing the already-correct SVI address.\n\n```ios DSW1\nDSW1# configure terminal\nDSW1(config)# vlan 30\nDSW1(config-vlan)# name USERS30\nDSW1(config-vlan)# end\nDSW1# show vlan brief\nDSW1# show interfaces status\nDSW1# show ip interface brief\nDSW1# show ip route\n```\n\nConfirm Gi1/0/5 is linked and forwarding in VLAN 30. Vlan30 should become operational and its connected route should return. Test PC-C to 192.168.30.1, then to a known host in another routed VLAN, and verify the reply path. Save after tests pass."
+    "explanation": "VLAN 30 is missing from the VLAN database, so its SVI is down even though the SVI and the access assignment are still configured. The SVI is enabled, the host address matches the plan and other VLANs route.",
+    "fix": "Re-create VLAN 30. Leave the SVI address alone.\n\n```ios DSW1\nDSW1# configure terminal\nDSW1(config)# vlan 30\nDSW1(config-vlan)# name USERS30\nDSW1(config-vlan)# end\nDSW1# show vlan brief\nDSW1# show interfaces status\nDSW1# show ip interface brief\nDSW1# show ip route\n```\n\nConfirm Gi1/0/5 is up and forwarding in VLAN 30. Vlan30 comes up and its connected route returns. Ping 192.168.30.1 from PC-C, then a host in another routed VLAN, and save."
   },
   {
     "id": "inter-vlan-routing-t02",
@@ -66,7 +66,7 @@
     "answer": [
       0
     ],
-    "explanation": "Creating a subinterface name does not supply its VLAN mapping or address. Up/up can follow the operational parent without proving a usable gateway service. The evidence does not prove whether a paste failed or commands were omitted; it proves the two required settings are absent. The supplied switch evidence confirms VLAN 30 is active and forwarding on the trunk. The parent and subinterface are up/up; the missing encapsulation and address remain visible in the configuration.",
-    "fix": "Complete the new subinterface, setting encapsulation before addressing.\n\n```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/0.30\nR1(config-subif)# encapsulation dot1Q 30\nR1(config-subif)# ip address 192.168.30.1 255.255.255.0\nR1(config-subif)# no shutdown\nR1(config-subif)# end\nR1# show ip interface brief\nR1# show ip route\n```\n\nConfirm the address is assigned, the interface is operational, and 192.168.30.0/24 appears as connected. Test PC-C's own gateway and a known reachable host in another VLAN. Older images may not show a separate local /32 entry; gateway and forwarding verification matter more than reproducing an exact display."
+    "explanation": "A new subinterface has no VLAN mapping or address until you configure them. Here both encapsulation and the IP address are missing, and the switch trunk already carries VLAN 30.",
+    "fix": "Add encapsulation first, then the address.\n\n```ios R1\nR1# configure terminal\nR1(config)# interface gigabitethernet0/0.30\nR1(config-subif)# encapsulation dot1Q 30\nR1(config-subif)# ip address 192.168.30.1 255.255.255.0\nR1(config-subif)# no shutdown\nR1(config-subif)# end\nR1# show ip interface brief\nR1# show ip route\n```\n\nConfirm the address is set, the subinterface is up and 192.168.30.0/24 is connected. Ping the gateway from PC-C, then a host in another VLAN. Older images may not show the local /32 entry."
   }
 ]

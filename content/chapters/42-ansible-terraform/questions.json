@@ -8,7 +8,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements describe the IOS CLI method used in this chapter? Choose two.",
+    "prompt": "Which two statements describe the IOS CLI method used in this chapter? (Choose two.)",
     "options": [
       "Each IOS target must run an installed Ansible agent and a Python interpreter.",
       "The network module executes on the control node and communicates with IOS.",
@@ -19,10 +19,10 @@
       1,
       2
     ],
-    "explanation": "The network module and SSH support are controller-side components. The IOS device handles its native CLI; it does not execute the controller's Python module.",
+    "explanation": "With network_cli the module runs on the control node, which opens an SSH session to the IOS device using inventory data. IOS runs only its own CLI.",
     "whyWrong": {
-      "0": "This network_cli method does not install an agent or require target Python.",
-      "3": "The Ansible ping module is not ICMP ping and is not the IOS network_cli test."
+      "0": "This method installs no agent and needs no Python on the target.",
+      "3": "The Ansible ping module is not an ICMP ping."
     }
   },
   {
@@ -34,7 +34,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which command checks the playbook's syntax and structure without executing its router tasks?",
+    "prompt": "Which command checks a playbook's syntax without running its tasks?",
     "options": [
       "ansible-playbook -i inventory.yml collect.yml --check",
       "ansible-playbook -i inventory.yml collect.yml --diff",
@@ -44,11 +44,11 @@
     "answer": [
       2
     ],
-    "explanation": "The syntax-check option validates the playbook without running its tasks. It cannot establish that a command exists on a particular IOS release.",
+    "explanation": "`--syntax-check` validates the playbook without executing it. It cannot tell whether a command exists on a given IOS release.",
     "whyWrong": {
-      "0": "Check mode depends on module behavior and may contact targets.",
-      "1": "Diff is a reporting option, not a no-execution guarantee.",
-      "3": "Limit narrows the target set but still executes the play."
+      "0": "`--check` runs tasks in check mode and can contact targets.",
+      "1": "`--diff` only reports changes.",
+      "3": "`--limit` narrows the targets but still runs the play."
     }
   },
   {
@@ -59,7 +59,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "What is Terraform state's principal role?",
+    "prompt": "What is the main role of Terraform state?",
     "options": [
       "Associate configuration resource addresses with managed objects and recorded attributes.",
       "Replace every device's startup configuration with a centrally encrypted backup file.",
@@ -69,11 +69,11 @@
     "answer": [
       0
     ],
-    "explanation": "State preserves Terraform's associations and attributes for the objects it manages. This lets subsequent plans reason about existing resources.",
+    "explanation": "State associates configuration resource addresses with the objects Terraform manages and their recorded attributes, so later plans know what already exists.",
     "whyWrong": {
-      "1": "State is not a device startup-configuration backup and is not inherently encrypted locally.",
-      "2": "State is distinct from source HCL; provider support is still required.",
-      "3": "Resource identity is not a DNS resolution service."
+      "1": "State is not a startup-configuration backup.",
+      "2": "State is separate from the HCL source, and providers are still required.",
+      "3": "State is not a DNS database."
     }
   },
   {
@@ -84,7 +84,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements about Terraform's normal workflow are correct? Choose two.",
+    "prompt": "Which two statements about Terraform's workflow are correct? (Choose two.)",
     "options": [
       "A saved plan file is guaranteed to exclude sensitive values.",
       "A provider implements operations for the resource types it supports.",
@@ -95,10 +95,10 @@
       1,
       3
     ],
-    "explanation": "Providers implement platform interactions, and plans expose proposed resource actions for review. State and saved plans require appropriate protection.",
+    "explanation": "A provider implements the operations for its resource types. A plan shows the proposed actions before apply.",
     "whyWrong": {
-      "0": "Saved plans can include sensitive input and resource values.",
-      "2": "Deleting state loses associations; it does not undo the real infrastructure."
+      "0": "Saved plans can contain sensitive values.",
+      "2": "Deleting state loses the associations and does not undo infrastructure."
     }
   },
   {
@@ -110,7 +110,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which statement about Ansible Vault is accurate?",
+    "prompt": "Which statement about Ansible Vault is correct?",
     "options": [
       "It grants privileged EXEC access even when the router rejects the enable credential.",
       "It automatically removes secrets from every debug message and captured command result.",
@@ -120,11 +120,11 @@
     "answer": [
       2
     ],
-    "explanation": "Vault protects stored data. Once a value is decrypted for use, task output and logging still need appropriate controls.",
+    "explanation": "Vault encrypts stored data. A task can still print a decrypted value, so protect task output and logs separately.",
     "whyWrong": {
-      "0": "Vault decrypts data; the device decides authentication and authorization.",
-      "1": "Vault does not automatically sanitize all runtime output.",
-      "3": "Vault and SSH protect different stages; SSH still protects the connection."
+      "0": "Vault does not grant device access; the router decides authentication.",
+      "1": "Vault does not scrub runtime output.",
+      "3": "Vault does not replace SSH encryption."
     }
   },
   {
@@ -136,7 +136,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An approved change must ensure one syslog configuration line exists on IOS. Which module is intended for managing configuration sections?",
+    "prompt": "Which module manages configuration lines on IOS, such as ensuring one syslog line exists?",
     "options": [
       "ansible.builtin.debug",
       "cisco.ios.ios_facts",
@@ -146,11 +146,11 @@
     "answer": [
       3
     ],
-    "explanation": "ios_config manages configuration sections and can compare intended lines against running configuration. Appropriate privilege and post-change verification remain necessary.",
+    "explanation": "`cisco.ios.ios_config` manages configuration lines and sections by comparing them with the running configuration.",
     "whyWrong": {
-      "0": "Debug displays data; it does not configure the router.",
-      "1": "Facts collect platform information rather than enforce a configuration line.",
-      "2": "ios_command is for operational EXEC commands, not configuration-mode management."
+      "0": "Debug only displays data.",
+      "1": "`ios_facts` collects information and does not enforce configuration.",
+      "2": "`ios_command` runs operational EXEC commands."
     }
   },
   {
@@ -166,7 +166,7 @@
       "title": "Representative exercise exhibit",
       "text": "cisco.ios.ios_config:\n  lines:\n    - ntp server 10.42.0.10\n\nr1 : ok=1 changed=1 unreachable=0 failed=0\nr2 : ok=1 changed=0 unreachable=0 failed=0"
     },
-    "prompt": "The task uses ordinary `ios_config` line matching, with no custom change conditions. What is supported by the result?",
+    "prompt": "The task uses ordinary ios_config line matching. What does this result show?",
     "options": [
       "Both routers now have verified NTP synchronization with the specified server.",
       "The task changed r1 and found no configuration change necessary on r2.",
@@ -176,11 +176,11 @@
     "answer": [
       1
     ],
-    "explanation": "The result describes the module's configuration comparison and work. It does not establish NTP synchronization or saving to startup configuration.",
+    "explanation": "The result shows r1 changed and r2 already matched. It does not prove NTP synchronization or that the configuration was saved.",
     "whyWrong": {
-      "0": "NTP needs separate operational verification; a configuration line is insufficient.",
-      "2": "The task is successful on r2. No change can be a normal idempotent result.",
-      "3": "No save behavior is requested in the displayed task."
+      "0": "NTP synchronization needs a separate operational check.",
+      "2": "No change on r2 is a normal idempotent result, not a skip.",
+      "3": "No save option is set in the task."
     }
   },
   {
@@ -206,11 +206,11 @@
     "answer": [
       3
     ],
-    "explanation": "For IOS network_cli, become with the enable method requests an enable transition. The appropriate credential and device authorization are still required.",
+    "explanation": "`become_method: enable` on network_cli requests IOS privilege escalation to enable mode when needed.",
     "whyWrong": {
-      "0": "SSH login and enable authentication are separate stages.",
-      "1": "The enable method is a network privilege-escalation method, not sudo.",
-      "2": "The settings use existing access; they do not configure an enable secret."
+      "0": "Enable authentication is separate from the SSH login.",
+      "1": "The enable method is IOS privilege escalation, not Linux sudo.",
+      "2": "The settings use the existing secret and do not set one."
     }
   },
   {
@@ -226,7 +226,7 @@
       "title": "Representative exercise exhibit",
       "text": "cisco.ios.ios_command:\n  commands:\n    - show version\n    - show ip interface brief\n    - show ip route\nregister: result\n\nansible.builtin.debug:\n  var: result.stdout_lines[1]"
     },
-    "prompt": "Which result does the debug task display?",
+    "prompt": "What does the debug task display?",
     "options": [
       "The second command's output split into a list of lines.",
       "The first command's output with line number one removed.",
@@ -236,11 +236,11 @@
     "answer": [
       0
     ],
-    "explanation": "The index is zero-based. Entry 1 corresponds to `show ip interface brief`; stdout_lines divides that command's returned text into lines.",
+    "explanation": "Indexes start at zero, so entry 1 is the second command's output. `stdout_lines` splits that output into lines.",
     "whyWrong": {
-      "1": "Index 1 selects the second command, not a line-removal operation.",
-      "2": "Splitting output into lines is not equivalent to parsing interface fields.",
-      "3": "The third command has index 2."
+      "1": "Index 1 selects the second command, not a line.",
+      "2": "`stdout_lines` splits text into lines and does not parse columns.",
+      "3": "The third command is index 2."
     }
   },
   {
@@ -255,7 +255,7 @@
       "title": "Representative exercise exhibit",
       "text": "+ resource \"terraform_data\" \"lab_intent\" {\n    input = { hostname = \"R1\", site = \"BR-01\" }\n  }\nPlan: 1 to add, 0 to change, 0 to destroy."
     },
-    "prompt": "In a new local directory, the plan contains only the displayed terraform_data resource. What will approving `terraform apply` do?",
+    "prompt": "The plan contains only the displayed terraform_data resource. What does `terraform apply` do?",
     "options": [
       "Configure the hostname and site on a router at the input address.",
       "Create one local managed data resource and record it in state.",
@@ -265,11 +265,11 @@
     "answer": [
       1
     ],
-    "explanation": "terraform_data follows a resource lifecycle while storing data in Terraform state. It has no mechanism here to log into or configure the named router.",
+    "explanation": "`terraform_data` creates one resource that stores its data in Terraform state. It does not log in to or configure a router.",
     "whyWrong": {
-      "0": "The hostname is just a string; no provider/device interaction is configured.",
-      "2": "Terraform does not create an Ansible inventory from this resource.",
-      "3": "Attributes are not separate resource instances."
+      "0": "No provider or device interaction is configured.",
+      "2": "Terraform does not create an Ansible inventory.",
+      "3": "Attributes are not separate resources."
     }
   },
   {
@@ -294,11 +294,11 @@
     "answer": [
       2
     ],
-    "explanation": "The prefix describes a destroy-then-create replacement. Review why replacement is required and its service impact before applying it.",
+    "explanation": "`-/+` means Terraform plans to destroy the existing instance and create a replacement.",
     "whyWrong": {
-      "0": "This is a resource replacement, not a data-source read.",
-      "1": "An in-place update uses the update action, not destroy/create.",
-      "3": "Matching state would not propose replacement."
+      "0": "Reading a data source does not show `-/+`.",
+      "1": "An in-place update shows `~`.",
+      "3": "Matching state produces no action."
     }
   },
   {
@@ -314,7 +314,7 @@
       "title": "Representative exercise exhibit",
       "text": "fatal: [r2]: FAILED! => {\"changed\": false, \"msg\": \"Authentication failed\"}\nr2 : ok=0 changed=0 unreachable=0 failed=1"
     },
-    "prompt": "What is the best supported next action?",
+    "prompt": "What is the next action?",
     "options": [
       "Compare the operational command spelling with the IOS command reference.",
       "Compare the selected account and authentication path with the working login.",
@@ -324,11 +324,11 @@
     "answer": [
       1
     ],
-    "explanation": "The explicit authentication error is the useful evidence. Connection failures can be surfaced as task failures, so failed=1 alone does not establish a successful session.",
+    "explanation": "The error is an authentication failure, which occurs before any command runs. Compare the account and authentication path with the working login.",
     "whyWrong": {
-      "0": "The explicit error concerns authentication before a CLI command result.",
-      "2": "No registered command output is available to index yet.",
-      "3": "The failure does not supply an interface table to interpret."
+      "0": "The error is authentication, before any command is parsed.",
+      "2": "No command output exists to index.",
+      "3": "The failure returned no interface data."
     }
   },
   {
@@ -340,7 +340,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "Which ad-hoc command runs `show clock` on the branch_routers inventory group and prompts for its SSH password?",
+    "prompt": "Which ad-hoc command runs `show clock` on the branch_routers group and prompts for the SSH password?",
     "options": [
       "ansible branch_routers -i inventory.yml -m cisco.ios.ios_command -a 'commands=\"show clock\"' --ask-pass",
       "ansible-playbook branch_routers -i inventory.yml -m cisco.ios.ios_command -a 'commands=\"show clock\"' --ask-pass",
@@ -350,11 +350,11 @@
     "answer": [
       0
     ],
-    "explanation": "The ansible executable runs an ad-hoc module call against the host pattern. ios_command receives the operational command and --ask-pass prompts for SSH authentication.",
+    "explanation": "The `ansible` command runs an ad-hoc module call. `ios_command` runs the show command, and `--ask-pass` prompts for the password.",
     "whyWrong": {
-      "1": "ansible-playbook expects a playbook file rather than this ad-hoc module interface.",
-      "2": "The ping module does not run an IOS show command.",
-      "3": "ios_config is not the module for collecting operational show output."
+      "1": "`ansible-playbook` runs a playbook file, not an ad-hoc module.",
+      "2": "The ping module does not run IOS commands.",
+      "3": "`ios_config` does not collect show output."
     }
   },
   {
@@ -370,7 +370,7 @@
       "title": "Representative exercise exhibit",
       "text": "branch_routers: r1, r2\ncore_routers: r3\nPlay: hosts: branch_routers\nRun: ansible-playbook -i inventory.yml collect.yml --limit r1"
     },
-    "prompt": "Which hosts are eligible for this run?",
+    "prompt": "Which hosts can this run target?",
     "options": [
       "Only r3, because --limit overrides the play host group.",
       "All three hosts, because they appear in the same inventory.",
@@ -380,11 +380,11 @@
     "answer": [
       3
     ],
-    "explanation": "The play selects branch_routers; the limit narrows that selection. It does not add hosts outside the play.",
+    "explanation": "The play selects branch_routers and `--limit` narrows that selection. A limit never adds hosts outside the play.",
     "whyWrong": {
-      "0": "A limit cannot replace the play target with an unrelated host.",
-      "1": "Inventory membership alone does not select a host for every play.",
-      "2": "The limit narrows the branch group to r1."
+      "0": "A limit cannot replace the play's target group.",
+      "1": "Inventory membership alone does not select a host.",
+      "2": "The limit narrows the group to r1."
     }
   },
   {
@@ -395,7 +395,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A previously trusted router now presents a different SSH host key. Which two actions are appropriate? Choose two.",
+    "prompt": "A trusted router now presents a different SSH host key. Which two actions are appropriate? (Choose two.)",
     "options": [
       "Globally disable checking so all remaining devices can be reached immediately.",
       "Pause and verify the router's identity and any legitimate key replacement.",
@@ -406,10 +406,10 @@
       1,
       2
     ],
-    "explanation": "The changed key can reflect a legitimate rebuild or a different/untrusted endpoint. Verify identity through trusted evidence before replacing the specific stale record.",
+    "explanation": "A changed key can mean a legitimate rebuild or a different, untrusted device. Verify identity before replacing the stale record.",
     "whyWrong": {
-      "0": "Disabling checking removes the identity boundary rather than explaining the change.",
-      "3": "Knowing an account password does not prove the identity of the remote server."
+      "0": "Disabling checking removes the identity check.",
+      "3": "Knowing the password does not prove the server's identity."
     }
   },
   {
@@ -419,7 +419,7 @@
       "v2:5.5"
     ],
     "difficulty": 2,
-    "prompt": "Which two entries correctly complete the collection task? Choose two.",
+    "prompt": "Which two entries correctly complete the collection task? (Choose two.)",
     "options": [
       "Module: cisco.ios.ios_command",
       "Module: cisco.ios.ios_config",
@@ -431,10 +431,10 @@
       0,
       3
     ],
-    "explanation": "ios_command collects operational output. The second listed command has zero-based index 1.",
+    "explanation": "`ios_command` collects operational output, and the second command is index 1.",
     "whyWrong": {
-      "1": "Configuration management is not the requested operational collection.",
-      "2": "Entry 0 is the clock output.",
+      "1": "`ios_config` manages configuration, not operational output.",
+      "2": "Index 0 is the clock output.",
       "4": "Only two command results exist."
     },
     "exhibit": {
@@ -450,7 +450,7 @@
       "v2:5.5"
     ],
     "difficulty": 2,
-    "prompt": "How many hosts can this play execute against?",
+    "prompt": "How many hosts can this play run against?",
     "options": [
       "One: r1, because --limit adds it to the group.",
       "Two: r2 and r3, because the play ignores --limit.",
@@ -460,11 +460,11 @@
     "answer": [
       2
     ],
-    "explanation": "Eligible hosts must be in the play selection and the limit. The intersection is empty; changing commands cannot fix that target mismatch.",
+    "explanation": "A host must be in both the play's group and the limit. Here the overlap is empty, so no hosts match.",
     "whyWrong": {
-      "0": "Limit restricts rather than adds hosts.",
-      "1": "The limit is not ignored.",
-      "3": "A play does not automatically target every inventory host."
+      "0": "A limit narrows hosts and never adds them.",
+      "1": "The limit still applies.",
+      "3": "A play does not target every inventory host."
     },
     "exhibit": {
       "kind": "cli",
@@ -479,7 +479,7 @@
       "v2:5.5"
     ],
     "difficulty": 2,
-    "prompt": "What does this successful run establish?",
+    "prompt": "What does this successful run show?",
     "options": [
       "Ansible connected to the device named R1 and ran IOS commands.",
       "Ansible executed a local debug task without testing IOS access.",
@@ -489,11 +489,11 @@
     "answer": [
       1
     ],
-    "explanation": "The play uses localhost and a debug message. A hostname inside that message does not turn it into remote execution.",
+    "explanation": "The play targets localhost and runs a debug message. A hostname in the message does not make it a remote IOS task.",
     "whyWrong": {
-      "0": "Neither an IOS module nor a remote target appears.",
-      "2": "No network_cli connection was requested.",
-      "3": "No command collected any route output."
+      "0": "No IOS module or remote target appears.",
+      "2": "No network_cli connection was made.",
+      "3": "No route output was collected."
     },
     "exhibit": {
       "kind": "cli",
@@ -508,7 +508,7 @@
       "v2:5.5"
     ],
     "difficulty": 2,
-    "prompt": "Which interpretation should guide the repair?",
+    "prompt": "What does this failure tell you to repair?",
     "options": [
       "The syntax checker should have rejected the unknown IOS word.",
       "The failed task proves no earlier listed command executed.",
@@ -518,11 +518,11 @@
     "answer": [
       3
     ],
-    "explanation": "YAML validation cannot establish IOS command support. A returned device parser error places this fault after a CLI session was reached; earlier commands may already have run.",
+    "explanation": "The IOS parser rejected the command, so the session worked and the spelling is wrong. Syntax checking cannot catch this, and earlier commands may have run.",
     "whyWrong": {
-      "0": "Syntax checking does not consult the remote IOS parser.",
-      "1": "The first command can complete before a later command fails.",
-      "2": "This is command-parser evidence, not an authentication rejection."
+      "0": "Syntax checking does not consult the IOS parser.",
+      "1": "Earlier commands can run before a later one fails.",
+      "2": "A parser error is not an authentication failure."
     },
     "exhibit": {
       "kind": "cli",
@@ -547,16 +547,118 @@
     "answer": [
       0
     ],
-    "explanation": "A saved plan contains its planned actions. Generate and review a new plan for the changed intent; do not assume applying the older file incorporates the edit.",
+    "explanation": "A saved plan holds the actions recorded when it was generated. Generate and review a new plan after changing the configuration.",
     "whyWrong": {
-      "1": "Applying a saved plan is not a fresh planning operation.",
-      "2": "Saved plans do not merge later desired values.",
-      "3": "An edit does not automatically rewrite the saved plan file."
+      "1": "Applying a saved plan does not re-plan.",
+      "2": "Saved plans do not merge later edits.",
+      "3": "Editing a file does not empty a saved plan."
     },
     "exhibit": {
       "kind": "cli",
       "title": "A saved plan and a later edit",
       "text": "An empty local terraform_data project was planned with site = \"BR-01\".\nThe reviewed plan was saved as site.tfplan; no apply has occurred.\nmain.tf is edited to site = \"BR-02\".\nProposed command: terraform apply site.tfplan"
+    }
+  },
+  {
+    "id": "ansible-terraform-q24",
+    "type": "single",
+    "objectives": [
+      "v1:6.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "In which order do you run the basic Terraform workflow commands?",
+    "options": [
+      "plan, init, apply",
+      "init, plan, apply",
+      "apply, plan, init",
+      "init, apply, plan"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The Terraform workflow is `terraform init`, then `plan`, then `apply`.",
+    "whyWrong": {
+      "0": "`init` comes first to set up providers.",
+      "2": "`apply` comes last.",
+      "3": "`plan` comes before `apply`."
+    }
+  },
+  {
+    "id": "ansible-terraform-q25",
+    "type": "single",
+    "objectives": [
+      "v1:6.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "In which language is Terraform configuration written?",
+    "options": [
+      "YAML",
+      "HCL",
+      "JSON-RPC",
+      "Jinja2 only"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Terraform configuration is declarative and written in HCL.",
+    "whyWrong": {
+      "0": "YAML is used for Ansible playbooks.",
+      "2": "JSON-RPC is not Terraform's configuration language.",
+      "3": "Jinja2 is Ansible's templating language."
+    }
+  },
+  {
+    "id": "ansible-terraform-q26",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A playbook is rerun when nothing needs changing. What does Ansible report in the play recap?",
+    "options": [
+      "changed=0",
+      "failed=1",
+      "unreachable=1",
+      "ok=0"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "With nothing to change, a repeated Ansible run reports `changed=0`. That is idempotence.",
+    "whyWrong": {
+      "1": "failed=1 means a task failed.",
+      "2": "unreachable=1 means a host could not be reached.",
+      "3": "ok counts successful tasks and would not be 0."
+    }
+  },
+  {
+    "id": "ansible-terraform-q27",
+    "type": "single",
+    "objectives": [
+      "v1:6.6",
+      "v2:5.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which ansible-playbook option shows the hosts a play would target without running it?",
+    "options": [
+      "--syntax-check",
+      "--ask-pass",
+      "--list-hosts",
+      "--diff"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "`--list-hosts` shows the targets. `--syntax-check` checks the playbook and `--limit` narrows the targets.",
+    "whyWrong": {
+      "0": "`--syntax-check` checks the playbook but does not list hosts.",
+      "1": "`--ask-pass` prompts for a password.",
+      "3": "`--diff` shows file differences."
     }
   }
 ]

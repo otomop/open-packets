@@ -5,7 +5,7 @@ title: Secure device access
 subtitle: Local accounts, console and VTY lines, SSH, and a reliable way to verify access.
 part: foundations
 domain: services
-minutes: { lesson: 55, lab: 70 }
+minutes: { lesson: 55, lab: 45 }
 summary: Build and verify local device access with named users and SSH. Distinguish session transport, authentication, privilege and saved configuration, then diagnose a failed login without losing console access.
 objectives:
   v1: ["2.8", "4.8", "5.3"]
