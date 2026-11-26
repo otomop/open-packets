@@ -1,80 +1,104 @@
 [
   {
     "id": "aaa-tacacs-radius-c01",
-    "front": "What are authentication, authorization, and accounting?",
-    "back": "Identity verification, permission decisions, and selected activity records. Success in one function does not establish success in the others.",
+    "front": "What question does each of authentication, authorization and accounting answer?",
+    "back": "Authentication: who are you? Authorization: what may you do? Accounting: what did you do?",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c02",
-    "front": "What conventional transport/port does TACACS+ use?",
-    "back": "TCP 49 for its separate authentication, authorization, and accounting exchanges.",
+    "front": "Which transport and port does TACACS+ use?",
+    "back": "TCP port 49.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c03",
-    "front": "Which service ports must a RADIUS client and server agree on?",
-    "back": "The explicitly configured authentication and accounting ports. Conventional UDP uses 1812/1813; legacy pairs exist, so verify the service rather than assume defaults.",
+    "front": "Which transport and ports does RADIUS use?",
+    "back": "UDP 1812 for authentication and authorization, UDP 1813 for accounting. Legacy deployments use 1645 and 1646.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c04",
-    "front": "How do classic TACACS+ and RADIUS protection scopes compare?",
-    "back": "TACACS+ obscures the body, not header; RFC 8907 calls it obfuscation. Conventional RADIUS hides User-Password, not the whole packet. Protect the management path; extensions can differ.",
+    "front": "How much of a packet do TACACS+ and RADIUS each encrypt?",
+    "back": "TACACS+ encrypts the whole packet body. RADIUS encrypts only the password.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c05",
-    "front": "Where can RADIUS provide authorization attributes?",
-    "back": "In the Access-Accept associated with successful access authentication. Accounting uses separate messages. This differs from TACACS+ separate authorization exchanges.",
+    "front": "How do TACACS+ and RADIUS differ in separating the three AAA functions?",
+    "back": "TACACS+ separates all three. RADIUS combines authentication and authorization in one exchange; only accounting is separate.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c06",
-    "front": "Which model supplies TACACS+-style per-command authorization?",
-    "back": "TACACS+ on supporting device configurations. Configure the intended privilege/context coverage; an EXEC login alone does not enable every command check.",
+    "front": "Which AAA protocol supports per-command authorization, and why?",
+    "back": "TACACS+. Authorization is a separate exchange, so the device can ask the server about each command.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c07",
-    "front": "What are common TACACS+ and RADIUS uses?",
-    "back": "TACACS+ for device administration; RADIUS for network access and also supported management authentication. Typical use is not an exclusivity rule.",
+    "front": "What is the typical use of TACACS+, and of RADIUS?",
+    "back": "TACACS+: administering network devices. RADIUS: network access, such as 802.1X and VPN logins.",
     "tags": [
       "compare"
     ]
   },
   {
+    "id": "aaa-tacacs-radius-c23",
+    "front": "Which of TACACS+ and RADIUS is an open standard?",
+    "back": "RADIUS (IETF RFC 2865). TACACS+ was developed by Cisco.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "aaa-tacacs-radius-c26",
+    "front": "Which three replies can a RADIUS server send to an Access-Request?",
+    "back": "Access-Accept, Access-Reject, or Access-Challenge (a request for more information).",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "aaa-tacacs-radius-c10",
-    "front": "Who is the AAA client during an administrator’s SSH login?",
-    "back": "The router/NAS is the AAA client of the central service, while it is the SSH server for the administrator. The two source identities differ.",
+    "front": "During an administrator's SSH login, which device is the AAA client?",
+    "back": "The router or switch, called the NAS. It is the SSH server to the administrator and a client of the AAA server.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "aaa-tacacs-radius-c24",
+    "front": "What is the key in a TACACS+ or RADIUS server definition?",
+    "back": "A secret shared by the device and the AAA server that protects their exchange. It is not any user's password.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c11",
-    "front": "What should accompany enabling aaa new-model?",
-    "back": "A precreated recovery account, tested SSH and console, explicit lists/bindings, and a saved baseline. Verify fresh sessions instead of relying on implicit line behavior.",
+    "front": "What does `aaa new-model` do, and what should exist before you enter it?",
+    "back": "It enables AAA method lists; VTY lines at once default to local usernames. Create a local user and keep a console session first.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c12",
-    "front": "When does a login method list advance to the next method?",
-    "back": "On ERROR, when the method cannot complete authentication. Explicit FAIL denies the attempt. ERROR can include more than an offline server.",
+    "front": "In `aaa authentication login VTY-AUTH group tacacs+ local`, when is `local` used?",
+    "back": "Only when no TACACS+ server answers (ERROR). If a server rejects the login (FAIL), authentication stops.",
     "tags": [
       "concept",
       "troubleshoot"
@@ -82,72 +106,72 @@
   },
   {
     "id": "aaa-tacacs-radius-c13",
-    "front": "How do you define a central-first named VTY list with local fallback?",
-    "back": "aaa authentication login VTY-AUTH group MGMT-TAC local. Local is a fallback for method ERROR, not a second password chance after rejection.",
+    "front": "Write the login method list VTY-AUTH that tries server group MGMT-TAC, then the local database.",
+    "back": "`aaa authentication login VTY-AUTH group MGMT-TAC local`",
     "tags": [
       "command"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c14",
-    "front": "How is a named login list bound to a VTY line?",
-    "back": "In that line’s configuration: login authentication VTY-AUTH. Inspect and configure every existing VTY range intentionally.",
+    "front": "How do you apply the method list VTY-AUTH to the VTY lines?",
+    "back": "`line vty 0 4`, then `login authentication VTY-AUTH`.",
     "tags": [
       "command"
     ]
   },
   {
+    "id": "aaa-tacacs-radius-c25",
+    "front": "Which lines use the login method list named `default`?",
+    "back": "Every line that has no named list bound to it with `login authentication`.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "aaa-tacacs-radius-c15",
-    "front": "What belongs in a named AAA server definition?",
-    "back": "Its reachable address, matching device/server key and protocol options such as RADIUS ports. Group membership and VTY binding are separate.",
+    "front": "Which three commands define TACACS+ server TAC1 at 10.0.0.100?",
+    "back": "`tacacs server TAC1`, then `address ipv4 10.0.0.100`, then `key <shared-key>`.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c17",
-    "front": "How is a named server added to its protocol group?",
-    "back": "aaa group server tacacs+ MGMT-TAC, then server name TAC1; use the radius group type for a named RADIUS definition.",
+    "front": "How do you put server TAC1 into a group named MGMT-TAC?",
+    "back": "`aaa group server tacacs+ MGMT-TAC`, then `server name TAC1`.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c18",
-    "front": "What do EXEC start-stop and stop-only accounting request?",
-    "back": "Session start and stop records, or only the stop record. They do not automatically record each command; verify collection and failure behavior.",
+    "front": "What do `start-stop` and `stop-only` mean in `aaa accounting exec`?",
+    "back": "Start-stop sends a record when the session begins and another when it ends. Stop-only sends one record at the end.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "aaa-tacacs-radius-c21",
+    "front": "A user's password is accepted, but no shell opens. Which AAA function refused?",
+    "back": "Authorization (`aaa authorization exec`). Authentication had already succeeded.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c19",
-    "front": "How should AAA verification combine tests and evidence?",
-    "back": "Inspect line→list→group→server configuration, correlate a fresh login with supported counters/server records, and test rejection/outage separately. A direct test aaa result does not prove VTY binding.",
+    "front": "A VTY login with a local account succeeds instantly and the AAA server sees no request. What is wrong?",
+    "back": "The line is not bound to the list that uses the server. Check `login authentication` under the VTY lines.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "aaa-tacacs-radius-c20",
-    "front": "Why does a continuing old SSH session not verify an AAA change?",
-    "back": "Its authentication occurred before the edit. Test a new session through the intended line and correlate its actual method result.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "aaa-tacacs-radius-c21",
-    "front": "Can authentication succeed while EXEC authorization fails?",
-    "back": "Yes. Check the separate lists and permission result; a valid password alone does not grant a shell or privilege level.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "aaa-tacacs-radius-c22",
-    "front": "Does a central AAA response shown as sent prove that the NAS accepted it?",
-    "back": "No. Return delivery and response validation must also work. Correlate the same fresh exchange at both ends.",
+    "front": "Why must you test an AAA change with a new session?",
+    "back": "An existing session authenticated before the change and keeps working whatever you configured.",
     "tags": [
       "troubleshoot"
     ]

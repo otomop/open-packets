@@ -48,7 +48,7 @@
     "answer": "ipv6 address fe80::1 link-local",
     "accept": [],
     "teaching": {
-      "sectionId": "address-types",
+      "sectionId": "configuring-ipv6-on-ios",
       "hint": "This address identifies the router only on this interface's local link.",
       "takeaway": "The link-local qualifier distinguishes this address from a global-prefix assignment. The same value can be used on separate links, but ordinary peers on one link must not duplicate it.",
       "syntax": [
@@ -70,7 +70,7 @@
   },
   {
     "id": "ipv6-addressing-d04",
-    "task": "You are configuring R1 Gi0/1. Use its MAC to derive the interface identifier beneath 2001:db8:acad:2::/64.",
+    "task": "You are configuring R1 Gi0/1. Give it an address in 2001:db8:acad:2::/64 whose interface ID IOS derives from the interface MAC.",
     "mode": "R1(config-if)#",
     "answer": "ipv6 address 2001:db8:acad:2::/64 eui-64",
     "accept": [],
@@ -144,9 +144,9 @@
     "answer": "show ipv6 neighbors",
     "accept": [],
     "teaching": {
-      "sectionId": "neighbor-discovery-and-getting-an-address",
+      "sectionId": "verify-and-troubleshoot",
       "hint": "IPv6 uses Neighbor Discovery rather than the IPv4 ARP table.",
-      "takeaway": "Compare both neighbor address and interface. Stale is not automatically a fault; persistent incomplete resolution during repeated failed tests is stronger evidence of a local-link problem.",
+      "takeaway": "The neighbor table is the IPv6 counterpart of the ARP table. STALE is normal for an idle neighbor; an entry that stays INCMP while pings fail means the target is not answering on that link.",
       "syntax": [
         {
           "text": "show ipv6 neighbors",

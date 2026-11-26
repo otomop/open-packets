@@ -54,7 +54,7 @@ Router(config)# hostname R1
 R1(config)# end
 ```
 
-On SW1 and SW2, use the same sequence with `hostname SW1` and `hostname SW2`, respectively. Inspect the cable endpoints before continuing. Router interfaces may initially remain administratively disabled.
+On SW1 and SW2, use the same sequence with `hostname SW1` and `hostname SW2`, respectively. Check the cable endpoints before continuing. A router's interfaces are shut down until you enable them, so the links to R1 stay red until Step 2.
 
 :::expected
 There are two separate switch LANs with R1 between them. The CLI hostnames match the labels, and you can identify R1's interface toward each subnet.
@@ -125,7 +125,7 @@ ping 192.168.20.20
 
 Use **Capture/Forward**, or the equivalent step control in your version, to advance events. Open the event or PDU details at PC-A, R1's incoming side, and R1's outgoing side. Inspect the available Layer 2 and Layer 3 fields.
 
-Before opening the outgoing event, predict which incoming fields must change. Then record the request's source MAC, destination MAC, source IP, destination IP, and TTL on both sides of R1. Also record the ARP target addresses if requests appear. A cached mapping can eliminate an ARP exchange; do not invent a missing packet or assume that every ping must generate fresh ARP.
+Before opening the outgoing event, predict which incoming fields must change. Then record the request's source MAC, destination MAC, source IP, destination IP, and TTL on both sides of R1. Also record the ARP target addresses if requests appear. If a device already holds the mapping in its ARP cache, no ARP request appears; record what you actually see.
 
 :::expected
 On LAN-A, the ICMP request frame is addressed to R1's LAN-A MAC. On LAN-B, the outgoing frame uses R1's LAN-B MAC as source and PC-B's MAC as destination. The request's IP addresses remain unchanged, and normal forwarding through R1 reduces its TTL by one. Any necessary ARP on LAN-B is a separate local exchange initiated there.
@@ -175,7 +175,7 @@ SW1# show mac address-table
 SW2# show mac address-table
 ```
 
-On each PC, run `arp -a`. Match actual MAC addresses to the devices using the tables and the device interface information. For each table, record one row and label its relationship: prefix with forwarding information, IP with MAC, or VLAN/MAC with switch port. Learn which question a table answers, rather than memorizing every column.
+On each PC, run `arp -a`. Match actual MAC addresses to the devices using the tables and the device interface information. For each table, record one row and label its relationship: prefix with forwarding information, IP with MAC, or VLAN/MAC with switch port. The aim is to know which question each table answers, not to memorize every column.
 
 :::expected
 SW1 learns PC-A's MAC on Fa0/1 and R1's LAN-A MAC on Fa0/24 when it receives frames from them. SW2 makes the equivalent local observations. R1 can hold ARP mappings for neighbors on both LANs. PC-A normally needs the local gateway mapping for the remote test, not PC-B's MAC.

@@ -174,9 +174,9 @@ Both PCs belong to VLAN 10 through Fa0/5. After convergence and address resoluti
 
 ## Step 3: Choose the primary and secondary root
 
-Before configuring root placement, write a prediction row for each switch: chosen root, total cost, root port, designated interswitch ports and alternate ports. Use SW2 priority 24576 and SW3 priority 28672 as the planned values; leave SW1 at 32768. Explain both the received-cost calculation and the designated-end comparison.
+Before configuring root placement, write a prediction row for each switch: chosen root, total cost, root port, designated interswitch ports and alternate ports. Use SW2 priority 24576 and SW3 priority 28672 as the planned values; leave SW1 at 32768. For each root port, add the cost the neighbor advertises to the cost of the receiving port. For each link, the end that advertises the lower root cost is designated.
 
-With the all-default priorities from Step 1, configure SW2 as primary, then SW3 as secondary. Do not run the primary macro on every switch. Observe the resulting numeric values, since the macro itself is not an ongoing protection mechanism.
+Configure SW2 as primary, then SW3 as secondary. The macros only set a priority number, so check the numbers they produce.
 
 ```ios SW2
 SW2# configure terminal
@@ -279,7 +279,7 @@ SW1# show spanning-tree vlan 10
 ```
 
 :::expected
-SW2 stays root because the FastEthernet link still connects it to SW1. SW1 uses Fa0/24 with cost 19 and becomes designated on Gi0/1. SW3 reaches SW2 through SW1: Gi0/1 is root port and total cost is 4 + 19 = 23. Pings may be lost during transition, then recover. Record what you observe; do not infer an exact universal convergence time from simulation animation.
+SW2 stays root because the FastEthernet link still connects it to SW1. SW1 uses Fa0/24 with cost 19 and becomes designated on Gi0/1. SW3 reaches SW2 through SW1: Gi0/1 is root port and total cost is 4 + 19 = 23. A ping or two may be lost during the transition, then replies resume. Rapid PVST+ makes this quick because SW1's alternate port already knows a second path to the root.
 :::
 
 ```state

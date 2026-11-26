@@ -137,7 +137,7 @@ R1# show ip route
 ```
 
 :::expected
-All four tests succeed after resolution. For the PC-A-to-PC-B request, the incoming destination MAC identifies R1 on VLAN 10 and the outgoing destination MAC identifies PC-B on VLAN 20. The destination IP remains 192.168.20.12; no NAT is configured. R1's ARP information associates PC-A with its VLAN 10 interface and PC-B with its VLAN 20 interface. In Packet Tracer Simulation mode, filter for ARP and ICMP and repeat a ping to inspect the addresses; cached ARP entries may mean no new ARP appears. Compare those fields with your prediction. If the simulator does not expose them, complete the same packet walk as a worksheet using the role names above, clearly marked as reasoned evidence rather than a captured packet. Save the file as `11A-router-stick-working.pkt` before introducing a fault.
+All four tests succeed after resolution. For the PC-A-to-PC-B request, the incoming destination MAC identifies R1 on VLAN 10 and the outgoing destination MAC identifies PC-B on VLAN 20. The destination IP remains 192.168.20.12; no NAT is configured. R1's ARP information associates PC-A with its VLAN 10 interface and PC-B with its VLAN 20 interface. To see the addresses, switch Packet Tracer to Simulation mode, filter for ARP and ICMP, and repeat a ping; if the ARP entries are already cached, no new ARP appears. Compare the fields with your prediction. Save the file as `11A-router-stick-working.pkt` before introducing a fault.
 :::
 
 ```state
@@ -160,7 +160,7 @@ R1# show running-config
 Repeat the gateway and cross-VLAN tests from step 3.
 
 :::expected
-PC-A can still reach 192.168.10.1, but PC-B cannot reach 192.168.20.1 and inter-VLAN traffic fails. The subinterface may remain up/up because the parent link is operational. The decisive mismatch is encapsulation VLAN 200 on R1 versus the client's VLAN 20 on SW1, not the .20 suffix. Record the running configuration and test results before recovery. If the selected image rejects changing encapsulation, record the rejection rather than claiming the intended fault was installed. Use the stated VLAN-200-versus-VLAN-20 mismatch as a supplied evidence exercise; do not report its predicted results as measured results.
+PC-A can still reach 192.168.10.1, but PC-B cannot reach 192.168.20.1 and inter-VLAN traffic fails. The subinterface may remain up/up because the parent link is operational. The decisive mismatch is encapsulation VLAN 200 on R1 versus the client's VLAN 20 on SW1, not the .20 suffix. Record the running configuration and test results before recovery.
 :::
 
 ```state
@@ -268,7 +268,7 @@ DSW1# show ip route
 Predict whether the same four pings from step 3 will all pass before routing is enabled. Run those four commands in the new Part B PC windows and record local-gateway and cross-VLAN results separately.
 
 :::expected
-With both PC links up and forwarding, the two SVIs should be operational. Each PC should reach its own local SVI address. PC-A to PC-B must not be treated as a working routed service while IPv4 forwarding is disabled. This is the distinction being tested: assigning an IP address to the switch does not itself enable it to route user packets. Record actual model behavior if your simulator differs from the documented feature behavior.
+With both PC links up and forwarding, the two SVIs should be operational. Each PC reaches its own SVI address, but PC-A cannot reach PC-B: with IP routing off the switch answers for its own addresses and does not forward packets between VLANs. `show ip route` prints `Default gateway is not set` instead of a routing table. Giving a switch IP addresses does not make it a router.
 :::
 
 ```state
@@ -312,7 +312,7 @@ DSW1# show ip route
 ```
 
 :::expected
-PC-B loses its link. Under normal SVI autostate behavior, Vlan20's line protocol goes down because there is no eligible forwarding member port, and its connected route is withdrawn. VLAN 20 still exists and the SVI is not administratively shut down. PC-A should still reach its own VLAN 10 gateway. Record actual status fields; do not insist that every image use the same up/down versus down/down wording.
+PC-B loses its link. Under normal SVI autostate behavior, Vlan20's line protocol goes down because there is no eligible forwarding member port, and its connected route is withdrawn. VLAN 20 still exists and the SVI is not administratively shut down. PC-A should still reach its own VLAN 10 gateway. Record the status fields you see for Vlan20.
 :::
 
 ```state
@@ -372,7 +372,7 @@ DSW1# show ip route
 ```
 
 :::expected
-The switch reports that Gi1/0/24 is not a switchport, and its table includes connected network 10.0.12.0/30. The two link-address pings succeed. R2 has no routes to the PC subnets in this exercise, so a PC-to-R2 ping is not an expected success test: R2 would need a return route. Do not add an unrelated default gateway command to DSW1 to conceal that missing routing design.
+The switch reports that Gi1/0/24 is not a switchport, and its table includes connected network 10.0.12.0/30. The two link-address pings succeed. R2 has no routes to the PC subnets in this exercise, so a PC-to-R2 ping fails: the request arrives, but R2 has no route back to the PC's subnet. Static routes in chapter 18 fix that.
 :::
 
 ```state

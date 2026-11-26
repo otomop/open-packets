@@ -1,160 +1,176 @@
 [
   {
+    "id": "acls-c03",
+    "front": "In what order does a router check ACL entries, and what happens to a packet that matches none?",
+    "back": "Top down, stopping at the first match. A packet that matches no entry is dropped by the implicit deny at the end.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "acls-c01",
-    "front": "Which numbered ranges identify standard IPv4 ACLs?",
-    "back": "1–99 and 1300–1999. These lists match source IPv4 addresses.",
+    "front": "Which numbers identify standard IPv4 ACLs?",
+    "back": "1–99 and 1300–1999.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "acls-c02",
-    "front": "Which numbered ranges identify extended IPv4 ACLs?",
-    "back": "100–199 and 2000–2699. Extended lists can match protocol, source, destination and relevant transport fields.",
+    "front": "Which numbers identify extended IPv4 ACLs?",
+    "back": "100–199 and 2000–2699.",
     "tags": [
       "number"
-    ]
-  },
-  {
-    "id": "acls-c03",
-    "front": "How does an ordinary nonempty IPv4 interface ACL decide a packet?",
-    "back": "Use the first matching entry. If none matches, the nonempty list implicitly denies the packet; later entries do not override an earlier match.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "acls-c04",
-    "front": "How do you calculate the wildcard for a CIDR subnet?",
-    "back": "Subtract each mask octet from 255. For /20, 255.255.240.0 becomes 0.0.15.255.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "acls-c05",
-    "front": "What do wildcard bits 0 and 1 mean?",
-    "back": "0: compare the corresponding address bit. 1: ignore it. This is independent of whether the base address is a usable host.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "acls-c06",
-    "front": "What wildcard represents a /27 subnet?",
-    "back": "0.0.0.31: compare the first 27 bits and ignore the final five. Use the network address as a clear base.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "acls-c08",
-    "front": "What do host and any replace in an IPv4 ACL?",
-    "back": "host A replaces A 0.0.0.0. any replaces 0.0.0.0 255.255.255.255.",
-    "tags": [
-      "command"
     ]
   },
   {
     "id": "acls-c09",
-    "front": "Which packet address does a standard IPv4 ACL match?",
-    "back": "The source. It cannot distinguish destination hosts, TCP from UDP, or one destination service from another.",
+    "front": "What can a standard IPv4 ACL match?",
+    "back": "Only the source IP address.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "acls-c10",
-    "front": "What additional fields can an extended IPv4 ACL use?",
-    "back": "Destination address and IP protocol, plus applicable fields such as TCP/UDP ports, ICMP type or TCP ACK/RST flag tests. All specified conditions must match.",
+    "front": "What can an extended IPv4 ACL match that a standard ACL cannot?",
+    "back": "The protocol (ip, tcp, udp, icmp), the destination address, and source and destination ports.",
     "tags": [
       "concept"
     ]
   },
   {
+    "id": "acls-c05",
+    "front": "In a wildcard mask, what do a 0 bit and a 1 bit mean?",
+    "back": "0: this address bit must match. 1: this bit is ignored.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c04",
+    "front": "How do you turn a subnet mask into a wildcard mask?",
+    "back": "Subtract each octet from 255. 255.255.240.0 (/20) becomes 0.0.15.255.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c06",
+    "front": "Which wildcard mask matches a /27 subnet?",
+    "back": "0.0.0.31.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "acls-c26",
+    "front": "Which addresses does `10.100.10.64 0.0.0.31` match?",
+    "back": "10.100.10.64 through 10.100.10.95.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "acls-c08",
+    "front": "What do `host` and `any` stand for in an ACL entry?",
+    "back": "`host A` means `A 0.0.0.0`. `any` means `0.0.0.0 255.255.255.255`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
     "id": "acls-c11",
-    "front": "What are the usual placement guidelines for standard and extended ACLs?",
-    "back": "Standard: near the destination, to limit a source-only rule’s effect. Extended: near the source, when it can precisely identify unwanted traffic. Trace the actual path before choosing a direction.",
+    "front": "Where should you place a standard ACL, and where an extended ACL?",
+    "back": "Standard: close to the destination. Extended: close to the source.",
     "tags": [
       "compare"
     ]
   },
   {
+    "id": "acls-c27",
+    "front": "In an extended ACL entry, how do you tell a source port from a destination port?",
+    "back": "A port written after the source address is the source port. A port written after the destination address is the destination port.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "acls-c23",
+    "front": "A client sends from port 51000 to a web server's port 80. What are the ports in the reply?",
+    "back": "Source port 80, destination port 51000. The addresses swap as well.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "acls-c12",
-    "front": "How is named ACL CLIENTS-IN attached inbound on an interface?",
-    "back": "Enter the interface configuration mode and use ip access-group CLIENTS-IN in. Verify the attachment with show ip interface for that interface.",
+    "front": "Which command applies the ACL CLIENTS-IN to packets entering an interface?",
+    "back": "`ip access-group CLIENTS-IN in`, in interface configuration mode.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "acls-c13",
-    "front": "How does a standard ACL restrict incoming VTY management access?",
-    "back": "Apply access-class NAME in under every VTY range present. This restricts permitted source addresses; SSH transport and authentication are separate settings.",
+    "front": "Which command limits which source addresses can open SSH or Telnet sessions to the router?",
+    "back": "`access-class <ACL> in` under `line vty`, with a standard ACL listing the allowed sources.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "acls-c14",
-    "front": "How many ordinary IPv4 interface ACL references are available per interface?",
-    "back": "One inbound and one outbound. Applying another IPv4 ip access-group in the same direction replaces that reference. Other platform-specific ACL features are separate.",
+    "front": "How many IPv4 ACLs can one interface have?",
+    "back": "One inbound and one outbound. A second `ip access-group` in the same direction replaces the first.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "acls-c15",
-    "front": "What does TCP established actually check?",
-    "back": "ACK or RST set on the current segment. It does not validate a remembered connection and can match a forged ACK without a preceding client session.",
+    "front": "What does the `established` keyword match?",
+    "back": "TCP segments with the ACK or RST bit set. It lets replies through but does not track sessions.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "acls-c17",
-    "front": "How do you remove only sequence 20 from a named ACL on supported IOS?",
-    "back": "Enter ip access-list extended NAME (or standard as appropriate), then no 20. Verify the resulting list rather than deleting the whole ACL.",
+    "front": "How do you delete only entry 20 from the named ACL CLIENTS-IN?",
+    "back": "`ip access-list extended CLIENTS-IN`, then `no 20`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "acls-c25",
+    "front": "What does the global command `no access-list 101` do?",
+    "back": "It deletes the whole of ACL 101, not a single entry.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "acls-c20",
-    "front": "Which two checks establish ACL contents and interface attachment?",
-    "back": "show access-lists NAME for entries and supported counters; show ip interface INTERFACE for inbound and outbound references. An ACL can exist without filtering that interface.",
+    "front": "Which two commands show an ACL's entries and where it is applied?",
+    "back": "`show access-lists` shows the entries and match counts. `show ip interface` shows the inbound and outbound ACL on an interface.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "acls-c21",
-    "front": "Why is a successful router-originated ping insufficient to validate a transit ACL?",
-    "back": "Its source and processing path can differ from the host’s packet. Classic IOS outbound ACL behavior commonly bypasses locally generated traffic. Test the affected host’s actual path.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
     "id": "acls-c22",
-    "front": "What is the classic IOS behavior for an absent or empty referenced interface ACL?",
-    "back": "It provides no restriction in the documented classic behavior. Build and review the complete list before attachment; do not assume a misspelled or empty list supplies implicit deny.",
+    "front": "An interface references an ACL that does not exist. What does it filter?",
+    "back": "Nothing: all traffic passes. The implicit deny applies only once the ACL has at least one entry.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "acls-c23",
-    "front": "How do TCP/UDP port roles change in a reply?",
-    "back": "The server's service port becomes the source port; the client's chosen port becomes the destination. Reverse the addresses too.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "acls-c24",
-    "front": "What does an increasing ACL permit counter prove?",
-    "back": "More packets matched that entry during the interval. It does not by itself prove routing, reply delivery or application success.",
+    "id": "acls-c21",
+    "front": "Why is a ping from the router itself a poor test of its outbound ACL?",
+    "back": "IOS does not apply an outbound ACL to packets the router generates. Test from a host behind the router.",
     "tags": [
       "troubleshoot"
     ]

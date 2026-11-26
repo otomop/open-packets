@@ -148,7 +148,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which explicit global configuration disables the documented IOS DHCP server and relay service?",
+    "prompt": "Which global command disables both the DHCP server and the DHCP relay on an IOS router?",
     "options": [
       "no ip dhcp pool USERS",
       "no ip domain-lookup",
@@ -158,7 +158,7 @@
     "answer": [
       3
     ],
-    "explanation": "The global no service dhcp command disables the documented IOS server and relay functions. service dhcp enables them; do not diagnose disabled DHCP merely because a default command is absent from an abbreviated configuration.",
+    "explanation": "`no service dhcp` turns off both the IOS DHCP server and the relay. `service dhcp` is on by default, so the running configuration normally shows the command only in its negated form.",
     "whyWrong": {
       "0": "Removing one server pool does not disable the global relay service.",
       "1": "This disables the router's DNS client lookup function.",

@@ -1,48 +1,72 @@
 [
   {
+    "id": "rest-apis-json-c29",
+    "front": "REST, HTTP, JSON and HTTPS: what is each?",
+    "back": "REST is an architectural style, HTTP carries the requests, JSON encodes the data and HTTPS adds TLS encryption.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c25",
+    "front": "Name the six REST constraints.",
+    "back": "Client-server, stateless, cacheable, uniform interface, layered system and code on demand (optional).",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c18",
+    "front": "What does stateless mean in REST?",
+    "back": "Each request carries everything needed to process it. The server keeps no session memory between requests.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "rest-apis-json-c01",
-    "front": "Common CRUD-to-HTTP mappings?",
-    "back": "Create POST; read GET; replace/create-at-target PUT; partial modification PATCH; delete DELETE, per API contract.",
+    "front": "Which HTTP verbs map to CRUD?",
+    "back": "Create POST; read GET; update PUT (replace) or PATCH (modify); delete DELETE.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c04",
+    "front": "PUT versus PATCH?",
+    "back": "PUT replaces the whole resource. PATCH changes only the fields you send.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "rest-apis-json-c02",
-    "front": "Which HTTP methods are idempotent by semantics?",
-    "back": "GET, PUT and DELETE, among others. POST and PATCH are not guaranteed idempotent.",
+    "front": "Which HTTP methods are idempotent?",
+    "back": "GET, PUT and DELETE. POST and PATCH are not guaranteed to be.",
     "tags": [
       "concept"
-    ]
-  },
-  {
-    "id": "rest-apis-json-c03",
-    "front": "What does safe mean for a GET request?",
-    "back": "The requested operation is read-only; incidental logging or counters can still change.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "rest-apis-json-c04",
-    "front": "PUT versus PATCH?",
-    "back": "PUT supplies the target representation; PATCH applies a partial modification using a defined patch format.",
-    "tags": [
-      "compare"
     ]
   },
   {
     "id": "rest-apis-json-c05",
-    "front": "HTTP status classes 1xx through 5xx?",
-    "back": "Informational, successful, redirection, client error and server error.",
+    "front": "HTTP status classes 1xx to 5xx?",
+    "back": "1xx informational, 2xx success, 3xx redirection, 4xx client error, 5xx server error.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c24",
+    "front": "What do 200, 201, 204 and 404 mean?",
+    "back": "200 OK; 201 Created; 204 success with no body; 404 resource not found.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "rest-apis-json-c06",
-    "front": "How does 202 differ from a completed API operation?",
-    "back": "202 accepts processing. Follow the documented task outcome and verify the required result; acceptance alone is not completion.",
+    "front": "What does 202 Accepted mean?",
+    "back": "The request was accepted for processing but is not finished. Check the task before assuming the change happened.",
     "tags": [
       "number"
     ]
@@ -50,31 +74,31 @@
   {
     "id": "rest-apis-json-c07",
     "front": "401 versus 403?",
-    "back": "401 lacks valid authentication credentials; 403 refuses the request, often for insufficient permission.",
+    "back": "401: not authenticated, because credentials are missing, wrong or expired. 403: authenticated but not permitted.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "rest-apis-json-c09",
-    "front": "What does 429 require the client to consider?",
-    "back": "Rate-limit guidance, bounded backoff and Retry-After when provided.",
+    "id": "rest-apis-json-c11",
+    "front": "How does HTTP Basic authentication send credentials?",
+    "back": "Authorization: Basic plus the Base64 of username:password. Base64 is encoding, not encryption, so use HTTPS.",
     "tags": [
-      "troubleshoot"
+      "concept"
     ]
   },
   {
-    "id": "rest-apis-json-c11",
-    "front": "HTTP Basic credential representation?",
-    "back": "Authorization: Basic followed by Base64 of user:password. Encoding is reversible; use authenticated HTTPS.",
+    "id": "rest-apis-json-c28",
+    "front": "What is an API key?",
+    "back": "A secret string issued to a client and sent with every request, usually in a header.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "rest-apis-json-c12",
-    "front": "What does Authorization: Bearer identify?",
-    "back": "A credential presented by possession; it does not prove OAuth, JWT format or a fixed lifetime.",
+    "front": "What is a bearer token?",
+    "back": "A credential sent as Authorization: Bearer <token>. Anyone holding it can use it, and it usually expires.",
     "tags": [
       "concept"
     ]
@@ -82,7 +106,7 @@
   {
     "id": "rest-apis-json-c15",
     "front": "What is OAuth 2.0?",
-    "back": "An authorization framework for obtaining access tokens; grants, scopes and refresh behavior depend on the flow.",
+    "back": "An authorization framework: an application obtains a limited access token without seeing the user's password.",
     "tags": [
       "concept"
     ]
@@ -90,31 +114,31 @@
   {
     "id": "rest-apis-json-c16",
     "front": "Content-Type versus Accept?",
-    "back": "Content-Type identifies this message's representation; Accept expresses acceptable response formats.",
+    "back": "Content-Type states the format of the body being sent. Accept states the format wanted in the response.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "rest-apis-json-c18",
-    "front": "Does stateless REST prohibit server databases or logs?",
-    "back": "No. It constrains interaction context, not storage of resources, credentials or operational records.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
     "id": "rest-apis-json-c19",
-    "front": "Six JSON value categories?",
+    "front": "Name the six JSON value types.",
     "back": "Object, array, string, number, boolean and null.",
     "tags": [
       "concept"
     ]
   },
   {
+    "id": "rest-apis-json-c26",
+    "front": "JSON object versus array?",
+    "back": "An object is key:value pairs in braces {}. An array is an ordered list of values in brackets [].",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
     "id": "rest-apis-json-c20",
     "front": "Why is {'enabled': True} invalid JSON?",
-    "back": "Member names need double quotes, and the boolean literal must be lowercase true. These are syntax faults, not formatting preferences.",
+    "back": "Keys and strings need double quotes, and the boolean must be lowercase true.",
     "tags": [
       "concept"
     ]
@@ -122,25 +146,25 @@
   {
     "id": "rest-apis-json-c21",
     "front": "In {\"ports\":[3,8]}, what does ports[1] select?",
-    "back": "The second array value: number 8. Array indexes start at zero in this notation.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "rest-apis-json-c22",
-    "front": "What body should a client expect after HTTP 204?",
-    "back": "No response body. Do not unconditionally parse JSON after every successful status.",
+    "back": "The second value, 8. Array indexes start at 0.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "rest-apis-json-c23",
-    "front": "Why can valid JSON still fail an API schema?",
-    "back": "The API can require particular fields and value types. A valid string such as \"false\" does not satisfy a boolean field.",
+    "front": "Why can valid JSON still be rejected by an API?",
+    "back": "Syntax can be valid while a type is wrong: \"false\" is a string, not the boolean false.",
     "tags": [
       "concept"
+    ]
+  },
+  {
+    "id": "rest-apis-json-c27",
+    "front": "How do you recognize JSON, XML and YAML?",
+    "back": "JSON uses braces and brackets, XML uses <tags>, and YAML uses indentation and dashes.",
+    "tags": [
+      "compare"
     ]
   }
 ]

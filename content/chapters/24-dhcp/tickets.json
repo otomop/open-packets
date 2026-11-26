@@ -41,7 +41,7 @@
       "v1:4.3",
       "v2:1.7"
     ],
-    "scenario": "An isolated training room uses R1 as a verified relay and R2 as an IOS DHCP server. The first three clients still have valid leases and are powered on. A fourth fresh client receives no allocation. Its Discover reaches R2. The reserved infrastructure range is .1–.49; the upper exclusion was temporary for this exercise. These are representative records, not simulator captures.",
+    "scenario": "An isolated training room uses R1 as a verified relay and R2 as an IOS DHCP server. The first three clients still have valid leases and are powered on. A fourth fresh client receives no allocation. Its Discover reaches R2. The reserved infrastructure range is .1–.49; the upper exclusion was temporary for this exercise.",
     "exhibits": [
       {
         "title": "R2 pool configuration",

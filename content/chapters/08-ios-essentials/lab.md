@@ -4,7 +4,7 @@ environment: packet-tracer
 devices: ["1 × ISR 2911 (R1)", "1 × Catalyst 2960-24TT (SW1)", "1 × PC-PT (ADMIN)", "1 × Laptop-PT (CONSOLE)"]
 minutes: 70
 ---
-Build this as a new Packet Tracer project. You will verify two privilege levels, restrict remote access to SSH, create a controlled transport fault, and recover through the console. All credentials shown are for this isolated exercise. Outputs are representative excerpts; record what your installed simulator actually reports.
+You will take a new router from "no password, console only" to the policy the lesson described: named users, a protected console, and SSH-only remote access. Then you break remote access on purpose and repair it from the console, which is why the console session stays open throughout. Build this as a new Packet Tracer project. The credentials shown are for this lab only. Outputs are representative; your release may word them differently.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
@@ -40,7 +40,7 @@ R1# show line
 ```
 
 :::expected
-The prompt is `R1#`. Record the model, image description and available console/VTY lines. `no ip domain-lookup` avoids accidental hostname lookups from mistyped commands; it does not prevent local RSA-key generation or change ADMIN's DNS settings. If the terminal is blank, check the console cable endpoints before investigating Ethernet.
+The prompt is `R1#`. `show version` reports the model and IOS image, and `show line` lists the console and VTY lines; note how many VTY lines there are. `no ip domain-lookup`, from Start here, stops a mistyped command from hanging on a name lookup. If the terminal is blank, check both ends of the console cable.
 :::
 
 ```state
@@ -69,7 +69,7 @@ ping 10.8.0.1
 ```
 
 :::expected
-Gi0/0 should have `10.8.0.1` and become `up/up` after the link is operational. Repeat an initial ping if address resolution was still in progress. If repeated tests fail, verify cabling, address/mask and interface state. Record every VTY range shown in the running configuration; later steps must apply the intended policy to all available lines.
+Gi0/0 has `10.8.0.1` and is `up/up`, and the ping succeeds; repeat it if the first echo times out. If it keeps failing, check the cabling, the address and mask, and the interface state. At the end of the running configuration, note every `line vty` range: later steps must configure all of them.
 :::
 
 ```state
@@ -91,7 +91,7 @@ R1# show running-config | include enable
 ```
 
 :::expected
-Both usernames and the enable secret appear. The stored verifier strings and their type numbers may differ by image; do not compare them character for character with an example hash. The configuration explicitly gives `admin` privilege 15 and leaves `trainee` at the default local-user level of 1. If a filter is unsupported, inspect the full running configuration.
+Both usernames and the enable secret appear, each stored as a hash (`secret 5` in Packet Tracer), not as the password you typed. `admin` shows privilege 15; `trainee` shows none, which means the default of 1. If a filter is unsupported, read the full running configuration.
 :::
 
 ```state
@@ -100,7 +100,7 @@ Both usernames and the enable secret appear. The stored verifier strings and the
 
 ## Step 4: Protect the console line
 
-Keep the existing console session open. Do not deliberately log out until a separate remote session has been tested. An open terminal window does not prevent the five-minute idle timeout: if the session times out, press Enter and sign in as `admin` with `AdminLabSecret8` from Step 3.
+Keep the console session open, and do not log out until a remote session has been tested. If the five-minute idle timeout ends the session, press Enter and sign in as `admin` with `AdminLabSecret8`.
 
 ```ios R1
 R1# configure terminal
@@ -113,7 +113,7 @@ R1# show running-config | section line con
 ```
 
 :::expected
-The console line uses `login local` and a five-minute idle timeout. The existing session remains available until it ends or the idle timeout expires; the next console login will need one of the accounts from Step 3. A missing user entry must be corrected now, before that session ends.
+The console line uses `login local` and a five-minute idle timeout. Your current session is unaffected, but the next console login will need one of the accounts from Step 3. If `show running-config | include username` shows no users, fix that now, while you are still logged in.
 :::
 
 ```state
@@ -122,7 +122,7 @@ The console line uses `login local` and a five-minute idle timeout. The existing
 
 ## Step 5: Configure the SSH server and VTY policy
 
-Use the conventional RSA-key workflow. If your image rejects the complete key-generation command, inspect `crypto key generate rsa ?`; a supported alternative may prompt for the modulus after `crypto key generate rsa`. Enter `2048` at that prompt. Do not paste an interactive answer as a separate configuration command.
+Follow the lesson's order: domain name, key pair, SSH version, then the VTY lines. If your release rejects the full key command, enter `crypto key generate rsa` on its own and type `2048` when it asks for the modulus.
 
 ```ios R1
 R1# configure terminal
@@ -149,7 +149,7 @@ R1(config-line)# end
 ```
 
 :::expected
-`show ip ssh` reports the server enabled for version 2.0. Inspect the VTY sections and confirm local authentication and SSH transport on every range. If the simulator lacks SSH support for the chosen device/image, use a supported router/image; reading an output example does not count as a successful login test.
+`show ip ssh` reports the server enabled for version 2.0. In the running configuration, every VTY range shows `login local` and `transport input ssh`.
 :::
 
 ```state
@@ -193,7 +193,7 @@ R1# exit
 Finally try `telnet 10.8.0.1` from ADMIN.
 
 :::expected
-`trainee` initially reports privilege 1 and reaches 15 after the enable secret is accepted. `admin` begins at privilege 15. Telnet must not open an authenticated terminal session. Exact rejection wording varies; the result and the VTY configuration matter. If your simulator does not expose `show privilege`, record the prompts and check the username privilege in the configuration.
+`trainee` starts at privilege 1 and reaches 15 after the enable secret. `admin` starts at privilege 15. Telnet is refused because the VTY lines accept only SSH. If your release lacks `show privilege`, read the level from the prompt: `>` is level 1 and `#` is level 15.
 :::
 
 ```state
@@ -202,9 +202,9 @@ Finally try `telnet 10.8.0.1` from ADMIN.
 
 ## Step 7: Complete a changed line requirement
 
-The administrator now requires a **three-minute remote EXEC idle timeout**, while the console must remain at five minutes. Keep SSH-only transport and local-user authentication. This is a partially guided task: write the necessary configuration context and timeout command before reading the reference below, then apply it through the console to every existing VTY range.
+The administrator now requires a **three-minute remote EXEC idle timeout**, while the console must remain at five minutes. Keep SSH-only transport and local-user authentication. Write the commands yourself before you open the reference below, then apply them through the console to every VTY range.
 
-Inspect the resulting console and VTY sections. Verify a fresh administrator login; you need not wait three minutes to document the configured timeout, and a successful login alone is not a measurement of timer expiry.
+Read back the console and VTY sections, and confirm that a new `admin` login still works. You do not need to wait three minutes to see the timeout fire.
 
 :::expected
 The timeout is a property of the selected terminal lines. Configure VTY 0–4 as follows, and repeat for VTY 5–15 only if those lines were found earlier:
@@ -217,7 +217,7 @@ R1(config-line)# end
 R1# show running-config | section line
 ```
 
-The VTY ranges show `exec-timeout 3 0`, while the console still shows `exec-timeout 5 0`. If the filter is unavailable, inspect the full configuration. Do not change `login local`, the username entries or `transport input ssh` to satisfy a timeout requirement.
+The VTY ranges show `exec-timeout 3 0`, while the console still shows `exec-timeout 5 0`. If the filter is unavailable, read the full configuration. Nothing else on the lines needed to change.
 :::
 
 ```state
@@ -226,7 +226,7 @@ The VTY ranges show `exec-timeout 3 0`, while the console still shows `exec-time
 
 ## Step 8: Introduce a remote-transport fault
 
-Confirm that ADMIN has exited its SSH session. On the still-open console, replace the incoming transport with `none` on every VTY range you configured. Do not save this fault.
+Confirm that ADMIN has exited its SSH session. On the console, set the incoming transport to `none` on every VTY range, which makes the lines accept no remote protocol at all. Do not save this fault.
 
 ```ios R1
 R1# configure terminal
@@ -243,7 +243,7 @@ ssh -l admin 10.8.0.1
 ```
 
 :::expected
-The IP interface remains operational and ping should still succeed. A new SSH terminal session is refused because the VTY lines accept no incoming transport. On the console, `show ip ssh` can still report an enabled SSH server. This combination demonstrates why server status, IP reachability and line policy must be checked separately.
+Ping still succeeds, and on the console `show ip ssh` still reports the server enabled, yet the new SSH session is refused: the VTY lines accept no incoming transport. This is the lesson's second gate. The IP path and the SSH server are fine; the line's transport setting is what refuses the session.
 :::
 
 ```state
@@ -252,7 +252,7 @@ The IP interface remains operational and ping should still succeed. A new SSH te
 
 ## Step 9: Restore the intended transport
 
-Use the console to restore SSH on every VTY range. Keep the fault and recovery as separate observations in your notes.
+Use the console to restore SSH on every VTY range.
 
 ```ios R1
 R1# configure terminal
@@ -282,10 +282,10 @@ R1# show ip ssh
 R1# show running-config | section line vty
 ```
 
-Record the user, line and any displayed client address. Keep ADMIN's proven SSH session open while you test a fresh console login. At the console, enter `exit` from privileged EXEC (`R1# exit`), then press Enter to start a new session and sign in as `admin` with `AdminLabSecret8` so the next step begins at `R1#`. Closing and reopening the terminal window alone may leave the existing console session active. Both an open console window and an open SSH window can still reach their configured idle timeouts; log back in if either session ends before testing. After both paths have been verified, log out of the SSH session on ADMIN.
+Note the user, the line and the client address shown. Now test a fresh console login while ADMIN's SSH session stays open as your way back in. At the console, enter `exit` at `R1#`, press Enter to start a new session, and sign in as `admin` with `AdminLabSecret8`. Closing and reopening the terminal window is not a logout. If either session reaches its idle timeout first, log in again. When both paths are verified, log out of the SSH session on ADMIN.
 
 :::expected
-The commands provide different evidence: terminal users, SSH sessions, SSH server state, and line configuration. The console login accepts a valid local account. A successful test on one VTY does not replace reviewing the other VTY ranges. On images with limited filters/session commands, inspect the full configuration and record the limitation instead of inventing missing output.
+`show users` lists the console and the VTY session with ADMIN's address, `show ssh` lists the SSH session, `show ip ssh` shows the server state, and the last command shows the line settings. The new console login accepts the `admin` account.
 :::
 
 ```state
@@ -309,22 +309,19 @@ R1# show startup-config
 Save the Packet Tracer project as `08-secure-device-access.pkt`.
 
 :::expected
-The saved configuration includes the intended username, interface, SSH and line settings. It must not contain `transport input none` on the VTY lines. The device save and project save are both complete. A reload is unnecessary for this exercise; if you later test one, retain the verified credentials and console path.
+The saved configuration includes the users, the interface address, the SSH settings and the line settings, with `transport input ssh` on every VTY range and no `transport input none`.
 :::
 
+Before the challenge, check that you saw each of these yourself:
 
-Before checking this lab complete, submit a short acceptance record:
-
-| Requirement | Evidence |
+| Requirement | What you observed |
 |---|---|
-| Local recovery | New console login while another proven path remains available |
-| Different user privileges | New trainee and admin sessions with their actual privilege levels |
-| SSH-only admission | Fresh SSH success and fresh Telnet rejection |
-| Complete line policy | Every available VTY range; console five minutes, VTY three minutes |
-| Fault reasoning | Ping/server/line evidence, narrow correction and new-session retest |
-| Persistence | Desired users and repaired line settings in startup-config |
-
-The deliberately introduced fault is guided practice. Attempt the independent fresh build below before reading its answer key; record help used and corrected reasoning.
+| Console recovery | A new console login while the SSH session was still open |
+| Two privilege levels | `trainee` at 1 and `admin` at 15 in new sessions |
+| SSH only | A new SSH login accepted and Telnet refused |
+| Every line covered | All VTY ranges set; console five minutes, VTY three minutes |
+| The fault | Ping and the SSH server were fine; the VTY transport was not |
+| Saved | The repaired settings in `show startup-config` |
 
 ```state
 {"status":"Configuration saved","tone":"ok","focus":["R"],"chips":[{"node":"L","text":"Terminal open"},{"node":"R","text":"Saved · startup-config","tone":"ok"}],"rows":[["startup-config","Users, interface, SSH, lines","ok"],["VTY lines","No transport input none","ok"],["Project","08-secure-device-access.pkt"]]}
@@ -353,7 +350,7 @@ Produce a configuration from these requirements before looking at the answer:
 - Use the conventional RSA workflow with domain `challenge.test`, supported 2048-bit keys and SSHv2.
 - Verify a new login for each account, a new console login, Telnet rejection, and the saved policy.
 
-Write a six-row acceptance table with predicted and actual results. If you consult the reference, record which part needed help and repeat that part later with changed values.
+Write the configuration and your predicted result for each check before you open the solution.
 
 :::solution
 The new switch can use its default access VLAN; the host/router share one subnet. Configure through the console, creating users before making lines depend on them:
@@ -399,5 +396,5 @@ R2(config-line)# end
 
 From ADMIN, test `ssh -l operator 10.8.1.1` and `ssh -l reviewer 10.8.1.1` in separate sessions. Verify privilege 15 and 1 respectively with `show privilege` where supported; the reviewer test must be before using `enable`. Test `telnet 10.8.1.1` and confirm that a terminal login is not admitted. While a proven SSH recovery session remains available, log out at the console prompt and verify a new local-user console login.
 
-Inspect the line timeouts and all VTY ranges. Save with `copy running-config startup-config`, accept the filename prompt, and inspect `show startup-config`. The acceptance record should show operator privilege 15, reviewer privilege 1, fresh console authentication, SSH admission/Telnet rejection, correct console/VTY timeouts, and the saved intended policy. Record unsupported checks as limitations rather than invented output. Save this project separately from R1's guided baseline.
+Check the line timeouts on all VTY ranges. Save with `copy running-config startup-config`, accept the filename prompt, and read `show startup-config`. You should have seen operator at privilege 15, reviewer at privilege 1, a new console login, SSH accepted and Telnet refused, and the saved policy. Save this project separately from the R1 lab.
 :::

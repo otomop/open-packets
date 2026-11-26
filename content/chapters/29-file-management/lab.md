@@ -8,7 +8,7 @@ Practice revised September 2026. If you completed an earlier version, repeat the
 
 Complete this lab in three sittings if useful: **backup and merge (Steps 1–6)**, **cleartext service comparison (Steps 7–8)**, and **secure transfer (Steps 9–17)**. The first two support v1.1's TFTP/FTP description objective. The third provides the SFTP/SCP execution required for v2.0. Linux installation, accounts, keys and the supplied fresh-device AAA block are preparation, not commands to memorize here.
 
-Before a copy, write its source, destination, client, server and expected effect on running-config/startup-config. After it, verify the destination. A simulator or paper interpretation does not establish that you performed a secure transfer.
+Before a copy, write its source, destination, client, server and expected effect on running-config/startup-config. After it, verify the destination. The time estimate assumes the Ubuntu VM for Steps 9–17 already exists; building it adds about an hour.
 
 ## Topology
 
@@ -22,7 +22,7 @@ Steps 9–17 use a **separate isolated secure-transfer lab**, not Packet Tracer:
 
 The exercise uses newly created lab accounts and uniquely named files. It does not erase startup configuration, reload a device, delete software or activate an image. Console access must remain available throughout SSH setup. These procedures have not been executed in Packet Tracer or IOS XE during authoring. If a feature is absent, record the exact limitation and complete the interpretation exercise; do not claim a successful secure transfer without a supporting environment.
 
-## Step 1 — Establish the Packet Tracer baseline
+## Step 1: Establish the Packet Tracer baseline
 
 On SRV1 Desktop → IP Configuration, set the static address, mask `255.255.255.0` and gateway from the topology above. Leave DNS blank. On R1, decline the initial setup dialog if presented:
 
@@ -49,7 +49,7 @@ Gi0/0 is up/up and ping replies arrive after address resolution. No router defau
 {"status":"Baseline reachable","addressed":["R1","SRV1"],"tone":"ok","wake":["SW1"],"focus":["R1","SRV1"],"flows":[{"path":["R1","SW1","SRV1"],"back":true,"label":"ARP for 10.29.0.100","tags":{"R1":"Address resolution first"}},{"path":["R1","SW1","SRV1"],"back":true,"label":"Ping 10.29.0.100","tags":{"R1":"Same subnet · no default route"}}],"chips":[{"node":"R1","text":"R1#"}],"rows":[["R1 Gi0/0","10.29.0.1/24 · up/up","ok"],["SRV1","10.29.0.100/24 · gw 10.29.0.1"],["Ping 10.29.0.100","Replies after ARP","ok"]]}
 ```
 
-## Step 2 — Predict and inspect the correct stores
+## Step 2: Predict and inspect the correct stores
 
 Before executing anything, write which store `copy running-config startup-config` changes, and whether it creates an off-device backup.
 
@@ -73,14 +73,14 @@ R1# show version
 ```
 
 :::expected
-The startup configuration includes hostname R1 and the lab interface address. Record actual local prefixes, available bytes and the running image filename. Do not expect an exact capacity or image version from a screenshot. If `flash:` is not listed, use the actual persistent-storage prefix in subsequent local-file commands.
+The startup configuration includes hostname R1 and the lab interface address. Record actual local prefixes, available bytes and the running image filename. If `flash:` is not listed, use the actual persistent-storage prefix in subsequent local-file commands.
 :::
 
 ```state
 {"status":"startup-config inspected","addressed":["R1","SRV1"],"tone":"ok","focus":["R1"],"chips":[{"node":"R1","text":"R1#"}],"rows":[["startup-config","hostname R1 · Gi0/0 address","ok"],["Record","Prefixes, free bytes, image file"]]}
 ```
 
-## Step 3 — Send a named TFTP backup
+## Step 3: Send a named TFTP backup
 
 In SRV1 → Services → TFTP, enable the service. On R1:
 
@@ -98,7 +98,7 @@ The router reports completion and SRV1's TFTP file list contains `R1-before.cfg`
 {"status":"Backup on SRV1","addressed":["R1","SRV1"],"tone":"ok","focus":["R1","SRV1"],"flows":[{"path":["R1","SW1","SRV1"],"label":"copy running-config tftp:","tags":{"R1":"Client · sends running-config","SRV1":"Stores R1-before.cfg"}}],"chips":[{"node":"R1","text":"R1#"},{"node":"SRV1","text":"TFTP On","tone":"ok"}],"rows":[["TFTP server","SRV1 · 10.29.0.100"],["SRV1 file list","R1-before.cfg","ok"],["startup-config","Not saved by this copy","dim"],["Encryption","None · isolated lab only"]]}
 ```
 
-## Step 4 — Retrieve to a staged file
+## Step 4: Retrieve to a staged file
 
 Your requirement is to retrieve `R1-before.cfg` as `flash:R1-received.cfg` for inspection while leaving both configuration stores unchanged. Write the source and destination before opening the supplied command.
 
@@ -121,7 +121,7 @@ The staged file contains the R1 baseline. Its presence does not mean a configura
 {"status":"File staged in flash","addressed":["R1","SRV1"],"tone":"ok","focus":["R1"],"flows":[{"path":["R1","SW1","SRV1"],"back":true,"label":"Retrieve R1-before.cfg","tags":{"R1":"Requests R1-before.cfg"},"backTags":{"SRV1":"Sends R1-before.cfg","R1":"Writes flash:R1-received.cfg"}},{"event":["R1"],"tags":{"R1":"Inspect flash:R1-received.cfg"}}],"chips":[{"node":"SRV1","text":"TFTP On","tone":"ok"},{"node":"R1","text":"R1#"},{"node":"R1","text":"Staged · not applied","from":1}],"rows":[["Source","R1-before.cfg on SRV1"],["Destination","flash:R1-received.cfg","ok"],["Configuration stores","Both unchanged"],["Staged content","R1 baseline"]]}
 ```
 
-## Step 5 — Predict a merge, then observe it
+## Step 5: Predict a merge, then observe it
 
 The staged baseline contains `hostname R1` and does not mention Loopback29. You will change the hostname and add that unused interface, then merge the baseline. Write whether each change will remain before running the block.
 
@@ -155,7 +155,7 @@ The hostname returns to R1 because the file contains `hostname R1`. Loopback29 r
 {"status":"Merge keeps Loopback29","addressed":["R1","SRV1"],"tone":"warn","focus":["R1"],"flows":[{"event":["R1"],"wait":1.6,"tags":{"R1":"Merge R1-received.cfg → running"}}],"chips":[{"node":"R1","text":"R1-TEMP#","tone":"warn","until":0},{"node":"R1","text":"R1#","from":0},{"node":"R1","text":"Loopback29 present","tone":"warn"},{"node":"SRV1","text":"TFTP On","tone":"ok"}],"rows":[["Hostname","R1-TEMP → R1 · in file","ok"],["Loopback29","Remains · not in file","warn"],["Operation","Merge, not exact replacement"]]}
 ```
 
-## Step 6 — Recover the baseline explicitly
+## Step 6: Recover the baseline explicitly
 
 After recording the merge result, remove the temporary interface:
 
@@ -183,7 +183,7 @@ Loopback29 is absent, the server remains reachable, and startup-config again rep
 {"status":"Baseline recovered","addressed":["R1","SRV1"],"tone":"ok","focus":["R1","SRV1"],"flows":[{"event":["R1"],"wait":1.6,"tags":{"R1":"no interface loopback29"}},{"path":["R1","SW1","SRV1"],"back":true,"label":"Ping 10.29.0.100"},{"event":["R1"],"tags":{"R1":"Save running → startup-config"}}],"chips":[{"node":"R1","text":"R1#"},{"node":"R1","text":"Loopback29 present","tone":"warn","until":0},{"node":"SRV1","text":"TFTP On","tone":"ok"}],"rows":[["Loopback29","Absent","ok"],["Ping 10.29.0.100","Server reachable","ok"],["startup-config","Intended lab state","ok"]]}
 ```
 
-## Step 7 — Compare FTP and introduce an authentication fault
+## Step 7: Compare FTP and introduce an authentication fault
 
 In SRV1 → Services → FTP, enable FTP and create account `filelab` with fictional lab password `FileLab2026!`. Grant that account Read, Write and List permissions in the simulator; additional Delete/Rename permissions are unnecessary. Save/add the account before testing.
 
@@ -207,7 +207,7 @@ The server should reject authentication; exact error text depends on the simulat
 {"status":"FTP login rejected","addressed":["R1","SRV1"],"tone":"bad","focus":["R1","SRV1"],"flows":[{"path":["R1","SW1","SRV1"],"label":"copy running-config ftp:","tags":{"R1":"FTP client · user filelab"},"stop":"SRV1","stopText":"Login rejected · wrong password"}],"chips":[{"node":"R1","text":"R1#"},{"node":"SRV1","text":"FTP On · filelab","tone":"ok"},{"node":"SRV1","text":"TFTP On","tone":"ok"},{"node":"R1","text":"ip ftp password wrong","tone":"bad"}],"rows":[["SRV1 account","filelab · read, write, list"],["R1 client password","Wrong on purpose","bad"],["R1-ftp.cfg","No successful backup","bad"],["IP baseline","Can still work","dim"]]}
 ```
 
-## Step 8 — Repair FTP and verify the destination
+## Step 8: Repair FTP and verify the destination
 
 Set the matching fictional password:
 
@@ -228,7 +228,7 @@ The repaired credentials permit the authorized transfer. FTP control and data us
 {"status":"FTP backup stored","addressed":["R1","SRV1"],"tone":"ok","focus":["R1","SRV1"],"flows":[{"event":["R1"],"wait":1.6,"tags":{"R1":"ip ftp password now matches"}},{"path":["R1","SW1","SRV1"],"label":"FTP control · login","tags":{"R1":"Client · user filelab","SRV1":"Login accepted"}},{"path":["R1","SW1","SRV1"],"tone":"alt","label":"FTP data · R1-ftp.cfg","tags":{"R1":"Separate data connection","SRV1":"Stores R1-ftp.cfg"}}],"chips":[{"node":"R1","text":"R1#"},{"node":"SRV1","text":"FTP On · filelab","tone":"ok"},{"node":"SRV1","text":"TFTP On","tone":"ok"},{"node":"R1","text":"ip ftp password wrong","tone":"bad","until":0},{"node":"R1","text":"ip ftp password fixed","tone":"ok","from":0}],"rows":[["Login","Accepted · filelab","ok"],["SRV1 file list","R1-ftp.cfg","ok"],["Control and data","Separate TCP connections"],["Backup may contain","The lab FTP password"]]}
 ```
 
-## Step 9 — Supplied preparation: Linux transfer server
+## Step 9: Supplied preparation: Linux transfer server
 
 A **virtual machine (VM)** runs its own operating system inside software on a host computer. Its **network interface card (NIC)** can connect to a virtual segment or to a dedicated physical adapter. This setup needs a console you can use even while that lab network is disconnected; Chapter 39 develops virtualization design separately.
 
@@ -291,7 +291,7 @@ The dedicated NIC has `10.29.0.100/24`. SSH configuration validation produces no
 {"status":"Linux SSH server ready","addressed":["R1","SRV1","Linux"],"tone":"ok","focus":["Linux"],"chips":[{"node":"Linux","text":"SSH listening · TCP 22","tone":"ok"}],"rows":[["Lab NIC","10.29.0.100/24"],["sshd -t","No error","ok"],["probe.txt","30 bytes · SHA-512 recorded"],["Transfer account","ccnafile · unprivileged"]]}
 ```
 
-## Step 10 — Supplied preparation: IOS XE identity and SCP
+## Step 10: Supplied preparation: IOS XE identity and SCP
 
 This block is for a fresh, isolated Catalyst 9300 S1. The `no switchport` command creates the routed port taught in Chapter 11. A virtual router uses its actual Layer 3 port name and omits that command. Do not apply this block over an existing production AAA policy.
 
@@ -364,7 +364,7 @@ The second session reaches S1 and has the intended privilege. Run `show privileg
 {"status":"S1 SSH and SCP ready","tone":"ok","focus":["S1","Linux"],"flows":[{"path":["Linux","S1"],"back":true,"label":"ssh labbackup@10.29.0.1","tags":{"Linux":"SSH client"},"backTags":{"S1":"Offers its RSA host key","Linux":"Matches console fingerprint"}},{"path":["Linux","S1"],"label":"Password after key check","tags":{"S1":"Local AAA · privilege 15"}}],"chips":[{"node":"S1","text":"SCP server On","tone":"ok"},{"node":"Linux","text":"SSH listening · TCP 22","tone":"ok"},{"node":"Linux","text":"S1 key in known hosts","from":1}],"rows":[["S1 Gi1/0/1","Routed · 10.29.0.1/24"],["SSH","Version 2 · VTY SSH only"],["Host key","RSA fingerprint verified","ok"],["labbackup","Privilege 15 session","ok"]]}
 ```
 
-## Step 11 — Pull a configuration backup with classic SCP
+## Step 11: Pull a configuration backup with classic SCP
 
 On S1, inventory local storage and create a snapshot:
 
@@ -393,7 +393,7 @@ The workstation initiates SCP and the Cisco device acts as server. `-O` is delib
 {"status":"Backup pulled over SCP","tone":"ok","focus":["S1","Linux"],"flows":[{"event":["S1"],"wait":1.6,"tags":{"S1":"Snapshot flash:S1-before.cfg"}},{"path":["Linux","S1"],"back":true,"label":"scp -O … flash:S1-before.cfg","tags":{"Linux":"SCP client · classic (-O)"},"backTags":{"S1":"SCP server · sends file","Linux":"Saved in ~/ccna-received"}}],"chips":[{"node":"S1","text":"SCP server On","tone":"ok"},{"node":"Linux","text":"S1 key in known hosts"}],"rows":[["Client → server","Linux → S1"],["Received","S1-before.cfg · mode 600","ok"],["scp -O","Classic SCP, not SFTP"],["startup-config","Not updated","dim"]]}
 ```
 
-## Step 12 — Observe rejection of an untrusted SFTP server identity
+## Step 12: Observe rejection of an untrusted SFTP server identity
 
 S1 is now the client; Ubuntu's SSH/SFTP service is the server. Client authentication by password and verification of the **server's identity** are different checks. The documented IOS XE procedure uses a trusted server public key and `ip ssh stricthostkeycheck`; do not assume it offers OpenSSH's interactive acceptance prompt.
 
@@ -425,7 +425,7 @@ Record whether the missing-key attempt was rejected before the account password 
 {"status":"Untrusted key rejected","tone":"warn","focus":["S1","Linux"],"flows":[{"path":["S1","Linux"],"back":true,"label":"copy sftp: … probe.txt","tags":{"S1":"SFTP client · strict key check"},"backTags":{"Linux":"Offers its host key"},"backStop":"S1","backStopText":"No trusted server key · rejected"}],"chips":[{"node":"S1","text":"Strict check · no pinned key","tone":"warn"},{"node":"Linux","text":"SSH/SFTP server"}],"rows":[["Client → server","S1 → Linux SFTP"],["Rejected","Before the account password"],["Files accepted","None"]]}
 ```
 
-## Step 13 — Pin the verified identity and perform the secure copy
+## Step 13: Pin the verified identity and perform the secure copy
 
 Keep the Ubuntu public key and fingerprint collected through its trusted console. Enter that trusted key on S1:
 
@@ -470,7 +470,7 @@ The file contains `CCNA secure transfer practice` and its SHA-512 matches the se
 {"status":"Trusted SFTP copy verified","tone":"ok","focus":["S1","Linux"],"flows":[{"event":["S1"],"wait":1.6,"tags":{"S1":"Pin Ubuntu key · 10.29.0.100"}},{"path":["S1","Linux"],"back":true,"label":"SSH to 10.29.0.100","backTags":{"Linux":"Offers its host key","S1":"Matches pinned key"}},{"path":["S1","Linux"],"back":true,"label":"copy sftp: … probe.txt","tags":{"S1":"Password for ccnafile"},"backTags":{"Linux":"Sends probe.txt","S1":"Saved flash:probe-sftp.txt"}}],"chips":[{"node":"S1","text":"Strict check · no pinned key","tone":"warn","until":0},{"node":"S1","text":"Strict check · key pinned","tone":"ok","from":0},{"node":"Linux","text":"SSH/SFTP server"}],"rows":[["Pinned key","server 10.29.0.100","ok"],["probe-sftp.txt","CCNA secure transfer practice","ok"],["SHA-512","Matches Step 9 value","ok"],["Strict checking","Still enabled"]]}
 ```
 
-## Step 14 — Observe a source-path failure
+## Step 14: Observe a source-path failure
 
 Attempt a source filename that does not exist:
 
@@ -488,7 +488,7 @@ Authentication may succeed while the file operation fails. The trusted directory
 {"status":"Source path fault","tone":"bad","focus":["S1","Linux"],"flows":[{"path":["S1","Linux"],"label":"copy sftp: … missing.txt","tags":{"S1":"Requests missing.txt"},"stop":"Linux","stopText":"No missing.txt in ccna-files"}],"chips":[{"node":"S1","text":"Strict check · key pinned","tone":"ok"},{"node":"Linux","text":"SSH/SFTP server"}],"rows":[["Fault","Source path · missing.txt","bad"],["ccna-files holds","probe.txt, not missing.txt"],["Authentication","May still succeed","dim"],["Network settings","Leave unchanged"]]}
 ```
 
-## Step 15 — Repair only the path and repeat the file operation
+## Step 15: Repair only the path and repeat the file operation
 
 Use the existing source and a new destination:
 
@@ -506,7 +506,7 @@ The received file matches the trusted source content and hash. Connectivity, use
 {"status":"Path fixed · copy works","tone":"ok","focus":["S1","Linux"],"flows":[{"path":["S1","Linux"],"back":true,"label":"copy sftp: … probe.txt","tags":{"S1":"Source corrected · probe.txt"},"backTags":{"Linux":"Sends probe.txt","S1":"Saved flash:probe-recovered.txt"}}],"chips":[{"node":"S1","text":"Strict check · key pinned","tone":"ok"},{"node":"Linux","text":"SSH/SFTP server"}],"rows":[["Repaired","Source path only","ok"],["probe-recovered.txt","Content and hash match","ok"],["Credentials, host key","Unchanged"]]}
 ```
 
-## Step 16 — Apply the checks to approved software or the worksheet
+## Step 16: Apply the checks to approved software or the worksheet
 
 If you have an authorized Cisco software download for this exact lab platform, place it in `/home/ccnafile/ccna-files` with owner `ccnafile` and read permission for that account. Record its exact filename, size, release compatibility and Cisco-published SHA-512. Check available Cisco storage and keep the working image and package files intact.
 
@@ -520,7 +520,7 @@ A file with the expected size and matching trusted hash is staged, not activated
 {"status":"Staged, not activated","focus":["S1"],"chips":[{"node":"S1","text":"Original software running"}],"rows":[["Transfer","SFTP pull or scp -O push"],["Hash","Compare with Cisco SHA-512"],["show version","Original software","ok"],["No approved image","Worksheet · mark unperformed","dim"]]}
 ```
 
-## Step 17 — Submit separate backup, staging and recovery evidence
+## Step 17: Submit separate backup, staging and recovery evidence
 
 Submit this evidence checklist with actual results or an explicit unperformed/paper label for each part:
 

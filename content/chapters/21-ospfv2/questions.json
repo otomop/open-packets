@@ -32,21 +32,21 @@
       "v2:3.3.a"
     ],
     "difficulty": 1,
-    "prompt": "How should the same up, OSPF-enabled LAN normally appear in the local and remote route tables?",
+    "prompt": "R3's client LAN is up, enabled in OSPF and passive. R1 is R3's OSPF neighbor. How does that LAN prefix appear in each routing table?",
     "options": [
-      "Static on the remote router because the LAN interface is passive.",
-      "Connected on its directly attached router; OSPF-learned on a remote router that selects that advertisement.",
-      "Local /32 only on every router, regardless of the Ethernet LAN mask.",
-      "OSPF-learned on every router, including the router directly attached to the LAN."
+      "Static (S) on R1, because the LAN interface is passive.",
+      "Connected (C) on R3 and OSPF-learned (O) on R1.",
+      "As a local /32 route only, on both routers.",
+      "OSPF-learned (O) on both R3 and R1."
     ],
     "answer": [
       1
     ],
-    "explanation": "A routing-protocol code identifies how that particular router obtained the installed route. Passive suppresses LAN Hellos but does not change local connected status or remote OSPF advertisement.",
+    "explanation": "The route code shows how that router learned the prefix. R3 is attached to the LAN, so it installs a connected route; R1 learns the prefix from OSPF. Passive only stops Hellos on the LAN.",
     "whyWrong": {
-      "0": "Passive OSPF advertisement does not turn a learned route into a static.",
-      "2": "The remote LAN prefix is not replaced by every router own local host route.",
-      "3": "An enabled local interface still supplies a connected route."
+      "0": "A passive interface is still advertised by OSPF; nothing makes the route static.",
+      "2": "The LAN's own /24 prefix is advertised, not a host route.",
+      "3": "R3 is directly attached, so its connected route is preferred over any OSPF route."
     }
   },
   {
@@ -151,7 +151,7 @@
     "answer": [
       2
     ],
-    "explanation": "Read the configured timer commands separately: Hello is 5 and dead is explicitly 40. A default relationship does not override an explicit dead timer.",
+    "explanation": "Hello is 5 and the dead interval is explicitly 40. IOS derives the dead interval as four times the Hello only when no dead interval is configured.",
     "whyWrong": {
       "0": "An explicit dead interval of 40 is present; it is not forced to 4 times Hello.",
       "1": "The explicit Hello override replaces the ordinary 10-second value.",
@@ -183,7 +183,7 @@
     ],
     "explanation": "The process number is locally significant. Shared-link parameters and unique router IDs determine the intended relationship, not equality of the process labels.",
     "whyWrong": {
-      "1": "Process numbers do not have to match area numbers, and IOS process 0 is not the intended valid process.",
+      "1": "A process ID has no relation to the area number, and 0 is not a valid process ID.",
       "2": "Different local process IDs do not prevent Full synchronization.",
       "3": "RIDs must be different."
     }
@@ -468,21 +468,21 @@
       "v2:3.3.a"
     ],
     "difficulty": 2,
-    "prompt": "When R1 sends a packet to R3 client LAN, which next hop is expected on their shared Ethernet?",
+    "prompt": "When R1 sends a packet to R3's client LAN, which next hop is expected on their shared Ethernet?",
     "options": [
-      "R3 shared-interface address, even if R2 is DR.",
-      "The destination PC MAC learned across the routed LAN.",
-      "R2 DR address for every packet, regardless of the destination router.",
-      "R2 BDR address because only the backup can forward user traffic."
+      "R3's shared-interface address, even though R2 is the DR.",
+      "The destination PC's MAC address, learned across the routed LAN.",
+      "The DR's address for every packet, whichever router owns the destination.",
+      "The BDR's address, because only the backup forwards user traffic."
     ],
     "answer": [
       0
     ],
-    "explanation": "OSPF flooding roles do not force user packets through the DR. SPF can select a directly reachable router on the shared segment.",
+    "explanation": "The DR and BDR organize LSA exchange. They do not carry user packets for other routers. SPF selects R3, which R1 reaches directly on the shared segment.",
     "whyWrong": {
-      "1": "R1 resolves the adjacent next-hop router on this Ethernet, not the remote PC MAC.",
-      "2": "The DR is not a mandatory data-plane transit router.",
-      "3": "BDR is an OSPF control role, not an exclusive user-traffic forwarding role."
+      "1": "R1 resolves the next-hop router on this Ethernet, not a PC on a remote LAN.",
+      "2": "The DR is not a transit router for user traffic.",
+      "3": "BDR is an OSPF control role and does not forward on behalf of other routers."
     },
     "exhibit": {
       "kind": "cli",
@@ -498,21 +498,21 @@
       "v2:3.3.a"
     ],
     "difficulty": 2,
-    "prompt": "A router with a configured new RID still displays the old active RID. What should the engineer do before any disruptive action?",
+    "prompt": "An engineer configures a new router-id on a router that already has OSPF neighbors. show ip ospf still displays the old RID. What should the engineer do?",
     "options": [
       "Assign the same new RID to every router to keep the area consistent.",
-      "Verify the active RID and plan a controlled process restart if needed on this image.",
+      "Plan a maintenance window and run clear ip ospf process, then confirm the RID.",
       "Assume the new running-config value already changed every adjacency identity.",
       "Change all neighbor process IDs to the new RID."
     ],
     "answer": [
       1
     ],
-    "explanation": "Check operational output rather than inferring live state from the configuration. Restarting OSPF drops local adjacencies, so it must be deliberate.",
+    "explanation": "IOS keeps the RID it chose when the process started. A new router-id takes effect after clear ip ospf process or a reload, which drops the process's adjacencies, so schedule it.",
     "whyWrong": {
       "0": "Router IDs must be unique within the OSPF domain.",
-      "2": "Configuration and the active process identity can differ until restart.",
-      "3": "Process IDs are local numeric labels, not dotted-decimal router identities."
+      "2": "The configured value and the RID in use differ until the process restarts.",
+      "3": "Process IDs are local numbers, not router identities."
     }
   },
   {
@@ -653,7 +653,7 @@
     "answer": [
       1
     ],
-    "explanation": "Init means a Hello was heard but bidirectional recognition is not yet established. The supplied repeated evidence identifies the direction to inspect, not a uniquely proven physical cause.",
+    "explanation": "Init means R1 hears R2's Hellos, but those Hellos do not list R1's RID. Check whether R1's Hellos reach R2 and whether R2 accepts them.",
     "whyWrong": {
       "0": "Priority does not repair one-way recognition.",
       "2": "MTU exchange trouble normally appears later; the evidence points first to missing bidirectional Hello recognition.",
@@ -793,7 +793,7 @@
       "v2:3.3.a"
     ],
     "difficulty": 3,
-    "prompt": "This adjacency repeatedly stalls during database exchange. Which evidence best identifies the fault?",
+    "prompt": "This adjacency never reaches Full. Which evidence best identifies the fault?",
     "options": [
       "Point-to-point operation omits the required DR.",
       "The two process numbers are different.",
@@ -803,7 +803,7 @@
     "answer": [
       2
     ],
-    "explanation": "ExStart/Exchange involves DBD negotiation, including an MTU check. The explicit 1500/1400 mismatch is actionable evidence; fix the intended MTU rather than assuming every ExStart case has the same cause.",
+    "explanation": "The DBD packets exchanged in ExStart and Exchange carry the interface MTU. R2, with the smaller MTU, rejects R1's DBD packets and stays in ExStart, while R1 waits in Exchange. Make the two MTUs equal.",
     "whyWrong": {
       "0": "A point-to-point adjacency does not require a DR.",
       "1": "Process IDs are local and can differ.",
@@ -812,7 +812,7 @@
     "exhibit": {
       "kind": "cli",
       "title": "Representative configuration or output",
-      "text": "R1 Gi0/1: up/up, MTU 1500, area 0, point-to-point, Hello 10, Dead 40\nR2 Gi0/1: up/up, MTU 1400, area 0, point-to-point, Hello 10, Dead 40\nR1 neighbor 2.2.2.2: repeatedly EXSTART/ -"
+      "text": "R1 Gi0/1: up/up, MTU 1500, area 0, point-to-point, Hello 10, Dead 40\nR2 Gi0/1: up/up, MTU 1400, area 0, point-to-point, Hello 10, Dead 40\nR1 shows neighbor 2.2.2.2 in EXCHANGE/ -\nR2 shows neighbor 1.1.1.1 in EXSTART/ -"
     }
   },
   {

@@ -1,146 +1,178 @@
 [
   {
-    "id": "fhrp-hsrp-vrrp-c04",
-    "front": "HSRP default Hello/hold and what starts the active hold timer?",
-    "back": "3/10 seconds. Accepted active Hellos refresh the timer; silent failure is detected at expiry, not by counting exactly three missed packets.",
+    "id": "fhrp-hsrp-vrrp-c22",
+    "front": "Which address do hosts use as their default gateway in an FHRP design, and why?",
+    "back": "The group's virtual IP. Whichever router is forwarding answers for it, so the gateway survives a router failure.",
     "tags": [
-      "number"
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c33",
+    "front": "Which FHRPs are Cisco proprietary and which is an open standard?",
+    "back": "HSRP and GLBP are Cisco proprietary. VRRP is an open standard.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c07",
+    "front": "What do the HSRP Active and Standby routers each do?",
+    "back": "Active answers ARP for the virtual IP and forwards the hosts' traffic. Standby monitors its Hellos and takes over if they stop.",
+    "tags": [
+      "concept"
     ]
   },
   {
     "id": "fhrp-hsrp-vrrp-c05",
-    "front": "Which HSRP priority is preferred?",
-    "back": "The higher effective priority. The normal configured default is 100; tracking can reduce the effective value.",
+    "front": "What is HSRP's default priority, and how is the Active router chosen?",
+    "back": "Default 100, range 0–255. The highest priority wins; a tie goes to the highest interface IP address.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "fhrp-hsrp-vrrp-c06",
-    "front": "HSRP preemption default and purpose?",
-    "back": "Disabled. Enabling it lets a higher-priority router take over from a healthy lower-priority Active router.",
+    "front": "What is HSRP's default preemption setting, and what does `standby preempt` change?",
+    "back": "Off. With preempt, a higher-priority router takes the role from a healthy Active. Replacing a failed Active never needs it.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c07",
-    "front": "How do Active and Standby differ in an ordinary HSRP group?",
-    "back": "Active forwards for the virtual gateway. Standby is the selected replacement if the active role is lost.",
+    "id": "fhrp-hsrp-vrrp-c04",
+    "front": "What are HSRP's default Hello and hold timers?",
+    "back": "Hello 3 seconds, hold 10 seconds. The Standby takes over when the hold timer expires without a Hello from the Active.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c31",
+    "front": "Name the six HSRP states from start-up to forwarding.",
+    "back": "Initial, Learn, Listen, Speak, Standby, Active.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "fhrp-hsrp-vrrp-c08",
-    "front": "IPv4 HSRP group ranges for versions 1 and 2?",
-    "back": "v1 0–255; v2 0–4095. Peers must use a compatible version and group.",
+    "front": "Which group numbers do HSRP version 1 and version 2 support?",
+    "back": "Version 1: 0–255. Version 2: 0–4095.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c09",
-    "front": "Does VRRPv3 use one shared virtual MAC for both IPv4 and IPv6?",
-    "back": "No. The address families use different virtual MAC blocks and independent instances; read the family in the status.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "fhrp-hsrp-vrrp-c12",
-    "front": "What VRRP priority identifies the address owner?",
-    "back": "255. Ordinary non-owner routers use lower priorities; their normal default is 100.",
+    "id": "fhrp-hsrp-vrrp-c27",
+    "front": "What are the HSRP virtual MAC formats for version 1 and version 2?",
+    "back": "v1: 0000.0c07.acXX. v2: 0000.0c9f.fXXX. The X digits are the group number in hex.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c13",
-    "front": "VRRP forwarding role in Cisco output versus the current RFC?",
-    "back": "Cisco often says Master; RFC 9568 says Active. Backup is the non-forwarding role for that virtual instance.",
+    "id": "fhrp-hsrp-vrrp-c28",
+    "front": "Where does HSRP send Hellos in version 1 and version 2, and on which port?",
+    "back": "v1: 224.0.0.2. v2: 224.0.0.102. Both use UDP port 1985.",
     "tags": [
-      "compare"
+      "number"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c18",
+    "front": "What happens when two HSRP peers run different versions?",
+    "back": "The versions do not interoperate. Each router ignores the other's Hellos and both become Active, with different virtual MACs.",
+    "tags": [
+      "troubleshoot"
     ]
   },
   {
     "id": "fhrp-hsrp-vrrp-c15",
-    "front": "What changes in the switch during ordinary HSRP failover?",
-    "back": "The learned port for the virtual MAC changes. The virtual IP/MAC identity remains, so hosts need not change their configured gateway.",
+    "front": "After an HSRP failover, what changes on the switch and what stays the same on the host?",
+    "back": "The switch relearns the virtual MAC on the new Active router's port. The host keeps the same gateway IP and ARP entry.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "fhrp-hsrp-vrrp-c17",
-    "front": "R1's priority 110 minus tracking decrement 20: what else allows R2 takeover?",
-    "back": "R1 becomes 90; R2 at 100 needs preempt to take over while R1 remains alive on the LAN.",
+    "front": "R1 is Active at priority 110 and tracks its uplink with decrement 20. R2 is at 100. What happens when the uplink fails?",
+    "back": "R1 drops to 90. R2 becomes Active only if R2 has preempt configured.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c18",
-    "front": "Why must an HSRP version change be coordinated across peers?",
-    "back": "Peers must recognize the same version, and changing versions changes the ordinary IPv4 virtual MAC. It is different from same-version failover.",
+    "id": "fhrp-hsrp-vrrp-c32",
+    "front": "By how much does HSRP tracking lower the priority if you do not set a decrement?",
+    "back": "10. A priority of 110 becomes 100 while the tracked interface is down.",
     "tags": [
-      "command"
+      "number"
     ]
   },
   {
     "id": "fhrp-hsrp-vrrp-c19",
-    "front": "What does unknown in an HSRP peer-role field mean?",
-    "back": "No peer in that role is currently known. In an intended pair, compare VLAN, version, group, and control traffic.",
+    "front": "In `show standby brief`, what does `unknown` in the Standby column mean?",
+    "back": "This router hears no Standby peer. In a two-router group, check that both use the same VLAN, HSRP version and group.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c21",
-    "front": "Which VRRP version supports IPv6, and does IPv4 Master prove IPv6 Master?",
-    "back": "VRRPv3 supports IPv4 and IPv6. Their instances are independent; inspect the address family and virtual address.",
+    "id": "fhrp-hsrp-vrrp-c23",
+    "front": "A PC can ping the HSRP virtual IP. What does that prove?",
+    "back": "Only that a router answers for the gateway on the LAN. Its route to the remote network and the return route still need checking.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-c13",
+    "front": "What are VRRP's two roles called in Cisco output?",
+    "back": "Master (the forwarding router) and Backup. RFC 9568 renames Master to Active; it is the same role.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c22",
-    "front": "Which gateway address should the PC use: a peer real IP or the agreed VIP?",
-    "back": "The agreed virtual IP, so a replacement router can preserve the gateway identity.",
+    "id": "fhrp-hsrp-vrrp-c29",
+    "front": "What are VRRP's defaults for priority, advertisement interval and preemption?",
+    "back": "Priority 100, an advertisement every 1 second, and preemption on.",
     "tags": [
-      "concept"
+      "number"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c23",
-    "front": "Does a successful ping to the VIP prove a remote server path works?",
-    "back": "No. Verify the active router destination route, the return route and the actual remote test.",
+    "id": "fhrp-hsrp-vrrp-c12",
+    "front": "Which VRRP priority marks the address owner, and what is an address owner?",
+    "back": "255. The owner's real interface address is the virtual IP. Other routers use 1–254, default 100.",
     "tags": [
-      "concept"
+      "number"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c24",
-    "front": "Does tracking an uplink line protocol detect every remote application failure?",
-    "back": "No. It tracks that local condition. A remote failure can occur while the interface remains up.",
+    "id": "fhrp-hsrp-vrrp-c30",
+    "front": "How are VRRP advertisements carried, and to which IPv4 address?",
+    "back": "Directly in IP as protocol 112, not in UDP, to multicast 224.0.0.18.",
     "tags": [
-      "concept"
+      "number"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c25",
-    "front": "Which field should be compared with a peer after tracking triggers: configured or effective priority?",
-    "back": "Effective priority. The configured baseline can stay unchanged while a decrement lowers the value used for preference.",
+    "id": "fhrp-hsrp-vrrp-c09",
+    "front": "What are the VRRP virtual MAC formats for IPv4 and IPv6?",
+    "back": "IPv4: 0000.5e00.01XX. IPv6: 0000.5e00.02XX. XX is the group number (VRID) in hex.",
     "tags": [
-      "concept"
+      "number"
     ]
   },
   {
-    "id": "fhrp-hsrp-vrrp-c26",
-    "front": "Two intended HSRP peers are Active with unknown Standby: is that a unique diagnosis?",
-    "back": "No. Compare VLAN/control reachability, version, group and other relevant peer settings before choosing a repair.",
+    "id": "fhrp-hsrp-vrrp-c21",
+    "front": "Which VRRP version supports IPv6?",
+    "back": "VRRPv3, which supports IPv4 and IPv6. VRRPv2 is IPv4 only.",
     "tags": [
-      "concept"
+      "compare"
     ]
   }
 ]

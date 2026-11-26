@@ -67,7 +67,8 @@ export function parseLab(body) {
   const sections = splitSections(body);
   const lab = { intro: "", topology: "", steps: [], troubleshooting: "", challenge: "" };
   for (const s of sections) {
-    const step = s.title.match(/^step\s+(\d+)\s*[:.–-]?\s*(.*)$/i);
+    // "Step 3: Title", "Step 3. Title", "Step 3 – Title", "Step 3 — Title" and "Step 3 - Title" are all accepted.
+    const step = s.title.match(/^step\s+(\d+)\s*[:.–—-]?\s*(.*)$/i);
     if (s.id === "intro") lab.intro = s.body;
     else if (/^topology/i.test(s.title)) lab.topology = s.body;
     else if (step) lab.steps.push({ id: "step-" + step[1], n: Number(step[1]), title: step[2] || "Step " + step[1], body: s.body });

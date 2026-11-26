@@ -9,7 +9,7 @@ Practice revised September 2026. If you completed an earlier version, repeat the
 
 The required outcome is interpreting requests, statuses and JSON, which you can complete as a 30-minute worksheet using the supplied observations. Running the service is an optional hands-on path; allow about 65 minutes including setup. Mark each recorded result as observed locally or reasoned from the supplied case.
 
-For the hands-on path, run a small, supplied **teaching service** on your own computer. It returns deterministic inventory data and lets you distinguish 200, 401, 403 and 404 without a public sandbox. It is not a production controller, a full REST implementation or RESTCONF. Its fictional tokens protect no real resource. The service binds only to IPv4 loopback and intentionally uses HTTP; real credentials require authenticated HTTPS.
+For the hands-on path you run a small **teaching service** on your own computer. It returns fixed inventory data and answers with 200, 401, 403 and 404, so you can see each status without a public sandbox. Python only starts the service; you do not need to understand its code. The service listens only on your own machine (loopback) and uses plain HTTP, which is acceptable only because its tokens are fictional. Real credentials need HTTPS.
 
 ## Topology
 
@@ -151,7 +151,7 @@ curl.exe -i http://127.0.0.1:8765/api/devices
 Record the status, challenge header and body before repairing.
 
 :::expected
-401, a Bearer `WWW-Authenticate` challenge and the error `valid lab token required`. No inventory body is returned. This result follows the supplied service's contract, not an assumption that every network timeout means bad credentials.
+401, a Bearer `WWW-Authenticate` challenge and the error `valid lab token required`. No inventory body is returned. The server answered, so the network path is fine; only the credential is missing.
 :::
 
 ## Step 5: Restore the credential
@@ -171,7 +171,7 @@ curl.exe -i -H "Authorization: Bearer lab-read-token" http://127.0.0.1:8765/api/
 ```
 
 :::expected
-403 and `admin role required`. Here the code explicitly authenticated the supplied read token before denying its role. In an arbitrary API, 403 alone does not establish all of those internal steps.
+403 and `admin role required`. The service recognized the read token and then refused it for this path: authenticated, but not authorized.
 :::
 
 ## Step 7: Use the correct fictional role
@@ -194,7 +194,7 @@ curl.exe -i -H "Authorization: Bearer lab-read-token" http://127.0.0.1:8765/api/
 ```
 
 :::expected
-The documented filter matches no devices and returns 200 with an empty `response` array. The unknown path returns 404. These behaviors are deliberately implemented here; check another API's contract rather than assuming every collection behaves identically.
+The filter matches no devices and returns 200 with an empty `response` array. The unknown path returns 404. An empty result and a missing path are different answers: the first is a successful search that found nothing.
 :::
 
 ## Step 9: Save and inspect the body without headers
@@ -234,7 +234,7 @@ for device in data["response"]:
 print("Lab syntax and selected schema checks passed")
 ```
 
-Run `python validate_lab.py`. This checks the listed schema fields and rejects NaN/Infinity extensions. It is not a complete generic schema validator and does not detect every interoperability problem, such as duplicate names.
+Run `python validate_lab.py`. The script checks the listed fields and their types. Python's parser also accepts `NaN` and `Infinity`, which are not valid JSON numbers, so `reject_constant` makes it refuse them. It is a small check for this lab, not a general schema validator.
 
 :::expected
 The supplied body passes. JSON syntax and the selected field types are checked separately; the intentionally different ports types are not rejected because this small schema does not constrain them.
@@ -289,7 +289,7 @@ Before handling real credentials, identify which protections the loopback exerci
 :::solution Check the boundary
 This service demonstrated a fictional role check over local HTTP. It did not implement TLS, OAuth acquisition, expiry or a production server. Real access needs the platform's supported authenticated HTTPS setup and credential/authorization policy.
 
-A certificate error concerns TLS identity/trust before a normal protected API response; a 401 is an HTTP response about valid authentication credentials; refusal means the connection did not reach a listening service at that endpoint. Disabling certificate validation does not repair an expired API token. Packet Tracer is not claimed to run this service or RESTCONF.
+A certificate error concerns TLS identity and trust, before any API response exists; a 401 is an HTTP response about credentials; a refusal means nothing is listening at that address and port. Disabling certificate validation does not repair an expired API token.
 :::
 
 ## Step 16: Stop the service and submit the evidence

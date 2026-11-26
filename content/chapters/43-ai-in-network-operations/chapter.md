@@ -35,9 +35,7 @@ sources:
 
 A network assistant may summarize logs, forecast a capacity problem, or suggest a command to run next. These are useful contributions only when you understand what information the system received and what its result actually establishes. A polished answer can mix correct observations with an unsupported diagnosis. Your job is to separate them before making a change.
 
-This chapter uses familiar networking problems so you can concentrate on that judgement. You do not need a paid AI subscription or access to an enterprise analytics platform. The lab supplies fictional assistant responses and a small network whose behavior you can check yourself.
-
-Bring forward the DNS test sequence from [chapter 25](#/chapter/dns), timestamps and counters from [chapters 27](#/chapter/ntp-syslog-snmp) and [31](#/chapter/troubleshooting-toolkit), and the distinction between task completion and verified network behavior from [chapter 42](#/chapter/ansible-terraform). The new skill is reviewing how a system uses that evidence, rather than accepting its explanation as another observation.
+Reviewing that output uses skills you already have: the DNS test sequence from [chapter 25](#/chapter/dns), timestamps and counters from [chapters 27](#/chapter/ntp-syslog-snmp) and [31](#/chapter/troubleshooting-toolkit), and the habit from [chapter 42](#/chapter/ansible-terraform) of checking the result, not the job status. By the end you will be able to tell predictive, generative and agentic AI apart, explain what machine learning adds to network operations, choose a prompt with the right persona, instructions, data classification and output format, and judge whether an assistant's proposed change is supported by the evidence. You need no AI subscription: the lab supplies the assistant's answers.
 
 ## The operational task and exam scope
 
@@ -54,7 +52,7 @@ The current v1.1 blueprint asks you to explain generative AI, predictive AI, and
 
 Start with the required operational result. Forecasting when a circuit may need more capacity differs from explaining a failed DNS lookup. A forecasting system needs meaningful historical measurements; a troubleshooting assistant needs the actual affected host, time, symptoms, topology, and relevant evidence. Neither can compensate for a task that never identifies the problem.
 
-Treat the examples here as operating principles, not promises about a particular product license. Features, data access, and write permissions vary among deployments. A chat interface does not establish that the assistant can see your devices, and a product labeled “AI” does not establish that every function uses machine learning.
+Products differ in what data they can see and what they are allowed to change, so the examples here teach principles, not one vendor's features.
 
 ## AI and machine learning vocabulary
 
@@ -71,7 +69,7 @@ Treat the examples here as operating principles, not promises about a particular
 | Unsupervised learning | Find structure without supplied outcome labels | Group similar site behavior and identify unusual samples |
 | Reinforcement learning | Learn action choices from a reward signal | An experimental controller learns a policy in a test environment |
 
-These learning approaches are background vocabulary for understanding ML, not instructions to build a training system. A **feature** is an input measurement or property, such as interface utilization, time of day, or retry rate. A **label** is an outcome attached to a training example, such as a confirmed failure. Features must represent comparable things: mixing bits per second with bytes per second creates an eightfold measurement error before any model is involved.
+Two more terms describe the data. A **feature** is an input measurement or property, such as interface utilization, time of day, or retry rate. A **label** is an outcome attached to a training example, such as a confirmed failure. Features must measure comparable things: mixing bits per second with bytes per second builds in an eightfold error before any model is involved.
 
 Predictions, generation, and agentic behavior can coexist. A workflow may read an anomaly score, use a language model to summarize related logs, then request permission to run a diagnostic command. Classify each function by what it does rather than assuming the whole system belongs to only one category.
 
@@ -91,7 +89,7 @@ Forecasts are also conditional. A capacity prediction based on steady past growt
 
 Useful telemetry needs consistent timestamps, device identities, sampling intervals, and units. NTP helps align events, but synchronized clocks do not prove that two simultaneous events share a cause. Correlation helps select an investigation; configuration, counters, and tests establish the mechanism.
 
-Cisco's Catalyst Assurance 3.1.x documentation provides a concrete example: AI Network Analytics uses network-specific baselines and cloud analysis of deidentified event data to present insights and issues. That supports explaining learned operational context. It does not support assuming every identified issue is correct or that every deployment automatically reconfigures devices.
+Cisco's Catalyst Center Assurance is a concrete example. Its AI Network Analytics feature learns a baseline for each network, sends deidentified event data to the cloud for analysis and reports deviations as issues for an engineer to investigate.
 
 ## Generative AI and evidence-based answers
 

@@ -165,7 +165,7 @@ SW2# show spanning-tree vlan 10
 SW2# show lacp neighbor
 ```
 
-Some Packet Tracer images omit `show lacp neighbor` or detailed fields in `show etherchannel port-channel`. Use the available summary, member configuration, and trunk output for the formation checks; inspect partner details on supporting IOS/CML hardware if necessary. Do not treat an unsupported show command as a failed bundle.
+`show spanning-tree vlan 10` is explained in chapter 14. For now, look only at its interface list: it should name Po1, not Fa0/23 and Fa0/24, which shows that spanning tree sees the bundle as one link. Some Packet Tracer images omit `show lacp neighbor`; if yours does, rely on the summary and trunk output. An unsupported show command is not a failed bundle.
 
 On PC-A open Desktop → Command Prompt and run `ping 10.13.10.12`; on PC-B run `ping 10.13.10.11`. Repeat after address resolution if the first attempt loses a packet. This tests reachability, not aggregate throughput.
 
@@ -268,7 +268,7 @@ SW2# show etherchannel summary
 Record the result before continuing. The physical trunk settings should remain as configured; inspect `show running-config` if the image behaves differently after group removal.
 
 :::expected
-Neither side initiates LACP, so a new LACP bundle cannot form. Your image may show individual, suspended, or down members. Whether an unbundled link forwards user traffic depends on platform and configuration; do not infer a universal result from this simulator. The fault is the passive/passive pairing even if some traffic still works.
+Neither side starts LACP, so no bundle forms. The summary no longer shows `(P)` beside the members: depending on the image they are flagged `I` (stand-alone), `s` (suspended) or `D` (down), and Po1 is `SD`. If the members run stand-alone, spanning tree blocks one of them and a ping may still pass over the other. The fault is the passive/passive pairing whether or not a ping works.
 :::
 
 ```state
@@ -280,7 +280,7 @@ Neither side initiates LACP, so a new LACP bundle cannot form. Your image may sh
 Do not apply this asymmetric configuration to the live topology. Consider a separate record in which SW1 uses `channel-group 1 mode on` on both members and SW2 uses `channel-group 1 mode active`. All VLAN, speed, and duplex settings otherwise match. Explain why changing a timer cannot make this an LACP bundle.
 
 :::solution Compare your diagnosis
-SW1 is using static aggregation and does not negotiate LACP. SW2 expects an LACP partner. These are incompatible methods, not a slow negotiation. The correct design is matching compatible aggregation methods, such as active/active LACP. Static/on on both ends is a different supported design when configured consistently; it does not provide LACP's partner checks. No exact traffic or interface-state outcome is assumed for the asymmetric case.
+SW1 is using static aggregation and does not negotiate LACP. SW2 expects an LACP partner. These are incompatible methods, not a slow negotiation. The correct design is matching compatible aggregation methods, such as active/active LACP. `on` at both ends is also a valid design, but it gives up LACP's check that both links reach the same partner.
 :::
 
 ```state
@@ -415,7 +415,7 @@ D2# show ip route
 D2# ping 10.13.12.1
 ```
 
-Repeat the pings after any needed address resolution. If your Packet Tracer image rejects routed port-channel configuration despite using the named multilayer model, complete this step on a supporting 3560 IOS image in hardware or an equivalent IOS switching image in CML; retain the same logical design and map available ports. If no supporting environment is available, complete a supplied-evidence worksheet using the address table and representative summary below: identify the interface that owns each address, the connected prefix, the two bundled members, and why no remote route is needed for this peer test. Label that work as interpreted evidence. Do not replace the routed bundle with a Layer 2 trunk and claim to have tested Layer 3 EtherChannel.
+Repeat the pings after any needed address resolution. If your Packet Tracer image rejects the routed port channel, do this step as a worksheet from the address table and the summary below: name the interface that owns each address, the connected prefix, the two bundled members, and why no extra route is needed to ping the peer.
 
 :::expected
 A representative summary is `Po1(RU) LACP Fa0/1(P) Fa0/2(P)`: routed and in use, with two bundled members. Po1 owns `.1/30` or `.2/30`; the physical members have no IP addresses. The connected route is `10.13.12.0/30` through Port-channel1, and each peer address responds to ping. No routing protocol or static route is required to reach the directly connected peer. Only after those checks pass, save D1 and D2 with `copy running-config startup-config`, completing each destination prompt separately, and save the second project.

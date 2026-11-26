@@ -4,13 +4,11 @@ environment: packet-tracer
 devices: ["1 × Cisco 2911 router (R1)", "3 × Catalyst 2960 switches (SW-USERS, SW-OPS, SW-DEV)", "3 × PC-PT devices (PC-USERS, PC-OPS, PC-DEV)"]
 minutes: 75
 ---
-Choose the subnet sizes and placements for three LANs before seeing the completed plan. Configure that plan, record evidence from all three LANs, and assess one growth request. A short renumbering variation demonstrates why a new router address also requires matching host settings. The challenge uses fresh requirements and a separate file.
+You will do on a real topology what the lesson did on paper: size three LANs from one /24 with VLSM, configure the plan, and read it back from the router. Then a growth request arrives that the block cannot absorb, and you see how IOS reacts to an overlapping subnet and how to renumber one LAN into new space.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Your required work is an allocation table and a verified small topology. The supplied commands support the addressing exercise; this is not a production migration plan. No static routes, dynamic routing, DHCP, VLAN changes or Internet connection are required.
-
-No Packet Tracer execution was available during this review. The addressing and command sequence have been checked against the plan and documentation. Output below is representative, not captured; your version may differ in spacing, extra routes, and messages.
+Every command here was introduced in Chapter 04 or earlier. The router's directly connected routes are enough: you need no static routes, DHCP or VLAN changes. Output below is representative, not captured from Packet Tracer; your version may differ in spacing, extra routes and messages.
 
 ## Topology
 
@@ -39,7 +37,7 @@ Use copper straight-through for all six links. The 2911 provides the three named
 
 ## Step 1: Allocate the block on paper
 
-Users require 100 usable addresses, Operations 50, and Devices 20. These totals include each LAN's router interface. Reserve a /30 for a future two-endpoint router link. Starting with an empty `10.44.8.0/24`, choose the smallest suitable subnet for each requirement and allocate largest first. Do not read the answer until you have completed this worksheet. Allocate at the lowest available valid boundary, in descending size order; use each LAN's first usable address for the gateway. The physical topology gives the interfaces, not the subnet sizes.
+Users require 100 usable addresses, Operations 50, and Devices 20. These totals include each LAN's router interface. Reserve a /30 for a future two-endpoint router link. Starting with an empty `10.44.8.0/24`, choose the smallest suitable subnet for each requirement and place them largest first, each at the lowest available valid boundary. Use each LAN's first usable address for the gateway. Complete the worksheet before you open the solution.
 
 | Allocation | Required usable | Host bits and minimum prefix | Network/broadcast | Usable range and dotted mask |
 |---|---|---|---|---|
@@ -48,7 +46,7 @@ Users require 100 usable addresses, Operations 50, and Devices 20. These totals 
 | Devices | 20, including gateway | Calculate | Calculate | Calculate |
 | Reserved link | Two endpoints, explicitly /30 | Record | Calculate | Calculate |
 
-Add the total block sizes, then determine the exact remaining free interval. Distinguish total addresses from usable host capacity. Explain why the unconfigured reservation should not become a connected route merely because it is on your plan.
+Add up the block sizes, then work out the exact free interval that remains. Predict whether the reserved link will appear in R1's routing table.
 
 :::solution
 | Allocation | Prefix | Usable range | Broadcast |
@@ -78,7 +76,7 @@ Compare your subnet calculation before using these supplied test-host selections
 
 ## Step 2: Cable the topology and address the router
 
-Place and connect the specified devices. Decline the initial setup dialog on R1 if it appears. Configure the interfaces from the original table; explicitly return to global configuration between interfaces.
+Place and connect the devices. Decline the initial setup dialog on R1 if it appears. Configure the three interfaces from the solution table, returning to global configuration between interfaces.
 
 ```ios R1
 Router> enable
@@ -103,7 +101,7 @@ R1# show ip interface brief
 ```
 
 :::expected
-With the switch links ready, Gi0/0, Gi0/1, and Gi0/2 are up/up and show the three gateway addresses. Switch ports may take time to enter forwarding. The brief table does not show masks; do not treat it as the complete verification.
+Gi0/0, Gi0/1, and Gi0/2 are up/up and show the three gateway addresses. A newly connected switch port takes about 30 seconds to start forwarding. The brief table does not show masks, so you check those in Step 4.
 :::
 
 ```state
@@ -130,7 +128,7 @@ ping 10.44.8.193
 ```
 
 :::expected
-Each PC reports the table's values and reaches its own gateway after any initial resolution delay. The correct masks are /25, /26, and /27 respectively. A mask of 255.0.0.0 is not correct merely because the address begins with 10.
+Each PC reports the table's values and reaches its own gateway; the first echo may time out while ARP resolves. The masks are /25, /26, and /27 respectively. Packet Tracer fills in 255.0.0.0 for any address that begins with 10, which is wrong here.
 :::
 
 ```state
@@ -139,7 +137,7 @@ Each PC reports the table's values and reaches its own gateway after any initial
 
 ## Step 4: Read the plan back from the routing table
 
-Before running a show command, predict the three connected prefixes and their interfaces from your completed allocation table. Leave a second column for the actual output. Compare the router's connected prefixes with the paper plan. Use the detailed interface command to inspect the Operations mask directly.
+Before running a show command, predict the three connected prefixes and their interfaces from your allocation table. Then compare the router's connected routes with the plan, and use the detailed interface command to read the Operations mask directly.
 
 ```ios R1
 R1# show ip route
@@ -163,7 +161,7 @@ The detailed Gi0/1 output identifies `10.44.8.129/26`. Additional local /32 rout
 
 ## Step 5: Test every pair
 
-For each source/destination pair below, calculate that the destination is outside the source's local subnet and name the source's gateway. Then run the six tests and record actual results. This checks each PC's ability to send traffic through its configured gateway and receive replies from both other LANs.
+For each pair below, confirm by calculation that the destination is outside the source's subnet and name the gateway the source will use. Then run the six tests and record the results.
 
 | Source | Destination | Predicted next hop | Actual result |
 |---|---|---|---|
@@ -190,7 +188,7 @@ ping 10.44.8.140
 ```
 
 :::expected
-All destinations respond after links and address resolution settle. R1 needs no static routes for these directly connected LANs. The predicted gateways are Users `.1`, Operations `.129`, and Devices `.193`, all under `10.44.8`. Record success or failure for each pair; repeat an initial failed echo rather than assuming a precise number of replies or a particular TTL. Stop and correct an unintended failure before continuing. Save a working `vlsm-original-baseline.pkt` checkpoint, then use a separate experiment copy for the growth steps.
+All six tests succeed; repeat any whose first echo times out while ARP resolves. R1 needs no static routes because all three LANs are directly connected. The gateways are Users `.1`, Operations `.129`, and Devices `.193`, all under `10.44.8`. Fix any failure before continuing. Save the file as `vlsm-original-baseline.pkt`, then work in a copy for the growth steps.
 :::
 
 ```state
@@ -201,7 +199,7 @@ All destinations respond after links and address resolution settle. R1 needs no 
 
 Operations now requires 70 total usable addresses. Work out its minimum prefix and the complete range that would contain its existing `.129` gateway. Compare that range with Devices and the reserved link before reading the command. Also add the minimum block sizes of Users, enlarged Operations, Devices and the reserved /30: can any rearrangement keep all of them inside the original /24?
 
-The following is deliberately the rejected proposal, not the recommended repair. Predict the error, then test it only in the isolated experiment copy. Keep the router's response and retained interface mask as evidence. Do not change the PCs yet.
+The command below is the tempting wrong answer: widen the mask and keep the gateway. Predict what IOS will do, then enter it in your experiment copy. Do not change the PCs yet.
 
 ```ios R1
 R1# configure terminal
@@ -213,10 +211,10 @@ R1# show ip route
 ```
 
 :::expected
-A /26 has only 62 usable addresses, so 70 requires a /25. However, `10.44.8.128/25` covers .128–.255 and overlaps the Devices subnet .192–.223. IOS should reject the command and report an overlap; verify that Gi0/1 retains its /26. Users /25 plus Operations /25 already consumes the entire /24. Including Devices and the reserved link requires `128 + 128 + 32 + 4 = 292` addresses. Reordering those blocks cannot fit 292 into 256. Confirm that the original three PC paths still work after the rejected command; rejected input should not be treated as an applied change.
+A /26 has only 62 usable addresses, so 70 requires a /25. However, `10.44.8.128/25` covers .128–.255 and overlaps the Devices subnet .192–.223. IOS rejects the command with a message such as `% 10.44.8.128 overlaps with GigabitEthernet0/2`, and Gi0/1 keeps its /26. Users /25 plus Operations /25 would already consume the entire /24. With Devices and the reserved link the plan needs `128 + 128 + 32 + 4 = 292` addresses, and no ordering fits 292 into 256. The PCs still reach each other because the rejected command changed nothing.
 :::
 
-Stop here long enough to record the rejected change and its reason. The next step implements a different, valid plan rather than repeating the failed command.
+The block is full, so the next step uses new address space instead.
 
 ```state
 {"status":"Overlap rejected","tone":"warn","cabled":true,"addressed":true,"focus":["R1"],"flows":[{"event":["R1"],"wait":1,"tags":{"R1":"Rejected · overlaps Devices /27"}},{"path":["PO","SO","R1","SD","PD"],"back":true,"label":"PC-OPS pings 10.44.8.200","tags":{"R1":"Connected 10.44.8.192/27 → Gi0/2"}}],"chips":[{"node":"R1","text":"Gi0/1 keeps 10.44.8.129/26","tone":"ok","from":0}],"rows":[["70 usable","Needs /25; a /26 has 62"],["10.44.8.128/25",".128–.255 overlaps Devices","bad"],["Gi0/1 after the command","Still 10.44.8.129/26","ok"],["Blocks needed","128 + 128 + 32 + 4 = 292 > 256","warn"]]}
@@ -226,7 +224,7 @@ Stop here long enough to record the rejected change and its reason. The next ste
 
 Assume the address administrator has now assigned `10.44.9.0/24` to this site as well. Use its lower /25 for Operations. Users, Devices, and the reserved link keep their original allocations. Before reading the configuration, calculate the new Operations network, usable range and broadcast. Choose the first usable gateway and a test PC ending in `.10`. Decide whether carrying forward `.140` would be valid in that lower /25.
 
-Update the address table before changing R1. Apply the small router-and-PC change as one guided configuration task; a temporary loss of Operations connectivity while only one side has changed is expected. Verify only after both settings are updated.
+Update the address table before changing R1. Operations loses connectivity while only one side has changed, so verify after both the router and the PC are updated.
 
 ```ios R1
 R1# configure terminal
@@ -257,7 +255,7 @@ The new network is `10.44.9.0/25`, usable range `.9.1–.9.126`, broadcast `.9.1
 
 ## Step 8: Verify the final plan and save
 
-The final Operations mask remains /25; do not restore its old /26. Complete this comparison using actual settings and results, not a copied answer. Read each PC's settings and compare them with the updated plan.
+Read each device's actual settings and compare them with the updated plan.
 
 | Item | Intended final result | Actual evidence |
 |---|---|---|
@@ -281,7 +279,7 @@ R1# copy running-config startup-config
 ```
 
 :::expected
-All three LANs work under the updated plan. Accept the default startup-config filename and save the Packet Tracer file as `vlsm-branch.pkt`. The rejected overlap has been resolved by obtaining and using suitable space, not by weakening the mask checks.
+All three LANs work under the updated plan. Accept the default startup-config filename and save the Packet Tracer file as `vlsm-branch.pkt`. You resolved the overlap by moving Operations into new space, which is the only fix when a block is full.
 :::
 
 ```state
@@ -295,15 +293,15 @@ All three LANs work under the updated plan. Accept the default startup-config fi
 - A gateway ping fails: inspect that PC's actual address, mask, gateway, and physical connection. An overly broad mask alone does not necessarily prevent reaching a local gateway.
 - Local gateway tests pass but a remote pair fails: check both endpoint configurations and R1's connected routes.
 - After the move, Operations fails: confirm PC-OPS is .9.10/25 with gateway .9.1, and that other PCs target the new address.
-- A successful ping conflicts with an incorrect mask: correct the mask from the plan. Proxy ARP or other host behavior can hide some errors; it is not a substitute for verification.
+- A ping succeeds although a mask is wrong: correct the mask from the plan anyway. A router can answer ARP on behalf of hosts on its other subnets (proxy ARP), which hides some mask errors.
 
 ## Challenge
 
 Without looking at the guided allocation above, allocate `192.168.72.0/24` for four LANs requiring 60, 28, 12, and 6 total usable addresses, plus one /30 router link. Use the smallest suitable subnet for each, allocate largest first, and place each block at the lowest available aligned boundary. List all broadcasts, usable capacities, gateway reservations and the exact remaining free blocks. Prove containment and check every adjacent allocation for overlap before revealing the solution. Predict whether an additional LAN needing 100 total usable addresses could fit without moving these allocations, and identify its prefix if so.
 
-Save your existing file, then create a separate challenge copy. Reuse only R1 Gi0/0 and Gi0/1 with the two largest new LANs, and shut Gi0/2. Choose the first usable gateway and the next usable address for each test PC. Write the intended router commands and PC settings in your notes before entering them. Configure the matching masks and gateways, then verify the two connected prefixes and bidirectional PC pings. Only the two largest new LANs are implemented; the other two LANs and link remain paper allocations. Do not claim five observed connected routes.
+Save your existing file, then create a separate challenge copy. Reuse only R1 Gi0/0 and Gi0/1 with the two largest new LANs, and shut Gi0/2. Choose the first usable gateway and the next usable address for each test PC. Write the intended router commands and PC settings in your notes before entering them. Configure the matching masks and gateways, then verify the two connected prefixes and bidirectional PC pings. Only the two largest new LANs are implemented, so expect two connected routes, not five; the other allocations stay on paper.
 
-For exit evidence, save your calculated table, the actual two C entries, both PC configuration records and both ping results. Save the challenge file separately so the completed growth exercise remains available.
+Keep your calculated table, the two C entries, both PC configurations and both ping results. Save the challenge file separately so the completed growth exercise remains available.
 
 :::solution
 | Requirement | Network | Gateway | Test PC | Broadcast |

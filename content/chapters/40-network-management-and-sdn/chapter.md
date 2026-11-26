@@ -31,7 +31,9 @@ sources:
   - { title: "HashiCorp: manage resource drift", url: "https://docs.hashicorp.com/terraform/tutorials/state/resource-drift" }
 ---
 
-You can operate a network through individual device interfaces, a controller, a cloud dashboard or automation tools. Those choices affect where intent is recorded and how changes are delivered. They do not remove the need to understand routing, switching or evidence. This chapter connects those operational choices to the control and forwarding mechanisms you already know.
+Forty switches need the same two NTP servers by Friday. You can open forty SSH sessions and type the same lines forty times, or you can tell one system what you want and let it push the change, check it and report back. This chapter is about that second way of working: controllers, the APIs they expose and the overlay networks they build.
+
+Everything you have configured so far still runs underneath: OSPF from [chapter 21](#/chapter/ospfv2), ACLs from [chapter 34](#/chapter/acls), SSH, SNMP and syslog. What changes is where decisions are made and how they reach the devices. By the end you will be able to sort any device activity into the data, control or management plane, compare traditional and controller-based networks, label northbound and southbound APIs, explain underlay, overlay and fabric, and name the five management approaches.
 
 ## Make changes repeatable and verifiable
 
@@ -43,17 +45,17 @@ You can operate a network through individual device interfaces, a controller, a 
 - Device-based, cloud-based, controller-based, automation-based and infrastructure-as-code approaches can coexist.
 :::
 
-Suppose forty switches must use two approved NTP servers. The work includes identifying the right devices, recording existing settings, applying the new values, checking synchronization and preserving evidence. Typing fewer commands is only one part of improvement.
+Take the forty switches. Done by hand, the job is forty logins, forty chances for a typo and no record of what each switch looked like before. The work is more than typing: you have to pick the right devices, record their current settings, apply the new values, check that each clock synchronizes and keep the evidence.
 
-**Automation** lets software carry out repeatable tasks. A tool can read an explicit inventory, apply a reviewed template and collect results consistently. It can also apply an incorrect address to every device quickly. The benefit therefore depends on accurate inputs, limited initial scope, error handling and verification.
+**Automation** hands the repeatable part to software. A tool reads an inventory of devices, applies one reviewed template to all of them and collects the results. The change is faster, identical on every device and leaves a record. The cost is that a wrong address is also applied to forty devices in seconds, so you review the inputs, run against a few devices first and verify the result.
 
-**Desired state** records the intended result; **observed state** records what the system reports. **Configuration drift** is a difference between those states within the scope being managed. The authoritative desired-state record is often called a **source of truth**. It might be a reviewed inventory or a controller's approved policy, rather than a particular file format.
+**Desired state** is what you intend the network to be; **observed state** is what the devices report. **Configuration drift** is any difference between the two, such as a server address someone changed by hand. The approved record of desired state is called the **source of truth**. It can be a reviewed inventory file or a controller's policy.
 
-For an NTP change, a successful command response proves only that the command was accepted. A configured server can still be unreachable or unusable. Verify both configuration and actual synchronization. The same distinction applies to a VLAN job, software staging or an access-policy deployment.
+A device accepting a command is not the same as the change working. A switch can accept `ntp server 10.200.0.10` and still fail to reach that server. Check the configuration, then check that the clock is synchronized. The same two-step check applies to a VLAN job or an access-policy deployment.
 
 ## The three planes of a network device
 
-The plane names classify functions; they are not necessarily three separate processors. A physical switch often forwards ordinary traffic with specialized hardware. A virtual router may forward in software. Both perform data-plane work.
+Every job a router or switch does belongs to one of three planes. Exam questions give you an activity and ask for its plane, so learn each plane by what it does. The planes are roles, not three separate processors: a physical switch forwards in hardware and a virtual router forwards in software, and both are doing data-plane work.
 
 | Plane | Function | Clear example |
 |---|---|---|
@@ -74,13 +76,13 @@ show ip cef 10.2.2.10
 
 An SSH connection terminating on R2 is management traffic at R2. The same packets traversing R1 are forwarded by R1's data plane. Their role depends on the device and function under discussion. Similarly, packets requiring exceptional processing can reach a device CPU without becoming a routing-protocol exchange.
 
-Avoid classifying solely by hardware location. MAC learning can involve switch hardware and software, and forwarding tables are implemented differently across platforms. For the core distinction, use unambiguous examples: OSPF learns reachability, the forwarding engine sends transit packets, and an administrator retrieves counters.
+A quick test sorts most cases. Traffic passing *through* the device is data plane. Traffic addressed *to* the device that builds its tables, such as OSPF hellos, STP BPDUs and ARP, is control plane. Traffic between the device and an administrator or monitoring system, such as SSH, SNMP and syslog, is management plane.
 
 ## Traditional versus controller-based networking
 
-A traditional routed network commonly has a **distributed control plane**: routers exchange protocol information and compute their own forwarding decisions. It can still have central monitoring, standardized templates and scripts. Traditional architecture does not mean every configuration must be typed manually.
+A traditional network has a **distributed control plane**: every router runs its own routing protocol, exchanges information with its neighbors and computes its own forwarding table. You can still automate such a network with scripts and templates, because "traditional" describes where control lives, not how commands are entered.
 
-**Controller-based networking** introduces a network-wide service for policy, topology, provisioning or control. The degree of centralization varies. Some architectures directly program forwarding rules; others leave substantial routing and endpoint-control functions on network devices while centralizing management and policy.
+**Controller-based networking** adds a central service, the controller, that holds a view of the whole network and takes over some or all of the control and management work. In some designs the controller programs forwarding entries directly. In others, including Cisco's, devices keep running routing protocols and the controller centralizes policy, provisioning and monitoring. In every design the devices still forward the traffic.
 
 | Question | Distributed device control | Controller-based approach |
 |---|---|---|
@@ -93,13 +95,13 @@ A traditional routed network commonly has a **distributed control plane**: route
 
 When a controller becomes unavailable, ask what service was lost and what state remains. A management-controller outage may prevent provisioning while existing forwarding continues. Loss of a control-plane service can affect new routes, endpoint discovery or forwarding after retained state expires. A cloud-hosted authentication dependency can affect new clients even when established traffic survives.
 
-:::trap Do not promise identical behavior for every controller failure
-Existing traffic continuing briefly is evidence about that traffic and time window. It does not prove all clients, new flows, reconvergence or policy changes will work indefinitely. Identify the failed component and the documented dependency.
+:::trap Losing the controller is not losing the network
+Devices keep forwarding with the tables they already hold, so users may notice nothing at first. What stops is whatever the controller provided: new policy, new provisioning and, in some designs, learning new routes or endpoints. An answer that says all forwarding stops the moment a controller fails is wrong for the designs the CCNA covers.
 :::
 
 ## SDN architecture: three layers and two APIs
 
-**Software-defined networking (SDN)** separates aspects of control from forwarding and exposes programmable interfaces. A common diagram shows applications above a controller and infrastructure below it. The diagram describes responsibilities, not a geographic arrangement.
+**Software-defined networking (SDN)** separates the control plane from the data plane and lets software program the network through APIs. The standard picture has three layers: applications on top, the controller in the middle and the network devices at the bottom. The two APIs are named from the controller's point of view: north is up toward applications, south is down toward devices.
 
 ```diagram
 {"type":"layers","title":"Fig 40.1 — Classify an interface by its participants","columns":[{"title":"Architecture","rows":["Applications","Northbound interface","Controller service","Southbound interface","Network devices"]},{"title":"Example","rows":["Inventory script or assurance tool","Controller REST API","Network policy and topology service","NETCONF, RESTCONF, SSH or another supported protocol","Routing, switching and policy enforcement"]}],"highlight":["Northbound interface","Southbound interface"],"caption":"The same protocol can appear in different roles; the participants determine northbound or southbound."}
@@ -107,9 +109,9 @@ Existing traffic continuing briefly is evidence about that traffic and time wind
 
 An **application programming interface (API)** defines how software requests operations or data. A script requesting inventory from a controller uses its northbound API. When the controller reads a device's status or updates its configuration, that interaction is southbound.
 
-REST APIs often use HTTPS and JSON, but REST is an architectural style rather than a synonym for JSON. NETCONF commonly uses SSH with XML messages; RESTCONF uses HTTP mechanisms with YANG-modeled JSON or XML data. **XML** represents structured data with named tags. **YANG** is a modeling language used to define supported data, including field types and constraints. A NETCONF **RPC**, remote procedure call, requests a named operation. Recognize the purpose of these terms here; implementing their schemas is outside this chapter.
+Northbound APIs are almost always **REST** APIs: HTTPS requests that return data, usually as JSON. Southbound, the controller uses whatever the devices support. **NETCONF** sends XML over SSH (TCP 830). **RESTCONF** uses HTTPS with JSON or XML. Both read and write data described by **YANG**, a modeling language that defines each setting's name, type and allowed values. **XML** marks up data with named tags, as in `<hostname>SW1</hostname>`.
 
-This small, authored controller exchange is enough to read the inventory evidence used here:
+Here is a small northbound exchange:
 
 ```output Application to controller — representative
 GET /inventory                              ← request to read the inventory resource
@@ -119,15 +121,13 @@ HTTP/1.1 200 OK                              ← successful HTTP response
 
 `GET` asks to read data, and status `200` reports a successful request. In this JSON example, braces enclose an object; a colon pairs each double-quoted member name with its value. The `collectedAt` value is the collection time, not automatically the time of this request. A successful reply at 09:10 could still describe SW1 at 09:00. Compare the clocks and freshness evidence from [chapter 27](#/chapter/ntp-syslog-snmp) before inferring current device state.
 
-[Chapter 41](#/chapter/rest-apis-json) develops HTTP methods, responses and JSON types; [chapter 42](#/chapter/ansible-terraform) applies automation tools to management work. Enabling model-driven device interfaces is an optional platform-specific extension, not a prerequisite for understanding this architecture.
+[Chapter 41](#/chapter/rest-apis-json) covers HTTP methods, status codes and JSON in detail, and [chapter 42](#/chapter/ansible-terraform) puts automation tools to work.
 
-**OpenFlow** is an example of programming switch flow behavior. **OpFlex** is an example of distributing declarative policy; Cisco has used it with virtual-switch integration such as ACI Virtual Edge. Do not label every Cisco controller-to-switch conversation OpenFlow or OpFlex. Consult the product's documented interfaces.
-
-A controller's inventory response also has a freshness limit. It may answer from previously collected state rather than polling every device for every application request. Read timestamps, collection status and device identity before treating a dashboard value as an observation of the present moment.
+Two more southbound names appear in exam questions. **OpenFlow** lets a controller program a switch's flow table directly and is the classic open SDN protocol. **OpFlex** carries declarative policy from Cisco's APIC to ACI switches. Catalyst Center mostly uses SSH, SNMP and NETCONF. The southbound list to recognize is therefore OpenFlow, OpFlex, NETCONF, RESTCONF, SNMP and SSH.
 
 ## Underlay, overlay and fabric
 
-The **underlay** supplies transport between tunnel endpoints. It includes links, addresses, routing and usable path MTU. The **overlay** supplies logical connectivity over that transport. At a tunnel ingress, an original packet or frame receives outer headers; intermediate devices forward toward the outer destination; the tunnel egress removes the encapsulation.
+Suppose users in two buildings must share one logical segment, but you do not want to stretch a VLAN and its spanning tree across the routed core. An overlay solves this by tunneling. The **underlay** is the physical network of links, addresses and routing that carries packets between tunnel endpoints. The **overlay** is the virtual network built on top of it. At the tunnel ingress the original frame or packet gets outer headers; routers in between forward on the outer destination only; the tunnel egress strips the outer headers and delivers the original.
 
 ```diagram
 {"type":"topology","title":"Fig 40.2 — Two address views in an overlay","nodes":[{"id":"A","kind":"pc","label":"Client","sub":"10.20.0.10","x":0.5,"y":3},{"id":"E1","kind":"l3switch","label":"Edge 1","sub":"192.0.2.11","x":3,"y":3},{"id":"I","kind":"router","label":"Underlay router","x":6,"y":3},{"id":"E2","kind":"l3switch","label":"Edge 2","sub":"192.0.2.12","x":9,"y":3},{"id":"B","kind":"server","label":"Server","sub":"10.20.0.20","x":11.5,"y":3}],"links":[{"from":"A","to":"E1"},{"from":"E1","to":"I","label":"outer destination .12","accent":true},{"from":"I","to":"E2","accent":true},{"from":"E2","to":"B"}],"caption":"Underlay forwarding uses tunnel-endpoint reachability; overlay state identifies how to deliver the inner traffic.","trace":{"flows":[{"path":["A","E1","I","E2","B"],"label":"Inner 10.20.0.10 → 10.20.0.20","tags":{"E1":"Ingress · outer 192.0.2.11 → .12","I":"Forwards on outer dst 192.0.2.12","E2":"Egress · removes encapsulation"}}]}}
@@ -135,21 +135,27 @@ The **underlay** supplies transport between tunnel endpoints. It includes links,
 
 In this example the inner conversation is `10.20.0.10 → 10.20.0.20`; the outer transport is `192.0.2.11 → 192.0.2.12`. The intermediate router does not need an endpoint route for every tenant's inner subnet. It still needs correct underlay routing, interfaces and MTU.
 
-**VXLAN** carries Ethernet traffic over an IP underlay, normally using destination UDP port `4789`. Its `24-bit` VXLAN network identifier, or **VNI**, identifies a virtual network context. These identifiers distinguish logical segments; they do not encrypt the payload.
+**VXLAN** is the usual overlay encapsulation. It wraps an Ethernet frame in UDP (destination port `4789`) so that the frame can cross a routed underlay. Its `24-bit` VXLAN network identifier, or **VNI**, says which virtual segment the frame belongs to, which allows about 16 million segments against 4094 VLANs. VXLAN separates segments; it does not encrypt them.
 
-Encapsulation consumes space. For a worked, explicitly scoped example, an inner IPv4 packet of 1500 bytes plus an untagged inner Ethernet header of 14, VXLAN 8, UDP 8 and outer IPv4 20 gives an **outer IP packet of 1550 bytes**. The outer Ethernet header is outside that IP-MTU calculation. IPv6 outer headers, retained tags or other encapsulation change the requirement. Do not apply one overhead number without stating the measurement boundary.
+Encapsulation costs space. A 1500-byte inner IPv4 packet gains an inner Ethernet header (14 bytes), a VXLAN header (8), a UDP header (8) and an outer IPv4 header (20), so the **outer IP packet is 1550 bytes**. This is the "VXLAN adds 50 bytes" rule: the underlay needs an IP MTU of at least 1550, or full-size packets are fragmented or dropped. An inner VLAN tag or an IPv6 outer header adds more.
 
-The term **fabric** describes an integrated network system; in SD-Access documentation it particularly refers to the overlay fabric operating on the underlay. Different products use the word somewhat differently. Understand the relationship instead of defining every fabric as exactly one controller plus two layers.
+A **fabric** is the underlay and overlay operating together as one system, managed as a whole and not switch by switch. For the exam: the underlay is the physical IP network, the overlay is the virtual network tunneled across it, and the fabric is the two together.
 
 ## Cisco SD-Access, ACI and SD-WAN
 
-These are examples for interpreting architecture, not separate CCNA product-deployment objectives.
+You do not configure these products for the CCNA, but questions use them as the examples of controller-based networking. Know which controller belongs to which network and what each piece does.
+
+| Solution | Where | Controller | How traffic is carried |
+|---|---|---|---|
+| SD-Access | Campus LAN | Catalyst Center (formerly DNA Center) | VXLAN tunnels; LISP tracks endpoint locations |
+| ACI | Data center | APIC | VXLAN across a spine-leaf fabric |
+| Catalyst SD-WAN | WAN | Manager, Controller, Validator | IPsec tunnels between WAN edge routers |
 
 In **SD-Access**, Catalyst Center automates and manages campus infrastructure. Fabric nodes use LISP-based endpoint/location information and VXLAN forwarding. Edge nodes attach endpoints; border nodes provide external connectivity; control-plane nodes maintain endpoint-location information; intermediate nodes transport underlay traffic. Catalyst Center and the fabric's control-plane nodes have different jobs.
 
-An endpoint identifier describes the attached endpoint; a routing locator identifies a fabric attachment location. That distinction lets a logical network extend across a routed underlay. Learn the role mapping before attempting to memorize message names or platform scale limits.
+LISP keeps two facts apart: the endpoint identifier says who an endpoint is, and the routing locator says which fabric edge it sits behind. An endpoint can move between edges and keep its address, because only the locator changes.
 
-**Cisco ACI** uses APIC to express and manage application-oriented policy in a data-center fabric. Endpoint groups and contracts are policy constructs. Fabric switches perform forwarding; APIC is not an ordinary transit hop for application traffic. Contract defaults and exceptions depend on the policy design, so avoid the universal claim that no two groups can communicate without an explicit contract.
+**Cisco ACI** runs a data-center fabric built as **spine-leaf**: every leaf switch connects to every spine, and servers attach only to leaves. The APIC controller holds the policy. Endpoints are placed in endpoint groups (EPGs), and by default two EPGs cannot communicate until a **contract** permits it. The switches forward the traffic; application packets do not pass through APIC.
 
 **Catalyst SD-WAN** separates management, control, orchestration and edge forwarding functions. Manager provides administration; Controllers distribute control information; Validator helps onboarding; WAN edge routers forward traffic over transport networks. Older documentation calls these vManage, vSmart and vBond. IPsec overlays can operate over internet or other WAN transports. Losing a management component and losing a control component are different events.
 
@@ -165,11 +171,11 @@ The v2.0 objective names approaches, not exclusive product categories:
 | Automation-based | Software performs operational tasks | Ansible collects commands from an inventory |
 | Infrastructure as code | Reviewed code/data represents managed infrastructure intent | Version files, review a plan and apply through a tool |
 
-A cloud-hosted controller can be both cloud-based and controller-based. An automation tool can call that controller's API. Cloud management does not necessarily place user traffic through the management service, but cloud security services, authentication or VPN paths can introduce separate cloud dependencies.
+The approaches overlap. A cloud-hosted controller is both cloud-based and controller-based, and an automation tool can call its API. User traffic normally does not pass through the cloud management service.
 
 **Infrastructure as code (IaC)** treats infrastructure definitions with practices such as versioning, review and repeatable execution. Declarative definitions describe a desired result; imperative instructions describe operations. IaC often uses declarative tools, but the discipline is not limited to one syntax or tool.
 
-An **idempotent** operation has the same intended state effect when repeated. A well-designed “ensure VLAN 20 exists” operation can be idempotent; an arbitrary command script is not automatically so. Tool support and resource coverage determine what drift can be detected. Check mode or a plan is useful evidence, not a universal simulation of every future effect.
+An **idempotent** operation gives the same end state however many times you run it. "Ensure VLAN 20 exists" is idempotent: the first run creates the VLAN and later runs change nothing. A script that blindly sends commands is not, because it acts again on every run. Idempotent tools make drift easy to fix: run the definition again and only the differences change.
 
 A backup records observed configuration. It may become input to a reviewed desired-state definition, but copying yesterday's mistakes does not establish today's intent. **Git** is a version-control tool that records changes to project files; a **commit** records a version in that history. Reverting a Git commit changes repository history/state; it does not by itself undo a deployed network change. Review and apply a recovery plan, then verify the network.
 
@@ -177,16 +183,16 @@ A backup records observed configuration. It may become input to a reviewed desir
 
 Separate the question being tested. A controller marked “unreachable” may indicate a blocked management protocol, bad credentials, stale collection or loss of IP transport. Users continuing to work narrows the impact but does not identify the cause.
 
-For example, a VTY access-class can deny the controller's SSH source while allowing ordinary user forwarding. Inspect the ACL and test from that exact source. A cumulative deny counter alone cannot attribute every match to the controller.
+For example, a VTY access-class can block the controller's SSH source while user traffic through the switch is unaffected. Inspect the ACL and test from the controller's exact source address.
 
-For overlay trouble, begin with shared transport evidence: endpoint addresses, routes, both directions and packet size. Small pings establish only small ICMP reachability. A failed large test can support an MTU investigation, but loss, filtering or a different path may also matter. Read explicit ICMP errors and interface MTUs before naming the cause.
+For overlay trouble, check the underlay first: tunnel-endpoint addresses, routes in both directions and MTU. Small pings can succeed while full-size packets fail, so test with a 1550-byte packet and the don't-fragment bit set.
 
 For drift, compare approved intent with the actual relevant state. If the desired NTP set is `10.200.0.10` and `10.200.0.11` but the device has `.10` and `.19`, retain `.10`, remove the unintended `.19` and add `.11`. Afterward check configuration and synchronization separately.
 
 ## Exam focus
 
-- Identify data, control and management functions by what they do.
-- Compare distributed device control with controller coordination without assuming either excludes automation.
-- Determine northbound/southbound roles from the participants.
-- Explain inner/outer traffic, underlay dependence, overlay segmentation and lack of inherent VXLAN encryption.
-- Recognize the five management approaches, their overlap, and the difference between intent, configuration and verified operation.
+- Sort activities into planes: forwarding, ACL filtering and VLAN tagging are data; OSPF, STP and ARP are control; SSH, SNMP and syslog are management.
+- Traditional networks distribute the control plane across devices; controller-based networks centralize it. Either can be automated.
+- Northbound is controller to applications (REST). Southbound is controller to devices (NETCONF, RESTCONF, OpenFlow, OpFlex, SNMP, SSH).
+- The underlay carries the tunnels, the overlay is the virtual network and the fabric is both together. VXLAN uses UDP 4789 and a 24-bit VNI, adds 50 bytes and does not encrypt.
+- Name the five management approaches and know that one deployment can be several at once. A successful job is not a verified result.

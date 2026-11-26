@@ -6,7 +6,7 @@ minutes: 90
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build this as a new isolated Packet Tracer project. Use new, unconfigured devices; open their console CLI tabs and answer no if the initial configuration dialog appears. You will use static NAT, a two-address dynamic pool, interface overload and pool overload, then investigate a wrong source selector. The 4331 interface names also prepare you to read IOS XE configurations. Outputs below are representative; Packet Tracer is a simulator, not a current IOS XE execution environment. Use a supporting IOS XE lab image with equivalent interfaces if a core NAT form is unavailable, or complete that mode's table worksheet from the supplied expected observations. Do not claim a simulated feature passed when the image rejects it.
+Build this in a new Packet Tracer project with unconfigured devices, and answer no to the initial configuration dialog. You will make one LAN reach a server through static NAT, a two-address dynamic pool, interface PAT and pool PAT in turn, and then find a wrong NAT ACL. The 4331 routers use the three-part interface names you will meet on IOS XE. Outputs shown are representative. If your Packet Tracer version rejects one of the NAT forms, work that step from its expected observations and mark it as not executed.
 
 ## Topology
 
@@ -86,7 +86,7 @@ Both used interfaces on each router become up/up after links settle. Each PC can
 
 ## Step 2: Compare router and client reachability
 
-Before testing, trace the reply destination for EDGE's ordinary ping and PC-A's ping separately. Predict whether ISP's current connected routes can deliver each reply. Router-generated success does not automatically test the forwarded client's source.
+This step shows why the LAN needs NAT at all. Before testing, work out the destination address of the reply to EDGE's own ping and of the reply to PC-A's ping, and decide whether ISP has a route for each.
 
 On EDGE, run the commands below. From PC-A's Command Prompt, ping `203.0.113.10`. On ISP, inspect the route to the PC's source address.
 
@@ -100,7 +100,7 @@ ISP# show ip route 10.20.30.10
 ```
 
 :::expected
-Before NAT is configured, EDGE's ordinary ping uses its outside-link address for this path and should receive replies. PC-A has no successful round trip because ISP has neither a specific route nor a default route to `10.20.30.10`. This is a deliberately missing return route, not a technical inability to route private addresses. In Simulation mode, filter for ARP/ICMP, generate a fresh ping and inspect the request and reply at each device. A worksheet alternative is to follow each packet's destination against the two routing tables.
+EDGE's own ping succeeds: its source is the outside-link address `198.51.100.1`, which ISP knows as connected. PC-A's ping fails: ISP has no route to `10.20.30.10` and no default route, so the reply is dropped there. Routers forward private addresses like any others; the return route is simply missing, as it would be on the Internet. In Simulation mode, filter for ICMP and watch where the reply stops.
 :::
 
 ```state
@@ -128,7 +128,7 @@ EDGE# show ip nat statistics
 Ping WEB from PC-A again. Look at the configured static entry and, where the simulator shows them, the packets on EDGE's outside link. Inspect ISP's route for `198.51.100.17`.
 
 :::expected
-The static address mapping is visible before traffic. The translated source is `.17`, but ISP still lacks a route toward it: `.17` lies outside the connected `.0/30` link. A representative address row is `--- 198.51.100.17 10.20.30.10 --- ---`. Additional per-flow rows vary by image. Neither the static row nor an outbound packet alone proves the reply can return.
+The static address mapping is visible before traffic. The translated source is `.17`, but ISP still lacks a route toward it: `.17` lies outside the connected `.0/30` link. A representative address row is `--- 198.51.100.17 10.20.30.10 --- ---`. The entry shows that the mapping is configured; it does not show that replies can return.
 :::
 
 ```state
@@ -158,7 +158,7 @@ ISP selects the `/28` via EDGE; PC-A receives replies and can load WEB when HTTP
 
 ## Step 5: Prepare a two-address dynamic pool
 
-Close the browsers and stop all generated traffic. Clear dynamic state before replacing the mapping. If an image reports a still-in-use mapping, inspect the remaining translations and let the test flows end before retrying; use its documented clearing behavior. Do not add the new mode while the old mapping remains active.
+Close the browsers and stop any pings. IOS will not remove a mapping that still has active entries, so clear the table first and then replace the static rule. The ACL here only selects which sources the rule translates. It is not applied to an interface and filters nothing.
 
 ```ios EDGE
 EDGE# clear ip nat translation *
@@ -173,7 +173,7 @@ EDGE# show ip nat statistics
 ```
 
 :::expected
-The static `.17` rule is gone and the active dynamic rule references ACL 1 and PUBPOOL without overload. Both addresses belong to the already-routed `/28`; the inclusive pool size is two. Record allocation before sending traffic rather than assuming a particular initial counter value.
+The static `.17` rule is gone and the active dynamic rule references ACL 1 and PUBPOOL without overload. Both addresses belong to the already-routed `/28`; the inclusive pool size is two.
 :::
 
 ```state
@@ -216,7 +216,7 @@ EDGE(config)# end
 Have all three PCs ping WEB, then open its HTTP page. Inspect translations promptly while traffic is active.
 
 :::expected
-All three clients can use inside global address `198.51.100.1`, with separate flow mappings. TCP/UDP rows identify ports; ICMP rows can show query identifiers. Compare inside local and inside global fields to see any translated port or identifier. Do not infer a fixed replacement value or require a particular table row order.
+All three clients can use inside global address `198.51.100.1`, with separate flow mappings. TCP/UDP rows identify ports; ICMP rows can show query identifiers. Compare inside local and inside global fields to see any translated port or identifier.
 :::
 
 Complete this short packet worksheet independently of the simulator's chosen ports. A representative mapping associates PC-B `10.20.30.11:51000` with global `198.51.100.1:1025` for TCP to WEB `203.0.113.10:80`. Write source and destination tuples for the outbound packet before/after EDGE and the reply before/after EDGE.
@@ -267,7 +267,7 @@ EDGE# show access-lists 1
 From PC-C, send a fresh ping to WEB and inspect translations. Compare the source with the displayed wildcard match.
 
 :::expected
-`10.20.30.12` does not match `10.20.3.0/24`. This NAT rule creates no new translation for it. With the given routes and no interface filters, the untranslated source lacks a return path on ISP. The ACL's NAT-selection deny is not itself an interface packet drop. The address mismatch, not zero counters alone, establishes the configuration error.
+`10.20.30.12` does not match `10.20.3.0/24`. This NAT rule creates no new translation for it. With the given routes and no interface filters, the untranslated source lacks a return path on ISP. The ACL did not drop the packet: it left EDGE untranslated, and the reply had no route back.
 :::
 
 ```state
@@ -307,7 +307,7 @@ EDGE# show ip nat translations
 ```
 
 :::expected
-Idle dynamic state can age out; an address allocation can have a different lifetime from its child flows. Clearing dynamic state leaves the NAT configuration present, so a fresh eligible packet can create new state. Worksheet: if a displayed entry has 45 seconds remaining, an observation 20 seconds later with no refresh leaves approximately 25 seconds, subject to display/granularity. A configured static mapping would not be removed from configuration by this clear command. These supplied timer values are an interpretation exercise; memorizing a list of platform defaults is not a completion requirement.
+Idle dynamic entries age out on their own. After the clear, the table is empty and the NAT rule is still in the configuration, so the next matching packet creates a new entry. Worksheet: an entry showing 45 seconds left shows about 25 seconds when you look again 20 seconds later, provided no packet has used it. A static mapping would survive the clear command.
 :::
 
 ```state
@@ -333,7 +333,7 @@ The active rule uses Gi0/0/1 overload; new client entries use `198.51.100.1`. In
 :::
 
 
-Your final evidence table must distinguish each mode: static PC-A mapping, two occupied plain-pool allocations plus the fresh third-host failure, interface PAT shared address, and pool PAT addresses. Add the selector fault/recovery pair and one complete request/reply tuple walk. For each successful mode, include the actual HTTP result as well as mapping state. If a mode is unsupported, mark its command/state/packet worksheet unexecuted; do not substitute a different mode and claim equivalence.
+To finish, write one line for each mode: the static mapping for PC-A, the two-address pool with the third host failing, interface PAT, and pool PAT. For each, note the inside global address used and whether HTTP worked. Add the wrong-ACL fault and its repair.
 
 ```state
 {"status":"Interface PAT baseline saved","tone":"ok","focus":["EDGE"],"flows":[{"path":["A","SW","EDGE","ISP","WEB"],"back":true,"label":"PC-A HTTP test","tags":{"EDGE":"10.20.30.10 → 198.51.100.1"}},{"path":["B","SW","EDGE","ISP","WEB"],"back":true,"with":true,"tone":"alt","label":"PC-B HTTP test","tags":{"EDGE":"10.20.30.11 → 198.51.100.1"},"wait":1.5},{"path":["C","SW","EDGE","ISP","WEB"],"back":true,"label":"PC-C HTTP test","tags":{"EDGE":"10.20.30.12 → 198.51.100.1"},"with":true,"wait":1.5}],"roles":[{"node":"EDGE","peer":"SW","text":"inside"},{"node":"EDGE","peer":"ISP","text":"outside"}],"chips":[{"node":"EDGE","text":"list 1 Gi0/0/1 overload","tone":"ok"},{"node":"ISP","text":"198.51.100.16/28 → .1"}],"rows":[["New client entries","198.51.100.1","ok"],["Three clients","HTTP works","ok"],["Kept for challenge","PUBPOOL · ISP /28 route"],["Saved","SW1, EDGE, ISP · nat-baseline.pkt","ok"]]}
@@ -346,7 +346,7 @@ Your final evidence table must distinguish each mode: static PC-A mapping, two o
 - For mapping state without success, inspect the reverse route, filtering and endpoint service. Table state is not proof of packet delivery.
 - For a full plain pool, distinguish allocated addresses from flow count and test a new eligible host.
 - If a mode change is rejected, stop traffic, inspect dependencies and clear only the lab state using supported syntax.
-- An early timeout can be associated with address resolution, but persistent loss requires evidence; do not automatically dismiss it as ARP.
+- The first ping of a test can time out while ARP resolves. Repeat it before you treat the loss as a fault.
 
 ## Challenge
 

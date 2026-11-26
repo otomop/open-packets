@@ -28,35 +28,47 @@ sources:
   - { title: "Cisco: Extended Ping and Extended Traceroute", url: "https://www.cisco.com/c/en/us/support/docs/ip/routing-information-protocol-rip/13730-ext-ping-trace.html" }
 ---
 
-A router can have working interfaces and still be unable to deliver a packet to a remote LAN. Its connected routes describe its own links. A route to another network must come from an additional source. In this chapter you supply it yourself, check that the router can use it, and prove that the destination can send a reply.
+R1 and R2 are cabled together, every interface is up, and PC-A can ping its gateway. A ping from PC-A to PC-B on R2's LAN still fails. Nothing is broken. R1 knows only the networks its own interfaces sit in, and nobody has told it where `192.168.20.0/24` is, so it drops every packet for that network.
 
-The examples use two routers with two separate Ethernet links. Work through the route decisions before entering commands. Understanding why an entry should appear makes the verification much more useful than checking that IOS accepted a line.
+Chapter 17 taught you to read a routing table: route codes, administrative distance and longest prefix match. In this chapter you write the entries yourself. By the end you will be able to configure a network route, a host route, a default route and a floating backup route, predict whether each one is installed, and prove that traffic works in both directions.
 
 ## How static routes become usable
 
 :::facts
-- An ordinary IOS static route has administrative distance **1**. A connected route has distance **0**; an OSPF route normally has distance **110**.
-- A network route identifies a prefix. A host route uses mask `255.255.255.255`, or **/32**.
-- An IPv4 default route identifies `0.0.0.0 0.0.0.0`, or **/0**.
-- A floating static route has a higher distance than the preferred route to the **same prefix**. Distance **255** is not usable.
+- A static route has administrative distance **1** by default. A connected route has distance **0**; an OSPF route has **110**.
+- A network route names a prefix. A host route uses mask `255.255.255.255`, or **/32**, and matches one address.
+- The IPv4 default route is `0.0.0.0 0.0.0.0`, or **/0**, and matches every address.
+- A floating static route has a higher distance than the preferred route to the **same prefix**. A route with distance **255** is never installed.
 - Forwarding uses the longest matching **installed** prefix. A successful ping also needs a working return path.
 :::
 
-A **static route** is an administrator's instruction about where a destination can be reached. It remains in the configuration until changed or removed. That does not mean it remains in the routing table under every condition. IOS must be able to resolve its next hop, the required interface must be usable, and a more preferred route to that same prefix may take its place.
+A **static route** is a line of configuration that says: to reach this destination network, send the packet to that neighbor. The router does not learn it from another device and does not check it with one. It trusts what you typed.
 
-Keep three checks separate. The configuration shows what you requested. The routing table shows the routes currently selected. Packet tests show whether forwarding and the return path actually work. An installed route does not prove that the remote server is available, and a line in the configuration does not prove that the route is installed.
+The line stays in the configuration until you remove it. It is **installed** in the routing table only while the router can use it, and two conditions decide that:
 
-Static routes are useful for a small, stable connection or a deliberate backup. They do not exchange routing-protocol updates, but the network still uses supporting mechanisms such as ARP. Their maintenance cost grows when many routers or prefixes change: an administrator must keep the instructions consistent across the path.
+- **The way out works.** If the route names an exit interface, that interface must be up. If it names a next-hop address, an installed route must cover that address.
+- **Nothing better exists for the same prefix.** A route to the same prefix with a lower administrative distance takes its place.
+
+That gives you three separate things to check. `show running-config` shows what you asked for. `show ip route` shows what the router is using now. A ping from the right source shows whether packets get there and back. Passing one check does not prove the next.
+
+Static routes suit a small network, a branch with one exit, and a backup path. Routers exchange no routing updates for them, so they cost no bandwidth and are easy to predict. The price is that they never adapt. When a network is added or a link moves, you must change every affected router by hand. Larger networks run a routing protocol such as OSPF (Chapter 21) and keep static routes for defaults and backups.
 
 ```diagram
 {"type":"topology","title":"Two paths between two LANs","caption":"Each router needs a route to the other router's LAN. The two transit networks are separate routed links.","nodes":[{"id":"a","kind":"pc","label":"PC-A","sub":"192.168.10.11/24","x":0.5,"y":3},{"id":"r1","kind":"router","label":"R1","sub":"LAN .10.1","x":3.5,"y":3},{"id":"r2","kind":"router","label":"R2","sub":"LAN .20.1","x":8.5,"y":3},{"id":"b","kind":"pc","label":"PC-B","sub":"192.168.20.12/24","x":11.5,"y":3}],"links":[{"from":"a","to":"r1","label":"192.168.10.0/24"},{"from":"r1","to":"r2","label":"Primary 10.0.12.0/30","fromLabel":"Gi0/0 .1","toLabel":"Gi0/0 .2","accent":true},{"from":"r1","to":"r2","label":"Backup 10.0.13.0/30","fromLabel":"Gi0/1 .1","toLabel":"Gi0/1 .2","style":"dashed"},{"from":"r2","to":"b","label":"192.168.20.0/24"}],"trace":{"flows":[{"path":["a","r1","r2","b"],"via":[null,1,null],"back":true,"label":"PC-A to PC-B","tags":{"a":"To gateway 192.168.10.1","r1":"Needs route covering 192.168.20.12","r2":"Connected route to PC-B LAN"},"backTags":{"r2":"Needs route covering PC-A","r1":"Delivers on connected LAN"}}]}}
 ```
 
-For PC-A to reach PC-B, PC-A first sends the packet to its gateway, `192.168.10.1`. R1 then needs a route covering `192.168.20.12`. R2 already has a connected route to that destination's LAN. For the reply, those roles reverse: R2 needs a route covering PC-A, while R1 can deliver directly onto its connected LAN.
+Follow one ping from PC-A to PC-B. PC-B is in another subnet, so PC-A sends the packet to its gateway, `192.168.10.1` on R1. R1 looks up `192.168.20.12`. Its connected routes are `192.168.10.0/24`, `10.0.12.0/30` and `10.0.13.0/30`. None of them matches, so R1 needs a route covering `192.168.20.12`. With that route in place, R2 receives the packet and delivers it on its connected LAN.
+
+Then PC-B replies to `192.168.10.11`, and the same problem appears in reverse: R2 needs a route covering PC-A, while R1 can deliver onto its connected LAN. Every static-routing design needs a route in each direction.
 
 ## Configure network and host routes
 
-The core syntax is `ip route destination mask next-hop` in global configuration mode. The destination is the **network address**, not an arbitrary host inside the network. The next-hop address belongs to the router that should receive the packet next, not to the configuring router.
+The basic command is `ip route destination mask next-hop`, entered in global configuration mode. It has two halves:
+
+- The **destination and mask** describe where the packets are going. Together they must be a network address, such as `192.168.20.0 255.255.255.0`, not a host inside the network.
+- The **next hop** is the address of the neighboring router's interface on the link you share with it. It is never one of the configuring router's own addresses.
+
+On R1, the remote LAN is `192.168.20.0/24` and R2's address on the primary link is `10.0.12.2`:
 
 ```ios R1
 R1# configure terminal
@@ -65,7 +77,7 @@ R1(config)# end
 R1# show ip route static
 ```
 
-Here `192.168.20.0` and `255.255.255.0` describe the remote /24. `10.0.12.2` is R2's primary transit address. It is directly reachable from R1 in this example. The command does not assign an interface address and does not tell R2 how to reach anything.
+The command changes R1 only. It assigns no interface address and tells R2 nothing. R2 needs its own line for the reply, pointing the other way: `ip route 192.168.10.0 255.255.255.0 10.0.12.1`.
 
 Representative abbreviated IOS output:
 
@@ -73,17 +85,21 @@ Representative abbreviated IOS output:
 S    192.168.20.0/24 [1/0] via 10.0.12.2    ← static, distance 1, metric 0
 ```
 
-A host route uses all 32 destination bits. For example, `ip route 192.168.20.12 255.255.255.255 10.0.13.2` identifies PC-B alone. It can coexist with the /24 route. When both are installed, PC-B's address matches the /32, while `192.168.20.13` matches only the /24. Host routes are useful for a specific exception; they are not a requirement for every host in a remote LAN.
+Read the entry the way Chapter 17 showed. `S` is the source, static. `192.168.20.0/24` is the destination. `[1/0]` is administrative distance 1 and metric 0; a static route has no cost to calculate, so its metric is 0. `10.0.12.2` is the next hop.
 
-To remove a route deliberately, read its current configuration and use the corresponding `no ip route ...` line. Including its destination, mask, interface, next hop and nondefault distance as configured makes the intended removal explicit. Verify afterwards; do not infer success merely from an absence of error text.
+A **network route** like this one covers every address in its prefix. The prefix can be wider than one LAN: `ip route 192.168.20.0 255.255.252.0 10.0.12.2` is a single summary route for `192.168.20.0` through `192.168.23.255`.
+
+A **host route** uses all 32 destination bits, so it matches exactly one address. `ip route 192.168.20.12 255.255.255.255 10.0.13.2` sends traffic for PC-B alone over the backup link. It can coexist with the /24 route. A packet for `192.168.20.12` matches both entries and uses the /32, the longer match. A packet for `192.168.20.13` matches only the /24. Host routes are for exceptions like this one; you do not need one for each host in a remote LAN.
+
+To remove a static route, put `no` in front of the line as it appears in the running configuration, for example `no ip route 192.168.20.0 255.255.255.0 10.0.12.2`. Copy the whole line, including the interface, next hop and distance if it has them, so that you remove exactly that route and leave any backup to the same prefix in place. Check the configuration and the table afterwards.
 
 :::trap
-`ip route 192.168.20.12 255.255.255.0 ...` mixes a host address with the /24 network mask. For the whole LAN, use `192.168.20.0`. For that one address, use a /32 mask. A route's mask describes the destination, not the transit link.
+`ip route 192.168.20.12 255.255.255.0 10.0.12.2` mixes a host address with the /24 network mask, and IOS rejects it with `%Inconsistent address and mask`. For the whole LAN, use `192.168.20.0`. For that one address, use a /32 mask. A route's mask describes the destination, not the transit link.
 :::
 
 ## Choose the next-hop form
 
-IOS accepts different ways to describe the path. They solve the same forwarding problem but make different assumptions.
+After the destination and mask, IOS accepts three ways to describe the way out. All three create a static route with administrative distance 1. They differ in how the router finds the exit interface and the next device.
 
 | Form | Example after the destination and mask | What IOS must determine |
 |---|---|---|
@@ -91,11 +107,13 @@ IOS accepts different ways to describe the path. They solve the same forwarding 
 | Exit interface only | `serial0/0/0` | Send through the specified interface; suitable for a true point-to-point link |
 | Fully specified | `gigabitethernet0/0 10.0.12.2` | Use the named next hop through the named interface |
 
-A next-hop-only route is often called **recursive**: another route determines how to reach the next-hop address. A directly connected transit subnet provides that resolution in the simple example. A next hop can also be reachable through another route, but it must resolve successfully without a routing dependency on itself. You do not need to design multistage recursion to meet this chapter's objective.
+**Next hop only.** The router has an address but no interface, so it makes a second lookup: which installed route covers `10.0.12.2`? On R1 the answer is the connected route `10.0.12.0/30` on Gi0/0, so the packet leaves through Gi0/0. That second lookup is why this form is called a **recursive** static route. If no installed route covers the next hop, the static route is removed from the table. The resolving route does not have to be connected, but the connected case is the one you need here.
 
-An interface-only route on Ethernet has a significant consequence. The router treats destinations covered by that route as reachable directly on that Ethernet link and may ARP for each destination. Remote hosts will not hear those requests across a router. Proxy ARP might hide the mistake on some networks, but its availability is not a sound prerequisite for a remote-LAN route.
+**Exit interface only.** `ip route 192.168.20.0 255.255.255.0 gigabitethernet0/0` tells the router that the destination is out of Gi0/0 and nothing more. The table shows `S 192.168.20.0/24 is directly connected, GigabitEthernet0/0`. The code is still `S` and the distance is still 1, as `show ip route 192.168.20.0` confirms; it is not a connected route.
 
-Use a next-hop address for the Ethernet examples here. A **fully specified** route additionally fixes the intended exit interface:
+On a point-to-point serial link there is one device at the far end, so this form works. On Ethernet it causes trouble. The router treats every address in the prefix as if it were on the local link and sends an ARP request for each destination, such as `192.168.20.12`. PC-B is behind R2 and never hears it. Traffic flows only if R2 answers for PC-B with proxy ARP, and a route should not depend on that.
+
+**Fully specified.** Naming both the interface and the next hop avoids both problems:
 
 ```ios R1
 R1# configure terminal
@@ -103,13 +121,13 @@ R1(config)# ip route 192.168.20.0 255.255.255.0 gigabitethernet0/0 10.0.12.2
 R1(config)# end
 ```
 
-This is an alternative to the earlier next-hop-only line, not another line to add blindly. The router still needs the next hop's Ethernet address through ARP. Naming both values does not remove Layer 2 address resolution.
+This replaces the next-hop-only line; do not configure both. The router needs no second route lookup, and it sends one ARP request, for the MAC address of `10.0.12.2`.
 
-The interface choice also matters during failures. A recursive next hop could remain reachable through an unexpected alternate route. Specifying the intended interface makes the local-link failure exercise more predictable. Neither form, by itself, tests the availability of every device beyond that next hop.
+The forms also fail differently. A route that names an interface leaves the table as soon as that interface goes down. A next-hop-only route leaves only when no route resolves its next hop, and with two links to the same neighbor another route might still resolve it. Naming the interface ties the route to one link, which makes failover predictable. The lab uses fully specified routes for that reason.
 
 ## Default routes
 
-A **default route** is the least specific destination route: /0 matches every IPv4 address. It is used when no longer installed prefix matches. It is common on a router with one general exit toward the rest of a network.
+A branch router with one way out does not need a separate route for every remote network. A **default route** covers them all. Its destination is `0.0.0.0` with mask `0.0.0.0`, the prefix /0. Zero bits have to match, so every IPv4 address matches it. It is also the shortest possible prefix, so longest prefix match uses it only when no more specific installed route matches.
 
 ```ios R1
 R1# configure terminal
@@ -126,15 +144,17 @@ S*   0.0.0.0/0 [1/0] via 10.0.12.2, GigabitEthernet0/0
 S    192.168.20.0/24 [1/0] via 10.0.12.2, GigabitEthernet0/0
 ```
 
-The `S` identifies a static route and the asterisk marks a candidate default. A default does not replace more specific entries. A packet for PC-B still matches /24; a packet for a separately configured R2 loopback at `203.0.113.8` can use /0.
+The `S` identifies a static route and the asterisk marks a candidate default. The `Gateway of last resort` line confirms that the router has chosen it. Without a default, that line reads `Gateway of last resort is not set` and the router drops any packet that matches no route.
 
-A default is only a forwarding instruction. It does not create Internet access, a destination host, or a return route. If R2 has no way to deliver the packet, sending it to R2 will not solve that problem. Two routers with defaults pointing at each other can also create a loop for unknown destinations. A packet's TTL limits that loop; the sensible repair is to correct the routing design.
+A default does not replace more specific entries. With the table above, a packet for PC-B at `192.168.20.12` matches both the /24 and the /0 and uses the /24. A packet for `203.0.113.8`, a loopback address the lab adds to R2, matches only the /0 and goes to `10.0.12.2`.
 
-Use `show ip route` to inspect the default explicitly. Destination-specific show-command formatting and default lookup behavior vary across IOS implementations. Read the full installed table and calculate the longest match rather than treating one diagnostic message as proof that no default exists.
+A default moves the packet one hop and no further. R2 must still know where the destination is and how to route the reply. If R1 and R2 each have a default pointing at the other, a packet for a network neither knows bounces between them. Each router lowers its TTL by 1, and the packet is discarded when the TTL reaches 0. TTL limits the damage; the repair is to correct the routes.
+
+Do not confuse this with `ip default-gateway` from Chapter 11. That command gives a Layer 2 switch, which does not route, a gateway for its own management traffic. A router that forwards packets uses `ip route 0.0.0.0 0.0.0.0`.
 
 ## Floating static routes
 
-A **floating static route** is a less preferred candidate that becomes usable when the preferred route to the same destination prefix is withdrawn. In the lab, both primary and backup are static, so distance 5 is greater than the primary's default distance 1.
+R1 and R2 share two links. You want traffic on the primary link and the second link used only when the primary fails. Two ordinary static routes to `192.168.20.0/24` would both have distance 1, both install, and R1 would share traffic across the two links. A **floating static route** solves this. It names the same destination and mask, points to the other link, and ends with a higher administrative distance.
 
 ```ios R1
 R1# configure terminal
@@ -144,40 +164,46 @@ R1# show running-config
 R1# show ip route static
 ```
 
-The configuration contains both route lines. With the primary working, the routing table normally contains the distance-1 route. When its required interface goes down, the distance-5 route can install if the backup link is usable. When the primary returns, its lower distance makes it preferred again.
+The final `5` is the administrative distance. It is not a metric or a hop count. Chapter 17 gave the rule: among routes to the same prefix, the lowest distance is installed. While the primary at distance 1 is usable, the distance-5 route stays out of the routing table. You can see it only in the running configuration.
 
-Distance is relative to the competing route. A backup intended to follow an OSPF route at distance 110 could use 120. Distance 5 would beat 110 for the same prefix. Distance 255 cannot serve as a working backup. Equal distances can permit multiple installed paths, subject to the platform's multipath behavior; that is not the intended primary/standby design.
+When Gi0/0 goes down, the primary leaves the table and the backup is installed in its place:
+
+```output R1# show ip route static
+S    192.168.20.0/24 [5/0] via 10.0.13.2, GigabitEthernet0/1
+```
+
+When Gi0/0 comes back, the distance-1 route is installed again and the backup returns to waiting. R2 needs the same pair of routes for `192.168.10.0/24`, or replies have no path after a failover.
+
+The distance only has to be higher than the route you are backing up. Behind a static primary, 5 is enough. Behind an OSPF route at distance 110, use a value such as 120; a static route at distance 5 would beat OSPF and become the primary. Distance 255 can never be a backup, because a route with that distance is never installed.
 
 :::trap
 A distance-200 /32 still wins forwarding over an installed distance-1 /24 for that single destination. Distance selects candidates for the same prefix; longest prefix match selects among the installed destination entries. A mistyped /25 backup can take half a /24's traffic immediately.
 :::
 
-The failover trigger must be real. Shutting a directly connected router-to-router link makes both ends lose that link. A remote failure behind an intermediate switch may leave your local interface up. The ordinary static route does not continuously ping the remote LAN. Tracking features can add health checks, but their configuration is outside this introductory chapter.
+A floating route takes over only when the primary route leaves the table. Shutting a direct router-to-router link does that, because both ends lose the link. If a switch sits between the routers and the far router fails, R1's interface stays up, the primary stays installed and traffic is lost. A static route never tests the path beyond its own interface. IOS can tie a route to a tracked probe, but that is beyond this chapter.
 
 ## Test the return path
 
-A ping has two routed packets: request and reply. Record both source and destination before concluding which routes it tested.
+A ping is two packets, a request and a reply, and each is routed on its own. So a ping proves both directions only for the source address it used.
 
-An ordinary IOS router ping normally chooses the outgoing interface's address as its source. If R1 pings PC-B over the primary link, that source is `10.0.12.1`. R2 already has a connected route back to that transit subnet. The ping may succeed even while R2 lacks any route to PC-A's `192.168.10.0/24` LAN.
+When you ping from a router, IOS uses the address of the outgoing interface as the source. If R1 pings PC-B over the primary link, the source is `10.0.12.1`. R2 has a connected route back to that transit subnet, so the ping succeeds even when R2 has no route to PC-A's `192.168.10.0/24` LAN. That success says nothing about whether PC-A can reach PC-B.
 
-Test from PC-A as well. Its source remains `192.168.10.11` in this lab, so the reply requires R2's return route. A router test sourced from R1's LAN address also tests that return prefix. IOS extended ping can select a source address; some simulator images support the inline `source` keyword and others require the interactive extended-ping prompts.
-
-For example, R1 owns LAN address `192.168.10.1`, and PC-B is `192.168.20.12`. On an IOS image accepting the inline form:
+To test what users see, ping from PC-A. Its source is `192.168.10.11`, so the reply needs R2's return route. You can run the same test from R1 by telling it to use its LAN address as the source. This is an **extended ping**:
 
 ```ios R1
 R1# ping 192.168.20.12 source 192.168.10.1
 R1# traceroute 192.168.20.12
 ```
 
-The source must belong to R1. If the inline form is unsupported, enter `ping` with no destination at privileged EXEC, accept protocol `ip`, enter target `192.168.20.12`, accept the ordinary count/size/timeout defaults, answer `y` to extended commands, and enter `192.168.10.1` at the source prompt. Accept the remaining defaults. The PC test is a useful fallback when that simulator omits extended ping.
+The source must be an address R1 owns. Some simulator images do not accept the inline `source` keyword. There, enter `ping` with no destination at privileged EXEC, accept protocol `ip`, enter target `192.168.20.12`, accept the count, size and timeout defaults, answer `y` to extended commands, and enter `192.168.10.1` at the source prompt. Accept the remaining defaults.
 
-Traceroute sends probes with increasing TTL values to gather hop responses, as introduced in Chapter 01. The ordinary command above does not automatically reuse the ping's chosen source. Record its actual source and treat unanswered hops as missing responses, not proof that the forwarding path stops there.
+Traceroute, introduced in Chapter 01, sends probes with increasing TTL values and lists the routers that answer. Use it to see which link traffic takes: from PC-A, the second hop is normally `10.0.12.2` on the primary and `10.0.13.2` on the backup. An unanswered hop, shown as `*`, means that router sent no response. It does not prove the path stops there.
 
-For a working PC-to-PC exchange, check these decisions in order: PC-A's gateway, R1's remote-LAN route, R2's connected delivery to PC-B, PC-B's gateway, R2's return route, and R1's connected delivery to PC-A. ARP must resolve the required local neighbors along the way. A routing fault is one possibility among address, gateway, interface and filtering faults; the observed table and addressing must support your diagnosis.
+For a working PC-to-PC exchange, check these decisions in order: PC-A's gateway, R1's remote-LAN route, R2's connected delivery to PC-B, PC-B's gateway, R2's return route, and R1's connected delivery to PC-A. ARP must resolve each local neighbor along the way. A missing route is one possible fault among several; a wrong address, a wrong gateway or a down interface produces the same failed ping.
 
 ## Verify and troubleshoot
 
-Use a repeatable sequence instead of changing several route lines at once.
+Work from the interfaces outward, and change one thing at a time.
 
 | Check | Evidence to inspect | What it establishes |
 |---|---|---|
@@ -188,12 +214,16 @@ Use a repeatable sequence instead of changing several route lines at once.
 | Destination choice | Inspect covering prefixes; use `show ip route address` where supported | Most specific installed match |
 | End-to-end path | PC ping and traceroute; inspect the reverse table | Forwarding and return connectivity for the tested source |
 
-A missing route can mean an unusable interface, unresolved next hop, wrong destination, or a better competing candidate. An installed route with failed traffic can mean the next-hop address is wrong on an otherwise active Ethernet link, a downstream fault, or a missing return route. Read the evidence before choosing between them.
+Three symptoms cover most static-routing faults:
 
-Traceroute can help distinguish primary and backup paths, but response addresses and unanswered probes depend on device behavior. Do not require every hop to print a particular interface address as the sole success test. Use the selected routes, interface state and completed endpoint ping together.
+- **The route is configured but not in the table.** Its interface is down, its next hop does not resolve, or a route with a lower distance holds the same prefix. The last case is normal for a floating route.
+- **The route is installed but traffic fails.** The next-hop address may be wrong: a mistyped address inside the transit subnet still installs, and then ARP gets no answer. Otherwise look for a missing return route or a fault further along the path.
+- **Traffic takes the wrong link.** A more specific prefix, such as a mistyped /25 or a leftover /32, is matching first, or two routes share the same distance.
 
 ## Exam focus
 
-Be able to build all four destination types: network, host, default and floating. For each route, identify its destination prefix, exit path and distance before predicting whether it installs. Then perform a separate longest-prefix comparison for the packet.
+Be able to write all four route types from a description: a network route, a host route with the /32 mask, a default route with `0.0.0.0 0.0.0.0`, and a floating route with the same prefix and a higher distance at the end of the line. The destination is always a network address with its own mask, and the next hop is always the neighbor's address.
 
-Finish the lab able to explain why a router ping can succeed while a PC ping fails, why an Ethernet route should identify a next hop, and why a configured backup may be absent from the routing table. Those explanations demonstrate the mechanism behind the commands.
+In output, read `S`, `S*`, `[1/0]` and `is directly connected` correctly, and remember that every static form has distance 1 unless you set another. Distance compares routes to the same prefix; longest prefix match chooses between different prefixes.
+
+Be ready to explain three results: why a router ping can succeed while a PC ping fails, why an Ethernet route should name a next hop, and why a configured backup is absent from the routing table.

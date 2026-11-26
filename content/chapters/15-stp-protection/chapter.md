@@ -29,11 +29,19 @@ sources:
   - { title: "Cisco: Catalyst 2960 optional spanning-tree configuration", url: "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/release/15-0_1_se/configuration/guide/scg2960/swstpopt.html" }
 ---
 
+Someone in a meeting room plugs a cheap desktop switch into a wall port. A training-lab switch arrives with a bridge priority of 0. Spanning tree treats both as ordinary neighbours, and it will elect the lab switch as root and pull the campus's traffic through it. A quieter failure is an uplink that stays up but stops delivering BPDUs: the switch at the far end decides the path is clear and unblocks the port that was preventing a loop.
+
+The last chapter showed how STP elects a root and chooses port roles from the BPDUs it hears. This chapter gives you the tools that tell a switch what each port is supposed to hear: PortFast, BPDU guard, root guard and loop guard, plus BPDU filter for the v1.1 exam. By the end you can choose the right one for a port, recognise the state each one leaves behind, and bring the port back safely.
+
 ## Match protection to the port's purpose
 
-Spanning tree selects a topology from the BPDUs it receives; it does not know your intended administrative boundaries. A newly attached switch with a lower BID can become root even if that switch belongs in a training room. A different fault occurs when an operational uplink stops delivering BPDUs. The receiving switch might discard its previous information and attempt to forward where it should remain blocked.
+Spanning tree builds its topology from the BPDUs it receives. It does not know which switch you meant to be root, or which ports should only ever see a PC. Each protection feature supplies one of those missing expectations, so start by asking what belongs behind the port:
 
-Protection features address these specific situations. First identify what belongs behind the port: an end device, a downstream switch that must not supply the root, or an uplink expected to receive BPDUs. Then choose a feature whose trigger matches the failure you want to detect. An interface labeled “access” is not necessarily an edge: it can still connect to another switch carrying a single VLAN.
+- **An end device.** No BPDU should ever arrive. Use PortFast so the device connects quickly, and BPDU guard to shut the port if a switch appears.
+- **A downstream switch that must never supply the root.** BPDUs are welcome, but not ones better than the real root's. Use root guard.
+- **An uplink toward the root.** BPDUs must keep arriving. Use loop guard so that silence does not unblock the port.
+
+An access port is not automatically an edge port: it can still lead to another switch that carries one VLAN. What matters is the device at the other end.
 
 | Intended connection | Appropriate feature | What it accomplishes |
 |---|---|---|
@@ -46,7 +54,7 @@ Protection features address these specific situations. First identify what belon
 {"type":"topology","title":"Fig 15.1 — Place the policy at the correct boundary","caption":"The access switch expects BPDUs on its uplink, rejects a superior root from the downstream lab, and rejects any BPDU from the host port.","nodes":[{"id":"CORE","kind":"switch","label":"CORE · intended root","x":1,"y":3,"highlight":true},{"id":"ACCESS","kind":"switch","label":"ACCESS","x":5,"y":3},{"id":"PC","kind":"pc","label":"PC","x":10,"y":1},{"id":"LAB","kind":"switch","label":"LAB switch","x":10,"y":5}],"links":[{"from":"CORE","to":"ACCESS","label":"ACCESS: loop guard","toBadge":"RP"},{"from":"ACCESS","to":"PC","label":"PortFast + BPDU guard","fromBadge":"Edge"},{"from":"ACCESS","to":"LAB","label":"ACCESS: root guard","fromBadge":"DP"}],"trace":{"flows":[{"path":["CORE","ACCESS"],"label":"BPDU from the intended root","tags":{"ACCESS":"Loop guard · BPDUs expected"}},{"path":["LAB","ACCESS"],"label":"Superior BPDU from the lab","tags":{"LAB":"Advertises a superior root"},"stop":"ACCESS","stopText":"Root guard · superior root rejected"}]}}
 ```
 
-The lab uses a known three-switch baseline and tests one condition at a time. You will inspect the state before recovery, remove the cause, and verify the restored path. The goal is to explain why traffic stopped and whether the protection behaved as intended, rather than make every blocked interface green.
+In Fig 15.1, ACCESS uses all three ideas: loop guard on the uplink where CORE's BPDUs are expected, root guard on the port toward the lab switch, and PortFast with BPDU guard on the PC port. The lab triggers each feature in turn on three switches, so you see the state it leaves and practise the recovery.
 
 ## PortFast and operational edge status
 
@@ -58,11 +66,11 @@ The lab uses a known three-switch baseline and tests one condition at a time. Yo
 - On the IOS platforms discussed here, the errdisable recovery interval defaults to `300` seconds; automatic recovery for the cause must be enabled separately.
 :::
 
-**PortFast** identifies a port that can safely forward immediately because it connects to an end device rather than a transit bridge. Classic STP otherwise has listening and learning delays, each `15` seconds by default. RSTP can also need timer-based forwarding when no rapid agreement is possible. Marking a genuine edge avoids that wait instead of expecting a PC to participate in a bridge-to-bridge handshake.
+**PortFast** tells the switch that a port connects to an end device, so the port can forward as soon as the link comes up. Without it, classic STP holds a new port in listening and then learning for `15` seconds each. A PC waits 30 seconds, long enough for some DHCP clients to give up. RSTP is fast between switches because they exchange a proposal and an agreement, but a PC cannot answer a proposal, so an RSTP port that is not marked as an edge falls back to the same timers.
 
-Immediate forwarding helps a newly connected host exchange DHCP, ARP, and application traffic without an STP startup delay. It does not guarantee that DHCP has a reachable server or that a host has the right VLAN. A failed first ping can still be address resolution rather than spanning-tree convergence. Verify the port state and the IP configuration independently.
+PortFast does not turn STP off. The port still sends BPDUs and still listens for them; it only skips the wait. If a host on a PortFast port still cannot reach the network, check its VLAN and IP settings next.
 
-PortFast also affects topology-change handling. In RSTP, ordinary edge-port link transitions do not trigger a topology change; non-edge ports entering forwarding do. Avoid the blanket claim that every RSTP port shutdown generates a topology-change event. The distinction matters because unnecessary topology changes can invalidate learned forwarding information and cause extra flooding while MAC addresses are relearned.
+PortFast also keeps the rest of the network calm. In RSTP, a non-edge port moving to forwarding is a topology change: switches flush learned MAC addresses and flood frames until they relearn them. An edge port going up or down is not a topology change, so a user plugging in a laptop does not disturb every MAC table in the VLAN.
 
 ```ios SW1
 SW1# configure terminal
@@ -74,7 +82,7 @@ SW1(config-if)# end
 SW1# show spanning-tree interface fastethernet0/5 detail
 ```
 
-The configuration declares an edge, but **operational edge status** is the state actually being used. With PortFast alone, receiving a BPDU causes an RSTP edge port to become an ordinary spanning-tree port; the configured command is not necessarily removed. STP still processes BPDUs and maintains loop-prevention behavior. If BPDU guard is enabled too, its shutdown action is the more visible result.
+The command sets the configured state. **Operational edge status** is what the port is doing now. If a PortFast port receives a BPDU, it loses operational edge status and becomes a normal spanning-tree port, even though `spanning-tree portfast` is still in the configuration. That is the safety net when BPDU guard is absent. When BPDU guard is enabled, the port is shut down instead.
 
 | IOS configuration | Scope |
 |---|---|
@@ -83,13 +91,16 @@ The configuration declares an edge, but **operational edge status** is the state
 | `spanning-tree portfast default` | Global default for nontrunking ports |
 | `spanning-tree portfast disable` | Interface exception to a global default |
 
-A server or hypervisor may legitimately receive tagged VLANs, but the trunk must still be an edge in the network design. Verify that the host cannot bridge this connection into another path through the LAN. “It is a server” is not sufficient evidence by itself. On current Catalyst IOS XE, the equivalent PortFast syntax may include `edge`, such as `spanning-tree portfast edge trunk`; use interface help for that image. The labs use the 2960-style commands shown above.
+Plain `spanning-tree portfast` has no effect while the port is trunking. A server or hypervisor that needs several tagged VLANs is still an end device, so its port uses the `trunk` form. Never use that form on a link to another switch: skipping the wait there can open a temporary loop. Current Catalyst IOS XE adds the word `edge` to these commands, as in `spanning-tree portfast edge trunk`. The labs use the 2960-style commands shown above.
 
 ## BPDU guard and errdisable recovery
 
-**BPDU guard** treats a received BPDU as a violation of the port's intended use. The BPDU does not have to advertise a better root. A fully authorized switch with a worse BID will still trigger guard if attached to a guarded host port. This makes BPDU guard suitable where no bridge should participate, rather than where a downstream bridge is allowed but must remain subordinate.
+**BPDU guard** enforces the rule that an edge port never hears a BPDU. Any BPDU triggers it; the BPDU does not have to advertise a better root. Suppose someone connects a switch with the default priority 32768 to a guarded port on SW1. That switch could never win the root election, but SW1 shuts the port anyway, because any switch on a host port can create a loop.
 
-There are two configuration scopes. `spanning-tree bpduguard enable` is an interface command and operates independently of PortFast. `spanning-tree portfast bpduguard default` is a global default applying to interfaces in the operational PortFast state. Therefore a global BPDU-guard line alone does not automatically protect every trunk. Check operational state and interface overrides when interpreting a configuration exhibit.
+You can enable BPDU guard at two scopes:
+
+- `spanning-tree bpduguard enable` is an interface command. It protects that port whether or not PortFast is on.
+- `spanning-tree portfast bpduguard default` is a global command. It protects every port in the operational PortFast state and no others, so a trunk that is not PortFast is not covered.
 
 ```ios SW1
 SW1# configure terminal
@@ -99,9 +110,14 @@ SW1(config-if)# end
 SW1# show interfaces status
 ```
 
-With the conventional Catalyst behavior used here, a violation puts the interface in **err-disabled** state and stops user traffic on the entire port. This differs from a VLAN-specific STP inconsistency on a trunk. Some platforms offer additional recovery/containment options, but do not assume them unless an exhibit explicitly shows their configuration.
+A violation puts the interface into the **err-disabled** state. The whole port stops, for every VLAN it carries, and the switch logs the reason:
 
-First inspect the interface and the log to identify the cause. Errdisable can result from several features; the state alone does not prove BPDU guard. A message containing `bpduguard` alongside the affected port is the useful evidence. Disconnect or correct the BPDU source before resetting the port. Otherwise the same violation can happen as soon as the port is active again.
+```output SW1 log after a BPDU arrives on Fa0/5
+%SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port FastEthernet0/5 with BPDU Guard enabled. Disabling port.
+%PM-4-ERR_DISABLE: bpduguard error detected on Fa0/5, putting Fa0/5 in err-disable state
+```
+
+Read the log before you act. Several features use err-disable (port security in the next chapter is one), and only the message naming `bpduguard` tells you which one fired. Then remove the switch that sent the BPDU, or the violation repeats as soon as the port comes up. Finally, bounce the port: an err-disabled port stays down until you enter `shutdown` followed by `no shutdown`.
 
 ```ios SW1
 SW1# configure terminal
@@ -112,15 +128,15 @@ SW1(config-if)# end
 SW1# show interfaces status
 ```
 
-Automatic recovery is an optional policy choice, not the default remedy. `errdisable recovery cause bpduguard` enables attempts for that cause; `errdisable recovery interval 60` changes the shared recovery interval. The documented IOS range is `30`–`86400` seconds, with default `300`. Verify the cause is enabled using `show errdisable recovery`; simply changing the interval does not enable BPDU-guard recovery. Knowing the trigger and corrective workflow matters more than memorizing the maximum timer value.
+The alternative is automatic recovery, which takes two separate settings. `errdisable recovery cause bpduguard` tells the switch to re-enable ports that BPDU guard disabled once the recovery interval passes. `errdisable recovery interval 60` changes that interval for all causes; the range is `30`–`86400` seconds and the default is `300`. Recovery is off for every cause by default, and changing the interval does not turn it on. `show errdisable recovery` lists each cause as Enabled or Disabled.
 
 :::trap Restoring the port is not correcting the cause
-Repeatedly issuing `shutdown` and `no shutdown`, or shortening a recovery timer, does not make a prohibited switch acceptable on a host port. Remove the cause or redesign the connection as an authorized interswitch link with the correct VLAN and STP policy.
+Bouncing the port again, or shortening the recovery timer, does not make a prohibited switch acceptable on a host port. Remove the switch, or redesign the connection as an authorized interswitch link with the correct VLAN and STP policy.
 :::
 
 ## Root guard and root-placement boundaries
 
-**Root guard** allows ordinary spanning-tree participation while preventing a designated boundary port from accepting superior information that would change its intended role. Place it on the managed side of a connection through which the root must not be learned. For example, the access-switch port toward a training-room switch may have root guard. The access switch's uplink toward the intended root should not.
+**Root guard** lets a downstream switch take part in spanning tree but never lets it become the root, or the path to the root, through the guarded port. You place it on the ports of your own switches that face switches which must stay subordinate. In Fig 15.1 that is ACCESS's port toward the lab switch. It never goes on ACCESS's uplink toward CORE, because that port must accept CORE's superior BPDUs.
 
 ```ios SW1
 SW1# configure terminal
@@ -130,17 +146,19 @@ SW1(config-if)# end
 SW1# show spanning-tree inconsistentports
 ```
 
-Consider an intended root at priority `24576` and a downstream training switch accidentally configured at `0`, both for VLAN 10. The guarded boundary hears superior information and enters **root-inconsistent** state for that VLAN. Traffic through the affected instance is blocked, protecting the upstream topology. The training switch may still consider itself root of its isolated portion; root guard is not an instruction that rewrites the training switch's configuration.
+Suppose the intended root has priority `24576` for VLAN 10 and a training switch arrives with priority `0`. Its BPDUs are superior. Without root guard, every switch would turn its root port toward the training room. With root guard, the guarded port becomes **root-inconsistent** for VLAN 10: the link stays up, the port blocks that VLAN, and the switch logs `%SPANTREE-2-ROOTGUARD_BLOCK`. The rest of the network keeps the real root. The training switch still believes it is root of its own small island, because root guard does not change the other switch's configuration.
 
-In Rapid PVST+, other VLANs on the trunk may continue forwarding if they have no inconsistent condition. Thus “VLAN 10 fails while VLAN 20 works” can be consistent with root guard. Check each VLAN rather than assuming the physical interface is down. Typical output includes `*ROOT_Inc` and a root-inconsistent entry; it is not BPDU-guard errdisable.
+Root guard acts per VLAN. In Rapid PVST+, if the training switch has priority 0 only in VLAN 10, VLAN 20 keeps forwarding on the same trunk. "VLAN 10 fails while VLAN 20 works" is therefore a root-guard clue, and it rules out BPDU guard, which takes down the whole port. In `show spanning-tree vlan 10` the port appears as `BKN*` with the type `*ROOT_Inc`.
 
-Recovery is automatic after superior information ceases and normal STP processing permits forwarding. Correct the downstream priority or cabling rather than removing the protection solely to restore traffic. Do not promise recovery at exactly `20` seconds: protocol state, new BPDUs, and timers affect the observed interval. Root guard also does not solve missing-BPDU faults, because inferior information received by an already legitimate root is not its trigger.
+Recovery is automatic. Once the superior BPDUs stop, the port leaves the root-inconsistent state and STP returns it to forwarding with no `shutdown` and `no shutdown`. The fix therefore belongs on the downstream switch: correct its priority or its cabling, and leave the guard in place. Root guard only reacts to BPDUs that arrive. BPDUs that go missing are loop guard's job.
 
 ## Loop guard and missing BPDUs
 
-**Loop guard** protects applicable point-to-point ports that are currently root or alternate ports and should continue receiving BPDUs. If expected information expires, it prevents them from becoming designated and forwarding merely because those BPDUs stopped arriving. The affected instance enters **loop-inconsistent** state. When BPDUs resume, the condition clears automatically and normal STP chooses the role and state again.
+A blocked port stays blocked only because it keeps hearing a better BPDU from the other side of the link. If those BPDUs stop while the link stays up, STP assumes the neighbour has gone, makes the port designated and moves it to forwarding. If the neighbour is in fact still there and still forwarding, the loop that the port was preventing is now open. The classic cause is a one-way fibre fault: one strand fails, so a switch can still send on the link but no longer hears anything.
 
-A link can remain physically up while its control traffic fails. Possible causes include a one-way transmission fault, a neighbor no longer sending BPDUs, or filtering that prevents delivery. Loop guard detects missing control information; it does not diagnose which of these caused the loss. A `*LOOP_Inc` indication alone cannot prove a broken fiber strand, and an ordinary cable unplug is not the same test because it causes link-down.
+**Loop guard** stops that. On a point-to-point root or alternate port, when the expected BPDUs stop arriving, the port becomes **loop-inconsistent** instead of designated. It blocks that VLAN, logs `%SPANTREE-2-LOOPGUARD_BLOCK`, and returns to its normal role automatically when BPDUs resume.
+
+Loop guard tells you that BPDUs are missing, not why. The cause can be a one-way link, a neighbour that stopped sending, or a BPDU filter on the neighbour's port. Unplugging the cable does not test loop guard, because that takes the link down and STP reconverges in the normal way.
 
 ```ios SW3
 SW3# configure terminal
@@ -150,25 +168,25 @@ SW3(config-if)# end
 SW3# show spanning-tree inconsistentports
 ```
 
-The global alternative is `spanning-tree loopguard default`. It enables the feature on applicable point-to-point interfaces; its protective action depends on the port's role and received information. It is not intended to disable a host port because a PC sends no BPDUs. It also cannot reliably detect a failure that existed from first link-up before the port received the information it is meant to monitor. Shared links are outside this mechanism's supported scope.
+The global form is `spanning-tree loopguard default`, which enables loop guard on every point-to-point link. It does not disturb host ports: a port that never receives BPDUs is a designated port, and loop guard acts only on root and alternate ports that were receiving them. For the same reason it cannot catch a link that was one-way from the moment it came up.
 
-Root guard and loop guard express different role expectations and cannot operate together on the same interface. One protects a boundary that should remain designated; the other prevents a root/alternate port from becoming designated through missing information. Do not apply every guard to every uplink. A global deployment still requires attention to exceptions and legitimate failover paths.
+Root guard and loop guard cannot both be active on one port; enabling one replaces the other. Root guard is for ports that should stay designated, and loop guard is for root and alternate ports. In Fig 15.1 they sit on different ports of ACCESS.
 
-The guided fault exercise temporarily suppresses BPDUs only in an isolated topology with no redundant physical path. That produces a controlled observation without deliberately constructing a forwarding loop. Packet Tracer may accept some commands but not model the complete failure; the lab provides a paper interpretation fallback. Recognizing an unsupported simulation is preferable to treating a missing reaction as proof that the protocol works differently.
+The lab creates the missing-BPDU condition with a BPDU filter, on a line of switches with no redundant link, so no loop can form. Packet Tracer may not model loop guard fully, so that step also has a paper version.
 
 ## BPDU filter: distinguish the two forms
 
-BPDU filter is explicitly listed in the v1.1 protection objective and is not listed in the v2.0 equivalent. Learn it here after the protection features, because suppression changes the evidence on which those features depend. This is a scope distinction, not a claim about Cisco's reason for changing its blueprint.
+BPDU filter is named in the v1.1 protection objective and not in the v2.0 one. Unlike the guards, it protects nothing: it stops a port from sending BPDUs and, in one form, from listening to them. The two forms behave very differently.
 
-The interface command `spanning-tree bpdufilter enable` suppresses sending and receiving BPDUs independently of PortFast. Cisco warns that this is effectively disabling spanning-tree participation on that interface and can permit a loop. A physically redundant link can continue carrying user traffic while the switches lack the control exchange needed to block it safely. This is why filter is not a substitute for BPDU guard.
+The interface command `spanning-tree bpdufilter enable` is unconditional. The port sends no BPDUs and ignores any it receives, whether or not PortFast is on. Spanning tree is in effect switched off on that port, so if the port ever joins a redundant path to another switch, nothing blocks the loop.
 
-The global command `spanning-tree portfast bpdufilter default` has different behavior on operational PortFast ports. Initial BPDUs are sent at link-up before outgoing filtering takes effect; if a BPDU is received, operational PortFast status and filtering are removed and normal STP operation resumes. Do not extend that fallback behavior to unconditional interface filtering. Avoid memorizing a platform-specific count of initial BPDUs.
+The global command `spanning-tree portfast bpdufilter default` applies only to operational PortFast ports. Such a port sends a few BPDUs at link-up and then stops sending. If it receives a BPDU, it loses PortFast status, filtering ends and normal STP runs on the port. A switch plugged into that port is still detected, which makes the global form the safer of the two.
 
-Review interface filtering wherever BPDUs appear to be missing. Do not build a host-port template by combining every feature name: suppressing BPDU processing conflicts with a design that relies on received BPDUs to expose a wrong connection. Remove unwanted filtering as the actual repair; adding more guard commands without examining the existing policy can leave the original problem in place.
+Do not add the interface filter to a host-port template that also has BPDU guard. The filter wins: BPDUs are dropped before BPDU guard sees them, so the port never err-disables. And when BPDUs seem to be missing on a link, which is loop guard's symptom, look for a filter on the sending switch and remove it.
 
 ## Verify and troubleshoot
 
-The following excerpts are representative IOS-style teaching exhibits. They illustrate distinct states and are not output from one simultaneously running experiment. Actual interface names, timestamps, and detailed formatting vary by device and software.
+The first question is whether the whole port is down or one VLAN is blocked. These two outputs show the difference.
 
 ```output SW1# show interfaces status
 Port      Name               Status       Vlan       Duplex  Speed Type
@@ -182,19 +200,28 @@ VLAN0010             GigabitEthernet0/1        Root Inconsistent  ← superior i
 Number of inconsistent ports (segments) in the system : 1
 ```
 
-Start with `show interfaces status` to distinguish link-down, administrative shutdown, and errdisable. Inspect `show logging` for a cause, then use `show spanning-tree vlan 10` and `show spanning-tree inconsistentports` for the affected instance. A protected port may disappear from normal STP output after errdisable; use interface status and running configuration rather than assuming the configuration vanished.
+| Feature | Trigger | Result | Recovery |
+|---|---|---|---|
+| BPDU guard | Any BPDU received | Port err-disabled, all VLANs | `shutdown` and `no shutdown`, or errdisable recovery if enabled |
+| Root guard | Superior BPDU received | Root-inconsistent, that VLAN | Automatic when the superior BPDUs stop |
+| Loop guard | BPDUs stop on a root or alternate port | Loop-inconsistent, that VLAN | Automatic when BPDUs resume |
 
-Use `show spanning-tree summary` to inspect global defaults, and `show spanning-tree interface fastethernet0/5 detail` to inspect an active port. Match the configuration scope with the operational state. For root guard, trace where superior information originates. For loop guard, compare BPDU reception and transmission at both ends and check filtering; do not remove the guard until the underlying condition is understood.
+Work through the evidence in this order:
 
-After recovery, verify both the expected root/port roles and end-to-end user traffic. A green interface is insufficient if the wrong root now attracts traffic or a VLAN is missing from a trunk. Save only the corrected design, leaving deliberate fault settings out of the startup configuration. Keep a short note of the trigger, evidence, fix, and successful retest.
+1. `show interfaces status` separates `err-disabled` from `notconnect` (no link), `disabled` (administratively shut down) and `connected`.
+2. If the port is err-disabled, `show logging` displays the switch's stored log messages; find the one that names the port and the cause. An err-disabled port also drops out of `show spanning-tree` output. Its configuration is still there.
+3. If the port is connected but a VLAN fails, use `show spanning-tree inconsistentports` and `show spanning-tree vlan 10`. For Root Inconsistent, find the downstream switch that is sending superior BPDUs. For Loop Inconsistent, find out why BPDUs stopped: check the neighbour's port for a BPDU filter, then the link itself.
+4. `show spanning-tree summary` shows which global defaults are on (PortFast, BPDU guard, BPDU filter, loop guard). `show spanning-tree interface fastethernet0/5 detail` shows what applies to one active port.
+
+After recovery, check two things: the root bridge and port roles are the ones you intended, and users can pass traffic. A port that is up again proves neither. Save the corrected configuration only, with any test settings removed.
 
 ## Exam focus
 
-- PortFast enables immediate forwarding for a genuine edge; STP remains active and configured status differs from operational status.
-- Interface BPDU guard applies independently of PortFast; the global default applies to operational PortFast ports.
-- Any received BPDU triggers BPDU guard; superior information triggers root guard; missing expected BPDUs trigger loop guard.
-- Distinguish whole-port errdisable from per-instance root/loop inconsistency in Rapid PVST+.
-- Remove the cause before manual or automatic errdisable recovery. A 300-second default interval does not mean recovery is enabled.
-- Put root guard at the boundary toward an impermissible root, and loop guard on appropriate root/alternate point-to-point paths.
+- PortFast gives an edge port immediate forwarding. STP still runs, and a received BPDU removes operational edge status even though the command stays configured.
+- Interface BPDU guard works with or without PortFast; the global default covers operational PortFast ports only.
+- Any received BPDU triggers BPDU guard; a superior BPDU triggers root guard; missing BPDUs trigger loop guard.
+- BPDU guard err-disables the whole port. Root and loop inconsistency block one VLAN's instance in Rapid PVST+ and clear automatically.
+- Remove the cause before manual or automatic errdisable recovery. The interval defaults to 300 seconds, and recovery is off until you enable the cause.
+- Put root guard on designated ports facing switches that must not become root, and loop guard on point-to-point root and alternate ports.
 - Root guard and loop guard are mutually exclusive on one interface.
-- For v1.1, distinguish conditional global BPDU filtering from unconditional interface filtering.
+- For v1.1, the global BPDU filter stops when a BPDU arrives; the interface BPDU filter never does.

@@ -114,21 +114,21 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which pairing is appropriate for the WPA2-PSK configuration taught in the CCNA GUI objective?",
+    "prompt": "A WLAN is configured for WPA2 with a pre-shared key (WPA2-PSK). Which authentication and encryption pair does that describe?",
     "options": [
-      "WPA2-Personal using AES-CCMP and a shared passphrase",
-      "WPA2-Enterprise using AES-CCMP and individual EAP credentials",
-      "WPA3-Personal using SAE and protected management frames",
-      "Original WPA-Personal using TKIP and a shared passphrase"
+      "One shared passphrase, with AES-CCMP encryption",
+      "Individual EAP credentials, with AES-CCMP encryption",
+      "SAE password authentication, with required PMF",
+      "One shared passphrase, with TKIP encryption"
     ],
     "answer": [
       0
     ],
-    "explanation": "The required WPA2-PSK exercise uses WPA2-Personal and AES-CCMP. WEP and TKIP are legacy choices, while WPA3 has its own authentication/security requirements.",
+    "explanation": "WPA2-PSK is WPA2-Personal: every client uses the same passphrase, and WPA2 encrypts with AES-CCMP.",
     "whyWrong": {
-      "1": "That is an Enterprise authentication design, not the requested WPA2-PSK exercise.",
-      "2": "That is WPA3-Personal rather than the stated WPA2-PSK setting.",
-      "3": "Original WPA/TKIP is a legacy alternative, not this WPA2/AES exercise."
+      "1": "Individual EAP credentials describe WPA2-Enterprise, which uses 802.1X instead of a pre-shared key.",
+      "2": "SAE with required PMF describes WPA3-Personal.",
+      "3": "TKIP is the encryption of the original WPA, not of WPA2."
     }
   },
   {
@@ -187,6 +187,86 @@
       "0": "The report says Personal, not Enterprise.",
       "1": "A link-rate field is not a throughput measurement.",
       "2": "The reported cipher is CCMP, not TKIP."
+    }
+  },
+  {
+    "id": "wireless-principles-q25",
+    "type": "multi",
+    "objectives": [
+      "v1:1.11",
+      "v2:1.5.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which two 802.11 standards operate only in the 5 GHz band? Choose two.",
+    "options": [
+      "802.11a",
+      "802.11b",
+      "802.11g",
+      "802.11n",
+      "802.11ac"
+    ],
+    "answer": [
+      0,
+      4
+    ],
+    "explanation": "802.11a and 802.11ac (Wi-Fi 5) use only 5 GHz. 802.11b and 802.11g use only 2.4 GHz, and 802.11n and 802.11ax use both bands.",
+    "whyWrong": {
+      "1": "802.11b uses only the 2.4 GHz band.",
+      "2": "802.11g uses only the 2.4 GHz band.",
+      "3": "802.11n (Wi-Fi 4) can use both 2.4 GHz and 5 GHz."
+    }
+  },
+  {
+    "id": "wireless-principles-q26",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.d",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which encryption protocol did the original WPA introduce to replace WEP on existing hardware?",
+    "options": [
+      "AES-CCMP",
+      "TKIP",
+      "GCMP-256",
+      "SAE"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "WPA introduced TKIP, which still uses the RC4 cipher but changes the key for each packet. WPA2 replaced it with AES-CCMP.",
+    "whyWrong": {
+      "0": "AES-CCMP is the encryption that WPA2 requires.",
+      "2": "GCMP-256 belongs to the 192-bit mode of WPA3-Enterprise.",
+      "3": "SAE is the WPA3-Personal authentication method, not an encryption protocol."
+    }
+  },
+  {
+    "id": "wireless-principles-q27",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.b",
+      "v2:1.5"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does a BSSID identify?",
+    "options": [
+      "The network name that a user selects to join the WLAN",
+      "The group of APs that advertise the same network name",
+      "One basic service set: an AP radio serving one SSID",
+      "The VLAN in which the AP places its wireless clients"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A BSSID is the 48-bit identifier of one BSS, shown in MAC-address form. An AP uses a different BSSID for each SSID on each radio.",
+    "whyWrong": {
+      "0": "The network name is the SSID.",
+      "1": "APs that share an SSID through a distribution system form an ESS; each of their cells has its own BSSID.",
+      "3": "A BSSID is a radio identifier and says nothing about the wired VLAN."
     }
   },
   {
@@ -547,21 +627,73 @@
       "title": "Band compatibility requirements (exercise)",
       "text": "Approved new WLAN: 6 GHz, WPA3-Personal.\nClient vendor specification and driver report: 2.4/5 GHz only.\nThe business requires this client to retain authorized access; its current hardware has no 6 GHz upgrade path."
     },
-    "prompt": "Which deployment change can meet the stated requirement without pretending a setting adds unsupported hardware?",
+    "prompt": "Which change lets this client keep its access?",
     "options": [
       "Rename the 6 GHz SSID to match the client's saved 5 GHz profile",
-      "Provide an approved compatible band or replace/update to documented capable equipment",
+      "Offer the WLAN on a band the client supports, or replace the client",
       "Select WPA2-only security on the 6 GHz radio for this client",
-      "Increase 6 GHz transmit power until the 5 GHz-only adapter can detect it"
+      "Increase 6 GHz transmit power until the client's adapter detects it"
     ],
     "answer": [
       1
     ],
-    "explanation": "The verified client lacks a 6 GHz radio capability. Use a supported, approved band for it or obtain equipment with documented 6 GHz support. A name, power change or security downgrade cannot add the missing radio band.",
+    "explanation": "The client has no 6 GHz radio. It can connect only on 2.4 or 5 GHz, so either the WLAN is also offered on one of those bands or the client is replaced with one that supports 6 GHz. A name, a power change or a security change cannot add a radio band.",
     "whyWrong": {
-      "0": "SSID equality does not add a radio capability.",
-      "2": "WPA2-only is not the appropriate 6 GHz security design and would not add band support.",
-      "3": "Increasing power does not change the adapter's supported frequency band."
+      "0": "A matching SSID does not add a radio capability.",
+      "2": "WPA2 is not allowed at 6 GHz, and a security setting does not add band support.",
+      "3": "More power does not change which frequency band the adapter can receive."
+    }
+  },
+  {
+    "id": "wireless-principles-q28",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.a",
+      "v2:1.5.a"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Two neighboring APs use 20 MHz channels 36 and 40 in the 5 GHz band. Why do these channels not overlap, when 2.4 GHz channels 1 and 2 do?",
+    "options": [
+      "5 GHz channel numbers are spaced so that their centers are 20 MHz apart",
+      "5 GHz signals are absorbed by walls before they can reach another cell",
+      "DFS moves one of the two APs whenever both transmit at the same time",
+      "5 GHz radios are full duplex, so two cells cannot interfere on a channel"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "5 GHz channels are numbered in steps of four, which places their centers 20 MHz apart, so adjacent 20 MHz channels do not overlap. 2.4 GHz centers are only 5 MHz apart, so channel 2 covers most of the same 20 MHz as channel 1.",
+    "whyWrong": {
+      "1": "5 GHz has a shorter range, but neighboring cells still hear each other; the channel spacing is what keeps them apart.",
+      "2": "DFS makes an AP leave a channel when it detects radar, not when it hears another AP.",
+      "3": "Wi-Fi radios are half duplex in every band."
+    }
+  },
+  {
+    "id": "wireless-principles-q29",
+    "type": "single",
+    "objectives": [
+      "v1:1.11.c",
+      "v2:1.5.b"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "A laptop receives AP-A at −70 dBm and AP-B at −60 dBm. How do the two received power levels compare?",
+    "options": [
+      "AP-A's signal is ten times as strong as AP-B's",
+      "AP-B's signal is twice as strong as AP-A's",
+      "AP-B's signal is ten times as strong as AP-A's",
+      "AP-B's signal is 10 mW stronger than AP-A's"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "−60 dBm is closer to zero than −70 dBm, so it is the stronger signal. The difference is 10 dB, and +10 dB is ten times the power.",
+    "whyWrong": {
+      "0": "This reverses the comparison: the dBm value closer to zero is the stronger one.",
+      "1": "Twice the power is a 3 dB difference, not 10 dB.",
+      "3": "A dB difference is a ratio, not an amount in milliwatts; both signals are far below 1 mW."
     }
   },
   {

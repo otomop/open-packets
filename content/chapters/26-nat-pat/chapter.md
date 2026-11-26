@@ -28,9 +28,9 @@ sources:
   - { title: "RFC 3022: Traditional NAT and NAPT", url: "https://www.rfc-editor.org/rfc/rfc3022.html" }
 ---
 
-An edge router may need to represent internal IPv4 hosts with a different set of addresses. The configuration has two jobs: select the traffic that needs translation and supply usable translated addresses. The network must still deliver the request and its reply. Work through both directions before deciding that a translation rule is correct.
+A branch office has 200 hosts, and its provider has assigned it one public IPv4 address. The hosts use private addresses, which the Internet will not route back to you, and there are far too few public IPv4 addresses to give every host its own. The edge router has to make each host appear on the Internet as an address the provider will deliver replies to, and then hand every reply back to the right host.
 
-Recall the request/reply endpoints from Chapter 6 and the return-path tests from Chapter 18. NAT changes address fields at a boundary; PAT can also change a transport port. Track the values on each side and make sure the reply can reach the translated address before deciding whether translation works.
+That job is address translation. This chapter builds on the address and port pairs from Chapter 6 and the return-path checks from Chapter 18. By the end you will be able to name the four NAT address terms in any translation table, configure static NAT, a dynamic pool and PAT on IOS, and work out why a translation that looks correct still carries no traffic.
 
 ## Why translation exists
 
@@ -42,17 +42,17 @@ Recall the request/reply endpoints from Chapter 6 and the return-path tests from
 - `show ip nat translations` shows mappings; `show ip nat statistics` shows roles, allocation and counters. Neither command alone proves application success.
 :::
 
-**Network Address Translation** changes the address by which a host is represented across a boundary. Private-to-public translation is a common branch use, but renumbering and private network interconnection can also use NAT. A global address in NAT terminology does not have to be public.
+**Network Address Translation (NAT)** rewrites the source or destination address of a packet as it crosses a router. The common case is a branch edge: hosts keep private addresses inside, and the router replaces each packet's source with an address the provider can route. The router records the substitution in a translation table so that it can reverse it on the reply.
 
-Private addressing works without NAT when the participating networks have routes and compatible addressing. Two company LANs can route RFC 1918 addresses directly. Internet access normally requires a publicly usable source somewhere along the path, or an intermediary such as a proxy. Do not infer that routers are technically unable to forward private addresses, or that every provider implements an identical filter.
+Private addresses do not need NAT to be routed. Two company sites can route `10.0.0.0/8` between themselves like any other prefix. NAT is needed where the far side has no route back to your addresses, and the Internet has none for RFC 1918 space.
 
-NAT adjusts relevant headers and checksums. Applications that advertise addresses inside their payloads can require application-aware translation. NAT supplies neither encryption nor a complete access-control policy. A static mapping can make a host address reachable, while filtering and the host's services decide what access is permitted.
+NAT is not a security feature. It encrypts nothing, and it is not an access policy: a static mapping makes an inside host reachable from outside, and only filtering decides what may reach it.
 
-The v1.1 objective names inside source NAT using static mappings and pools. The v2.0 objective explicitly names NAT/PAT on IOS XE. Learn all three forms below. Carrier-scale NAT design and application-gateway tuning are outside the core scope.
+The chapter takes three forms in turn: **static NAT** (one fixed inside address to one fixed outside address), **dynamic NAT** (inside hosts borrow addresses from a pool) and **PAT** (many inside hosts share one address and are told apart by port).
 
 ## Identify the four address terms
 
-Ask whether the address identifies an **inside** or an **outside** host, then whether it is that host's **local** or **global** representation. Here only the inside address is translated.
+Every packet through a NAT router involves two hosts, and each host can be known by two addresses, one on each side of the router. Cisco names the four possibilities with two words. The first word says whose address it is: **inside** is a host on your network, **outside** is a host on the far side. The second word says where the address is used: **local** on the inside network, **global** on the outside network. In this chapter only the inside host is translated, so the outside host's two addresses are the same.
 
 | Term | Meaning in this example | Address |
 |---|---|---|
@@ -67,7 +67,7 @@ Ask whether the address identifies an **inside** or an **outside** host, then wh
 
 The outbound packet changes from `10.20.30.10 → 203.0.113.10` to `198.51.100.17 → 203.0.113.10`. The reply arrives as `203.0.113.10 → 198.51.100.17`; EDGE restores the destination to `10.20.30.10`. The ultimate destination remains the server, not the ISP router's next-hop address.
 
-The external-looking ranges in these examples are documentation space for isolated labs, not assigned public addresses to deploy on the Internet.
+The `198.51.100.0/24` and `203.0.113.0/24` ranges used here are reserved for documentation and stand in for public addresses.
 
 :::trap A viewpoint is not an address classification
 If `192.168.4.20` is represented to a partner as `172.16.9.20`, the latter is the inside global address even though both are private. Identify the host and configured translation rather than guessing from the first octet.
@@ -75,7 +75,7 @@ If `192.168.4.20` is represented to a partner as `172.16.9.20`, the latter is th
 
 ## Configure static NAT
 
-**Static NAT** maintains a configured one-to-one mapping, available before the inside host initiates traffic. It does not age out like dynamic state. A successful incoming connection still needs routes, permitted traffic, an available service and a return path.
+**Static NAT** is a permanent one-to-one mapping that you type in. Use it for a host that outside clients must be able to reach first, such as a server. The entry is in the table before any traffic flows and never ages out, so the host is always known outside by the same address.
 
 This example uses an IOS XE-style interface layout. EDGE's LAN is `10.20.30.0/24`, its outside link is `198.51.100.0/30`, and its neighbor is `.2`. The separate translation block is `198.51.100.16/28`. The lab supplies the neighbor and endpoints.
 
@@ -97,9 +97,9 @@ EDGE(config)# end
 EDGE# show ip nat translations
 ```
 
-The address order is **inside local, then inside global**. Interface roles describe the packet's path; the mapping does not replace them. However, a configured static entry can appear even when roles or routing are wrong. Its presence is a configuration clue, not proof that packets traverse it.
+Every form of NAT in this chapter needs the same three things. `ip nat inside` and `ip nat outside` mark the interfaces, and a packet is translated only when it crosses from one role to the other. An `ip nat inside source` rule defines the mapping; in the static form the address order is **inside local, then inside global**. And routing must work in both directions. A static entry appears in `show ip nat translations` as soon as you configure it, even when the roles or routes are wrong, so the entry alone does not show that traffic is passing.
 
-For the classic inside-to-outside path here, destination routing precedes source translation. For outside-to-inside replies, destination translation precedes routing toward the inside host. The upstream neighbor therefore needs a path toward `.17`; its connected `198.51.100.0/30` does not include `.17`. A route for `198.51.100.16/28` via EDGE provides that path in the lab.
+The return route is the part most often forgotten. On the way out, EDGE routes the packet first and then translates its source. On the way back, EDGE translates the destination first and then routes toward the inside host. The reply arrives only if the upstream router has a route to `.17`, and its connected `198.51.100.0/30` does not contain `.17`. In the lab, a static route for `198.51.100.16/28` via EDGE provides it.
 
 **Static PAT** maps a TCP or UDP service instead of an entire address:
 
@@ -109,11 +109,11 @@ EDGE(config)# ip nat inside source static tcp 10.20.30.50 80 198.51.100.18 80
 EDGE(config)# end
 ```
 
-This adds a TCP port-80 translation. It does not disable other router services or remove other mappings. Check the complete policy before describing an address as accessible only through one port.
+This is what home routers call port forwarding. Only TCP port 80 on `.18` is delivered to the server at `10.20.30.50`. The mapping does nothing for other ports and leaves other NAT rules as they are.
 
 ## Select sources and allocate a pool
 
-**Dynamic NAT** assigns addresses when eligible traffic needs them. An **access control list (ACL)** describes the source addresses eligible for this rule, a pool supplies replacement addresses, and an inside-source rule connects the two. Here the ACL is a selector for translation, not an interface packet filter. Its `permit` selects matching sources; its **implicit deny** means sources with no matching permit are not selected by this rule. Use this alternative after removing the static example and stopping its traffic.
+Static NAT needs one outside address per host, typed in by hand. **Dynamic NAT** lets a group of hosts borrow addresses from a pool as they need them. It has three parts. An **access control list (ACL)** is a numbered list of `permit` and `deny` lines that match packets; here it picks out the source addresses to translate. A pool lists the outside addresses available. An inside-source rule connects the two. This is not an ACL's usual job, and it filters nothing here. A source that matches a `permit` is translated. A source that matches no line falls to the **implicit deny** at the end of every ACL, which here means only that this rule leaves it alone. Remove the static example before you configure this one.
 
 ```ios EDGE
 EDGE# configure terminal
@@ -123,17 +123,17 @@ EDGE(config)# ip nat inside source list 1 pool PUBPOOL
 EDGE(config)# end
 ```
 
-A **wildcard** zero bit must match; a one bit may vary. Here `0.0.0.255` matches every last-octet value in `10.20.30.0/24`. This is enough ACL knowledge for the selector; [chapter 34](#/chapter/acls) teaches filtering policy in full.
+The second value in the ACL line is a **wildcard mask**, the inverse of a subnet mask: a zero bit must match and a one bit may be anything. `10.20.30.0 0.0.0.255` therefore matches every address in `10.20.30.0/24`. That is all the ACL knowledge NAT needs; [chapter 34](#/chapter/acls) teaches ACLs as filters, which is the role they take when applied to an interface with `ip access-group`.
 
-An ACL permit selects a source for this rule. A deny or implicit deny means this rule does not translate it. That is separate from forwarding: another feature, route or filter may still affect the packet. In an otherwise unfiltered example with a route, an unselected packet can leave untranslated. Applying the same ACL with `ip access-group` gives it the separate role of an interface filter.
+A packet that the ACL does not select is still forwarded if a route exists. It leaves with its private source address unchanged, and normally no reply comes back. This is an exam trap: a wrong NAT ACL does not drop traffic at the router, it sends the traffic out untranslated.
 
-PUBPOOL contains two addresses: `.20` and `.21`, both usable in the `/28`. Without overload, each active inside-address mapping needs its own address. If two hosts hold both allocations, a third eligible host cannot obtain a translation until capacity is available. Establish this with allocation evidence and a fresh third-host test; one failed ping does not establish exhaustion.
+PUBPOOL contains two addresses, `.20` and `.21`. Without overload, each inside host that is translating holds one pool address for itself, so two hosts can be translated at once. A third host gets no translation, and its packets are dropped until an entry times out or is cleared. `show ip nat statistics` shows this state as `total addresses 2, allocated 2 (100%)`.
 
-The pool mask describes the translation-address subnet. It neither creates an interface in that subnet nor installs an upstream route. Avoid assuming host A must receive the lowest address: allocation order and existing state are implementation details; one-to-one allocation is the concept.
+The `netmask` in the pool command only describes the subnet the pool addresses belong to. It does not create a route, so the upstream router still needs its own route to the pool.
 
 ## Share an interface or pool with PAT
 
-**PAT** enables several hosts to use the same inside global address. TCP/UDP mappings include transport ports. Protocol and other flow information also matter; a port alone is not a globally unique connection identifier.
+A pool without overload still needs one outside address per active host. **Port Address Translation (PAT)**, configured with the keyword `overload`, removes that limit by translating the source port as well as the source address. Every TCP or UDP conversation already has a source port, chosen by the client. The router records each inside address and port against the shared outside address and a port that is unique on that address. When a reply arrives, its destination address and port identify the table entry, and so the inside host.
 
 Use one of these alternatives with the existing selector and interface roles:
 
@@ -149,7 +149,7 @@ EDGE(config)# ip nat inside source list 1 pool PUBPOOL overload
 EDGE(config)# end
 ```
 
-The first uses EDGE's outside interface address; the second uses the pool. Leaving `overload` out of a pool rule changes its sharing behavior. Interface overload avoids the separate pool-block route on the directly connected neighbor in this lab. It does not eliminate every possible return-routing or filtering failure beyond that neighbor.
+The first form uses whatever address the outside interface has. It suits a site with a single provider-assigned address and needs no extra return route, because the upstream router already knows the connected link. The second form shares the pool's addresses. Its only difference from plain dynamic NAT is the word `overload`: leave it out and you are back to one address per host.
 
 Consider this representative table after two clients connect to the same server:
 
@@ -159,9 +159,9 @@ tcp 198.51.100.1:49200      10.20.30.10:49200       203.0.113.10:443      203.0.
 tcp 198.51.100.1:1025       10.20.30.11:49200       203.0.113.10:443      203.0.113.10:443  ← second inside source port was translated
 ```
 
-A reply from the shown server to `.1:1025` is mapped back to `10.20.30.11:49200`. The rows show translation values. They do not prove which algorithm selected 1025, that the handshake completed, or whether each mapping was dynamically created. Use configuration and packet evidence for those questions.
+Both clients happened to choose source port 49200. The router kept that port for the first host, because IOS keeps the original port when it is free, and gave the second host port 1025, because two entries on one address cannot share a port. A reply addressed to `198.51.100.1:1025` is therefore delivered to `10.20.30.11:49200`.
 
-ICMP Echo has no TCP/UDP ports. PAT can translate its **query identifier**, which the responder returns. Do not confuse it with the IPv4 Identification field used for fragment handling. A request and reply are separate IP datagrams and need not share their IPv4 Identification values.
+Ping has no ports. For ICMP Echo, PAT uses the **query identifier** in the ICMP header, which the reply carries back, in place of a port. This is a different field from the IPv4 Identification field used for fragments.
 
 | Property | Static NAT | Dynamic NAT | PAT overload |
 |---|---|---|---|
@@ -171,26 +171,26 @@ ICMP Echo has no TCP/UDP ports. PAT can translate its **query identifier**, whic
 | Initial mapping | Configured | Eligible traffic | Eligible traffic |
 | Capacity check | Nonconflicting address | Free pool addresses | Translation/port and platform resources |
 
-Do not convert the 16-bit port field into a universal supported-session count. Reservations, implementation limits, destination-dependent behavior and platform resources affect scale. The task here is to choose, configure and interpret the appropriate translation.
+A port number is 16 bits, so one address can in theory carry about 65,000 translations for each protocol.
 
 ## Platform behavior and entry lifetimes
 
-These core commands are documented for IOS XE, but names, support, counters and defaults vary. Packet Tracer's 4331 provides practice with three-component interface names; it does not certify a current physical IOS XE image. Read `show version` and `show ip interface brief` and use the actual router's documentation.
+The commands in this chapter are the same on classic IOS and IOS XE. What differs is the interface names: IOS XE routers such as the 4331 use three-part names like `GigabitEthernet0/0/1`. Check `show ip interface brief` before you type an interface into a NAT rule.
 
-Dynamic state ages out. The cited Cisco command reference lists values such as a 24-hour general dynamic timeout, 24-hour TCP timeout, 300-second UDP timeout and 60-second ICMP/DNS timeouts. These are scoped reference values, not a promise that every entry disappears exactly that interval after one packet. Explicit settings and the relationship between address mappings and child flows matter. Static configuration is different from temporary flow state.
+Dynamic entries are temporary. Each has an idle timer and is removed when no packet has used it for that long. The IOS defaults are 24 hours for a dynamic NAT address entry and for an established TCP translation, 5 minutes for UDP and 1 minute for ICMP and DNS. Static entries have no timer.
 
 ```ios EDGE
 EDGE# show ip nat translations verbose
 EDGE# show ip nat statistics
 ```
 
-Use the verbose form where supported to inspect lifetimes. In an isolated lab, stop traffic before changing an in-use mapping. `clear ip nat translation *` clears dynamic state; it does not remove configured NAT rules or their static mappings. Sessions can be interrupted and may receive different mappings when traffic resumes. If an image refuses removal because dependent entries remain, inspect its message and supported clearing syntax. Repeatedly clearing a production table is not a diagnostic method.
+The verbose form shows each entry's remaining lifetime. `clear ip nat translation *` removes every dynamic entry at once; the NAT rules and static mappings stay. IOS refuses to remove a rule or pool that still has entries in use, so in the lab you stop the traffic, clear the table and then change the rule.
 
 ## Verify and troubleshoot
 
-Start with the client, destination, protocol and time of the test. Record the gateway, selected route, interface roles, selector, translation and return path. A router-originated ping can use a different source and processing path from a forwarded client packet; it is a separate test rather than a substitute.
+Check NAT in the order a packet meets it. Does the client reach its gateway? Does the router have a route out? Does the packet enter an `inside` interface and leave an `outside` one? Does the ACL select its source? Is an address or port free? Can the reply get back to the translated address? Test from a client. A ping typed on the router itself is sent from the outside interface's own address, is not translated and proves nothing about NAT.
 
-The column order is **Inside global, Inside local, Outside local, Outside global**, after the protocol. An address-only `---` row alone does not distinguish static from ordinary dynamic NAT. Correlate it with configuration or detailed entry information.
+The table's columns are **Inside global, Inside local, Outside local, Outside global**. That is the reverse of the static command, which takes the local address first. A row with `---` in the protocol and outside columns is an address-only mapping: a static entry, or a pool address that dynamic NAT has lent to a host. Rows with a protocol and ports are individual conversations.
 
 ```output EDGE# show ip nat translations (static configuration, before traffic)
 Pro Inside global      Inside local       Outside local      Outside global
@@ -206,16 +206,16 @@ Pro Inside global      Inside local       Outside local      Outside global
 | Top-level Misses increases | Some lookups lacked an existing entry | New flow creation versus allocation/drop counters |
 | One-sided debug excerpt | Only that direction appears in the excerpt | Capture scope and actual reply evidence |
 
-`debug ip nat` is an optional controlled-lab aid. On supporting images, enable it immediately before one test and disable it afterward with `undebug all`. Accelerated forwarding and logging behavior affect its output. An outbound translation message does not prove delivery to the server; missing return debug lines do not identify a unique remote fault. Prefer the least disruptive show or capture evidence needed to narrow the problem.
+`debug ip nat` prints a line for each packet as it is translated, which lets you watch both directions in a lab. Lines for the outbound packets with none for the replies point at the return path. Debugging loads the CPU, so turn it on for one test and off again with `undebug all`.
 
-After repair, repeat the same client request, inspect its translated values, confirm the application's response and save the verified configuration. Replacing a pool without checking its return route can leave connectivity broken despite correct NAT syntax.
+After repair, repeat the same client request, inspect its translated values, confirm the application's response and save the verified configuration.
 
 ## Exam focus
 
-- Identify all four address terms by host and viewpoint; interpret addresses and ports separately.
-- Configure interface roles, static mappings, selectors, pools, interface overload and pool overload.
-- Distinguish ACL selection from an interface filtering decision.
-- Calculate a pool's inclusive address count and interpret allocation evidence.
-- Read translations without inferring successful sessions or their creation method from unsupported clues.
-- Verify forward and return routing with the actual client's test.
-- Understand aging and clearing state; advanced platform tuning is reference material.
+- Inside or outside says whose address it is; local or global says where it is used. The inside global address is your host's translated address.
+- Every form needs `ip nat inside`, `ip nat outside`, an `ip nat inside source` rule and a return route to the translated address.
+- Static NAT is permanent and one-to-one: `ip nat inside source static LOCAL GLOBAL`.
+- Dynamic NAT is an ACL, a pool and a rule joining them. Each active host holds one address, so the pool can run out.
+- PAT adds `overload`, with a pool or with `interface`. Hosts share an address and are told apart by port.
+- The NAT ACL selects and does not filter: an unmatched packet leaves untranslated.
+- `show ip nat translations`, `show ip nat statistics` and `clear ip nat translation *`, which removes dynamic entries only.

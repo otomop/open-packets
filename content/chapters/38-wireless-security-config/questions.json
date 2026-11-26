@@ -18,7 +18,7 @@
     "answer": [
       3
     ],
-    "explanation": "Personal and Enterprise distinguish authentication/key management, not whether AES-based radio protection or SSID broadcast can exist.",
+    "explanation": "Personal mode uses one shared credential (a PSK, or SAE in WPA3). Enterprise mode authenticates each user or device through 802.1X and an EAP method. Both modes encrypt the radio link.",
     "whyWrong": {
       "0": "SSID visibility is a separate setting.",
       "1": "Enterprise can provide both authentication and radio protection.",
@@ -124,7 +124,7 @@
     "answer": [
       3
     ],
-    "explanation": "EAP-TLS provides certificate-based authentication for both endpoints. Certificates must be issued, trusted and validated correctly; simply selecting the method is not a complete deployment.",
+    "explanation": "EAP-TLS authenticates both ends with certificates, so the server and every client need one. PEAP needs a certificate only on the server.",
     "whyWrong": {
       "0": "Password-based client authentication does not meet the client-certificate requirement.",
       "1": "A site PSK is not a client certificate.",
@@ -177,7 +177,7 @@
       0,
       2
     ],
-    "explanation": "HTTPS and SSH provide protected administration when the server/host identity and configuration are properly validated. This question does not assume a particular controller's factory enabled/disabled defaults.",
+    "explanation": "HTTPS (TCP 443) and SSH (TCP 22) encrypt the administration session. HTTP and Telnet send the administrator password in clear text, and an SNMPv2c community string is not encrypted either.",
     "whyWrong": {
       "1": "Telnet does not encrypt the administration session.",
       "3": "HTTP does not supply TLS protection.",
@@ -208,6 +208,32 @@
       "0": "The PSK setting chooses key management, not a client VLAN.",
       "2": "A rate contract affects traffic treatment rather than the interface mapping.",
       "3": "A session timer controls client lifetime behavior rather than VLAN selection."
+    }
+  },
+  {
+    "id": "wireless-security-config-q23",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which pairing of wireless security generation and encryption method is correct?",
+    "options": [
+      "WEP with TKIP",
+      "WPA with AES-GCMP",
+      "WPA2 with AES-CCMP",
+      "WPA3 with RC4"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "WPA2 uses AES-CCMP. WEP uses RC4 with a static key, WPA wraps RC4 in TKIP, and WPA3 uses AES with CCMP or the stronger GCMP.",
+    "whyWrong": {
+      "0": "WEP uses RC4 with a static key; TKIP arrived with WPA.",
+      "1": "WPA uses TKIP. GCMP is the cipher added by WPA3.",
+      "3": "RC4 belongs to WEP and TKIP. WPA3 uses AES."
     }
   },
   {
@@ -264,7 +290,7 @@
     "answer": [
       2
     ],
-    "explanation": "The wrong passphrase leads to different master/transient key material, so the infrastructure cannot validate the client's message-2 integrity check. This specific conclusion is supported by the diagnostic, not just a generic connection popup.",
+    "explanation": "A wrong passphrase gives the client a different PMK, so the keys it derives differ from the controller's. The controller cannot validate the MIC on message 2 and the four-way handshake stops there.",
     "whyWrong": {
       "0": "The record shows association and handshake message 1 already occurred.",
       "1": "The diagnostic stops at message 2 before successful key establishment and addressing.",
@@ -513,7 +539,7 @@
     "answer": [
       2
     ],
-    "explanation": "Current secure-connection evidence and a fresh service test establish recovery; an address, visible SSID or saved setting alone cannot.",
+    "explanation": "A completed secure connection and a fresh service test prove recovery. A displayed address can be left over from yesterday, the SSID is visible before any security step, and a saved key has not yet been tested.",
     "whyWrong": {
       "0": "A retained address is not current security or service evidence.",
       "1": "Discovery precedes secure data access.",
@@ -556,7 +582,7 @@
     "exhibit": null,
     "prompt": "A WPA2/WPA3 transition WLAN accepts one legacy WPA2 client and one WPA3-Personal client. Which security claim is justified?",
     "options": [
-      "Only the WPA3 connection is established to use SAE and required PMF",
+      "Only the WPA3 client uses SAE and is required to use PMF",
       "Both receive identical negotiated security because their IP subnet matches",
       "Both receive SAE because the same SSID advertises WPA3",
       "The WPA2 client no longer needs its Personal key"
@@ -564,7 +590,7 @@
     "answer": [
       0
     ],
-    "explanation": "Transition mode permits different negotiated security on the same SSID. WPA3's connection requirements must not be attributed automatically to its WPA2 clients.",
+    "explanation": "Transition mode lets WPA2 and WPA3 clients share one SSID. Each client gets the security of the mode it negotiated: the WPA3 client uses SAE and PMF, and the WPA2 client still uses its PSK.",
     "whyWrong": {
       "1": "IP addressing does not select negotiated wireless security.",
       "2": "The legacy connection remains WPA2 rather than acquiring SAE by sharing the SSID.",
@@ -599,6 +625,32 @@
       "0": "Both current security checks succeeded; changing keys does not correct the wrong VLAN mapping.",
       "1": "This moves the working service instead of correcting the mismapped guest.",
       "2": "Removing addressing does not move the client to its intended VLAN."
+    }
+  },
+  {
+    "id": "wireless-security-config-q24",
+    "type": "single",
+    "objectives": [
+      "v1:5.9",
+      "v2:1.5.c"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "Staff must join the WLAN with their own username and password. The company will install a certificate on the RADIUS server but not on the clients. Which choice fits?",
+    "options": [
+      "EAP-TLS, because it needs a certificate on every client",
+      "LEAP, because it protects passwords with a server certificate",
+      "PEAP, because the server certificate builds a tunnel for the password",
+      "SAE, because it replaces 802.1X in WPA3-Enterprise"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "PEAP needs a certificate only on the server. The server certificate builds a TLS tunnel, and the user proves a password inside it, commonly with MS-CHAPv2.",
+    "whyWrong": {
+      "0": "EAP-TLS does need a certificate on every client, which this company will not install.",
+      "1": "LEAP uses no certificates and is deprecated because its password exchange can be cracked.",
+      "3": "SAE is the WPA3-Personal method. WPA3-Enterprise still uses 802.1X/EAP."
     }
   }
 ]

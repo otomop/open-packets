@@ -6,7 +6,7 @@
       "v1:1.11.a",
       "v2:1.5.d"
     ],
-    "scenario": "The office AP and a separately authorized test AP use 2.4 GHz, 20 MHz channels. A survey first identifies overlap, then the operator repeats an approved on/off test of the test AP while other conditions remain stable. The excerpts below are an authored diagnostic scenario, not a captured simulator run.",
+    "scenario": "Users near the office AP report slow file transfers at some times of day. The office AP and a test AP in the next room both use 2.4 GHz with 20 MHz channels. You record the channels, then switch the test AP's radio off and on several times while nothing else changes.",
     "exhibits": [
       {
         "title": "Radio inventory",
@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The inventory establishes overlap, and the controlled repeatable test supports its effect here. Strong desired signal does not exclude interference; a scan alone would not establish the causal conclusion.",
-    "fix": "Restore the authorized baseline, then choose an allowed nonoverlapping channel using the complete survey. For a small North American 20 MHz plan, evaluate 1/6/11 across both APs. Change one radio at a time, reconnect clients and repeat the same measurements. Record actual retries and application results; do not infer an optimal channel solely from a neighbor's signal percentage."
+    "explanation": "Channels 1 and 3 overlap, so each AP hears the other as noise it cannot decode. That is adjacent-channel interference: frames are damaged and retried, which matches the rising retries. The on/off test confirms the test AP as the source. A strong signal does not rule interference out.",
+    "fix": "Move the test AP to a channel that does not overlap channel 1: channel 6 or 11 in the 1/6/11 plan. Change one radio only, then repeat the same transfer and compare the retry rate with the baseline."
   },
   {
     "id": "wireless-principles-t02",
@@ -37,7 +37,7 @@
       "v1:1.11.d",
       "v2:1.5.c"
     ],
-    "scenario": "STAFF is changed to WPA3-Personal-only. A failing client's OS/driver report and vendor compatibility check confirm that this installed combination supports WPA2-Personal but not SAE. The passphrase is verified unchanged. Other compatible clients connect. The excerpts are representative.",
+    "scenario": "The STAFF WLAN is changed from WPA2-Personal to WPA3-Personal only. The passphrase stays the same. Most clients reconnect, but one older laptop can no longer join. You compare the WLAN settings with what the laptop's driver reports it supports.",
     "exhibits": [
       {
         "title": "WLAN settings",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The security capability evidence establishes the missing SAE support. PMF and CCMP support alone do not make a client WPA3-capable; radio generation names alone do not establish the security method.",
-    "fix": "Check whether a supported OS/driver update provides the required capability for this hardware. Otherwise replace the client or use a separately approved migration design. On 2.4/5 GHz, a compatible WPA2/WPA3 transition design can allow older WPA2 clients, but they still use WPA2 and do not acquire SAE's properties. Confirm the exact controller security/PMF settings and client compatibility, document the exception, and retest. Do not apply a WPA2 fallback to a 6 GHz-only WLAN."
+    "explanation": "WPA3-Personal authenticates with SAE, and this laptop's driver does not support SAE. Supporting CCMP and PMF is not enough, and the radio standard (802.11ac) has nothing to do with the security method.",
+    "fix": "Update the laptop's OS or wireless driver if a version with WPA3 support exists; otherwise replace the adapter. If the laptop must stay, the WLAN has to accept WPA2-Personal again on 2.4 or 5 GHz, where that client still gets only WPA2 protection. WPA2 cannot be enabled on a 6 GHz WLAN."
   }
 ]

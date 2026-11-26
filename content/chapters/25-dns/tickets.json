@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The explicit disabling command prevents the router’s DNS client lookup even though a resolver address is present. The full requested name has no matching local entry. DNS service success from another client supports the server data, and address pings support basic reachability, but the router’s own lookup setting still needs correction. A static entry for a different name does not disable a remote service. The resolver address is explicitly configured, no matching static entry exists, and both address pings succeeded. Those checks rule out the other proposed causes in this controlled incident.",
+    "explanation": "The explicit disabling command prevents the router’s DNS client lookup even though a resolver address is present. The full requested name has no matching local entry. DNS service success from another client supports the server data, and address pings support basic reachability, but the router’s own lookup setting still needs correction. The resolver address is configured, no static entry matches the name, and both address pings succeed, which rules out the other three options.",
     "fix": "Enable the router’s DNS client, then inspect settings and repeat the exact name test.\n\n```ios\nR1# configure terminal\nR1(config)# ip domain-lookup\nR1(config)# end\nR1# show hosts\nR1# ping app.lab.example\n```\n\nVerify that the selected address is 10.1.1.80. If name lookup still fails, inspect the actual request and response path rather than changing already-correct records without evidence. Save the correction after verifying service."
   }
 ]

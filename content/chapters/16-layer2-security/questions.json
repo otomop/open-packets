@@ -18,11 +18,11 @@
     "answer": [
       3
     ],
-    "explanation": "Restrict preserves service for permitted addresses while dropping violating traffic and providing violation reporting.",
+    "explanation": "Restrict drops violating frames, logs them and increments the violation counter, while frames from secure addresses are still forwarded.",
     "whyWrong": {
-      "0": "Shutdown error-disables the port, affecting permitted traffic too.",
-      "1": "Disabling port security removes this enforcement.",
-      "2": "Protect drops violating traffic without restrict's counter and notification behavior."
+      "0": "Shutdown err-disables the port, which stops permitted traffic too.",
+      "1": "Disabling port security removes the enforcement altogether.",
+      "2": "Protect drops violating frames but logs nothing and leaves the violation counter unchanged."
     }
   },
   {
@@ -34,7 +34,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "On the documented Catalyst default configuration, which two settings apply after port security is enabled? (Choose two.)",
+    "prompt": "`switchport port-security` is entered on a Catalyst access port with no other port-security commands. Which two settings apply? (Choose two.)",
     "options": [
       "The maximum is one secure MAC",
       "The aging interval is five minutes",
@@ -46,7 +46,7 @@
       0,
       3
     ],
-    "explanation": "The documented defaults are maximum 1 and shutdown mode. Port security itself must be enabled; sticky learning and address aging are separate choices.",
+    "explanation": "The defaults are a maximum of 1 secure MAC address and violation mode shutdown. Sticky learning and aging stay off until you configure them.",
     "whyWrong": {
       "1": "Default aging time is 0, meaning disabled.",
       "2": "Enabling port security does not enable sticky learning.",
@@ -74,7 +74,7 @@
       2,
       4
     ],
-    "explanation": "DAI can use snooping bindings and configured ARP ACLs. Its interface trust is independent of DHCP snooping trust, and trust placement follows the actual design.",
+    "explanation": "DAI validates the sender IP and MAC of an ARP message against the DHCP snooping bindings, and an ARP ACL can permit a static host that has no binding. DAI trust is configured separately from DHCP snooping trust.",
     "whyWrong": {
       "0": "Validating an address claim is not user authentication.",
       "1": "A trunk's existence does not establish that all ARP arriving on it should bypass inspection.",
@@ -115,9 +115,9 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "No explicit storm-control action is configured. What is the documented default response when broadcast suppression is triggered?",
+    "prompt": "A port has `storm-control broadcast level` configured and no `storm-control action` command. What does the switch do when broadcasts reach the rising threshold?",
     "options": [
-      "Filter the selected controlled traffic type.",
+      "Drop broadcasts on the port until they subside.",
       "Send a notification without suppressing any traffic.",
       "Change the port to an STP alternate role.",
       "Err-disable the entire selected interface."
@@ -125,7 +125,7 @@
     "answer": [
       0
     ],
-    "explanation": "The default action filters the storm-controlled traffic. Treat this as suppression, not a guarantee that precisely the excess percentage is discarded; implementation and measurement depend on the platform.",
+    "explanation": "The default action is to drop the controlled traffic class, here broadcasts, until it falls below the falling threshold. Other traffic on the port continues and the port stays up.",
     "whyWrong": {
       "1": "A notification action is separate from the default suppression behavior.",
       "2": "Storm suppression does not elect an STP port role.",
@@ -151,7 +151,7 @@
     "answer": [
       3
     ],
-    "explanation": "Excess source addresses can consume MAC-learning resources. If destinations are unknown, frames may be flooded to eligible forwarding ports in that VLAN. The scope and device response depend on the platform and configuration.",
+    "explanation": "The forged addresses fill the MAC address table, so the switch cannot learn real hosts. Frames to destinations it has not learned are flooded to every port in the VLAN, where the attacker can capture them.",
     "whyWrong": {
       "0": "Known destinations, VLAN boundaries and other forwarding controls still matter.",
       "1": "Learning a source MAC is not identity authentication.",
@@ -306,7 +306,7 @@
     "difficulty": 2,
     "exhibit": {
       "kind": "cli",
-      "title": "Authored server diagnostic summary",
+      "title": "R1 DHCP server diagnostics (summary)",
       "text": "Request received: giaddr 0.0.0.0, relay-agent information (Option 82) present\nRequest rejected by relay-information trust policy"
     },
     "prompt": "The server-facing switch port is trusted. The isolated lab does not use relay-agent information for policy, and the server records the exhibit. Which switch change removes the explicitly observed cause?",
@@ -319,7 +319,7 @@
     "answer": [
       1
     ],
-    "explanation": "The evidence specifically identifies Option 82 with a zero relay address on a path the server does not trust. In this stated design, `no ip dhcp snooping information option` removes the unused inserted information. Other designs may deliberately retain it and configure an appropriate server/relay trust policy.",
+    "explanation": "The server rejected a request that carried Option 82 with `giaddr` 0.0.0.0, which is what a snooping access switch sends by default. Nothing in this lab uses Option 82, so `no ip dhcp snooping information option` on the switch removes the cause. A design that needs Option 82 would configure the server to trust it instead.",
     "whyWrong": {
       "0": "Client trust does not establish a correct relay-information policy and would permit unauthorized server replies.",
       "2": "The gateway option does not repair rejection of the DHCP request.",
@@ -374,11 +374,11 @@
     "answer": [
       3
     ],
-    "explanation": "After suppression begins, the falling threshold governs recovery. 0.7% is above 0.50%. Exact sampling and counter presentation depend on the hardware.",
+    "explanation": "Once the rising threshold has been crossed, broadcasts are dropped until the level falls below the falling threshold. 0.7% is still above 0.50%, so the port keeps dropping broadcasts.",
     "whyWrong": {
       "0": "This policy selects broadcast traffic, not all unicast.",
       "1": "The separately configured falling threshold prevents immediate recovery at the rising threshold.",
-      "2": "A threshold alone does not specify a shutdown action; filtering is the documented default."
+      "2": "The port is err-disabled only if `storm-control action shutdown` is configured; the default action drops the traffic class."
     }
   },
   {
@@ -414,7 +414,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "In the documented RA guard design, which two actions support a valid verification? (Choose two.)",
+    "prompt": "You deploy RA guard on an access switch with one legitimate IPv6 router. Which two actions belong in a correct deployment and check? (Choose two.)",
     "options": [
       "Judge success from the policy name alone",
       "Assume DHCP snooping also validates IPv6 RAs",
@@ -426,7 +426,7 @@
       2,
       4
     ],
-    "explanation": "Verification needs the attachment on the real ingress and evidence that authorized advertisements still pass. Old host state can remain for its advertised lifetime, so fresh packet behavior is the stronger test.",
+    "explanation": "A host-role policy must be attached to the endpoint ports, and the router's port needs the router role so that its RAs still pass. Check with fresh RAs, because hosts keep addresses and routers they learned earlier until the lifetimes expire.",
     "whyWrong": {
       "0": "A policy can exist without being applied anywhere.",
       "1": "These are separate features protecting different traffic.",
@@ -474,9 +474,9 @@
     "exhibit": {
       "kind": "cli",
       "title": "Supplied access-security evidence",
-      "text": "DAI enabled for VLAN 10; Fa0/2 is untrusted.\nSnooping binding: 10.1.10.51, 00aa.0000.0001, VLAN 10, Fa0/2.\nFresh ARP sender: 10.1.10.51 / 00bb.0000.0002; ingress Fa0/2, VLAN 10.\nNo matching ARP ACL permit or other exception is configured."
+      "text": "DAI enabled for VLAN 10; Fa0/2 is untrusted.\nSnooping binding: 10.1.10.51, 00bb.0000.0002, VLAN 10, Fa0/2.\nNew ARP message: sender 10.1.10.51 / 00dd.0000.0009; ingress Fa0/2, VLAN 10.\nNo ARP ACL is configured."
     },
-    "prompt": "Which comparison explains why the fresh sender claim fails the shown binding validation?",
+    "prompt": "Why does DAI drop the new ARP message?",
     "options": [
       "The client uses a private IPv4 subnet rather than a public one.",
       "The client’s IP address matches the binding’s IPv4 address.",
@@ -486,7 +486,7 @@
     "answer": [
       2
     ],
-    "explanation": "The binding maps 10.1.10.51 to 00aa.0000.0001, while the fresh ARP claims that IP with 00bb.0000.0002. That IP/MAC mismatch is sufficient for rejection under this stated binding-only policy. It does not establish whether the cause is spoofing, an approved replacement or stale state.",
+    "explanation": "The binding ties 10.1.10.51 to 00bb.0000.0002, but the ARP message claims that IP address with 00dd.0000.0009. The sender IP and MAC must both match a binding, so DAI drops the message. The drop shows a mismatch; it does not show whether the cause is spoofing or a replaced network card.",
     "whyWrong": {
       "0": "Private IPv4 addressing is normal and does not invalidate the claim.",
       "1": "The matching IP identifies the entry to compare; the sender MAC is the mismatch.",
@@ -534,14 +534,14 @@
     "prompt": "A 1% broadcast storm threshold is copied from a 100 Mb/s port to a 1 Gb/s port. What nominal rate comparison is correct?",
     "options": [
       "The faster port uses 100 Mb/s because the percentage is a packet count.",
-      "The thresholds correspond to 1 Mb/s and 10 Mb/s, before hardware accounting details.",
+      "The thresholds correspond to about 1 Mb/s on the slower port and 10 Mb/s on the faster.",
       "The slower port uses 10 Mb/s while the faster port uses 1 Mb/s.",
       "Both ports use 1 Mb/s because the configured percentage is identical."
     ],
     "answer": [
       1
     ],
-    "explanation": "One percent of 100 Mb/s is 1 Mb/s; one percent of 1000 Mb/s is 10 Mb/s. A copied percentage therefore changes the nominal permitted rate. Actual accounting and enforcement depend on the device.",
+    "explanation": "A percentage threshold is a share of the port's bandwidth. One percent of 100 Mb/s is 1 Mb/s and one percent of 1000 Mb/s is 10 Mb/s, so the copied setting allows ten times the broadcast rate on the faster port.",
     "whyWrong": {
       "0": "The percentage is not one packet per hundred packets or a 100 Mb/s allocation here.",
       "2": "The values are reversed.",
@@ -627,7 +627,7 @@
     "answer": [
       2
     ],
-    "explanation": "On the documented Catalyst behavior, seeing an address secured on one interface at another secure interface in the same VLAN can itself be a violation. Reconcile the approved move and old secure entry rather than merely raising a limit.",
+    "explanation": "A violation also occurs when an address secured on one port appears on another secure port in the same VLAN, whatever that port's limit. Remove the old secure entry from Fa0/1 to complete the move; raising the maximum on Fa0/2 does not help.",
     "whyWrong": {
       "0": "STP-instance differences are not the source-address violation rule.",
       "1": "Ordinary forwarding-table aging does not remove the shown secure configuration.",

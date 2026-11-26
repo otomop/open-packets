@@ -33,7 +33,7 @@ These management addresses support a separate IP test; discovery itself does not
 
 ## Step 1: Build, name, and address the devices
 
-Start a new project, select the exact models, and connect the listed ports. Decline initial configuration dialogs if shown. Type commands after the prompts.
+Start a new project, select the exact models, and connect the listed ports. Decline initial configuration dialogs if shown. Type commands after the prompts. `cdp run` and `cdp enable` are already the defaults; they are entered here so that the two levels of CDP control appear in your configuration notes.
 
 ```ios SW1
 Switch> enable
@@ -159,7 +159,7 @@ SW1# show cdp neighbors
 Repeat the neighbor view after a short interval and record changes. Also inspect `show cdp` on SW2 to identify the timer and holdtime SW2 advertises. Do not change timers merely to make the observed number match the lesson.
 
 :::expected
-The referenced defaults are 60-second advertisements and 180-second holdtime. Remaining holdtime commonly decreases and refreshes when an advertisement arrives. A displayed value is not an exact packet timestamp; the relevant lifetime comes from the neighbor. Clearing SW1's local CDP table, if used for an additional experiment, does not instantly force SW2 to advertise again.
+`show cdp` reports the defaults: advertisements every 60 seconds and a holdtime of 180 seconds. In the neighbor table, Holdtme counts down and jumps back toward 180 each time SW2's next advertisement arrives. The value is set by the sender, SW2, not by SW1.
 :::
 
 ```state
@@ -168,13 +168,11 @@ The referenced defaults are 60-second advertisements and 180-second holdtime. Re
 
 ## Step 6: Enable LLDP explicitly and compare identities
 
-Use these commands where supported. If `lldp run` is unavailable, read the subsequent observations as a paper exercise instead of entering guessed alternatives.
+LLDP is off by default, so start it globally on both switches. The timers stay at their defaults of 30 seconds and 120 seconds. The `lldp transmit` and `lldp receive` lines are already the default once LLDP runs; entering them makes the two directions visible before you turn one off in step 7. If `lldp run` is unavailable in your image, read the next steps as a paper exercise.
 
 ```ios SW1
 SW1# configure terminal
 SW1(config)# lldp run
-SW1(config)# lldp timer 30
-SW1(config)# lldp holdtime 120
 SW1(config)# interface gigabitethernet0/1
 SW1(config-if)# lldp transmit
 SW1(config-if)# lldp receive
@@ -186,8 +184,6 @@ SW1# show lldp neighbors detail
 ```ios SW2
 SW2# configure terminal
 SW2(config)# lldp run
-SW2(config)# lldp timer 30
-SW2(config)# lldp holdtime 120
 SW2(config)# interface gigabitethernet0/2
 SW2(config-if)# lldp transmit
 SW2(config-if)# lldp receive
@@ -201,7 +197,7 @@ After advertisements arrive, each switch learns the other. A representative SW1 
 :::
 
 ```state
-{"status":"LLDP learned both ways","tone":"ok","focus":["S1","S2"],"flows":[{"path":["S2","S1"],"label":"SW2 LLDP advertisement","tags":{"S1":"LLDP: SW2 on Gi0/1 · remote Gi0/2"}},{"path":["S1","S2"],"label":"SW1 LLDP advertisement","tags":{"S2":"LLDP: SW1 learned on Gi0/2"}}],"chips":[{"node":"S1","text":"LLDP Gi0/1 tx · rx","tone":"ok"},{"node":"S2","text":"LLDP Gi0/2 tx · rx","tone":"ok"}],"rows":[["LLDP timer / holdtime","30 s / 120 s on both switches"],["SW1 sees","SW2, local Gi0/1, remote Gi0/2","ok"],["SW2 capability","B in LLDP · CDP may show S"]]}
+{"status":"LLDP learned both ways","tone":"ok","focus":["S1","S2"],"flows":[{"path":["S2","S1"],"label":"SW2 LLDP advertisement","tags":{"S1":"LLDP: SW2 on Gi0/1 · remote Gi0/2"}},{"path":["S1","S2"],"label":"SW1 LLDP advertisement","tags":{"S2":"LLDP: SW1 learned on Gi0/2"}}],"chips":[{"node":"S1","text":"LLDP Gi0/1 tx · rx","tone":"ok"},{"node":"S2","text":"LLDP Gi0/2 tx · rx","tone":"ok"}],"rows":[["LLDP timer / holdtime","Defaults: 30 s / 120 s"],["SW1 sees","SW2, local Gi0/1, remote Gi0/2","ok"],["SW2 capability","B in LLDP · CDP may show S"]]}
 ```
 
 ## Step 7: Create one-way LLDP visibility

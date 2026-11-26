@@ -6,12 +6,12 @@ minutes: 90
 ---
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
-The router/switch blocks are supplied preparation; the main skills are selecting WLAN GUI fields and proving current client stages. Build an isolated controller WLAN from a new file, configure its security through the GUI and prove that a wireless client reaches a known server. Then introduce a wrong passphrase and unavailable DHCP as separate faults, preserving evidence before each repair.
+You will build a small controller-based WLAN, secure it with WPA2-Personal in the WLC GUI and prove that a wireless laptop reaches a web server. Then you will break it twice, once with a wrong passphrase and once by removing DHCP, and see that the two faults stop the client at different stages. The switch and router configuration is supplied; the skills to practise are the WLAN GUI fields and reading the client's stage.
 
-This lab deliberately uses one subnet for management and clients, whereas chapter 37 separated them. Start fresh with the addresses below; do not reuse chapter 37's controller interfaces or DHCP pools. The smaller design lets you isolate authentication from DHCP. In a design with separate client VLANs, the same client stages must succeed and the chapter 37 VLAN mapping must also be correct.
+The lab uses one subnet for management and clients so that the security steps stay easy to see. Chapter 37 separated them with VLANs. Start a new file here and do not reuse that lab's controller interfaces or DHCP pools.
 
 :::note Controller and simulator limits
-Use the WLC-3504 and LAP-PT when your Packet Tracer version offers them. Record the version and the actual labels in its port picker. This is a legacy AireOS-style exercise, not a Catalyst 9800 emulator. If a required GUI control or AP/client function is unavailable, keep the working wired setup and complete the supplied configuration/status worksheet for that portion, labeled “not simulated.” Do not substitute an autonomous AP and call that completion of a controller GUI lab. WPA3, Enterprise authentication, realistic RF behavior and exact controller states are not assumed to be simulated.
+Use the WLC-3504 and LAP-PT if your Packet Tracer version offers them. Their GUI is AireOS-style, not a Catalyst 9800. Packet Tracer does not model WPA3, Enterprise authentication, RF behavior or every controller state. If a control named in a step is missing in your version, keep the wired setup working, complete that step from its table as a worksheet and label it “not simulated.” Do not substitute an autonomous AP, because the lab is about the controller GUI.
 :::
 
 ## Topology
@@ -34,12 +34,12 @@ There is no DNS server or Internet connection. Leave DNS unset and test the supp
 
 ## Step 1: Cable, power and prepare the endpoints
 
-Place all seven devices and connect the five wired links. Supply AP1 with its supported external power adapter if the selected model requires one; do not assume the 2960 model provides PoE. On LT1, check for an installed wireless interface. If absent and the model offers WPC300N, power the laptop off, replace its copper module with WPC300N, then power it on. Do not remove or insert modules while powered.
+Place all seven devices and connect the five wired links. On AP1's Physical tab, fit the power adapter; the 2960 does not supply PoE. LT1 needs a wireless adapter: on its Physical tab, power the laptop off, replace the copper Ethernet module with WPC300N and power it on again, as in chapter 36.
 
 Use Desktop → IP Configuration on ADMIN and WEB1 to enter their static address, `255.255.255.0` mask and gateway. On WEB1 open Services → HTTP and turn HTTP On. This is a disposable local test page with no credentials.
 
 :::expected
-ADMIN and WEB1 display the static values in the table. LT1 has a wireless interface/control. AP1 is powered. No successful AP join or wireless client connection is claimed at this stage.
+ADMIN and WEB1 show the static values from the table. LT1 has a wireless interface and AP1 is powered. Nothing has joined the WLAN yet.
 :::
 
 ```state
@@ -48,7 +48,7 @@ ADMIN and WEB1 display the static values in the table. LT1 has a wireless interf
 
 ## Step 2: Configure the switch, router and DHCP pool
 
-On the switch, configure endpoint access ports first, then override only Fa0/2 for the controller distribution-system trunk. Cisco documents trunk mode for that controller connection even though this lab carries only one native VLAN.
+On the switch, put all five ports in access VLAN 10, then change only Fa0/2 into the trunk toward the controller. A controller connects by trunk because each WLAN can map to a different VLAN; this lab carries only native VLAN 10. `spanning-tree portfast trunk` (chapter 15) lets that trunk forward without the usual STP delay.
 
 ```ios SW1
 Switch> enable
@@ -94,7 +94,7 @@ R1# show ip interface brief
 From ADMIN run `ping 10.0.10.1` and `ping 10.0.10.20` in Desktop → Command Prompt. Open `http://10.0.10.20` in ADMIN's browser.
 
 :::expected
-Fa0/1 and Fa0/3–5 are access members of VLAN 10. Fa0/2 is a trunk with native VLAN 10 and allowed VLAN 10; it appears operational once the controller link is up. R1 Gi0/0 becomes up/up. ADMIN reaches R1 and WEB1; the local test page loads. Retry an initial ping after ARP resolution if necessary. Do not start the wireless diagnosis while this wired baseline is broken.
+Fa0/1 and Fa0/3–5 are access members of VLAN 10. Fa0/2 is a trunk with native VLAN 10 and allowed VLAN 10; it appears operational once the controller link is up. R1 Gi0/0 becomes up/up. ADMIN reaches R1 and WEB1, and the test page loads. The first ping may lose a reply while ARP resolves. Fix any wired failure now, before the wireless steps.
 :::
 
 ```state
@@ -103,9 +103,9 @@ Fa0/1 and Fa0/3–5 are access members of VLAN 10. Fa0/2 is a trunk with native 
 
 ## Step 3: Initialize controller management
 
-In WLC1's Config → Management page, where provided, enter `10.0.10.2`, mask `255.255.255.0`, gateway `10.0.10.1` and Port 1. Keep management untagged; an AireOS VLAN value of `0` represents this. The controller trunk assigns the untagged traffic to its native VLAN 10.
+In WLC1's Config → Management page, enter `10.0.10.2`, mask `255.255.255.0` and gateway `10.0.10.1`. Management stays untagged, which AireOS shows as VLAN `0`; the switch trunk places that untagged traffic in native VLAN 10.
 
-From ADMIN's browser try `https://10.0.10.2`. A fresh model may expose its day-zero wizard at `http://10.0.10.2` instead; use HTTP only for this isolated simulator bootstrap. Enter the following fields if requested:
+From ADMIN's browser open `http://10.0.10.2`. A new controller serves its first-time setup wizard over HTTP, which is acceptable only in an isolated lab. (If your controller is already set up, go straight to `https://10.0.10.2`.) Create the administrator account and enter these values when the wizard asks for them:
 
 | Setup field | Value |
 |---|---|
@@ -117,10 +117,10 @@ From ADMIN's browser try `https://10.0.10.2`. A fresh model may expose its day-z
 | Required initial employee SSID, if any | `SETUP-LAB` |
 | Initial security/passphrase | WPA2-Personal, AES / `Setup-Lab-2026!` |
 
-Apply after checking the fields. If the model restarts, wait for management reachability and reconnect with HTTPS. Record the created WLAN IDs; the exercise below reserves ID 2. If ID 2 is already in use, choose another unused ID and use it consistently in your worksheet.
+Check the fields and Apply. If the controller restarts, wait until it answers a ping, then log in at `https://10.0.10.2`. Open WLANs and note the IDs in use. The wizard's WLAN normally takes ID 1 and this lab uses ID 2; if 2 is taken, choose another unused ID and use it throughout.
 
 :::expected
-The controller displays the intended management settings and accepts the newly configured administrator account. If the selected model lacks the required setup mechanism, record that limitation and use the supplied fields as a worksheet; do not guess a factory address or claim an operational WLC.
+The controller shows the management settings from the table and accepts the `labadmin` login over HTTPS.
 :::
 
 ```state
@@ -129,18 +129,18 @@ The controller displays the intended management settings and accepts the newly c
 
 ## Step 4: Verify the AP and DHCP path
 
-Set AP1's wired management interface to DHCP where that control is exposed. Inspect R1:
+AP1 must get its address by DHCP. Check that setting in its Config tab, then look for the lease on R1:
 
 ```ios R1
 R1# show ip dhcp binding
 ```
 
-Record AP1's actual address and MAC from its interface/status view. On the controller inspect Wireless → Access Points → All APs, or its equivalent AP summary. AP and controller share the same VLAN here, so local discovery is possible without option 43. This does not imply that all real AP/controller combinations are compatible.
+Note AP1's address and MAC. On the controller open Wireless → Access Points → All APs and look for AP1. The AP and controller share a subnet, so the AP finds the controller by local broadcast and needs no DHCP option 43 (chapter 37). The join can take a minute or two.
 
-In Controller → Interfaces → management, if the model exposes a Primary DHCP Server field, set it to `10.0.10.1`. This is needed for the documented AireOS DHCP-proxy arrangement. Do not set an internal DHCP pool and R1's pool simultaneously for this exercise.
+In Controller → Interfaces → management, set Primary DHCP Server to `10.0.10.1`. With DHCP proxy (chapter 37) the controller forwards client DHCP requests to this address. Leave the controller's internal DHCP server off; R1 is the only DHCP server in this lab.
 
 :::expected
-AP1 receives an address in `10.0.10.21–254`, but no particular first lease is guaranteed. A separate controller record shows registration where implemented. The selected interface points to the actual DHCP server. Missing simulator controls are recorded as such; a DHCP lease alone is not proof of a completed AP join.
+AP1 holds a lease in `10.0.10.21–254` and appears in the controller's AP list. The management interface points to DHCP server `10.0.10.1`. The lease alone does not prove the join; the AP list does.
 :::
 
 ```state
@@ -149,7 +149,7 @@ AP1 receives an address in `10.0.10.21–254`, but no particular first lease is 
 
 ## Step 5: Create the WLAN and configure security while disabled
 
-Before opening the GUI, write four separate decisions: client-visible name, client network, cipher and key-management method. Predict whether this Personal design needs a RADIUS account. Then on the controller open WLANs → Create New → Go. Create profile `CCNA-USERS`, SSID `CCNA-Lab`, WLAN ID `2` (or your recorded unused ID). Leave the WLAN disabled while editing. Configure the following; click Apply where the model requires it to retain a tab's changes.
+Before you open the GUI, write down four decisions: the SSID, the client network, the cipher and the key-management method. Decide whether this Personal design needs a RADIUS server. Then open WLANs → Create New → Go and create profile `CCNA-USERS` with SSID `CCNA-Lab` and WLAN ID `2` (or your unused ID). Leave Status unticked while you edit, set the fields below and click Apply before you leave each tab.
 
 | Page/field | Required setting |
 |---|---|
@@ -163,10 +163,10 @@ Before opening the GUI, write four separate decisions: client-visible name, clie
 | PSK Format / key | ASCII / `StudyLab-2026!` |
 | Security → Layer 3 | None; no WebAuth for this test |
 
-These settings deliberately match WPA2-Personal. They are not obtained simply by selecting a dropdown labeled WPA+WPA2.
+The `WPA+WPA2` dropdown only opens these options. The checkboxes decide the result, and a new WLAN starts with 802.1X ticked.
 
 :::expected
-The stored WLAN is still disabled and its security summary indicates WPA2, PSK and AES/CCMP. It is mapped to the management network only because this is an isolated flat lab. There is no RADIUS requirement, captive portal or MAC filter in this design.
+The WLAN is stored but still disabled, and its security summary shows WPA2 with PSK and AES. It maps to `management` only because this lab is one flat subnet. The design needs no RADIUS server.
 :::
 
 ```state
@@ -175,12 +175,12 @@ The stored WLAN is still disabled and its security summary indicates WPA2, PSK a
 
 ## Step 6: Inspect policy, enable and save
 
-Read the QoS tab and record the profile and WMM setting that actually appear. For this best-effort data exercise, choose Silver if that AireOS-style option is available; leave WMM Allowed or its compatible enabled policy. Read the Advanced tab and record any session timeout, client exclusion, DHCP-required and P2P settings shown. Mark unavailable controls “not modeled.”
+Open the QoS tab. Leave the profile at Silver (best effort), which suits ordinary data, and leave WMM Policy at Allowed. Open the Advanced tab and write down the session timeout, client exclusion, DHCP-required and P2P blocking values your version shows. You change nothing here; the aim is to know where these policies live.
 
-Return to General, enable the WLAN and Apply. Use Save Configuration if available. If a setup WLAN was automatically created, disable that unused WLAN so LT1 cannot accidentally connect to it.
+Return to General, tick Status Enabled and Apply, then click Save Configuration. Disable the `SETUP-LAB` WLAN that the wizard created, so LT1 cannot join it by mistake.
 
 :::expected
-The lab WLAN is enabled with WPA2/PSK/AES and the intended interface. An Advanced value is a policy to interpret, not proof of a fault. For example, a displayed `1800`-second timer is 30 minutes, while a displayed 60-second exclusion value does not establish that any client is currently excluded.
+WLAN 2 is enabled with WPA2, AES and PSK on the `management` interface. You can say what each recorded Advanced value means: a session timeout of `1800` is 30 minutes, and a client exclusion time applies only to a client the controller has actually excluded.
 :::
 
 ```state
@@ -189,9 +189,9 @@ The lab WLAN is enabled with WPA2/PSK/AES and the intended interface. An Advance
 
 ## Step 7: Join LT1 and prove actual data access
 
-Predict what SSID visibility, a DHCP lease and a loaded web page each establish. On LT1 open Desktop → PC Wireless, refresh the network list, select `CCNA-Lab` and connect with WPA2-Personal/AES and `StudyLab-2026!`. If the model uses Config → Wireless0 instead, set the same SSID, security and key there. Select DHCP in Desktop → IP Configuration.
+Before you connect, predict what each of these will prove: the SSID appearing in the list, a DHCP lease, and a loaded web page. On LT1 open Desktop → PC Wireless → Connect, click Refresh, select `CCNA-Lab`, click Connect and enter `StudyLab-2026!` as the pre-shared key. You can set the same SSID, WPA2-PSK and key in Config → Wireless0 instead. Set Desktop → IP Configuration to DHCP.
 
-Run these commands separately in the PC command prompt:
+Run these in LT1's Command Prompt:
 
 ```text
 ipconfig
@@ -199,10 +199,10 @@ ping 10.0.10.1
 ping 10.0.10.20
 ```
 
-Open `http://10.0.10.20` in LT1's browser. Compare its wireless MAC/IP with the controller's Monitor → Clients entry and R1's DHCP bindings. Record whether the GUI exposes security completion/admitted state, rather than relying only on “Associated.”
+Open `http://10.0.10.20` in LT1's browser. Then find LT1 in the controller's Monitor → Clients list and in `show ip dhcp binding` on R1, and check that the MAC and IP addresses agree. Note the state the controller shows for the client.
 
 :::expected
-LT1 has a current `10.0.10.21–254/24` address and gateway `10.0.10.1`. The gateway and WEB1 respond, and the local page loads. Together these observations support a working WLAN data path. They do not prove Internet connectivity, DNS service, RF performance or any destination absent from this topology.
+LT1 has an address in `10.0.10.21–254/24` with gateway `10.0.10.1`. The gateway and WEB1 reply and the page loads. The SSID in the list proved only that the WLAN is advertised. The new lease proved that security completed and DHCP works. The page proved the data path.
 :::
 
 ```state
@@ -213,10 +213,10 @@ LT1 has a current `10.0.10.21–254/24` address and gateway `10.0.10.1`. The gat
 
 Save `wlan-security-baseline.pkt`, then save a working copy as `wlan-security-fault.pkt`. Disconnect LT1, edit its saved profile or remove and recreate that profile, and reconnect with `StudyLab-2026` (omit the final exclamation mark). Do not change the controller key.
 
-Before retrying, predict whether the visible SSID or a retained old address establishes new security completion. Observe the client message and current controller state, then attempt the WEB1 test. Do not restore the key yet.
+Before you reconnect, predict which stage will fail and whether the SSID will still be listed. Watch the client's message and the controller's client entry, then try the WEB1 page. Do not restore the key yet.
 
 :::expected
-With the new incorrect key actually in use, the secure data connection fails. The SSID can still be visible, and an old IP address can remain displayed. Neither proves the new key exchange succeeded. A popup alone does not prove which handshake message failed; record only the evidence your simulator exposes.
+The connection fails at the key exchange, because the four-way handshake cannot complete with a wrong passphrase. The SSID is still listed, and LT1 may still display its old IP address; neither shows that the new attempt succeeded. The WEB1 page does not load.
 :::
 
 ```state
@@ -225,12 +225,12 @@ With the new incorrect key actually in use, the secure data connection fails. Th
 
 ## Step 9: Restore the key and verify recovery
 
-Disconnect again and replace the saved key with `StudyLab-2026!`. Reconnect. If the controller explicitly shows this client excluded, wait for its displayed remaining interval or clear only the lab client's exclusion using the supported GUI action. Do not assume a universal timeout.
+Disconnect again, replace the saved key with `StudyLab-2026!` and reconnect. Repeated failures can trigger the client exclusion policy you read in Step 6. If the controller lists LT1 as excluded, wait for the exclusion time to pass or remove LT1 from the excluded list.
 
-Repeat the current IP, ping and WEB1 page checks.
+Repeat the `ipconfig`, ping and WEB1 page checks.
 
 :::expected
-The client again passes the same baseline tests. If not, verify that its saved profile actually changed and that it chose `CCNA-Lab` rather than a different SSID. A repaired field alone is not the final proof.
+LT1 passes the same tests as in Step 7. If it does not, check that the saved profile really changed and that LT1 joined `CCNA-Lab`, not another SSID.
 :::
 
 ```state
@@ -239,17 +239,17 @@ The client again passes the same baseline tests. If not, verify that its saved p
 
 ## Step 10: Remove the DHCP service after clearing the client's lease
 
-Keep AP1 and WLC1 powered and connected. This short fault is for a fresh client address request; do not reboot the AP while its DHCP server is temporarily absent.
+This fault removes the DHCP server, so that a client with the correct key stops at the addressing stage instead. Keep AP1 and WLC1 running. AP1 uses the same DHCP server; its existing lease survives a short outage but not a reboot.
 
-On LT1, try:
+On LT1, release the lease:
 
 ```text
 ipconfig /release
 ```
 
-Confirm LT1 no longer has its usable DHCP address. If that operation is unsupported or the simulator retains a usable lease that you cannot release through its IP Configuration controls, stop the live DHCP fault and use the worksheet in Step 11. A reconnect by itself does not guarantee a fresh lease.
+Run `ipconfig` and confirm that LT1 no longer has its `10.0.10.x` address. If your version will not release the lease, skip the live fault and use the supplied observations in Step 11.
 
-Only after confirming the release, remove the lab pool on R1:
+Then remove the pool on R1:
 
 ```ios R1
 R1# configure terminal
@@ -259,7 +259,7 @@ R1# show ip dhcp pool
 ```
 
 :::expected
-The WLAN-LAB pool is absent, while the wireless security settings and AP's existing management connection have not been deliberately changed. A prior AP lease can remain valid during this brief fault. Record whether the prerequisites for the live test were actually met.
+`show ip dhcp pool` no longer lists WLAN-LAB. Nothing about the WLAN's security has changed, and AP1 is still joined on its existing lease.
 :::
 
 ```state
@@ -268,19 +268,19 @@ The WLAN-LAB pool is absent, while the wireless security settings and AP's exist
 
 ## Step 11: Observe a fresh address request
 
-If Step 10's live prerequisites were met, request a new client lease:
+Predict first: can a correct PSK make up for a missing DHCP server? Then request a new lease on LT1:
 
 ```text
 ipconfig /renew
 ipconfig
 ```
 
-Before the request, predict whether a correct PSK can compensate for an absent address server. Alternatively use the supported DHCP request control in LT1's IP Configuration page. Check the controller's security/admission/addressing information and R1's pool state before drawing a conclusion.
+Switching Desktop → IP Configuration to Static and back to DHCP sends the same request. Look at the controller's client entry and at R1's pools before you decide which stage failed.
 
 :::expected
-With no available DHCP server in this isolated topology, a fresh DHCP attempt cannot obtain the intended lease. The client may show no address or a link-local address, depending on the model. Security may still be complete even though the client cannot reach WEB1.
+LT1 gets no lease. It shows no address or a `169.254.x.x` link-local address (chapter 30), and WEB1 is unreachable. The wireless connection itself still succeeds, because the key is correct.
 
-If the live fault could not be performed, use these supplied observations: current WPA2 key establishment succeeded; a fresh client request repeats without any DHCP offer; R1 has no WLAN-LAB pool. State the last successful stage and narrow repair before opening the answer below. These are authored observations, not a claimed capture.
+If you could not run the live fault, work from these observations instead: the WPA2 key exchange succeeded; LT1 repeats its DHCP request and receives no offer; R1 has no WLAN-LAB pool. Name the last successful stage and the repair before you open the answer.
 :::
 
 :::solution DHCP worksheet
@@ -304,10 +304,10 @@ R1(dhcp-config)# end
 R1# show ip dhcp pool WLAN-LAB
 ```
 
-Request DHCP again on LT1, inspect its current configuration and repeat the gateway/WEB1 tests. If AP1's management lease was affected during a long pause, restore its DHCP connectivity and registration before judging the client result.
+Run `ipconfig /renew` on LT1 and repeat the gateway and WEB1 tests. If AP1 lost its lease during a long pause, wait for it to get an address and rejoin the controller before you judge the client.
 
 :::expected
-A valid client lease returns and the local page loads. The pool does not advertise an unconfigured DNS server. If the fault was worksheet-only, describe this repair and its required verification without claiming to have observed it.
+LT1 receives a lease again and the page loads. The two faults produced two different pictures: a wrong key stopped the client before it could ask for an address, and a missing DHCP server stopped it after security had passed.
 :::
 
 ```state
@@ -316,17 +316,17 @@ A valid client lease returns and the local page loads. The pool does not adverti
 
 ## Step 13: Translate the configuration to a 9800 worksheet
 
-Do not paste IOS XE commands into the Packet Tracer controller. For an already commissioned Catalyst 9800, use this supplied specification to sketch the equivalent object relationships before opening the answer:
+This step is on paper, because Packet Tracer's controller is not a 9800. Using the 9800 objects from the lesson, sketch how the same WLAN would be built from this specification before you open the answer:
 
 - WLAN profile `CCNA-USERS`, SSID `CCNA-Lab`, ID `2`, WPA2/AES/PSK.
 - Enabled policy profile `PP-LAB`, client VLAN `10`, central switching.
 - Policy tag `PT-LAB` mapping `CCNA-USERS` to `PP-LAB`.
 - The intended AP assigned `PT-LAB`, with appropriate existing site/RF tags and an operational radio.
 
-Identify the current GUI pages that hold these objects and explain the symptom if the AP retains a different policy tag.
+Name the GUI page for each object, and say what users would see if the AP kept a different policy tag.
 
 :::solution
-Use Configuration → Tags & Profiles → WLANs; Policy; Tags → Policy; then Configuration → Wireless → Access Points for assignment. A correct WLAN and policy profile do not reach an AP unless its effective policy tag maps them. Verify the mapping and WLAN/radio states before changing the client password. This is a documented translation, not a 9800 deployment executed in Packet Tracer.
+The pages are Configuration → Tags & Profiles → WLANs, then Policy, then Tags → Policy, and Configuration → Wireless → Access Points for the assignment. An AP advertises only the WLANs in its policy tag, so with a different tag `CCNA-Lab` never appears on that AP. Check the tag before you touch the client's passphrase.
 :::
 
 ```state
@@ -347,10 +347,10 @@ Accept the destination filename with Enter. On SW1:
 SW1# copy running-config startup-config
 ```
 
-Accept the prompt there, then save `wlan-security-recovered.pkt`. Record the model/version, any unavailable GUI fields, final SSID/security/interface, client IP evidence, both fault observations and both recovery checks. Do not publish the administrative password or PSK in a real support record.
+Press Enter there too, then save `wlan-security-recovered.pkt`. In your notes, record the final SSID, security settings and interface, LT1's address, and what you saw during each fault and each recovery. In a real support record, leave out the administrator password and the PSK.
 
 :::expected
-The working baseline remains intact, and the recovered project is separately saved. Your notes clearly distinguish completed simulator actions from worksheet-only procedures. No controller reload is required for this verification.
+The baseline file is untouched and the recovered project is saved separately. Your notes mark any step you completed as a worksheet instead of in the simulator.
 :::
 
 ```state
@@ -359,31 +359,31 @@ The working baseline remains intact, and the recovered project is separately sav
 
 ## Troubleshooting
 
-- **Controller page unavailable:** first test the wired management path, address and controller-untagged/switch-native VLAN agreement; then check the displayed setup/HTTPS state. A failed ping alone does not establish that its web server is down.
-- **AP absent from controller:** check power, Ethernet, AP addressing, discovery, software compatibility and exposed join errors. Same-subnet placement simplifies discovery; it does not guarantee compatibility.
-- **SSID absent:** inspect AP/radio operation, enabled WLAN, compatible band and assignment. Do not start by changing the PSK.
-- **Security fails:** compare exact saved profile, cipher, AKM, PMF support and controller diagnostics. Do not infer “RF is fine” from SSID visibility alone.
-- **Security complete, fresh DHCP fails:** inspect interface mapping, actual server availability and any trunk/relay path. A stale displayed address is not a new lease.
-- **Address works but application fails:** test the actual destination/service. Here WEB1's HTTP service must be On; DNS and Internet were never part of the topology.
+- **Controller page unavailable:** ping `10.0.10.2` from ADMIN. Then check the management address, that management is untagged (`0`) and that Fa0/2's native VLAN is 10. After the setup wizard, use `https://`, not `http://`.
+- **AP absent from controller:** check AP1's power, its Ethernet link and its DHCP lease, then allow a minute or two for the join.
+- **SSID absent:** check that WLAN 2 is enabled, that Broadcast SSID is on, that AP1 has joined and that the radio policy includes a band LT1 supports. The PSK is not involved yet.
+- **Security fails:** compare LT1's SSID, security type and key with the WLAN character by character, and confirm that PSK is ticked and 802.1X is not.
+- **Security complete, fresh DHCP fails:** check the WLAN's interface, its Primary DHCP Server and R1's pool. An address LT1 still displays from earlier is not a new lease.
+- **Address works but application fails:** test the service itself. WEB1's HTTP service must be On; DNS and Internet access are not part of this topology.
 
 ### Evidence to keep
 
-Record model/version and actual GUI fields; distinguish configured security from the client's current negotiated/admitted state. Keep baseline and recovered HTTP results, the wrong-key observation, a genuinely fresh DHCP-failure observation or clearly labeled worksheet, and matching controller/client/DHCP identities. The two faults should lead to different next investigations.
+Keep the WLAN's security settings, LT1's `ipconfig` output and page result at baseline and after each recovery, and your observation of each fault. The two faults should point you to different places: the passphrase for the first, the DHCP path for the second.
 
 ## Challenge
 
-Save a separate copy. Add a second WLAN while preserving `CCNA-Lab` and LT1's service. Use profile `CCNA-SECOND`, client-visible SSID `CCNA-Second`, unused ID `3` (or a documented unused value), WPA2-Personal/AES and new lab key `Maple-Lab-2026!`. It uses the same flat network and real DHCP server as the original; no RADIUS, WebAuth, client isolation or separate guest VLAN is requested.
+Save a separate copy. Add a second WLAN without disturbing `CCNA-Lab` or LT1. Use profile `CCNA-SECOND`, SSID `CCNA-Second`, unused ID `3`, WPA2-Personal with AES and the key `Maple-Lab-2026!`. It uses the same flat network and DHCP server as the first WLAN.
 
-Add a second Laptop-PT, LT2. Prepare its compatible wireless module as in Step 1. Before editing, list the required GUI fields and predict why copying LT1's complete saved profile unchanged will not join the new WLAN. Create and enable the new WLAN, connect LT2 with its own correct profile, request a fresh address and open WEB1. Keep LT1 on the original SSID and prove both page results afterward. If the simulator lacks a second-WLAN/client feature, submit the full object/field plan and required observations, labeled unexecuted.
+Add a second Laptop-PT, LT2, and fit its wireless module as in Step 1. Before you edit anything, list the GUI fields you must set and predict why LT1's saved profile would not join the new WLAN. Create and enable the WLAN, connect LT2 and open WEB1 from both laptops.
 
-Explain why a different SSID alone does not create an isolated guest network. Then provide a separate 9800 object map for the second WLAN without pasting its commands into the simulator.
+Then explain why a second SSID alone does not create an isolated guest network, and sketch the 9800 objects the second WLAN would need.
 
 :::solution
-Use WLANs → Create New with profile `CCNA-SECOND`, SSID `CCNA-Second` and the unused ID. Leave it disabled during edits. General maps to `management` for this flat exercise and uses a compatible radio policy. Security selects WPA2/AES, PSK enabled with ASCII `Maple-Lab-2026!`, 802.1X disabled, legacy WPA/TKIP disabled and no Layer 3 WebAuth. Apply the tab changes, enable, and Save Configuration. Preserve the original WLAN and its existing key.
+Use WLANs → Create New with profile `CCNA-SECOND`, SSID `CCNA-Second` and the unused ID. Leave it disabled during edits. General maps to `management` for this flat exercise and uses a compatible radio policy. Security selects WPA2/AES, PSK enabled with ASCII `Maple-Lab-2026!`, 802.1X disabled, legacy WPA/TKIP disabled and no Layer 3 WebAuth. Apply the tab changes, enable, and Save Configuration. Leave the original WLAN and its key alone.
 
-On LT2 select the new client-visible SSID, WPA2-Personal/AES and the new key; request DHCP. Both clients should have distinct current `10.0.10.21–254/24` leases with gateway `10.0.10.1`. Check their actual MAC/IP identities, secure connections, gateway reachability and `http://10.0.10.20`. Retest LT1 after LT2 succeeds. An unchanged LT1 profile selects the old SSID and key, not the new one; a retained lease is not proof that LT2 joined successfully.
+On LT2 select `CCNA-Second`, enter the new key and set DHCP. Both laptops should hold different leases in `10.0.10.21–254/24` with gateway `10.0.10.1`, and both should load `http://10.0.10.20`. Retest LT1 after LT2 succeeds. LT1's saved profile names the old SSID and the old key, so it cannot join the new WLAN unchanged.
 
-Both WLANs enter the same flat network. An SSID name alone adds no VLAN, routing boundary or isolation policy. If isolation were required, the design would need an explicit separate client policy/VLAN and permitted service paths, not merely a new name.
+Both WLANs map to the same interface, so their clients share one subnet and can reach each other. An SSID is only a name. Isolation needs a separate interface and VLAN for the guest WLAN, plus routing or ACL rules for what guests may reach.
 
-For an already commissioned 9800, create WLAN profile `CCNA-SECOND` with the new SSID/security, map it to a suitable enabled policy profile for VLAN 10 and central switching, and include that mapping in the intended AP's effective policy tag alongside the original WLAN. Verify both assignments, radios and fresh client service. The relationship is a worksheet translation, not a 9800 execution claim.
+On a 9800, create WLAN profile `CCNA-SECOND` with the new SSID and security, map it to an enabled policy profile for VLAN 10, and add that mapping to the AP's policy tag next to the original WLAN's entry.
 :::

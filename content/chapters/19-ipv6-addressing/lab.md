@@ -7,12 +7,9 @@ minutes: 80
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The guided settings are supplied so you can concentrate on how an address is formed and what each test proves. Calculate before opening a solution; copy the actual addresses and observations from your own devices into the worksheet.
+You will build the lesson's two IPv6 LANs on R1. LAN 1 is addressed by hand. On LAN 2, R1 builds its address with modified EUI-64 and PC-B configures itself with SLAAC. You will then watch a Neighbor Solicitation find a new address, and switch IPv6 routing off to see the difference between a router answering for itself and forwarding traffic. No DHCPv6 server, DNS service or static route is needed, because R1 connects directly to both LANs.
 
-
-Create a fresh isolated file. You will configure one LAN manually, use modified EUI-64 and SLAAC on another, inspect the actual addresses, and test the difference between a router answering for itself and forwarding traffic. No DHCPv6 server, DNS service or static route is required: R1 directly connects both LANs.
-
-This lab has not been executed on your simulator. The examples are representative; Packet Tracer's supported commands, client address-generation method and event detail depend on its version. Compare concepts and actual configuration rather than expecting identical MAC addresses or timings.
+Start from a new, empty Packet Tracer file. Work out each address before you open a solution, and write what your own devices show into the worksheet. Your MAC addresses, and so your EUI-64 results, will differ from the examples, and the detail Packet Tracer displays varies a little between versions.
 
 ## Topology
 
@@ -27,7 +24,7 @@ This lab has not been executed on your simulator. The examples are representativ
 | PC-B FastEthernet0 — SW2 FastEthernet0/1 | Copper straight-through |
 | SW2 FastEthernet0/24 — R1 GigabitEthernet0/1 | Copper straight-through |
 
-Use fresh 2960 switches with default VLAN 1 access ports. Do not connect the switches together. The two LANs are different links, so R1 can use `fe80::1` on each without a same-link duplicate. Gi0/2 is unused.
+Use new 2960 switches and leave every port in the default VLAN 1. Do not connect the switches to each other. The two LANs are different links, so R1 can use `fe80::1` on both. Gi0/2 is unused until the challenge.
 
 | Interface or host | Address/prefix | Gateway |
 |---|---|---|
@@ -37,25 +34,25 @@ Use fresh 2960 switches with default VLAN 1 access ports. Do not connect the swi
 | PC-B initially | Automatic IPv6 address from LAN 2's RA | Learned from R1 |
 | PC-B later, for a stable fault test | `2001:db8:acad:2::20/64`, static | `fe80::1` |
 
-All documentation addresses stay inside this project.
+PC-B starts on automatic addressing so that you can observe SLAAC. It moves to a static address in Step 8 so that the forwarding test in Step 9 does not depend on Router Advertisements.
 
 ### Evidence worksheet
 
-Keep this table in your notes. A prediction is written before the corresponding change; an observation comes from your actual device or is explicitly marked as a worksheet fallback.
+Keep this table in your notes. Write each prediction before you make the change, then record what your devices show.
 
 | Checkpoint | Predict first | Record after testing |
 |---|---|---|
-| Gi0/1 EUI-64 | Operational MAC, inverted first byte, inserted bytes, complete global address | Actual global address; match or discrepancy |
-| PC-B Automatic | Expected prefix and source of the default gateway | Actual address, gateway, and supported assignment behavior |
-| New address ending ::99 | NS target and solicited-node destination | Packet fields, or unsupported-event note |
-| Forwarding disabled | Local-router ping versus remote-PC ping | Both actual outcomes before repair |
-| Forwarding restored | Expected cross-LAN recovery | Both endpoint pings and connected /64s |
+| Gi0/1 EUI-64 | Gi0/1 MAC, flipped first byte, position of `fffe`, complete global address | The address IOS built; does it match? |
+| PC-B Automatic | The prefix PC-B will use and where its default gateway comes from | PC-B's address and gateway |
+| New address ending ::99 | NS target and solicited-node destination | The fields in the captured NS and NA |
+| Forwarding disabled | Ping to the local router address; ping to the remote PC | Both results before the repair |
+| Forwarding restored | Which pings recover | Both PC-to-PC pings and the connected /64s |
 
-The topology table supplies the guided /64 settings. Prefix allocation is tested independently in the challenge; do not copy a subnet from the table into that exercise.
+The address table gives every /64 for the guided steps. In the challenge you work out the prefix yourself.
 
 ## Step 1: Configure R1's first LAN
 
-Place, label and cable the devices. Decline the router setup dialog if offered. Configure the first interface and enable forwarding.
+Place, label and cable the devices. Answer `no` if the router offers its setup dialog. `ipv6 unicast-routing` makes R1 an IPv6 router. The two `ipv6 address` lines give Gi0/0 its global address and replace its automatic link-local address with `fe80::1`.
 
 ```ios R1
 Router> enable
@@ -71,7 +68,7 @@ R1# show ipv6 interface brief
 ```
 
 :::expected
-After the switch port becomes ready, Gi0/0 should show up/up with `fe80::1` and `2001:db8:acad:1::1`. The other interfaces may remain administratively down. A link-local plus another unicast address on one interface is normal.
+Once the switch port is forwarding, Gi0/0 shows up/up with `FE80::1` and `2001:DB8:ACAD:1::1`; IOS prints addresses in uppercase. The other interfaces are still administratively down. A link-local address plus a global address on one interface is normal.
 :::
 
 ```state
@@ -88,7 +85,7 @@ ping 2001:db8:acad:1::1
 ```
 
 :::expected
-Confirm the entered address and a link-local address in the client's display. The ping should succeed after discovery completes. If your version provides different display options, inspect IP Configuration directly. A successful local ping establishes this one link; it does not yet test routing between LANs.
+`ipconfig /all` shows the address you entered and a link-local address that the PC created for itself. The first echo may time out while Neighbor Discovery resolves R1's MAC address; the rest succeed. This ping tests one link only: R1 is answering for its own address, not routing.
 :::
 
 ```state
@@ -103,12 +100,12 @@ Read Gi0/1's MAC before configuring its IPv6 address.
 R1# show interfaces gigabitethernet0/1
 ```
 
-Find the hardware-address line. Record the operational MAC shown as `address is`; a separate `bia` field is the burned-in address and can differ if manually overridden. With this fresh router they should normally match.
+Find the line that contains `address is xxxx.xxxx.xxxx (bia xxxx.xxxx.xxxx)` and record the value after `address is`. The `bia` value is the burned-in address; on a new router the two match. The interface is still shut down, but its MAC is already shown.
 
-On paper, split the six MAC bytes after byte three, insert `ff:fe`, and XOR the first byte with hexadecimal `02`. Regroup the resulting eight bytes into four hexadecimal groups.
+IOS prints a MAC as three groups of four hexadecimal digits. On paper, split it in the middle of the second group, insert `fffe`, and flip the seventh bit of the first byte, which is an XOR of that byte with hexadecimal `02`. Write the result as four groups of four digits.
 
 :::solution
-Your calculation produces a 64-bit identifier. As a worked example only, MAC `00:1a:2b:3c:4d:5e` produces `021a:2bff:fe3c:4d5e`. A first byte of `02` would become `00`, not `04`. Keep your own MAC and result; the example is not a prediction of your router's hardware address.
+As a worked example, a displayed MAC of `001a.2b3c.4d5e` gives `021a:2bff:fe3c:4d5e`. A first byte of `02` would become `00`, not `04`. Your router's MAC is different, so keep your own result for Step 4.
 :::
 
 ```state
@@ -116,6 +113,8 @@ Your calculation produces a 64-bit identifier. As a worked example only, MAC `00
 ```
 
 ## Step 4: Configure and verify modified EUI-64
+
+Give Gi0/1 the LAN 2 prefix and let IOS supply the interface ID. Set the link-local address by hand, as on Gi0/0.
 
 ```ios R1
 R1# configure terminal
@@ -128,9 +127,9 @@ R1# show ipv6 interface gigabitethernet0/1
 ```
 
 :::expected
-Gi0/1 should have a global-form address beginning `2001:db8:acad:2:` followed by the identifier you calculated. Record the entire address as **R1-LAN2** in your notes. The manual link-local stays `fe80::1`; do not assume its suffix matches the EUI-64 global address.
+Gi0/1 shows a global address of `2001:DB8:ACAD:2:` followed by the identifier you calculated, with leading zeros dropped. Record the whole address as **R1-LAN2**. The link-local address is the `FE80::1` you set by hand, so its suffix does not match the global address.
 
-The detailed output should identify the /64 prefix and ND/RA settings on supported images. If the generated suffix differs, recheck the operational MAC, inserted bytes and bit inversion before changing the configuration.
+The output also shows the /64 subnet and the multicast groups the interface has joined. If the suffix differs from your calculation, recheck the MAC, the position of `fffe` and the flipped bit before you change any configuration.
 :::
 
 ```state
@@ -139,12 +138,12 @@ The detailed output should identify the /64 prefix and ND/RA settings on support
 
 ## Step 5: Let PC-B obtain an automatic address
 
-Open PC-B → Desktop → IP Configuration and select Automatic in the IPv6 area. Allow router advertisements and duplicate-address checks to complete. Inspect the resulting address and gateway with the GUI and, where supported, `ipconfig /all`.
+Open PC-B → Desktop → IP Configuration and select Automatic in the IPv6 area. Give it a few seconds to receive R1's Router Advertisement, then read the address and gateway in the same window or with `ipconfig /all`.
 
 :::expected
-PC-B should acquire an address in `2001:db8:acad:2::/64` and learn R1's link-local address `fe80::1` as a default gateway. Record its complete address as **PC-B-AUTO**. The client may use an EUI-64-derived or another supported identifier; the router's explicit `eui-64` command does not dictate how the PC builds its own identifier.
+PC-B takes an address in `2001:db8:acad:2::/64` and shows `fe80::1`, R1's link-local address, as its default gateway. This is SLAAC: the prefix and the gateway both came from R1's Router Advertisement. Record the complete address as **PC-B-AUTO**. The PC chooses its own interface ID; the `eui-64` keyword on R1 affects only R1.
 
-DNS may remain empty because this lab provides no DNS information. That does not prevent numeric-address pings. If automatic assignment is unavailable in your version, record that limit, use the static values in Step 8 and substitute `2001:db8:acad:2::20` wherever Step 6 refers to **PC-B-AUTO**. Study the representative RA sequence in the lesson rather than claiming a successful SLAAC observation.
+The DNS field stays empty because nothing in this lab supplies DNS, and every test uses numeric addresses. If your Packet Tracer version cannot do automatic IPv6 addressing, note that, apply the static values from Step 8 now, and use `2001:db8:acad:2::20` wherever Step 6 says **PC-B-AUTO**.
 :::
 
 ```state
@@ -159,7 +158,7 @@ From PC-B, ping PC-A by its known address.
 ping 2001:db8:acad:1::10
 ```
 
-From PC-A, ping **PC-B-AUTO**, substituting the exact address recorded in Step 5. Do not paste the label itself. Then inspect R1:
+From PC-A, ping the address you recorded as **PC-B-AUTO** in Step 5. Then inspect R1:
 
 ```ios R1
 R1# show ipv6 route
@@ -167,9 +166,9 @@ R1# show ipv6 neighbors
 ```
 
 :::expected
-Both endpoint pings should succeed. R1 has connected /64 routes for both LANs; it needs no static route for either one. Its neighbor table should contain bindings learned while delivering traffic, with the correct interface for each LAN. It need not list every IPv6 address each PC owns.
+Both pings succeed. `show ipv6 route` lists a connected (C) /64 and a local (L) /128 for each LAN, so R1 needs no static route. `show ipv6 neighbors` lists the addresses R1 resolved while delivering the pings, each against the interface for its LAN. It does not list every address each PC owns.
 
-An entry may be reachable or stale depending on timing. Stale alone is not a failure. An incomplete entry that persists while pings fail calls for checking the target address and local link.
+An entry shows REACH or STALE depending on timing, and both are normal. An INCMP entry that stays while pings fail means the target address is not answering on that link.
 :::
 
 ```state
@@ -178,9 +177,9 @@ An entry may be reachable or stale depending on timing. Stale alone is not a fai
 
 ## Step 7: Observe a new neighbor-resolution exchange
 
-Before generating traffic, calculate the target's last 24 bits and the solicited-node multicast destination. Keep that prediction next to the captured fields. The configuration below assigns the target; it does not supply your prediction.
+You will add a second address, `2001:db8:acad:1::99`, to R1 Gi0/0 and watch PC-A resolve it. Before you start, work out the solicited-node multicast address for that address from its last 24 bits and write it in the worksheet.
 
-First configure a temporary, previously unused **secondary** address on R1 Gi0/0. Do not remove the original.
+Add the address. An interface can hold several IPv6 addresses, so this command does not replace the first one.
 
 ```ios R1
 R1# configure terminal
@@ -189,12 +188,12 @@ R1(config-if)# ipv6 address 2001:db8:acad:1::99/64
 R1(config-if)# end
 ```
 
-Switch Packet Tracer to Simulation mode. Enable ICMPv6/ND events in the event filter if available. From PC-A, ping `2001:db8:acad:1::99` for the first time. Step through the events and inspect the packet details. Because the destination is new to PC-A, this avoids pretending that clearing only R1's neighbor cache also clears the PC's cache.
+Switch Packet Tracer to Simulation mode and set the event filter to show only ICMPv6 and NDP. From PC-A, ping `2001:db8:acad:1::99`. Step through the events and open each packet to read its source, destination and target. PC-A has never sent to this address, so it has no neighbor entry for it and must send a Neighbor Solicitation first.
 
 :::expected
-For normal address resolution, PC-A should send an NS for target `2001:db8:acad:1::99` to solicited-node group `ff02::1:ff00:99`. R1's NA supplies neighbor information; echo traffic can then complete. Earlier DAD or other discovery events may also appear. Identify each message by its actual source, destination and target rather than assuming the first envelope is the requested exchange.
+PC-A sends an NS with target `2001:db8:acad:1::99` to the solicited-node group `ff02::1:ff00:99`. R1 answers with an NA that carries its MAC address, and the echo request and reply follow. You may also see R1's periodic RAs or its own duplicate-address check for the new address. Tell the messages apart by their source, destination and target.
 
-If event detail is not modeled, record that limit and draw the expected sequence from the lesson. Return to Realtime mode before continuing.
+If your version does not show this detail, note that and sketch the sequence from the lesson instead. Return to Realtime mode before you continue.
 :::
 
 ```state
@@ -215,7 +214,7 @@ R1(config-if)# end
 Set PC-B to IPv6 Static: `2001:db8:acad:2::20`, prefix `64`, gateway `fe80::1`. Keep PC-A unchanged. On PC-B, ping the recorded **R1-LAN2** address and `2001:db8:acad:1::10`. From PC-A, ping `2001:db8:acad:2::20`.
 
 :::expected
-Local and cross-LAN pings should succeed before the fault. Record both PC configurations. Static host values make the next observation independent of whether an old SLAAC address or RA-learned route remains cached.
+All three pings succeed. PC-B is now static so that Step 9 tests forwarding alone. A SLAAC host depends on R1's Router Advertisements, which also stop in that step and would blur the result.
 :::
 
 ```state
@@ -224,9 +223,7 @@ Local and cross-LAN pings should succeed before the fault. Record both PC config
 
 ## Step 9: Disable forwarding and observe the difference
 
-Predict both ping outcomes in the worksheet before making the change. Leave the fault present long enough to collect both results; do not paste the recovery step into the same block.
-
-Only in this isolated lab, remove the forwarding command.
+Write your prediction for both pings in the worksheet first. Then turn IPv6 routing off and leave it off until you have both results. You would not do this on a production router.
 
 ```ios R1
 R1# configure terminal
@@ -238,9 +235,9 @@ R1# show ipv6 interface brief
 Repeat PC-A's ping to its local router address `2001:db8:acad:1::1`, then to remote PC-B `2001:db8:acad:2::20`. On PC-B, separately ping **R1-LAN2**.
 
 :::expected
-Each PC can still reach the router address on its own LAN, but PC-to-PC forwarding should fail. Interface addresses remain configured. This distinguishes “the router answers for itself” from “the router forwards between interfaces.”
+Each PC still reaches the router address on its own LAN, but the PC-to-PC ping fails. `show ipv6 interface brief` shows the same addresses as before. R1 now behaves as an IPv6 host: it answers for its own addresses and forwards nothing.
 
-The router also ceases acting as an advertising IPv6 router in this basic configuration. Do not assume existing automatic host addresses vanish immediately; their lifetimes and simulator handling are separate. The test deliberately uses static PC addresses.
+R1 has also stopped sending Router Advertisements, so a SLAAC host would lose its default gateway. The static PC addresses keep that second effect out of this test.
 :::
 
 ```state
@@ -263,7 +260,7 @@ R1# copy running-config startup-config
 ```
 
 :::expected
-Press Enter at the destination-filename prompt and wait for completion. Both LAN /64s are present and PC-to-PC communication works. Save the project as `19-ipv6-addressing-baseline.pkt`. Record R1-LAN2's exact value so that later work does not mistakenly use `2001:db8:acad:2::1` as though EUI-64 had created it.
+Press Enter at the destination-filename prompt and wait for the copy to finish. Both LAN /64s are in the routing table and the PCs reach each other again. Save the project as `19-ipv6-addressing-baseline.pkt`. Keep the exact R1-LAN2 address in your notes: Gi0/1 uses EUI-64, so `2001:db8:acad:2::1` does not exist on R1.
 :::
 
 ```state
@@ -272,23 +269,23 @@ Press Enter at the destination-filename prompt and wait for completion. Both LAN
 
 ## Troubleshooting
 
-- **A numeric local ping fails:** compare every group of the target and interface address, link state and /64 prefix. Do not diagnose DNS when the test uses a literal address.
-- **PC-B has only link-local while Automatic:** inspect R1's global forwarding command, Gi0/1 state and RA/prefix information. A DHCPv6 server is not required for SLAAC.
-- **The supposed `::1` gateway is absent:** read the complete configured router address. EUI-64 does not create `::1` merely because it is convenient.
-- **Neighbor resolution stays incomplete:** verify the target actually exists on the stated link. Clear or refresh caches only as a deliberate isolated-lab action; a correct route cannot resolve a nonexistent target.
-- **Local router pings work, cross-LAN fails:** confirm `ipv6 unicast-routing`, both PC gateways and the connected prefixes. Use the controlled Step 9 evidence to distinguish this fault from general routing problems.
-- **A source field or output label differs:** record what your simulator actually shows. Do not replace a correct calculated address merely to imitate illustrative output.
+- **A ping to an address on the same LAN fails:** compare the target with the configured address group by group, then check the link state and the /64 at both ends. DNS is not involved when you ping a numeric address.
+- **PC-B on Automatic has only a link-local address:** no Router Advertisement is reaching it. Check `ipv6 unicast-routing` on R1, that Gi0/1 is up/up and that it has its /64 address. SLAAC needs no DHCPv6 server.
+- **A PC cannot reach `2001:db8:acad:2::1`:** that address does not exist. Gi0/1 uses EUI-64, so read its real address from `show ipv6 interface brief`, or use `fe80::1` as the gateway.
+- **A neighbor entry stays INCMP:** the target is not answering on that link. Check that the address is configured, that the device is on the right LAN and that its interface is up.
+- **Pings to the local router address work but cross-LAN pings fail:** check `ipv6 unicast-routing`, both PC gateways and the two connected prefixes. Step 9 produced exactly this symptom.
+- **Your output differs from the examples:** MAC addresses and generated suffixes are specific to your devices. Trust your own calculation over the sample values.
 
 ## Challenge
 
-Use a copy of the restored baseline. First do the following calculations without commands:
+Work on a copy of the saved baseline. First do two calculations on paper:
 
 1. Derive the modified EUI-64 address for MAC `02:aa:bb:cc:dd:ee` under `2001:db8:44:7::/64`, then derive its solicited-node multicast group.
 2. Find the first and last /64 in `2001:db8:44:ab30::/60`. Number the /64s starting at **1** and allocate the **third** to a new LAN C.
 
-Now implement LAN C without copying the solution. Add one blank 2960 switch SW3 and PC-C. Connect R1 Gi0/2 to SW3 Fa0/24 and PC-C FastEthernet0 to SW3 Fa0/1 with straight-through copper. Keep default access VLAN 1; do not connect SW3 to another switch. On the allocated /64 use router identifier `::1`, host identifier `::10`, and router link-local `fe80::3`. Set PC-C manually with the matching /64 and its local link-local gateway. Keep both original LANs unchanged.
+Then build LAN C. Add a new 2960 switch, SW3, and PC-C. Connect R1 Gi0/2 to SW3 Fa0/24 and PC-C FastEthernet0 to SW3 Fa0/1 with straight-through copper. Leave SW3 in the default VLAN 1 and do not connect it to another switch. On the /64 you allocated, give the router the interface ID `::1`, the host `::10`, and the router the link-local address `fe80::3`. Configure PC-C statically with the matching address, prefix length 64 and the router's link-local address as its gateway. Leave both original LANs unchanged.
 
-Record the calculated prefix, complete router and host addresses, gateway, and commands before revealing the solution. Verify PC-C to its router and to PC-A `2001:db8:acad:1::10`; verify PC-A back to PC-C. Inspect the three connected /64s and the neighbor interfaces. Explain why no static route is needed and why repeating `fe80::1` on the original separate links was valid.
+Write down the prefix, the complete router and host addresses, the gateway and your commands before you open the solution. Test PC-C to its router and to PC-A at `2001:db8:acad:1::10`, then PC-A back to PC-C. Check the three connected /64s and the interface shown for each neighbor. Explain why no static route is needed and why `fe80::1` could be used on both original links.
 
 :::solution
 The first byte `02` becomes `00`, giving identifier `00aa:bbff:fecc:ddee`. The full address is `2001:db8:44:7:aa:bbff:fecc:ddee`; its solicited-node group is `ff02::1:ffcc:ddee`.
@@ -320,5 +317,5 @@ On PC-A:
 ping 2001:db8:44:ab32::10
 ```
 
-After discovery, each test should succeed. R1 directly connects all three prefixes and already has IPv6 forwarding enabled, so extra statics are unnecessary. Its repeated original link-local address is meaningful on two different links, not a same-link duplicate. Save this successful extension under a new project filename after saving R1's running configuration; retain the original two-LAN baseline separately. If a test fails, collect the exact addresses, gateway and interface state before changing them.
+Each test succeeds once Neighbor Discovery has resolved the addresses. R1 is directly connected to all three prefixes and has IPv6 routing enabled, so it needs no static routes. `fe80::1` could repeat on Gi0/0 and Gi0/1 because they are separate links, and link-local addresses only have to be unique on their own link. Save R1's running configuration, then save the project under a new filename so that the two-LAN baseline stays intact. If a test fails, write down the exact addresses, gateway and interface state before you change anything.
 :::

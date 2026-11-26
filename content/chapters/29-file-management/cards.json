@@ -1,162 +1,178 @@
 [
   {
-    "id": "file-management-c21",
-    "front": "What does copy running-config startup-config do?",
-    "back": "It writes the active configuration to the saved startup store. This is separate from creating an off-device backup.",
+    "id": "file-management-c30",
+    "front": "How do running-config and startup-config differ?",
+    "back": "running-config is the active configuration in use now. startup-config is the saved copy in NVRAM that is read at boot.",
     "tags": [
-      "command"
+      "compare"
     ]
   },
   {
-    "id": "file-management-c11",
-    "front": "What changes when a file is copied into startup-config?",
-    "back": "The saved startup file is replaced; the active configuration does not change immediately. A later configuration application/startup is separate, and saving running-config over it would overwrite it.",
+    "id": "file-management-c21",
+    "front": "What does `copy running-config startup-config` do?",
+    "back": "Saves the active configuration as the startup configuration, so it survives a reload. It does not create an off-device backup.",
     "tags": [
-      "concept"
+      "command"
     ]
   },
   {
     "id": "file-management-c10",
-    "front": "Copying a saved file into running-config: merge or replace?",
-    "back": "Merge. The file's commands are applied to current configuration. Extra settings absent from the file can remain; explicit commands, including `no`, can change or remove settings.",
+    "front": "What happens when you copy a file into running-config?",
+    "back": "Its commands are merged into the active configuration. Settings the file does not mention stay as they are.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "file-management-c22",
-    "front": "Does copying a software image activate it?",
-    "back": "No. Transfer, integrity/compatibility verification and activation are separate stages. Confirm active software with the platform's operational displays.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "file-management-c23",
-    "front": "What makes a backup filename useful?",
-    "back": "It identifies the device and a known checkpoint, with a date/change label when appropriate. Verify the destination file and restrict access to its sensitive contents.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "file-management-c01",
-    "front": "How does a TFTP transfer use UDP ports?",
-    "back": "Requests target server UDP 69. The server selects a transfer ID/port for the exchange with the client's selected port; retransmitted requests can still use 69.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "file-management-c02",
-    "front": "What protection does base TFTP provide for users and file contents?",
-    "back": "No built-in user login authentication or encryption. Server file permissions still matter, but they do not turn TFTP into a secure transport.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "file-management-c03",
-    "front": "Which FTP connection normally targets server TCP 21?",
-    "back": "The control connection for login and commands. Files and directory listings use a separate data connection.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "file-management-c04",
-    "front": "Active versus passive FTP data connections?",
-    "back": "Active: server initiates toward client. Passive: client initiates toward the server's advertised data endpoint. Both use a separate control connection; defaults depend on implementation.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "file-management-c05",
-    "front": "Common transport for SCP and SFTP?",
-    "back": "SSH, normally TCP 22. Both protect data in transit; permissions and protection of files at rest remain separate responsibilities.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "file-management-c06",
-    "front": "IOS FTP client credential commands?",
-    "back": "`ip ftp username` and `ip ftp password` supply client credentials. They do not create a server, and saved configuration may contain sensitive credential information.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "file-management-c07",
-    "front": "What does a Cisco SCP server require?",
-    "back": "Working SSH, suitable authentication and EXEC authorization, adequate user privilege and `ip scp server enable`. Successful login alone does not prove permission for a file operation.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "file-management-c08",
-    "front": "Can SFTP client support on a Cisco device prove that it accepts incoming SFTP requests?",
-    "back": "No. Client and server are separate roles. The cited Catalyst 9300 release supplies an SFTP client; consult the actual device’s server capabilities before choosing the transfer direction.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "file-management-c09",
-    "front": "Why might OpenSSH 9+ scp need `-O` for an IOS server?",
-    "back": "Its default transfer protocol is SFTP. Uppercase `-O` selects classic SCP for a verified SCP-only server; it does not repair passwords or file permissions.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "file-management-c24",
-    "front": "Does an SSH password authenticate the server’s identity?",
-    "back": "No. Verify the SSH host key through a trusted path. User authentication and server-identity verification are separate checks.",
+    "id": "file-management-c11",
+    "front": "What changes when you copy a file into startup-config?",
+    "back": "The saved startup file is replaced. The running configuration does not change until the device reloads.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "file-management-c12",
-    "front": "What does `configure replace` require?",
-    "back": "A complete compatible replacement configuration and a supporting platform. It applies differences, including removals; use validated recovery access and inspect errors/results.",
+    "front": "How does `configure replace` differ from copying a file into running-config?",
+    "back": "It makes the running configuration match the file exactly, removing anything the file lacks. A copy only merges.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "file-management-c14",
-    "front": "How should a staged image hash be verified?",
-    "back": "Compute a supported strong hash, such as `verify /sha512 flash:filename`, and compare with trusted Cisco metadata for that exact image. MD5 can detect transfer errors but is not modern proof of authenticity.",
+    "id": "file-management-c28",
+    "front": "What does `show file systems` display?",
+    "back": "Every storage prefix on the device, with its size and free space. An asterisk marks the default file system.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "file-management-c01",
+    "front": "Which transport and port does TFTP use?",
+    "back": "UDP. The first request goes to server port 69; the server then replies from a port it chooses for that transfer.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "file-management-c02",
+    "front": "What security does TFTP provide?",
+    "back": "None: no login and no encryption. Use it only on a trusted network.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "file-management-c26",
-    "front": "A file matches a hash from the same untrusted mirror. Is its publisher established?",
-    "back": "No. The match shows agreement with that value; compare with trusted metadata for the exact intended software and applicable authenticity checks.",
+    "id": "file-management-c31",
+    "front": "What can FTP do that TFTP cannot?",
+    "back": "Authenticate users, list directories and manage files, over reliable TCP. TFTP only reads or writes a named file.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "file-management-c03",
+    "front": "Which port carries the FTP control connection, and what travels on it?",
+    "back": "TCP 21. It carries the login and commands; files and listings use a separate data connection.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "file-management-c04",
+    "front": "How do active and passive FTP differ?",
+    "back": "Active: the server opens the data connection to the client, from port 20. Passive: the client opens it to a port the server announces.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "file-management-c06",
+    "front": "Which IOS commands store the credentials for the router's FTP client?",
+    "back": "`ip ftp username NAME` and `ip ftp password PASSWORD` in global configuration.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "file-management-c05",
+    "front": "Which protocol and port carry SCP and SFTP?",
+    "back": "SSH, on TCP port 22. The login and the file contents are both encrypted.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "file-management-c27",
+    "front": "What does SCP protect, and what does it leave unprotected?",
+    "back": "It encrypts the file in transit. The copy stored on the server is not encrypted and needs its own access control.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "file-management-c07",
+    "front": "What does an IOS device need before it can act as an SCP server?",
+    "back": "Working SSH, `ip scp server enable`, and a user who is authenticated and authorized at privilege level 15.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "file-management-c08",
+    "front": "Which SFTP role does IOS XE on a Catalyst 9300 support?",
+    "back": "Client only. The switch can fetch files with `copy sftp:`, but it cannot accept incoming SFTP sessions.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "file-management-c09",
+    "front": "Why does a modern OpenSSH client need `scp -O` to reach an IOS SCP server?",
+    "back": "Since OpenSSH 9.0, scp uses the SFTP protocol by default, which the IOS SCP server rejects. `-O` forces classic SCP.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "file-management-c24",
+    "front": "How does an SSH client confirm that it has reached the right server?",
+    "back": "It compares the server's host-key fingerprint with one obtained by a trusted route, such as the console.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "file-management-c25",
-    "front": "SFTP login succeeds, then “No such file” names the requested path. What should you check?",
-    "back": "Compare the exact server-side path, filename case and account access with a trusted directory listing before changing the network.",
+    "front": "An SFTP login succeeds, then the copy fails with “No such file”. What do you check?",
+    "back": "The path and filename on the server, including letter case. The network and the credentials are already proven.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "file-management-c27",
-    "front": "Does an SCP transfer encrypt the backup file stored at its destination?",
-    "back": "SSH protects the bytes in transit. Restrict access and apply appropriate storage protection separately; configuration backups may contain secrets.",
+    "id": "file-management-c22",
+    "front": "After you copy a new IOS image to flash, which image is the device running?",
+    "back": "Still the old one. Copying only stores the file; the device runs it after it is selected for boot and the device reloads.",
     "tags": [
       "concept"
+    ]
+  },
+  {
+    "id": "file-management-c14",
+    "front": "How do you check that an image copied to flash is intact?",
+    "back": "Run `verify /sha512 flash:FILE` (or `/md5`) and compare the result with the hash Cisco publishes for that image.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "file-management-c29",
+    "front": "What does configuration register 0x2142 do, compared with 0x2102?",
+    "back": "0x2142 makes a router ignore startup-config at boot, as used in password recovery. 0x2102 is the normal value.",
+    "tags": [
+      "number"
     ]
   }
 ]

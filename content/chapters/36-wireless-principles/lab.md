@@ -6,9 +6,9 @@ minutes: 55
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build a fresh, isolated project. The supplied WLAN setup gives you a working application path; the assessed work is interpreting identity, channel use and comparable RF evidence. Steps 7–8 are an optional wrong-passphrase demonstration, and the second cell in Step 10 and real-computer queries in Step 12 are optional. Complete the required RF worksheet and fresh planning challenge even if your simulator cannot report physical measurements.
+You build one small WLAN in a new Packet Tracer project: a wireless router, a laptop and a wired server. You then use it to see the lesson's terms in a working network: the SSID, the channel, the security setting, and the difference between joining a WLAN and reaching a service. Packet Tracer does not simulate signal levels, noise or interference, so Step 11 is a paper worksheet that gives you readings to work with.
 
-Keep a table with **question/prediction, source of evidence, actual observation, conclusion and remaining uncertainty**. Simulator graphics are not RF measurements. Supplied paper readings are clearly separate from the values your tool actually reports.
+Steps 7–8 (a wrong passphrase), the second AP in Step 10 and the Windows commands in Step 12 are optional. The worksheet in Step 11 and the challenge are not. At each step, write down what you expect before you look, then what you saw.
 
 ## Topology
 
@@ -25,16 +25,16 @@ Keep a table with **question/prediction, source of evidence, actual observation,
 | WLAN | 2.4 GHz, 20 MHz, channel 1, WPA2-Personal/AES |
 | Fictional lab passphrase | Cedar-Lab-2026! |
 
-Packet Tracer controls vary by version. Check the actual device dialog. Do not substitute WEP or an open network if the selected model lacks the required WPA2/AES option. Use a compatible model/activity or complete the affected fields as a worksheet and record the limitation. No simulator run was executed during authoring.
+The WRT300N is a home wireless router: a router, a small switch, an AP and a DHCP server in one box. Its menu names vary a little between Packet Tracer versions, so follow your own device's dialog where it differs, and do not fall back to WEP or an open network. This lab was written from the device's interface and was not run in the simulator during authoring.
 
 ## Step 1 — Place, power and cable the equipment
 
-Place WRT300N, Laptop-PT and Server-PT. If the laptop lacks a wireless interface, power it off in Physical, remove its Ethernet module, insert the compatible WPC300N module when offered, and power it on. If that module name differs, use the device's compatible wireless option rather than forcing an incompatible module.
+Place a WRT300N, a Laptop-PT and a Server-PT. A new Laptop-PT has an Ethernet module and no radio. On its Physical tab, power it off, drag the Ethernet module out, insert the WPC300N wireless module, and power it on again. If your version names the module differently, use its 2.4 GHz wireless module.
 
-Cable Server-PT Fa0 to WRT Ethernet 1 with copper straight-through. Leave the WRT Internet/WAN port disconnected. Set the server's static address, mask and gateway from the table. Under Services → HTTP, turn HTTP On. This isolated server is the application destination; no DNS or Internet service is required.
+Cable Server-PT Fa0 to WRT Ethernet 1 with a copper straight-through cable. Leave the WRT Internet port unconnected. Give the server the static address, mask and gateway from the table, and under Services → HTTP check that HTTP is On. The server is the service the laptop will try to reach.
 
 :::expected
-The laptop exposes a wireless interface; the server's Ethernet link becomes active. Record actual interface labels. A default wireless association, if one appears, is not the configured secure baseline.
+The laptop now has a wireless interface, and the server's Ethernet link comes up. The laptop may join the router's default open WLAN on its own. Ignore that connection; you replace it with a secured WLAN in the next steps.
 :::
 
 ```state
@@ -43,7 +43,7 @@ The laptop exposes a wireless interface; the server's Ethernet link becomes acti
 
 ## Step 2 — Configure the LAN and DHCP
 
-Open WRT300N → GUI → Setup → Basic Setup. Set Router IP to 192.168.80.1 and mask to 255.255.255.0. Enable the LAN DHCP service, set the starting host to 100 and maximum users to 50, then Save Settings. A field that accepts a full address uses 192.168.80.100.
+Open WRT300N → GUI → Setup → Basic Setup. Set the Router IP to 192.168.80.1 and the mask to 255.255.255.0. Leave the DHCP server enabled, with a start address ending in .100 and a maximum of 50 users (the field may show only the last octet). Click Save Settings at the bottom of the page.
 
 From the server's command prompt:
 
@@ -52,7 +52,7 @@ ping 192.168.80.1
 ```
 
 :::expected
-The saved page shows the intended LAN subnet and DHCP settings. After link/ARP convergence, the server can reach .1. The server's .20 address is outside .100–.149, so it cannot collide with this pool. This is a local LAN test; Internet service is not part of the topology.
+The saved page shows the 192.168.80.0/24 LAN and a DHCP range of .100–.149. The server reaches .1; the first ping may time out while ARP resolves. The server's .20 address is outside the DHCP range, so the router will not lease it to a client.
 :::
 
 ```state
@@ -61,10 +61,12 @@ The saved page shows the intended LAN subnet and DHCP settings. After link/ARP c
 
 ## Step 3 — Set the WLAN name and channel
 
-Under Wireless → Basic Wireless Settings, set SSID to CCNA-LAB, select a compatible mixed radio mode, choose Standard/20 MHz when exposed, channel 1 and SSID Broadcast Enabled. Save Settings. Record which width options your model actually exposes.
+Under Wireless → Basic Wireless Settings, set the Network Name (SSID) to CCNA-LAB and leave Network Mode on Mixed. Set Radio Band to Standard - 20MHz Channel if your version offers it, set Standard Channel to 1 - 2.412GHz, and leave SSID Broadcast Enabled. Save Settings.
+
+The channel list shows each channel with its center frequency. Compare channels 1, 6 and 11 with the centers given in the lesson.
 
 :::expected
-A fresh client scan should list CCNA-LAB when the radio is enabled and the client is within simulated range. The configured channel is 1. If the model does not report width or signal numerically, do not invent those measurements.
+The router now advertises CCNA-LAB on channel 1. If the laptop had joined the default WLAN, that connection drops, because the SSID changed. In the channel list each center is 5 MHz above the one before, and channels 1, 6 and 11 are at 2.412, 2.437 and 2.462 GHz.
 :::
 
 ```state
@@ -73,10 +75,10 @@ A fresh client scan should list CCNA-LAB when the radio is enabled and the clien
 
 ## Step 4 — Apply WPA2-Personal security
 
-Under Wireless → Wireless Security, select WPA2 Personal, AES, and Cedar-Lab-2026!, then save. Leave unrelated timing controls at their existing defaults.
+Under Wireless → Wireless Security, set Security Mode to WPA2 Personal, Encryption to AES and the Passphrase to Cedar-Lab-2026!, then Save Settings. Leave Key Renewal at its default. This is the WPA2-PSK with AES-CCMP combination from the lesson's security table.
 
 :::expected
-The saved security page shows WPA2-Personal and AES. This exercise does not require WPA3 support on the WRT model and makes no claim that a different Packet Tracer controller provides it. An existing client profile may need updating before data works.
+The saved page shows WPA2 Personal with AES. The WRT300N has no WPA3 option, and the lab does not need one. The laptop cannot join until it is given the same passphrase.
 :::
 
 ```state
@@ -85,9 +87,9 @@ The saved security page shows WPA2-Personal and AES. This exercise does not requ
 
 ## Step 5 — Join the laptop and request an address
 
-On the laptop, open Desktop → PC Wireless. Refresh the network list and select CCNA-LAB; if the version uses profile creation, create a profile with that exact name, WPA2-Personal/AES and the lab passphrase. Connect. Set Desktop → IP Configuration to DHCP.
+Before you connect, list in order what has to succeed for the laptop to load a web page from the server: finding the SSID, the WPA2 key exchange, a DHCP lease, then the HTTP request (Fig 36.2 in the lesson).
 
-Before connecting, predict whether the SSID name, security result, IP lease and HTTP result would establish the same thing. Then inspect the status and run:
+On the laptop, open Desktop → PC Wireless → Connect and click Refresh. Select CCNA-LAB, click Connect, and enter the passphrase as the pre-shared key. Then set Desktop → IP Configuration to DHCP and run these from the Command Prompt:
 
 ```text
 ipconfig /all
@@ -95,10 +97,10 @@ ping 192.168.80.1
 ping 192.168.80.20
 ```
 
-Open the laptop's Web Browser and request `http://192.168.80.20`. Record a fresh returned page as well as the ICMP results.
+Open the laptop's Web Browser and request `http://192.168.80.20`.
 
 :::expected
-The client reports the intended WLAN/security and an address somewhere in .100–.149, mask /24 and gateway .1. Do not assume .100 specifically. Both local targets respond after any initial ARP delay, and the configured HTTP page loads. If ipconfig /all is absent, use the IP Configuration GUI. The dotted line alone is insufficient evidence: record the address and successful data tests too.
+PC Wireless shows CCNA-LAB with WPA2 security, and the Link Information tab shows the connection. The laptop has an address in .100–.149 with mask 255.255.255.0 and gateway 192.168.80.1. Both pings succeed after any first ARP timeout, and the server's page loads. The wireless link drawn in the workspace shows only that the laptop joined the WLAN; the lease, the pings and the page are what show the network works.
 :::
 
 ```state
@@ -107,10 +109,10 @@ The client reports the intended WLAN/security and an address somewhere in .100�
 
 ## Step 6 — Save the verified starting point
 
-Save as wireless-principles-baseline.pkt, then Save As wireless-principles-faults.pkt for the experiments. Record the laptop's actual lease, SSID, security and observed status.
+Save the project as wireless-principles-baseline.pkt, then use Save As to create wireless-principles-faults.pkt and continue in that copy. Record the laptop's address, the SSID, the channel and the security mode.
 
 :::expected
-Two separate files exist, and the recorded baseline includes successful pings and a fresh HTTP page. Continue only when the initial secure WLAN works; otherwise troubleshoot that state before adding a fault.
+You have two files and a record of a working WLAN. If the baseline does not work yet, fix it with the Troubleshooting section before you go on.
 :::
 
 ```state
@@ -119,12 +121,12 @@ Two separate files exist, and the recorded baseline includes successful pings an
 
 ## Step 7 — Optional security refresher: observe a wrong client key
 
-This bounded refresher supports the radio/security distinction; chapter 38 owns the fuller WLAN-security workflow. Predict which old fields can remain visible despite failed new key establishment. Change only the laptop's saved passphrase to Cedar-Lab-2025!. Disconnect/reconnect using its wireless utility so a new security exchange is required. Keep the router and DHCP settings unchanged.
+This optional step shows the join order from the lesson: a client can see an SSID and still fail the key exchange. Chapter 38 covers WLAN security in full. Predict which details the laptop will still show after the key exchange fails.
 
-Try a fresh HTTP request to `http://192.168.80.20`, try its ping, and inspect client security status. Record this state before restoring anything.
+In PC Wireless, reconnect to CCNA-LAB and enter Cedar-Lab-2025! as the key. Change nothing on the router. Then ping 192.168.80.20, request `http://192.168.80.20` again, and note what the laptop shows.
 
 :::expected
-The wrong shared secret prevents successful WPA2 key establishment and normal protected data access. The SSID may remain visible, and the laptop may retain its previous IP lease. A stale address does not prove security succeeded; an association indicator does not necessarily mean the four-way handshake completed.
+The ping and the page both fail, because the wrong passphrase stops the WPA2 key exchange and no data can pass. The SSID is still listed, and the laptop may still show its old IP address. A visible SSID and a remembered address do not mean the laptop is on the network.
 :::
 
 ```state
@@ -133,10 +135,10 @@ The wrong shared secret prevents successful WPA2 key establishment and normal pr
 
 ## Step 8 — Optional security refresher: restore and verify
 
-Restore Cedar-Lab-2026! in the laptop profile, reconnect, and request DHCP again if needed. Repeat both baseline pings and a fresh request for the same HTTP page.
+Reconnect to CCNA-LAB with the correct key, Cedar-Lab-2026!. If the laptop has no address, set IP Configuration to Static and back to DHCP to request one. Repeat both pings and the HTTP request.
 
 :::expected
-The known settings restore access. Record recovery separately from the fault observation. If failure remains, compare SSID, mode and AES selection before changing addressing or channels.
+The pings and the page work again. If they do not, compare the SSID, the security mode, the encryption and the passphrase on both sides before you change anything else.
 :::
 
 ```state
@@ -145,10 +147,10 @@ The known settings restore access. Record recovery separately from the fault obs
 
 ## Step 9 — Change the channel without changing the WLAN identity
 
-First predict whether changing a channel must also change the SSID, passphrase or IP subnet. On WRT300N, change only the standard channel from 1 to 6 and save. Refresh/reconnect the client when necessary. Record the SSID, reported channel and IP address, then ping the server and request its HTTP page again.
+Predict first: if the router moves to another channel, do the SSID, the passphrase or the laptop's IP address have to change? On the WRT300N, change only Standard Channel from 1 to 6 - 2.437GHz and save. Refresh or reconnect in PC Wireless if the laptop does not rejoin by itself. Record the SSID, the channel and the laptop's address, then ping the server and reload its page.
 
 :::expected
-The WLAN name and passphrase remain the same while the channel changes. A brief reconnection may occur. Successful recovery demonstrates configuration compatibility; it does not measure improved throughput or reduced interference. Keep this channel-6 observation separate from the restoration in Step 10.
+The laptop rejoins CCNA-LAB on channel 6 with the same passphrase and the same subnet, and the ping and the page work. The channel is a radio setting of the cell; the SSID, the security and the IP addressing do not depend on it. Clients find the new channel by scanning, so you never set a channel on a client. Packet Tracer cannot show whether channel 6 is less busy than channel 1.
 :::
 
 ```state
@@ -157,14 +159,14 @@ The WLAN name and passphrase remain the same while the channel changes. A brief 
 
 ## Step 10 — Restore the channel and optionally compare a second cell
 
-Restore WRT channel 1, save, reconnect if needed, and repeat the same HTTP request. Record the restored setting and service result before the optional extension.
+Set the WRT back to channel 1, save, and reload the server's page from the laptop.
 
-Optional: add AccessPoint-PT and cable its wired Port 0 to WRT Ethernet 2 with copper straight-through. In its radio/Port 1 settings, use CCNA-LAB, channel 6, WPA2-PSK, AES and the same passphrase. If this model lacks that security combination, leave it disconnected and use the lesson's ESS diagram as the worksheet instead.
+Optional: build a second cell to make an ESS. Add an AccessPoint-PT and cable its Port 0 to WRT Ethernet 2 with a copper straight-through cable. Under Config → Port 1, set the SSID to CCNA-LAB, the channel to 6, the authentication to WPA2-PSK with the same passphrase, and the encryption to AES. The two cells now share an SSID, use nonoverlapping channels and connect to the same LAN, as in Fig 36.1.
 
-Use available client status/scan information to distinguish the cells. You may move the laptop in the Physical workspace to encourage a change, but do not assume the simulator performs a particular roaming algorithm.
+The new AP has its own BSSID. Compare what PC Wireless shows for each cell. You can move the laptop closer to the new AP in the workspace to make it change cells, but Packet Tracer does not model real roaming decisions.
 
 :::expected
-The required restoration returns the original channel and working HTTP service. In the optional extension, both cells bridge toward the same LAN/DHCP server. If the client changes serving BSSID, record that evidence and retest .20 by ping and HTTP. Its lease may remain valid; do not claim guaranteed seamless roaming from an unchanged SSID. A real AP can have a management IP while still forwarding as a Layer 2 bridge.
+The WRT is back on channel 1 and the page loads. In the optional part, both cells advertise CCNA-LAB and bridge to the same LAN and DHCP server. If the laptop moves to the new AP, it keeps its address and can still reach .20, because both BSSs lead to the same subnet.
 :::
 
 ```state
@@ -173,20 +175,20 @@ The required restoration returns the original channel and working HTTP service. 
 
 ## Step 11 — Compare RF evidence before deciding on a change
 
-Complete the following paper worksheet before opening its answer. These values are supplied exercise data, not measurements of the Packet Tracer project.
+Work through these five questions on paper before you open the answers. The readings are supplied for the exercise; they are not measurements of your Packet Tracer project.
 
-1. Three mutually neighboring APs must use ordinary North American 2.4 GHz 20 MHz channels. Propose a nonoverlapping plan and explain why 1/2/3 differs from your choice. They may share an SSID; does that change the RF overlap?
-2. At one receiver, signal is −68 dBm and noise −94 dBm. At another comparable location, signal is −58 dBm and noise −64 dBm. Calculate both SNRs and distinguish stronger signal from better signal-to-noise ratio.
-3. A 5 GHz AP occupies bonded component channels 36/40/44/48 at 80 MHz. A neighbor uses 20 MHz channel 44. Are the occupied ranges independent? Would different SSIDs make them so?
-4. A client has a strong received signal but slow transfers at lunchtime. Both client count and nearby appliance use rise then; no spectrum data or controlled comparison is available. What facts would you gather before identifying a cause?
-5. A receiver reports 600 Mb/s PHY rate and has 24 clients sharing its channel. What application throughput can you establish from those two fields alone?
+1. Three APs that can all hear one another use 2.4 GHz with 20 MHz channels in North America. Which channels do you give them, and why not 1, 2 and 3? Does it matter whether they share an SSID?
+2. At one location a client measures a signal of −68 dBm and noise of −94 dBm. At a second location it measures −58 dBm and −64 dBm. Calculate both SNRs. Which location has the stronger signal, and which has the better link?
+3. A 5 GHz AP uses an 80 MHz channel made of channels 36, 40, 44 and 48. A neighboring AP uses 20 MHz channel 44. Do they overlap? Would giving them different SSIDs change that?
+4. A client has a strong signal but slow transfers at lunchtime. More clients are active then, and a microwave oven nearby is in use. What would you measure before naming a cause?
+5. A client reports a 600 Mb/s PHY rate, and 24 clients share its channel. What file-transfer speed can you state from those two facts?
 
 :::solution Check the RF reasoning
-1. Use channels 1, 6 and 11 in the stated plan. 1/2/3 occupy overlapping spectrum. SSID equality or difference does not create independent channels.
-2. The SNRs are `−68 − (−94) = 26 dB` and `−58 − (−64) = 6 dB`. The second signal is stronger but has a poorer ratio. Neither ratio alone proves a particular application throughput.
-3. The 80 MHz channel includes the neighbor's occupied component. Different primary-channel numbers or SSIDs would not remove that overlap. Choose any change from allowed spectrum and a complete survey, then compare results.
-4. Record the affected receiver/band/channel/width, signal/noise where available, utilization and retries, and the same application's results. Correlate authorized controlled changes to distinguish added Wi-Fi load from non-Wi-Fi interference. Timing and proximity alone do not prove the appliance caused it.
-5. No exact application throughput. PHY rate is not a per-client reservation or a fixed fraction of useful throughput. Measure the intended service and consider shared airtime, overhead and the rest of the path.
+1. Channels 1, 6 and 11. Channels 1, 2 and 3 have centers only 5 MHz apart, so their 20 MHz transmissions overlap and interfere. The SSID makes no difference: it is a name, not a frequency.
+2. `−68 − (−94) = 26 dB` and `−58 − (−64) = 6 dB`. The second location has the stronger signal (−58 dBm) but much the worse SNR, so the first location has the better link.
+3. Yes, they overlap: channel 44 is one of the four channels inside the 80 MHz channel. Different SSIDs change nothing.
+4. Record the band, channel and width, signal and noise, channel utilization and the retry rate, at lunchtime and at a quiet time. High utilization points to Wi-Fi load; a raised noise floor on 2.4 GHz points to a non-Wi-Fi source. Switching the oven on and off while you watch the retry rate confirms or clears it.
+5. None. The PHY rate is the speed of the radio link, not a share reserved for this client. Throughput depends on overhead, retries and how the 24 clients share the airtime, so it has to be measured.
 :::
 
 ```state
@@ -195,7 +197,7 @@ Complete the following paper worksheet before opening its answer. These values a
 
 ## Step 12 — Inspect a real connection without changing it
 
-Optional, on an authorized Windows computer already connected to Wi-Fi, run the following read-only commands. They are Windows commands, not a guarantee of Packet Tracer PC support.
+Optional: on a Windows computer of your own that is connected to Wi-Fi, run these three commands from the lesson. They only display information. They are Windows commands and do not work in Packet Tracer.
 
 ```text
 netsh wlan show interfaces
@@ -203,19 +205,19 @@ netsh wlan show networks mode=bssid
 netsh wlan show drivers
 ```
 
-Windows may require location permission or an elevated context for particular wireless details. Use the permitted OS settings display if a field is unavailable; do not change networks or expose saved passwords. macOS/Linux inspection is covered in chapter 30.
+Recent Windows versions hide some wireless details until location access is allowed for the terminal. Chapter 30 gives the equivalent commands for macOS and Linux.
 
 :::expected
-Record only needed fields: SSID/BSSID, band/channel, authentication/cipher and reported rate. A scan is a partial observation, not a complete site survey. Finish by saving the restored simulator file and noting every unsupported step.
+Find the SSID and BSSID, the radio type, the band and channel, the authentication and cipher, and the receive rate, and match each to its section of the lesson. In the scan, count how many BSSIDs share your SSID and which channels your neighbors use. Finish by saving the Packet Tracer file.
 :::
 
 ### Evidence to keep
 
-- The actual SSID/security, DHCP lease, channel and successful baseline HTTP page; unavailable fields marked as such.
-- A prediction and separate observation for the channel change, followed by the restored channel and original HTTP service.
-- Optional wrong-key observation and separate recovery, if performed; an old lease is not a fresh security success.
-- RF worksheet calculations, channel-range comparisons and a justified next test for ambiguous interference.
-- Optional second-cell or Windows observations labeled with their source; no claimed site survey from simulator graphics.
+- The baseline: SSID, security mode, channel, the laptop's leased address and the loaded page.
+- Your prediction and result for the channel change, and the restored channel.
+- If you did Steps 7–8: what the laptop still showed with the wrong key, and the recovery.
+- Your worksheet answers for Step 11.
+- If you did them: the second cell's details and the fields from your own Windows computer.
 
 ```state
 {"status":"Real client · read only","chips":[{"node":"W","text":"DHCP .100–.149"},{"node":"W","text":"CCNA-LAB · channel 1"},{"node":"W","text":"WPA2-Personal · AES"},{"node":"L","text":"Lease in .100–.149","tone":"ok"},{"node":"S","text":"HTTP On","tone":"ok"}],"rows":[["Record","SSID/BSSID · band/channel"],["Also","Authentication/cipher · rate"],["A scan","Partial · not a site survey","dim"],["Simulator file","Restored and saved","ok"]]}
@@ -223,28 +225,28 @@ Record only needed fields: SSID/BSSID, band/channel, authentication/cipher and r
 
 ## Troubleshooting
 
-- SSID not listed: check model/radio support, power, SSID broadcast, scan refresh and simulated range. The absence of a scan entry does not identify one unique cause.
-- SSID visible but data fails: compare security mode, cipher and exact passphrase; then inspect IP configuration and DHCP. Existing leases can outlast a failed reconnection.
-- .1 reachable but .20 fails: inspect the server address, link, port and host settings. A gateway mistake on a same-subnet server is not automatically the cause of a same-subnet ping failure.
-- Optional second AP fails: verify its LAN cable and matching security. It must not introduce a second conflicting DHCP service.
+- CCNA-LAB is not listed: check that the laptop has the wireless module and is powered on, that SSID Broadcast is enabled on the router, and click Refresh in PC Wireless.
+- CCNA-LAB is listed but nothing works: compare the security mode, the encryption and the exact passphrase on both sides, then check that IP Configuration is set to DHCP. An old address can remain after a failed reconnection.
+- The laptop reaches .1 but not .20: check the server's address and mask, its cable to Ethernet 1 and that HTTP is On. The server's gateway setting does not matter for a ping inside one subnet.
+- The optional second AP does not work: check its cable to Ethernet 2 and that its SSID, security and passphrase match the router's exactly.
 
 ## Challenge
 
-Prepare a fresh **paper** channel and evidence plan for a four-cell training site. The site permits the ordinary North American 2.4 GHz 20 MHz plan. AP-A is fixed on channel 1, and AP-B is fixed on channel 6. All four cells use the same approved SSID/security and bridge to the same client LAN.
+Plan channels on paper for a training site with four APs. The site uses 2.4 GHz with 20 MHz channels in North America. AP-A is fixed on channel 1 and AP-B on channel 6. All four APs use the same SSID and security and connect to the same client LAN.
 
-The supplied survey establishes these pairs as strongly mutually audible: **A–B, A–C, B–C, B–D and C–D**. A and D are sufficiently separated for the scenario's approved co-channel reuse. No other relevant transmitter appears in this bounded survey. This is explicit survey evidence, not an inference from the drawing or row number.
+A site survey shows which pairs of APs hear each other strongly: **A–B, A–C, B–C, B–D and C–D**. AP-A and AP-D barely hear each other. No other transmitters were found.
 
-1. Choose channels for C and D while preserving A and B. Check every listed neighboring pair and explain which channel is reused.
-2. A test client measures −64 dBm signal and −90 dBm noise at one location. At a busier location its readings are −59 dBm and −66 dBm. Calculate each SNR; say which reading has the stronger desired signal and which has the better ratio.
-3. After a client changes from BSSID A to BSSID C, it reports the same SSID, completed approved security and its original valid lease. What additional checks establish that the intended application still works? Does the unchanged SSID alone prove seamless roaming?
-4. Define an acceptance record for an authorized channel change. Include the same locations/test conditions, both radio directions where measurable, retries/utilization, and a fresh application action. State what remains a prediction when no physical RF equipment is available.
+1. Choose channels for AP-C and AP-D without changing AP-A or AP-B. Check every pair in the survey list, and say which channel is reused.
+2. A test client measures a signal of −64 dBm and noise of −90 dBm at one location. At a busier location it measures −59 dBm and −66 dBm. Calculate each SNR. Which location has the stronger signal, and which has the better SNR?
+3. A client roams from AP-A's BSSID to AP-C's BSSID. It shows the same SSID and keeps its IP address. What else do you check to confirm that it still works? Does the unchanged SSID prove it?
+4. List what you would record before and after a channel change to decide whether the change helped.
 
 :::solution Check the independent plan
-C uses channel 11: it hears both fixed A/1 and B/6. D uses channel 1: it hears B/6 and C/11, and the supplied survey permits reuse with A. Every strongly audible pair uses different nonoverlapping channels. This particular reuse decision depends on the stated survey; it is not a universal “fourth AP uses 1” rule.
+1. AP-C uses channel 11, because it hears both AP-A on 1 and AP-B on 6. AP-D uses channel 1: it hears AP-B on 6 and AP-C on 11, and the survey shows it barely hears AP-A, so those two can share a channel. Every pair in the list is now on different nonoverlapping channels. Channel 1 is the reused channel, and that choice comes from the survey, not from a rule that a fourth AP always takes channel 1.
 
-The first SNR is `−64 − (−90) = 26 dB`. The busier location gives `−59 − (−66) = 7 dB`. The latter desired signal is stronger, but the former has the better ratio. Signal strength alone would select the wrong conclusion about relative noise conditions.
+2. The first SNR is `−64 − (−90) = 26 dB` and the second is `−59 − (−66) = 7 dB`. The busier location has the stronger signal but the worse SNR; the first location has the better link.
 
-Confirm the intended BSSID-to-AP/forwarding mapping, valid address/mask/gateway, gateway reachability where relevant, and the actual application's fresh result. Record interruption or session behavior if that is a requirement. Identical SSIDs alone do not guarantee identical VLANs, valid addressing or preserved sessions; this scenario explicitly supplies the common LAN rather than asking you to assume it.
+3. Check that the address, mask and gateway are still right for the network behind AP-C, ping the gateway, and use the application again. The unchanged SSID proves nothing by itself: two APs can advertise one SSID and place clients in different VLANs. Here it works because the scenario puts all four APs on the same client LAN.
 
-Keep before/after channel/width, client location, received/noise measurements where available, both-direction link evidence, retries/utilization and the same application transaction. Apply one approved change, observe it, then restore the known baseline separately if it fails acceptance. In Packet Tracer or paper-only work, channel settings and model predictions can be recorded, but physical coverage, interference and measured capacity remain unverified.
+4. Record the channel and width, the client's location, signal and noise, channel utilization, the retry rate and one repeatable application test, such as timing the same file transfer. Take the same measurements from the same places before and after, and change one AP at a time. On paper or in Packet Tracer you can plan the channels, but coverage and interference stay unmeasured until you test with real radios.
 :::

@@ -316,7 +316,7 @@
     "answer": [
       0
     ],
-    "explanation": "The record is consistent with IPv4 link-local fallback rather than a normal DHCP lease for the intended LAN. Check connectivity, VLAN membership, and DHCP availability; this snapshot alone does not identify the exact failure.",
+    "explanation": "The record is consistent with IPv4 link-local fallback rather than a normal DHCP lease for the intended LAN. Check the PC's link and whether a DHCP server is reachable.",
     "whyWrong": {
       "1": "169.254.0.0/16 is link-local, not RFC 1918 space.",
       "2": "Provider shared space is 100.64.0.0/10, not this range.",

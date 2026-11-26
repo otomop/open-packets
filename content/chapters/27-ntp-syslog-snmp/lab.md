@@ -6,9 +6,9 @@ minutes: 80
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Use a new isolated Packet Tracer project. R1 provides an explicitly configured local lab clock; R2 synchronizes to it and sends events to LOG1. PC1 reads R2's management information. This avoids assuming a particular Server-PT NTP stratum or switch NTP implementation. These are authored procedures and expected observations, not a recorded simulator run. If your image lacks a required operation, use a supporting IOS/CML lab with equivalent interfaces, or complete the accompanying evidence worksheet and record that it was a worksheet.
+Use a new Packet Tracer project. R1 acts as the lab's time source, R2 synchronizes to it and sends its log messages to LOG1, and PC1 reads R2's name and location over SNMP. The expected results were written from IOS behaviour and have not been run end to end in Packet Tracer for this revision. Where your version lacks a command, use the worksheet evidence supplied in that step.
 
-Work in three checkpoints: time-source selection and recovery (Steps 1–5), event content and destination thresholds (6–9), and read-only management data (10–13). Submit one short evidence table for each. NTP configuration is a v1.1 outcome; syslog interpretation and SNMP operation serve both tracks. SNMP agent setup is supplied preparation, not a requirement to memorize a production monitoring deployment.
+The lab has three parts: NTP (Steps 1–5), syslog (Steps 6–9) and SNMP (Steps 10–13). NTP configuration is a v1.1 objective; reading syslog and explaining SNMP serve both exam versions. The SNMP commands are given to you and you do not need to memorise them.
 
 ## Topology
 
@@ -26,7 +26,7 @@ All five devices share VLAN 10 and `10.60.0.0/24`. Connect each listed Ethernet 
 | LOG1 | FastEthernet0 `10.60.0.50/24` | Gateway `.1`; syslog service |
 | PC1 | FastEthernet0 `10.60.0.60/24` | Gateway `.1`; MIB Browser |
 
-No router default route or switch management SVI is needed for these same-subnet tests. The gateway fields prepare the endpoints consistently but do not explain successful same-subnet communication.
+Everything is on one subnet, so no routing is needed.
 
 ## Step 1: Establish the management LAN
 
@@ -73,7 +73,7 @@ R2# ping 10.60.0.50
 ```
 
 :::expected
-After the links settle, R2 reaches R1 and LOG1. PC1 can ping `10.60.0.2` and `.50`. Gi0/0 and Loopback99 on R2 are up/up. Resolve persistent failures using addresses, VLAN membership and interface state before testing application protocols. Record `show clock detail` and `show ntp status` on both routers as the initial state without assuming a particular default date.
+After the links settle, R2 reaches R1 and LOG1. PC1 can ping `10.60.0.2` and `.50`. Gi0/0 and Loopback99 on R2 are up/up. Fix any ping failure before going on. Run `show clock detail` and `show ntp status` on both routers and note the starting state: neither router is synchronized yet.
 :::
 
 ```state
@@ -94,7 +94,7 @@ R1# show clock detail
 ```
 
 :::expected
-On a supporting image, R1 advertises its local clock at stratum 8. Its NTP status identifies the local reference; an IOS-style reference may be `127.127.1.1`. Record the actual display. This deliberately supplied lab time is not an independently verified UTC source and is not an appropriate automatic repair for a production NTP outage.
+R1 reports stratum 8 with a local reference such as `127.127.1.1`, the name IOS gives its own clock. The time is only as accurate as what you typed, which is fine for an isolated lab.
 :::
 
 ```state
@@ -114,10 +114,10 @@ R2# show ntp status
 R2# show clock detail
 ```
 
-Observe repeated samples over the displayed poll intervals. Compare R1's and R2's time and status. Synchronization may require several exchanges; do not repeatedly reconfigure the association during convergence.
+Repeat `show ntp associations` every minute or so and watch `reach` grow. Synchronization takes several exchanges, so wait before deciding that anything is wrong.
 
 :::expected
-When R2 actually selects the stratum-8 source, its status reports synchronized at stratum 9. The association identifies `.1`, its stratum and recent reach history. A reach value below `377` during initial convergence does not automatically mean failure. Record actual local status rather than treating the configured address as evidence of selection.
+Once R2 selects R1, `show ntp status` reports synchronized at stratum 9, and the association for `.1` shows `st 8` with a `*`. Reach climbs through 1, 3, 7, 17 and onward to 377 as polls succeed, so a value below 377 early on is normal.
 :::
 
 If the NTP operation is unavailable, interpret this supplied alternative: the association to `.1` has `st 8`, `reach 377` and `*~`, with the legend `* selected synchronization source; ~ configured`; local status says `synchronized, stratum 9, reference 10.60.0.1`. Identify which fields prove selection, recent exchanges and the local hierarchy position before opening the answer.
@@ -146,7 +146,7 @@ R2# show ntp status
 ```
 
 :::expected
-The configured target is now wrong. The new association cannot receive a response from the nonexistent host; its reach remains zero. R2's clock may continue displaying plausible time or retain previous synchronization status temporarily. This does not validate the new source. Worksheet: a recent good clock and a new association with reach zero are compatible observations, because clock state and new exchange success are different evidence.
+The new association gets no reply from the nonexistent host, so its reach stays at 0. R2's clock still shows a plausible time, and its status may stay synchronized for a while, because a clock keeps running after its source is lost. A correct-looking clock is therefore no evidence that the configured server works.
 :::
 
 ```state
@@ -187,7 +187,7 @@ R2# show logging
 ```
 
 :::expected
-The actual logging output identifies `.50` as the destination and debugging as the remote threshold. Record the local buffer's enabled state and level instead of assuming a default. The timestamp command changes format, not time accuracy. A configured host does not yet prove LOG1 received an event. If the buffer command is unavailable, use console output for the local observation; if remote logging is unsupported, use the next step's supplied records as a worksheet.
+`show logging` lists `10.60.0.50` as a logging host with trap level debugging, and shows the buffer's size and level. The timestamp command changes only how the time is printed. Nothing has been delivered to LOG1 yet. If your version rejects the level on `logging buffered`, enter `logging buffered 16384` alone.
 :::
 
 ```state
@@ -210,7 +210,7 @@ R2# show logging
 Open LOG1's SYSLOG view and compare newly received records with R2's local output. Identify the interface, description, severity and timestamp from what was actually produced.
 
 :::expected
-Loopback99 becomes administratively down; Gi0/0 stays up and the collector path remains intact. Supporting images generate administrative and/or line-protocol messages with platform-dependent wording. A representative record is `%LINK-5-CHANGED: Interface Loopback99, changed state to administratively down`: component LINK, severity 5, mnemonic CHANGED, administrative-state description. Do not require every platform to produce an identical pair of messages. If the simulator omits the event, interpret this supplied record as the worksheet rather than treating its absence as a proven transport fault.
+Loopback99 becomes administratively down. Gi0/0 stays up, so the path to LOG1 is unaffected. Expect `%LINK-5-CHANGED: Interface Loopback99, changed state to administratively down`: facility LINK, severity 5, mnemonic CHANGED. A `%LINEPROTO-5-UPDOWN` message usually accompanies it. If your version logs nothing, read the record above as the worksheet.
 :::
 
 ```state
@@ -229,7 +229,7 @@ R2# show logging
 ```
 
 :::expected
-Loopback99 returns up/up. Compare its new event with Step 7 in the local buffer and collector, using the actual severity encoded in each record. Do not assume that every `no shutdown` produces a level-3 message. Confirm the management interface, NTP association and collector path remain intact.
+Loopback99 returns to up/up. On IOS the link message is `%LINK-3-UPDOWN` (severity 3) and the line-protocol message is `%LINEPROTO-5-UPDOWN` (severity 5): one event reported at two severities. Read the level from each record in the buffer and on LOG1, and confirm that Gi0/0 and the NTP association are unaffected.
 :::
 
 ```state
@@ -271,6 +271,8 @@ R2(config)# end
 R2# show snmp
 ```
 
+ACL 10 here only limits which source address may use the community, as the lesson explains. If Packet Tracer rejects the trailing `10` or the location command, enter `snmp-server community LABREAD ro` and continue.
+
 On PC1, open Desktop → MIB Browser. Set the agent address to `10.60.0.2`, destination port `161`, read community `LABREAD`, and version v2c (some interfaces label this version 2). Leave write credentials unused. Use Get for scalar instance `1.3.6.1.2.1.1.5.0` (`sysName.0`), then `1.3.6.1.2.1.1.6.0` (`sysLocation.0`). If the tree interface supplies the instance automatically, select the corresponding system object. If only v1 Get is exposed, that read can demonstrate basic request/response; record the selected version and do not claim it demonstrates GetBulk or v3.
 
 :::expected
@@ -286,7 +288,7 @@ The name query identifies R2; the location query returns `Training rack`. Compar
 Change only PC1's read community to `WRONG-LAB` and repeat the same Get. Keep the target, object, port and version unchanged. Inspect R2's counters again where supported.
 
 :::expected
-The agent rejects or does not provide the requested value under the mismatched community; a browser may display a timeout. A bad-community counter may rise. Because this controlled test changed one known parameter, the mismatch is supported here. An unexplained timeout in another network would require checking the service, version, object, policy and path as well; it would not alone prove the community is wrong.
+With the wrong community the agent does not answer, and the browser usually shows a timeout. R2's unknown-community counter in `show snmp` may rise. You changed one thing, so the cause is known here. On a real network the same timeout could also come from the wrong version, the attached ACL, the path or a disabled agent.
 :::
 
 ```state

@@ -22,15 +22,9 @@ sources:
   - { title: "RFC 5227: IPv4 address conflicts on a link", url: "https://www.rfc-editor.org/rfc/rfc5227.html" }
 ---
 
-Network work depends on a few habits that are worth establishing from the start: know which device you are changing, understand what the change should accomplish, and verify the result. A command being accepted is only one part of that process.
+Your first minutes on a real switch look like this: a blinking prompt, a device that calls itself `Switch`, and no way to tell whether the command you just typed changed anything or will survive a restart. Every engineer starts there. What gets you past it is three habits: know which device you are changing, know what the change should do, and check the result.
 
-This chapter prepares your study environment and introduces those habits. By the end, you should be able to build a small LAN in Packet Tracer, move confidently between Cisco IOS command modes, and preserve a working configuration. You do not need to understand every field in the output yet. Addressing, switching, and packet forwarding are developed in the following chapters.
-
-The first practical pass is deliberately small: build a working LAN, correct a device name, and save it. Later CLI and reload examples remain reference material; they are not all required tasks in the opening lab.
-
-For this first build, a **local-area network (LAN)** connects nearby devices. A **switch** joins the PCs through its network ports. **Ethernet** is the wired networking technology used here; it carries units of data called **frames**. Each PC receives a distinct **IPv4 address**, such as `192.168.10.10`, and a **subnet mask** that describes its local IP network. Copy the supplied values for now. Chapter 01 explains delivery, and Chapter 04 teaches you to calculate the address ranges yourself.
-
-A **default gateway** is the local router used to reach other networks; a **DNS server** answers name lookups, such as finding an address for a website name. Neither is needed for this first same-LAN test by numeric address. The `ping` command sends diagnostic requests and reports whether replies return. Those messages use **ICMP**, the Internet Control Message Protocol. Receiving a reply tests that exchange, rather than every application on the destination.
+This chapter sets up your study environment and practices those habits on the smallest network that works. By the end you will have chosen your exam version, installed Packet Tracer, built a two-PC LAN, moved between the Cisco IOS command modes, and saved a configuration so that it survives a reload. You do not need to understand every field of the output yet; addressing, switching and packet forwarding are built up in the chapters that follow.
 
 ## Which exam you are sitting
 
@@ -43,7 +37,7 @@ As checked on **19 September 2026**, the current exam is **CCNA 200-301 v1.1**, 
 | v1.1 | Network Fundamentals 20%; Network Access 20%; IP Connectivity 25%; IP Services 10%; Security Fundamentals 15%; Automation and Programmability 10% |
 | v2.0 | Network Infrastructure and Connectivity 25%; Switching and Network Access 25%; IP Routing 20%; Network Services and Security 20%; AI, Network Operations, and Management 10% |
 
-The weights help you allocate study time; they do not justify skipping a domain or predict the exact questions on an individual exam. Both versions require a working understanding of addressing, forwarding, device configuration, and verification. The first eight chapters establish that foundation.
+Use the weights to divide your study time, and still study every domain. Both versions require a working understanding of addressing, forwarding, device configuration, and verification, which the first eight chapters establish.
 
 | Objective wording | What your study should enable you to do |
 |---|---|
@@ -52,10 +46,10 @@ The weights help you allocate study time; they do not justify skipping a domain 
 | Configure and verify | Translate requirements into a configuration, then prove that the intended behavior occurs. |
 | Troubleshoot | Interpret evidence, identify the cause, make an appropriate correction, and test again. |
 
-A multiple-choice score alone does not demonstrate all four skills. Use the labs and output interpretation exercises as part of your preparation. Cisco may assess practical skills as well as conceptual knowledge. Use its current exam guidance for the delivery format and test-day rules; this course does not assume a fixed question count, passing score, or placement of practical items.
+The verbs tell you how to prepare. Cisco may assess "configure and verify" and "troubleshoot" objectives with practical tasks as well as multiple-choice questions, so do the labs and the output-reading exercises, not only the quizzes. This course does not assume a fixed question count, passing score, or placement of practical items; check Cisco's exam page for the current format and test-day rules.
 
 :::note
-This opening chapter teaches prerequisite skills rather than a separate exam domain. Foundation chapters remain part of your study path even when a blueprint does not name a concept, such as the OSI model, as its own objective. Coverage tags identify relevant objectives; they do not certify complete mastery of an objective.
+This opening chapter teaches prerequisite skills rather than a separate exam domain. Foundation chapters remain part of your study path even when a blueprint does not name a concept, such as the OSI model, as its own objective.
 :::
 
 ## Install Packet Tracer and learn its workspace
@@ -82,9 +76,13 @@ The first labs use devices within a local simulated topology. You do not need Pa
 | Simulation mode | Filter events and advance through selected packet exchanges. |
 | Save / Save As | Preserve the topology as a Packet Tracer project. |
 
+The first lab uses a handful of terms that later chapters explain in full. A **local-area network (LAN)** connects nearby devices. A **switch** joins those devices through its ports. **Ethernet** is the wired technology that carries their data, in units called **frames**. Each PC needs its own **IPv4 address**, such as `192.168.10.10`, and a **subnet mask**, which tells the PC which addresses are on its own network. Copy the supplied values for now; Chapter 04 teaches you to calculate them.
+
+Two settings stay blank in that lab. A **default gateway** is the router a PC uses to reach other networks, and a **DNS server** turns names, such as a website's, into addresses. Neither is needed when two PCs on one LAN test each other by address. The test is `ping`: it sends **ICMP** (Internet Control Message Protocol) echo requests and reports whether replies come back.
+
 For the first lab, use a **2960 switch** and two **PC-PT** devices. The lab specifies the ports so you can compare your work with its output. If you choose another model, inspect its interface names and adjust the instructions consistently. A router's GigabitEthernet0/0 is not interchangeable with a switch's FastEthernet0/1 simply because both are Ethernet ports.
 
-Link indicators are useful observations, but they are not a complete diagnosis. A port may take time to become ready because of link negotiation or spanning tree. A red link can have several causes, including a disconnected cable, the wrong port, an incompatible connection, or an administratively disabled interface. Later chapters show how to distinguish these causes.
+Packet Tracer draws a small indicator at each end of a cable. Green means the link is up. Amber on a switch port means the switch is still checking the new connection before it forwards traffic, which takes about 30 seconds. Red means the link is down: the cable is in the wrong port, it is the wrong cable type, or the interface has been disabled. Later chapters show how to tell these causes apart.
 
 ## The command line: modes, help and the pager
 
@@ -123,7 +121,7 @@ You may abbreviate a command when the entered characters identify it uniquely. F
 | Ambiguous command | Supply more characters to distinguish the possible commands. |
 | --More-- | Output has paused at the pager. Space advances a page; Enter advances a line; `q` normally stops the display. |
 
-On images that support it, `terminal length 0` disables paging for the current terminal session. It is a convenience, not a prerequisite: use the pager if your simulated device does not implement it. Similarly, common IOS output filters such as `show running-config | include hostname` help find a line, but filtered output can hide context. Read the complete relevant section before making a diagnosis.
+On images that support it, `terminal length 0` turns the pager off for the current session. An output filter such as `show running-config | include hostname` prints only the matching lines. It is quick, but it hides the surrounding lines, so read the whole section before you diagnose a fault.
 
 From configuration mode, the supported `do` form lets you run common EXEC verification commands without leaving that mode:
 
@@ -135,7 +133,7 @@ S1# show running-config
 
 ## Saving, reloading and the domain-lookup trap
 
-The **running configuration** is the active configuration. The **startup configuration** is the saved configuration used at startup. On the classic IOS devices used in these introductory labs, running configuration is held in RAM and startup configuration is conventionally stored in NVRAM. Storage implementation varies across platforms; the operational distinction is active versus saved.
+A Cisco device holds two copies of its configuration. The **running configuration** is the one in use right now. It lives in RAM, so it is lost when the device restarts. The **startup configuration** is the saved copy. It lives in NVRAM, memory that keeps its contents without power, and the device loads it the next time it starts.
 
 The configuration commands in this lab take effect when accepted. Leaving configuration mode does not save them. Use the direction of the copy command to check your intent:
 
@@ -154,10 +152,10 @@ Building configuration...
 At the destination prompt, Enter accepts the name in brackets. Then inspect `show startup-config` and confirm that the intended setting appears. `write memory` is a common alternative save command on these devices; learning the full copy command makes the source and destination explicit.
 
 :::trap
-`copy startup-config running-config` is the opposite direction. On conventional IOS it merges saved commands into the active configuration; it is not a general “undo everything” operation. Do not use it as a substitute for understanding which setting must be corrected.
+`copy startup-config running-config` is the opposite direction. It merges the saved commands into the active configuration: saved lines are added or replace matching lines, but lines that exist only in the running configuration stay. It does not save your work, and it is not an undo.
 :::
 
-A reload restarts the device and interrupts its operation. Practice it only on the isolated lab device. If the running configuration differs from startup configuration, IOS may ask whether to save the changes. The answer changes what you will see after the restart. Read the prompt rather than pressing Enter through it.
+A reload restarts the device and interrupts its operation. Practice it only on the isolated lab device. If the running configuration has unsaved changes, IOS asks `System configuration has been modified. Save? [yes/no]:`. Answer **no** and the device restarts with the old startup configuration, so your changes are gone. Read the prompt rather than pressing Enter through it.
 
 There are three separate things to preserve:
 
@@ -169,7 +167,7 @@ There are three separate things to preserve:
 
 Saving the project is not a replacement for practicing the device's save procedure. Saving a device also does not export your study history. Keep working project files and progress backups somewhere you can find them again.
 
-Another common surprise occurs when an unrecognized word at an EXEC prompt is treated as a hostname. The device may attempt a DNS lookup, appearing to pause. On an isolated practice device, `no ip domain-lookup` in global configuration disables this behavior. It changes that device's name-lookup behavior; it does not disable DNS for the entire network. Do not apply it automatically to a system that needs name resolution.
+The trap in this section's title catches everyone once. Mistype a command at an EXEC prompt, for example `shwo`, and IOS assumes you typed the name of a host to connect to. It tries to look that name up through DNS, and the prompt hangs for many seconds. On a lab device, `no ip domain-lookup` in global configuration stops this. It affects only lookups made by that device, so leave it off a production device that needs to resolve names.
 
 Ctrl+Shift+6 is a common IOS escape sequence for interrupting a running operation. Its handling can depend on the terminal or simulator. If a lookup does not respond to the shortcut, allow it to time out, correct the input, and use context help before retrying.
 
@@ -185,23 +183,23 @@ Use flashcards for recall, checkpoint questions for reasoning, and command drill
 
 After completing a guided lab, rebuild it from the topology and requirements with the instructions closed. Change one address range or interface assignment and verify the revised result. This tests whether you understand the configuration, rather than whether you remember one sequence of keystrokes.
 
-No course can guarantee an exam result. Readiness is better demonstrated by consistent performance across the published objectives, including unfamiliar examples and practical verification, than by a particular number of study hours.
+You are ready when you perform consistently across the published objectives, including unfamiliar examples and labs. Hours studied are a poor measure of that.
 
 ## Reading the output
 
-The following is a **representative excerpt**, not a required byte-for-byte result from your Packet Tracer version:
+`show ip interface brief` prints one line per interface. **Status** reports the physical connection; **Protocol** reports whether the link can carry frames. This representative excerpt shows the states you will meet first:
 
 ```output show ip interface brief
 Interface              IP-Address      OK? Method Status                Protocol
 FastEthernet0/1         unassigned      YES unset  up                    up  ← The local interface reports operational physical and line-protocol states.
 FastEthernet0/2         unassigned      YES unset  down                  down  ← No operational link is reported; inspect the connection and peer.
 FastEthernet0/3         unassigned      YES unset  administratively down down  ← The interface has been disabled in configuration.
-Vlan1                  unassigned      YES unset  down                  down  ← The switch virtual interface has no IP address here.
+Vlan1                  unassigned      YES unset  administratively down down  ← The switch's own management interface: shut down by default.
 ```
 
-An access switch can forward Layer 2 traffic without an IP address on each physical port or a configured management address. The Vlan1 row concerns a logical interface; it does not, by itself, say that every physical port is down.
+Every port shows `unassigned` because a switch forwards frames between its ports without needing an IP address. **Vlan1** is a logical interface used only to manage the switch itself. It stays shut down until you configure it in a later chapter, and its state says nothing about the physical ports.
 
-**Up/up** is useful local evidence. It does not prove that the host has the correct address, that every switch setting is appropriate, or that an application works. Similarly, a successful ping proves that the tested source received ICMP replies from the destination at that time. It does not validate every service or every possible path.
+Each test proves one thing. **Up/up** proves that this port has a working link; it says nothing about the PC's address or any application. A successful ping proves that this source exchanged ICMP messages with that destination just now; it does not test other services or other paths.
 
 To check whether a hostname is saved, inspect both configurations. If running configuration contains `hostname S1` but startup configuration contains `hostname Switch`, the active name has not been saved to that startup configuration. This is stronger evidence than simply remembering that you pressed a Save button somewhere in the application.
 

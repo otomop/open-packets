@@ -36,7 +36,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "No installed route matches a packet's destination, and no default is present. With ordinary unicast routing and no alternative policy, what happens?",
+    "prompt": "No installed route matches a packet's destination, and there is no default route. What does the router do with the packet?",
     "options": [
       "The router discards the packet",
       "The router broadcasts it to all routed interfaces",
@@ -46,7 +46,7 @@
     "answer": [
       0
     ],
-    "explanation": "There is no applicable forwarding route, so the packet is discarded. An ICMP unreachable may be generated subject to implementation, configuration and rate limits.",
+    "explanation": "With no matching route and no default, the router drops the packet. It normally sends an ICMP destination unreachable message back to the source.",
     "whyWrong": {
       "1": "Routers do not flood unmatched unicast traffic across routed interfaces to discover a path.",
       "2": "An arriving data packet does not automatically install a route to its destination.",
@@ -73,7 +73,7 @@
     "answer": [
       2
     ],
-    "explanation": "The connected entry covers the subnet; the local /32 identifies the router's own interface address. This question concerns the ordinary /24 interface case, not every possible /32 or platform-specific display.",
+    "explanation": "The `C` entry covers the whole subnet, and the `L` /32 is the router's own interface address.",
     "whyWrong": {
       "0": "Interface-derived entries are not static and OSPF routes.",
       "1": "The local address is .1; .255 is the subnet's directed broadcast address.",
@@ -102,7 +102,7 @@
       3,
       4
     ],
-    "explanation": "Connected routes use AD 0 and ordinary static routes default to 1. Displayed configuration can change a configurable source preference.",
+    "explanation": "Connected routes have AD 0, and static routes default to AD 1.",
     "whyWrong": {
       "0": "EIGRP external defaults to 170; 20 is external BGP.",
       "1": "RIP defaults to 120.",
@@ -133,7 +133,7 @@
     "answer": [
       0
     ],
-    "explanation": "The two path lines belong to the same OSPF prefix and have equal cost. Actual sharing depends on the forwarding implementation and traffic; flow hashing does not guarantee an equal byte split.",
+    "explanation": "Both lines belong to one OSPF prefix and show the same `[110/20]`, so this is equal-cost multipath. CEF shares traffic per flow, which does not guarantee an equal byte split or faster single transfers.",
     "whyWrong": {
       "1": "Both paths serve one prefix; the exhibit does not specify per-packet alternation.",
       "2": "Equal-cost eligibility does not establish a 50/50 byte distribution.",
@@ -160,7 +160,7 @@
     "answer": [
       1
     ],
-    "explanation": "The destination-specific route command requests routing-entry detail. Read the returned prefix and source rather than assuming the destination itself must be a /32 route.",
+    "explanation": "`show ip route` followed by an address displays the longest matching installed route, with its source, distance, metric and next hop.",
     "whyWrong": {
       "0": "An interface configuration block does not identify the matching installed route.",
       "2": "ARP reports neighbor resolution, not the route source and distance.",
@@ -384,7 +384,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 has eligible candidates for exactly 10.5.0.0/16: OSPF costs 10 and 25, plus a static route with default AD and a resolvable next hop. What is installed as the preferred source?",
+    "prompt": "R1 has three candidates for exactly 10.5.0.0/16: two OSPF paths with costs 10 and 25, and a static route with the default AD and a reachable next hop. Which route is installed?",
     "options": [
       "The static source because AD 1 is preferred over 110",
       "Both OSPF paths because their route codes match",
@@ -394,7 +394,7 @@
     "answer": [
       0
     ],
-    "explanation": "The static source is preferred for this identical prefix because its default AD is 1. OSPF chooses among its own paths using its rules, but that does not give it precedence over the eligible static.",
+    "explanation": "All three describe the same prefix. OSPF first picks its own best path, cost 10. That path then competes with the static route on AD, and static 1 beats OSPF 110.",
     "whyWrong": {
       "1": "Different OSPF costs are not equal-cost paths, and the static source is preferred.",
       "2": "Higher OSPF cost is not better, and source AD still matters here.",
@@ -567,14 +567,14 @@
     "prompt": "R1 Gi0/1 is administratively shut. Its configured address remains 192.0.2.1/24, with no other interface or route covering that LAN. What should the ordinary IPv4 RIB show?",
     "options": [
       "Only the connected /24 remains because configuration persists",
-      "Neither the interface’s usable connected /24 nor its local /32 remains installed",
+      "Neither the connected /24 nor the local /32 is installed",
       "Both the connected /24 and local /32 remain usable",
       "The interface’s connected /24 becomes a default-distance static"
     ],
     "answer": [
       1
     ],
-    "explanation": "An address remaining in configuration is not an operational connected path. The shut interface does not supply these active connected/local entries.",
+    "explanation": "`C` and `L` routes exist only while the interface is up/up. A shut interface supplies neither, even though its address stays in the configuration.",
     "whyWrong": {
       "0": "The connected subnet also depends on the interface being operational.",
       "2": "The configuration alone does not establish operational interface routes.",
@@ -595,7 +595,7 @@
       "title": "IP destination and Ethernet recipient",
       "text": "Packet destination: 198.51.100.200\nS 198.51.100.0/24 [1/0] via 10.0.12.2, GigabitEthernet0/0\nR1 Gi0/0: 10.0.12.1/30; neighbor: 10.0.12.2"
     },
-    "prompt": "The route below is selected. Which address does R1 normally resolve with ARP for this packet?",
+    "prompt": "The route in the exhibit is selected. Which address does R1 resolve with ARP for this packet?",
     "options": [
       "198.51.100.0, the remote network identifier",
       "10.0.12.2, the Ethernet next hop",
@@ -626,7 +626,7 @@
       "title": "Request and reply destinations",
       "text": "PC: 192.0.2.10/24, gateway R1 192.0.2.1\nServer: 10.90.5.20, with a verified return path to R1\nR1 installed: C 192.0.2.0/24 Gi0/1; L 192.0.2.1/32 Gi0/1;\nS 10.90.0.0/16 via 10.0.12.2 Gi0/0\nNo policy routing or filtering."
     },
-    "prompt": "Which two entries does the same exchange use at R1? (Choose two.)",
+    "prompt": "The PC pings the server and the server replies. Which two statements describe R1's lookups for this exchange? (Choose two.)",
     "options": [
       "The reply uses R1’s local 192.0.2.1/32 because it entered this router",
       "The request must match the route to the PC’s own source subnet",

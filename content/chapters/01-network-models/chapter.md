@@ -21,23 +21,21 @@ sources:
   - { title: "Cisco: Understand the Extended Ping and Extended Traceroute Commands", url: "https://www.cisco.com/c/en/us/support/docs/ip/routing-information-protocol-rip/13730-ext-ping-trace.html" }
 ---
 
-When a user reports that a service is unavailable, several different failures can produce the same symptom. The cable might be disconnected, the host might have an incorrect gateway, or the application might not be listening. Network models give you a way to separate these functions and choose useful tests.
+A user says the server is down. The cable could be unplugged, the PC could have the wrong gateway, or the server's application could have stopped: three different faults, one symptom. Network models divide communication into layers so that you can test one job at a time instead of guessing.
 
-This chapter follows an IPv4 packet across two Ethernet LANs. The aim is to understand which addresses each device uses, which fields change at a router, and what you can learn from the device tables. Detailed subnet calculations, TCP behavior, and switch learning follow in later chapters.
-
-The lab supplies router addresses and their commands as setup for observing traffic. You are not yet expected to design subnets or reproduce that setup from memory; Chapter 04 teaches addressing and Chapter 08 extends the IOS workflow.
+In Chapter 00 you pinged between two PCs on one switch. This chapter explains what happened inside that ping, then adds a router and follows one IPv4 packet across two LANs. By the end you will be able to name the layers and the data unit each one handles, say which MAC and IP addresses a frame carries on each link, explain what a router changes as it forwards a packet, and read the three tables (ARP, MAC address and routing) that record those decisions. The lab supplies the router commands; Chapter 04 teaches addressing and Chapter 08 the full IOS workflow.
 
 ## Why we need a model
 
-A **layer model** organizes communication into related functions. Applications exchange meaningful data; transport protocols provide services to applications; IP addresses and routes support delivery between networks; link technologies carry data across each local connection.
+A **layer model** splits the job of communicating into smaller jobs stacked on top of each other. Each layer does one job and relies on the layer below it. An application produces the data. A transport protocol delivers it to the right program on the far computer. IP gets it across networks to that computer. A link technology such as Ethernet carries it across each single cable or radio link on the way.
 
 A **protocol** is a set of rules that communicating systems follow. The examples below name several protocols before studying their details: HTTP carries web requests and responses, DNS answers name lookups, and SSH provides a protected remote command-line session. Here, identify each function and the information it uses; the later service chapters teach configuration and diagnosis.
 
 This separation supports interoperability. An application does not need to implement Ethernet signaling, and an Ethernet switch does not need to understand the contents of a web page to forward its frames. Real devices can perform functions at several layers, so a layer number describes a function rather than everything a device can do.
 
-The models are also a troubleshooting framework. Begin with the symptom and select a test that narrows the possibilities. If an interface reports no operational link, physical connectivity deserves attention. If a remote IP address responds to ping but its application does not work, examine the application and relevant transport or policy behavior. The successful ping is useful evidence about that exchange; it does not establish that all Layer 1–3 conditions are correct for every kind of traffic.
+The models are also a troubleshooting map. Start from the symptom and pick a test that rules a layer in or out. If an interface reports no link, look at the cable and the port before anything else. If a remote address answers a ping but its application does not respond, the lower layers carried that ping, so look next at the application and at anything that filters traffic.
 
-For the CCNA, use the models to explain forwarding and interpret evidence. Memorizing the layer names is a starting point. Being able to distinguish a MAC address lookup from an IP route lookup is the more useful skill.
+For the CCNA, memorizing the layer names is only the start. The skill that earns marks is telling apart the decision a switch makes about a frame from the decision a router makes about a packet. The rest of this chapter builds up to that.
 
 ## Seven layers, four layers, five PDUs
 
@@ -53,16 +51,16 @@ The **OSI reference model** has seven layers. Read this table from the top down 
 | 2 Data link | Delivery across a local link | Ethernet frames and MAC addresses |
 | 1 Physical | Transmission of signals | Copper electrical signals, optical signals, and radio |
 
-The **TCP/IP model** groups these functions into four layers: **Application, Transport, Internet, and Link**. Its Application layer includes functions discussed across the upper three OSI layers. Its Internet layer corresponds broadly to OSI Layer 3, and its Link layer includes data-link and physical functions. Some teaching materials split Link into two layers and call this a five-layer model.
+The **TCP/IP model** groups these functions into four layers: **Application, Transport, Internet, and Link**. Its Application layer includes functions discussed across the upper three OSI layers. Its Internet layer corresponds broadly to OSI Layer 3, and its Link layer includes data-link and physical functions. Cisco material often calls the Link layer **Network Access**, and some texts split it in two to make a five-layer model.
 
-These are ways of describing functions, not competing packet formats. For example, encryption can be discussed as a presentation function, but that does not mean every encrypted protocol exists exclusively at OSI Layer 6. Modern protocol implementations do not always fit a single neat box.
+The TCP/IP model describes the protocols that networks actually run. The OSI layer numbers are the vocabulary engineers speak, which is why a switch is called a Layer 2 device and a router a Layer 3 device. Both models describe jobs, and real protocols do not always fit one box: encryption is a presentation-layer job, yet it is built into protocols at several layers.
 
 Read the size units literally: a **bit** is a 0 or 1; a **byte**, also called an **octet** here, contains eight bits. An IPv4 address such as `192.168.10.10` writes four octets as decimal numbers. An Ethernet **MAC (Media Access Control) address** names an interface on the local Ethernet link and is usually written in hexadecimal: digits `0–9` and letters `a–f`. For example, `00:60:2f:3e:1b:22` and `0060.2f3e.1b22` display the same six bytes. You only need to match the addresses in this chapter; binary conversion is developed in Chapter 04.
 
 :::facts
 - **PDU** means protocol data unit: the unit handled by a protocol at a particular layer.
 - Common teaching names are **data** at the upper layers, a TCP **segment** or UDP **datagram** at Layer 4, an IP **packet** at Layer 3, and an Ethernet **frame** at Layer 2.
-- Physical interfaces represent bits using signals. “Bits” describes the information, not a particular voltage or optical encoding.
+- At Layer 1 the unit is **bits**, sent as electrical, optical or radio signals.
 - Ethernet MAC addresses are 48 bits; IPv4 addresses are 32 bits; IPv6 addresses are 128 bits.
 - TCP and UDP use 16-bit port fields. A port identifies a transport endpoint; it is not a physical switch socket.
 :::
@@ -80,40 +78,40 @@ Read the size units literally: a **bit** is a 0 or 1; a **byte**, also called an
 | Ethernet source and destination MAC addresses | Identify sender and intended receiver on the current Ethernet link. |
 | Ethernet frame check sequence (FCS) | Detect corruption of the received frame; it does not repair the data. |
 
-A minimum IPv4 header is **20 bytes**, and a minimum TCP header is **20 bytes**; options can make either larger. UDP has an **8-byte header**. Recognize that headers add overhead, but do not treat these minimums as the length of every observed header.
+A minimum IPv4 header is **20 bytes**, and a minimum TCP header is **20 bytes**; options can make either larger. UDP has an **8-byte header**. Every header is overhead: bytes on the wire that are not the user's data.
 
-For ordinary Ethernet without VLAN tags, the MAC frame from destination address through FCS is normally **64–1518 bytes**, with up to **1500 bytes** of payload. VLAN tags and other supported frame formats affect frame length. The preamble and interframe gap are not part of that 64–1518-byte count. **MTU** refers to the maximum network-layer packet size carried by the link in this context, not to every byte transmitted on the medium. Frame details are developed in Chapter 07.
+A standard Ethernet frame is **64 to 1518 bytes** long, counted from the destination MAC address to the FCS, and carries up to **1500 bytes** of payload. That 1500-byte limit is the link's **MTU** (maximum transmission unit): the largest IP packet one frame can carry. Chapter 07 covers the frame fields and the effect of VLAN tags.
 
-A host delivering an IPv4 packet to another subnet does not put the remote host's MAC address into the local frame. It uses a reachable **next hop** on its own link. The distinction between the packet's destination and the frame's destination explains why the same IP packet can cross several different link technologies.
+Notice that the table lists two destination addresses. The IP address names the final destination and stays the same for the whole journey. The MAC address names only the next device on the current link, so each link on the path gets a fresh frame. That is how one IP packet can cross Ethernet, Wi-Fi and a provider's line on the same trip. The next section shows how a host chooses that next device.
 
 ## Local or remote: the host's first decision
 
-A host uses its routing information to choose how to send a packet. In our introductory topology, each PC has one interface, one connected subnet, and a default gateway, with no additional routes. Under those conditions, the subnet mask determines whether the destination belongs to the connected subnet. Later routing chapters extend this decision to more-specific routes.
+Before a host sends any packet it asks one question: is the destination on my own network? An IP network, or **subnet**, is a range of addresses whose devices share a LAN and can reach each other directly. A **router** connects subnets and forwards packets between them. If the destination is in the host's own subnet, the host delivers the packet itself. If it is not, the host hands the packet to its **default gateway**, the router interface on its LAN. Whichever device receives the frame next is called the **next hop**. The host answers the question with its subnet mask.
 
-For **192.168.10.10/24**, the mask is **255.255.255.0** and the connected subnet is **192.168.10.0/24**. A destination of **192.168.10.20** is local. A destination of **192.168.20.20** is outside that subnet and is sent toward the configured gateway, **192.168.10.1**.
+Take PC-A, **192.168.10.10/24**. The `/24` is another way of writing the mask **255.255.255.0**: the first three numbers name the subnet, so PC-A's subnet is every address that begins 192.168.10. A destination of **192.168.10.20** is local. A destination of **192.168.20.20** is outside that subnet, so PC-A sends it toward its gateway, **192.168.10.1**. Chapter 04 teaches the calculation for other masks.
 
 | Destination in this topology | IP next hop | MAC address needed before sending the IPv4 frame |
 |---|---|---|
 | 192.168.10.20 | The destination host itself | MAC for 192.168.10.20 |
 | 192.168.20.20 | Gateway 192.168.10.1 | MAC for 192.168.10.1 |
 
-**ARP**, Address Resolution Protocol, resolves the IPv4 address of a next hop to a MAC address on an Ethernet LAN. A host first checks its ARP cache. If it lacks a usable mapping, it normally sends an ARP request to the Ethernet broadcast address, **ff:ff:ff:ff:ff:ff**. The request names the IPv4 address being resolved. A normal solicited reply is sent back to the requester as a unicast frame.
+The host now knows the next hop's IP address, but an Ethernet frame needs a destination MAC address. **ARP**, the Address Resolution Protocol, finds it. The host first looks in its **ARP cache** (also called the ARP table), a list of IP-to-MAC mappings it has already learned. If the address is not there, the host sends an ARP request to the Ethernet broadcast address, **ff:ff:ff:ff:ff:ff**, asking in effect "who has 192.168.10.1?" Every device on the LAN receives the request. Only the owner of that IP address answers, with a unicast reply that carries its MAC address. The host stores the answer and sends the waiting packet.
 
-**Unicast** addresses one interface; an Ethernet **broadcast** addresses the devices in the local **broadcast domain**, the part of the network over which that broadcast can be forwarded. A **VLAN (virtual LAN)** creates such a logical Layer 2 network on switches. The introductory labs leave all used switch ports in their default VLAN 1. Separate switches connected through a router still form separate LANs; sharing the number 1 does not join them across the router. Chapter 07 develops the switching decisions, and Chapter 09 teaches VLAN configuration.
+A **unicast** frame is addressed to one interface. A **broadcast** frame is addressed to every device in the **broadcast domain**: the set of devices that a broadcast reaches, which is one LAN. Switches forward broadcasts and routers do not, so each router interface starts a new broadcast domain. Switch output also labels each LAN with a **VLAN** (virtual LAN) number. Every port in these early labs is in the default, VLAN 1. Chapter 07 develops the switching decisions, and Chapter 09 shows how one switch can hold several VLANs.
 
 For the remote destination above, the request asks for **192.168.10.1**, not 192.168.20.20. The subsequent IPv4 packet still has destination **192.168.20.20**. Learning the gateway's MAC address does not change the final IP destination.
 
-ARP requests remain within the local Layer 2 broadcast domain. A switch floods a broadcast to eligible forwarding ports in the same VLAN, excluding the receiving port. A router does not route that Ethernet broadcast into the next subnet. Its outgoing interface can perform a separate ARP exchange when it needs a next-hop mapping there.
+An ARP request never leaves its LAN. A switch **floods** it: it sends a copy out of every other port in the same VLAN. The router receives the request but does not pass it on to the next subnet. When the router needs a MAC address on that other LAN, it sends an ARP request of its own there.
 
 :::trap
-A default gateway is used when the selected route requires it. Two hosts in the same correctly configured subnet can communicate directly without sending their traffic through a router. Conversely, a host can reach local neighbors while failing to reach remote networks because its gateway is missing or incorrect.
+The default gateway is used only for destinations outside the host's subnet. Two hosts in the same subnet talk directly, without the router. So a host with a missing or wrong gateway still reaches its local neighbors and fails only for remote networks.
 :::
 
-An incorrect mask can make the host choose the wrong next hop. Features such as **proxy ARP**, where a router answers certain ARP requests on another host's behalf, can sometimes conceal an addressing error. Do not use one successful ping as proof that the configured mask is correct. Read the actual settings and compare them with the addressing plan. Proxy ARP configuration and platform defaults are not memorization targets for this chapter.
+A wrong mask makes the host give the wrong answer to the local-or-remote question, so it picks the wrong next hop. When a remote ping fails, read the host's address, mask and gateway and compare them with the plan. Chapter 04 returns to this fault and to **proxy ARP**, a router feature that can hide it.
 
 ## The packet walk: PC-A to Server-B and back
 
-Use the following topology throughout the example. Both router interfaces are operational, both connected routes exist, and no NAT, filtering, tunneling, or fragmentation affects the exchange. PC-A and Server-B have the gateways shown.
+Now follow one ping from PC-A to Server-B and back. R1 simply routes between its two LANs; nothing on the path filters or translates the traffic. PC-A and Server-B have the gateways shown.
 
 ```diagram
 { "type": "topology", "title": "One routed IPv4 exchange",
@@ -147,19 +145,19 @@ Use the following topology throughout the example. Both router interfaces are op
 
 **1. PC-A selects its next hop.** The destination is outside its connected /24, so PC-A uses its default gateway. If necessary, it resolves 192.168.10.1 through ARP. It then sends an Ethernet frame with source MAC **0060.2f3e.1b22** and destination MAC **0001.9641.7a01**. Inside that frame, the IPv4 addresses are **192.168.10.10 → 192.168.20.20**.
 
-**2. SW1 forwards the frame.** It learns the source MAC against the incoming port and VLAN, and looks up the destination MAC in that VLAN's table. If the gateway's MAC is known on the router-facing forwarding port, SW1 sends the frame there. If it is unknown, SW1 floods it to eligible ports in that VLAN except the incoming port. Ordinary Layer 2 forwarding preserves the source and destination MAC addresses and does not decrement the packet's TTL.
+**2. SW1 forwards the frame.** A switch keeps a **MAC address table**: a list of which MAC address it has seen on which port. SW1 first records the frame's source MAC against the port it arrived on. Then it looks up the destination MAC. If the table shows that MAC on the port facing R1, SW1 sends the frame out of that port only. If the MAC is not in the table yet, SW1 floods the frame out of every other port. Either way SW1 changes nothing: the MAC addresses and the IP packet inside, including its TTL, pass through untouched.
 
-**3. R1 routes the packet.** The frame is addressed to R1's receiving interface. R1 processes the contained IPv4 packet and selects a route for **192.168.20.20**. In this example the destination is on the subnet directly connected to Gi0/1. Normal forwarding decrements **TTL**, the IPv4 Time to Live field, by one and updates the IPv4 header checksum. If forwarding would exhaust TTL, the router discards the packet and normally generates an ICMP Time Exceeded message, subject to the rules and limits for ICMP responses.
+**3. R1 routes the packet.** The frame is addressed to R1's own MAC, so R1 accepts it, removes the Ethernet header and reads the IP packet inside. It looks up the destination, **192.168.20.20**, in its **routing table**: its list of known subnets and the interface that leads to each. The table says that 192.168.20.0/24 is directly connected to Gi0/1. Before forwarding, R1 subtracts one from the packet's **TTL** (Time to Live) and recalculates the IPv4 header checksum. TTL is a hop counter that stops a misrouted packet from circulating forever: a router that would reduce it to zero discards the packet and sends an ICMP Time Exceeded message back to the source.
 
-**4. R1 builds the outgoing frame.** It resolves Server-B's MAC on LAN-B if needed. The new frame has source MAC **0001.9641.7a02** and destination MAC **00d0.ba2c.5e01**. The source and destination IPv4 addresses remain **192.168.10.10 → 192.168.20.20** under our stated assumptions. The outgoing frame has an FCS for its own contents.
+**4. R1 builds the outgoing frame.** It resolves Server-B's MAC on LAN-B if needed. The new frame has source MAC **0001.9641.7a02** and destination MAC **00d0.ba2c.5e01**. The source and destination IPv4 addresses are still **192.168.10.10 → 192.168.20.20**. Only the frame around the packet is new, with its own FCS.
 
 **5. Server-B receives the request and sends a reply.** SW2 forwards the frame within LAN-B. Server-B recognizes its own destination addresses and processes the ICMP Echo Request. The reply is a new packet with source **192.168.20.20** and destination **192.168.10.10**. Because that destination is remote to Server-B, its reply uses gateway **192.168.20.1**. R1 then routes the reply toward LAN-A.
 
-The reply has its own initial TTL. A ping display usually reports the TTL of the received reply, not the original request's remaining TTL. Initial values vary. You can calculate a hop count from a received TTL only when you know the starting value and the relevant forwarding assumptions; do not infer an exact path from a guessed operating-system default.
+The reply is a new packet with its own starting TTL, and that is the TTL a ping display reports. Packet Tracer PCs start at 128, so in the lab PC-A sees `TTL=127` on replies from the far LAN: one router subtracted one. Starting values differ between operating systems, so you can count hops from a TTL only when you know where it started.
 
 ## Where the layers live: devices and commands
 
-Keep three tables distinct:
+The walk shows where each layer does its work. PC-A and Server-B are the only devices that handle every layer, from the application down to the cable. SW1 and SW2 read only the Ethernet header: a switch is a **Layer 2** device and forwards by MAC address. R1 reads one layer further: a router is a **Layer 3** device. It forwards by IP address and builds a new frame for each link. That gives three tables to keep distinct:
 
 | Table | Main relationship | What it helps decide |
 |---|---|---|
@@ -167,11 +165,11 @@ Keep three tables distinct:
 | ARP cache | IPv4 address to MAC address on a local link | How to address an Ethernet frame to the selected IPv4 next hop |
 | Switch MAC address table | VLAN and MAC address to switch port | Where to forward a frame inside a VLAN |
 
-These tables have different contents and learning mechanisms. A learned MAC entry does not prove that the host has the right IP address. An ARP entry does not prove that a TCP service works. A route does not, by itself, prove that the next-hop link is operational or that return traffic is permitted.
+Each table answers only its own question. A MAC table entry shows where a device is plugged in, not whether its IP settings are right. An ARP entry shows that a neighbor answered, not that its application works. A route shows where a packet will be sent, not that a reply can come back.
 
-Useful IOS commands include `show ip interface brief`, `show interfaces GigabitEthernet0/0`, `show ip route`, `show arp`, and `show mac address-table`. On a Windows PC or the Packet Tracer PC command prompt, `arp -a` displays the ARP cache. Command availability and output vary by platform.
+Each table has its own command. On a router, `show ip route` displays the routing table and `show arp` the ARP table. On a switch, `show mac address-table` displays the MAC address table. On a Windows PC or a Packet Tracer PC, `arp -a` displays the ARP cache. `show ip interface brief`, from Chapter 00, remains the quick check of a router's interface addresses and states.
 
-For this lab, read only the directly connected routes and the router's own addresses. A **prefix** describes an address range; here `/24` corresponds to mask `255.255.255.0`, while `/32` identifies exactly one address. This representative excerpt shows how the configured router interfaces produce those entries:
+R1 needs no routing configuration to know its two LANs. Giving an interface an address and enabling it puts that subnet into the routing table as a **connected** route. In the output, a **prefix** such as `192.168.10.0/24` names a range of addresses, and `/32` names exactly one address:
 
 ```output R1# show ip route — abbreviated teaching example
 C  192.168.10.0/24 is directly connected, GigabitEthernet0/0  ← LAN-A subnet
@@ -180,9 +178,9 @@ C  192.168.20.0/24 is directly connected, GigabitEthernet0/1  ← LAN-B subnet
 L  192.168.20.1/32 is directly connected, GigabitEthernet0/1  ← R1's own LAN-B address
 ```
 
-`C` identifies a connected subnet; `L`, on images that display it, identifies an address belonging to the router itself. A request to Server-B `192.168.20.20` uses the LAN-B connected route; the lab uses PC-B for this same destination-host role. A request to `192.168.20.1` is for R1 itself. The `L` entry does not change the LAN's mask to /32. Chapter 17 extends this reading to choosing among routes learned in different ways.
+`C` marks a connected subnet and `L` marks one of the router's own addresses. A packet for Server-B, `192.168.20.20`, matches the LAN-B connected route and is forwarded out of Gi0/1. A packet for `192.168.20.1` matches an `L` entry: it is for R1 itself. Chapter 17 extends this to routes learned in other ways.
 
-Use **ping** for an ICMP reachability test. Use **traceroute** on IOS, or **tracert** on Windows, to collect responses from probes with increasing TTL values. Implementations use different probe types, and intermediate devices may filter or rate-limit replies. A missing traceroute response does not by itself prove that the device cannot forward traffic, and the displayed forward path does not establish the return path.
+Two tests use what you have just learned. **ping** sends ICMP Echo Requests and reports the replies, so it tests the path there and back. **traceroute** on IOS, or **tracert** on Windows, lists the routers along the path by using TTL. Its first probe has a TTL of 1, so the first router discards it and returns ICMP Time Exceeded, which reveals that router's address. The next probe has a TTL of 2 and reaches the second router, and so on until the destination answers. A row of `* * *` means that hop sent no answer. Routers are often configured not to answer, so it does not prove that the path stops there.
 
 ## Reading the output
 
@@ -195,7 +193,7 @@ Vlan    Mac Address       Type        Ports
    1    0001.9641.7a01    DYNAMIC     Fa0/24  ← The gateway MAC is reachable through the router-facing port.
 ```
 
-For a known unicast addressed to 0001.9641.7a01 in VLAN 1, SW1 selects Fa0/24 if that port is eligible to forward. The destination IP can be remote; this ordinary Layer 2 decision uses the destination MAC and VLAN.
+A frame for 0001.9641.7a01 leaves through Fa0/24. SW1 makes that decision from the destination MAC alone; it does not matter that the IP packet inside is addressed to another network.
 
 ```output R1: show arp
 Protocol  Address          Age (min)  Hardware Addr   Type   Interface
@@ -205,9 +203,9 @@ Internet  192.168.20.1            -   0001.9641.7a02  ARPA   GigabitEthernet0/1
 Internet  192.168.20.20           1   00d0.ba2c.5e01  ARPA   GigabitEthernet0/1
 ```
 
-In this known configuration, the .1 entries correspond to R1's own interfaces. The numbered ages belong to dynamically learned neighbor entries. A dash in the Age field alone is not enough to distinguish every possible static or local entry; use the address and configuration as well. ARP entries can age out, so a missing entry alone does not prove that communication never occurred.
+The two `.1` entries with a dash for an age are R1's own interfaces. The entries with an age in minutes were learned from ARP. Learned entries expire when they are not used, so a missing entry means only that the two devices have not talked recently.
 
-After a failed remote ping, first compare the hosts' addresses, masks, and gateways with the plan. Inspect interface states and the relevant connected routes. Then examine ARP and MAC learning on the path. This sequence is a practical starting point, not a requirement to run every command regardless of the evidence.
+After a failed remote ping, work in this order. Compare both hosts' addresses, masks and gateways with the plan. Check the router's interface states and connected routes. Then look at the ARP and MAC tables along the path. Check both hosts, because the reply has to find its way back.
 
 ## Exam focus
 

@@ -1,8 +1,8 @@
 [
   {
     "id": "dns-c03",
-    "front": "How do stub resolver, recursive resolver, and authoritative server roles differ?",
-    "back": "The stub asks for resolution; a recursive resolver performs permitted lookup work and can cache results; an authoritative server answers for its served zone data. A device can perform more than one role, and caches can avoid new authoritative queries.",
+    "front": "What do the stub resolver, recursive resolver and authoritative server each do in a lookup?",
+    "back": "Stub: the host's client, asks the configured server. Recursive: finds the answer for the client and caches it. Authoritative: holds the zone's records.",
     "tags": [
       "compare"
     ]
@@ -10,24 +10,32 @@
   {
     "id": "dns-c07",
     "front": "How do A and AAAA records differ?",
-    "back": "A holds an IPv4 address; AAAA holds an IPv6 address. They are separate record types. An A answer does not supply the AAAA requested by an IPv6 application; verify the address family the client actually uses.",
+    "back": "A holds an IPv4 address; AAAA holds an IPv6 address. They are separate records, so a name can have one without the other.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "dns-c08",
-    "front": "What must a web CNAME chain eventually supply?",
-    "back": "Usable address data of the requested type. Follow each alias target; a loop or missing final A/AAAA can prevent that lookup.",
+    "front": "What must a CNAME chain end in for an address lookup to succeed?",
+    "back": "A record of the requested type (A or AAAA) at the final target. A missing target record or an alias loop returns no address.",
     "tags": [
       "concept",
       "troubleshoot"
     ]
   },
   {
+    "id": "dns-c30",
+    "front": "Which other records can share an owner name with a CNAME?",
+    "back": "None. A name with a CNAME cannot also hold A, MX or other ordinary records, so a zone's top name cannot be a CNAME.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "dns-c09",
-    "front": "What are an MX record's two main data fields?",
-    "back": "Preference and exchanger hostname. Lower preference values are preferred; the value is a name rather than an IP literal.",
+    "front": "What are an MX record's two data fields, and which exchanger is tried first?",
+    "back": "A preference number and an exchanger hostname. The lowest preference is tried first.",
     "tags": [
       "number",
       "concept"
@@ -35,16 +43,16 @@
   },
   {
     "id": "dns-c24",
-    "front": "What must an MX exchanger hostname provide?",
-    "back": "Suitable address records for the intended mail service. The exchanger named by MX must not itself be a CNAME alias.",
+    "front": "What must the hostname in an MX record have?",
+    "back": "Its own A or AAAA record. It must not be a CNAME, and MX data is never an IP address.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "dns-c10",
-    "front": "What does an NS record identify, and what does it not configure?",
-    "back": "An authoritative name server for a zone. Parent delegation and name-server address dependencies must lead to the intended service. It is not the resolver IP setting entered on a client or supplied by DHCP.",
+    "front": "What does an NS record identify?",
+    "back": "An authoritative name server for a zone. NS records in the parent zone delegate a child zone. It is not a client's resolver setting.",
     "tags": [
       "concept",
       "troubleshoot"
@@ -52,8 +60,8 @@
   },
   {
     "id": "dns-c11",
-    "front": "What is the IPv4 PTR owner for 10.1.1.80?",
-    "back": "80.1.1.10.in-addr.arpa. Reverse the IPv4 octets; the PTR value is the hostname.",
+    "front": "At which name is the PTR record for 10.1.1.80 stored?",
+    "back": "80.1.1.10.in-addr.arpa: the octets reversed, then in-addr.arpa. The PTR data is the hostname.",
     "tags": [
       "number",
       "concept"
@@ -61,24 +69,32 @@
   },
   {
     "id": "dns-c25",
-    "front": "Does a correct A answer prove a matching PTR exists?",
-    "back": "No. Forward and reverse data are separate. Query the reverse name when that is the required check.",
+    "front": "Why can a host have a working A record and no PTR record?",
+    "back": "Forward and reverse records live in different zones and are created separately. Adding an A record does not create its PTR.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "dns-c01",
-    "front": "Which ports does conventional DNS use?",
-    "back": "UDP 53 and TCP 53 on the DNS service. A querying client normally uses an ephemeral source port. TCP can carry ordinary queries as well as full zone transfers; allowing only UDP does not establish complete DNS connectivity.",
+    "front": "Which ports does a DNS server listen on?",
+    "back": "UDP 53 and TCP 53. Most queries use UDP; truncated replies and zone transfers use TCP.",
     "tags": [
       "number"
     ]
   },
   {
+    "id": "dns-c26",
+    "front": "What does the TC flag in a DNS UDP reply tell the client?",
+    "back": "The reply was truncated. The client repeats the query over TCP port 53.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
     "id": "dns-c04",
-    "front": "How can a resolver follow the DNS hierarchy with no relevant cache and no forwarding service?",
-    "back": "Using known root-server starting information, it asks the root, follows a referral toward the top-level domain, then follows delegation toward the name’s authority. Caching, forwarding, and local zones can change the actual path.",
+    "front": "A resolver with an empty cache looks up www.example.com. Which servers does it ask, in order?",
+    "back": "A root server, a .com (TLD) server, then example.com's authoritative server. The first two reply with referrals.",
     "tags": [
       "concept"
     ]
@@ -86,7 +102,7 @@
   {
     "id": "dns-c06",
     "front": "How does a recursive query differ from an iterative query?",
-    "back": "A recursive query asks the receiving service to complete resolution if permitted. With iteration, the querying resolver follows referrals itself until it obtains the relevant result. An authoritative-only service need not offer general recursion.",
+    "back": "Recursive: the server must return the final answer (client to resolver). Iterative: the server returns an answer or a referral, and the asker follows it.",
     "tags": [
       "compare"
     ]
@@ -94,7 +110,7 @@
   {
     "id": "dns-c13",
     "front": "What does a DNS record’s TTL control?",
-    "back": "Its ordinary cache lifetime, measured in seconds from receipt and subject to cache policy. An authoritative edit does not instantly replace copies elsewhere. This TTL is unrelated to an IP packet’s hop limit. Negative results can also be cached.",
+    "back": "How many seconds a cache may reuse the record. Caches keep the old answer until it expires, even after the record is changed.",
     "tags": [
       "number",
       "compare"
@@ -102,8 +118,17 @@
   },
   {
     "id": "dns-c14",
-    "front": "How do NXDOMAIN and completed NODATA differ?",
-    "back": "NXDOMAIN reports an absent name, possibly the final alias target. Completed NODATA reports no requested type at the resolved name; other types may exist.",
+    "front": "How do NXDOMAIN and NODATA differ?",
+    "back": "NXDOMAIN: the name does not exist. NODATA: the name exists but has no record of the requested type (NOERROR with an empty answer).",
+    "tags": [
+      "compare",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dns-c23",
+    "front": "How do SERVFAIL and a DNS query timeout differ?",
+    "back": "SERVFAIL is a reply: the resolver could not complete the lookup. A timeout is no reply at all: the resolver was not reached.",
     "tags": [
       "compare",
       "troubleshoot"
@@ -111,16 +136,49 @@
   },
   {
     "id": "dns-c15",
-    "front": "Does Non-authoritative answer in nslookup mean the returned address is wrong?",
-    "back": "No. It normally indicates that the response is not marked authoritative for that data, as commonly happens with a recursive resolver. Evaluate the actual name, requested type, returned address, and intended design.",
+    "front": "What does “Non-authoritative answer” mean in nslookup output?",
+    "back": "The reply came from a resolver’s cache or recursion, not directly from the zone’s authoritative server. It is normal.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
+    "id": "dns-c28",
+    "front": "http://10.1.1.80 loads but http://app.lab.example does not. Which stage has failed?",
+    "back": "Name resolution. The address test already proves reachability and the web service.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dns-c20",
+    "front": "Why can ping and nslookup return different addresses for the same name on one PC?",
+    "back": "nslookup always queries a DNS server. ping uses the OS resolver, which checks the hosts file and local cache first.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dns-c21",
+    "front": "You change the dns-server in a DHCP pool. When do existing clients start using the new resolver?",
+    "back": "When they renew or re-request their lease. Until then they keep the old resolver address.",
+    "tags": [
+      "concept",
+      "troubleshoot"
+    ]
+  },
+  {
     "id": "dns-c16",
-    "front": "Which IOS command configures the resolver for the router’s own lookups?",
-    "back": "In global configuration: ip name-server 10.1.1.53. Supported syntax can list additional resolvers. Verify actual service and reachability; an address list does not by itself provide working redundancy. This is separate from DHCP’s dns-server option.",
+    "front": "Which IOS command sets the DNS server for the router’s own lookups?",
+    "back": "ip name-server 10.1.1.53 in global configuration. DHCP clients get theirs from dns-server in the pool instead.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "dns-c29",
+    "front": "What does ip domain name lab.example do on a router?",
+    "back": "Sets the default suffix. A name typed without a dot, such as app, is looked up as app.lab.example.",
     "tags": [
       "command"
     ]
@@ -128,68 +186,43 @@
   {
     "id": "dns-c17",
     "front": "What does no ip domain-lookup disable?",
-    "back": "The router's own DNS client lookup function. It does not itself filter DNS traffic forwarded for users.",
+    "back": "Only the router’s own DNS client. Forwarded user DNS traffic and static ip host entries still work.",
     "tags": [
       "command",
       "concept"
     ]
   },
   {
-    "id": "dns-c18",
-    "front": "How do clearing a DNS cache and removing a static IOS name differ?",
-    "back": "clear host NAME clears the supported cached entry. no ip host NAME removes the configured static mapping; inspect show hosts afterward.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "dns-c20",
-    "front": "Why can an application or ping disagree with an explicit nslookup query?",
-    "back": "The application can use a hosts-file entry or cached result while nslookup queries a selected DNS service. Also compare exact name, address family, and server. Do not assume every application shares one universal OS lookup sequence.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "dns-c21",
-    "front": "Does changing DHCP's DNS option immediately update every client?",
-    "back": "No. Refresh the client's configuration appropriately and verify its actual resolver setting before retesting.",
+    "id": "dns-c32",
+    "front": "Why does a mistyped command hang a router that has default settings and no name server?",
+    "back": "ip domain-lookup is on by default, so IOS treats the word as a hostname and broadcasts a DNS query until it times out.",
     "tags": [
       "concept",
       "troubleshoot"
     ]
   },
   {
-    "id": "dns-c22",
-    "front": "How can you query the MX for lab.example specifically from 10.1.1.53?",
-    "back": "nslookup -type=MX lab.example 10.1.1.53 or dig @10.1.1.53 lab.example MX. Then resolve the returned exchanger hostname’s address records. Tool availability differs; record-based paper exercises cover unsupported simulator operations.",
+    "id": "dns-c31",
+    "front": "Which IOS command shows the router’s name servers, default domain and host table?",
+    "back": "show hosts. Static ip host entries are flagged perm; cached DNS answers are flagged temp.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "dns-c23",
-    "front": "How do SERVFAIL and a DNS query timeout differ?",
-    "back": "SERVFAIL is a received failure response. A timeout means no usable reply arrived within the tool's wait; neither establishes one unique cause.",
+    "id": "dns-c18",
+    "front": "How do you remove a cached name and a static name from an IOS router?",
+    "back": "clear host NAME removes a cached entry. no ip host NAME removes a static mapping from the configuration.",
     "tags": [
-      "compare",
-      "troubleshoot"
+      "command"
     ]
   },
   {
-    "id": "dns-c26",
-    "front": "What does TC in a DNS UDP reply tell you?",
-    "back": "The reply is truncated. A TCP retry may be needed, so verify the TCP path to DNS port 53.",
+    "id": "dns-c22",
+    "front": "Which nslookup command asks 10.1.1.53 for the MX records of lab.example?",
+    "back": "nslookup -type=MX lab.example 10.1.1.53. Then resolve the exchanger hostname it returns.",
     "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "dns-c27",
-    "front": "What should identify every DNS test in your evidence?",
-    "back": "The exact name, requested type, server queried and returned result. Compare them with the intended service before editing records.",
-    "tags": [
-      "troubleshoot"
+      "command"
     ]
   }
 ]

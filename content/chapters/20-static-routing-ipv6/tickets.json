@@ -43,7 +43,7 @@
       "v2:3.2",
       "v2:3.2.b"
     ],
-    "scenario": "R1 and R2 connect over Gi0/0 on 2001:db8:12::/64. R1 uses ::1 and FE80::1; R2 uses ::2 and FE80::2. R1 LAN is 2001:db8:10::/64; R2 LAN is 2001:db8:20::/64. Both PCs have the correct /64 and their own router as gateway. IPv6 forwarding is enabled on both routers; there are no filters. Compare these authored observations before changing the configuration.",
+    "scenario": "R1 and R2 connect over Gi0/0 on 2001:db8:12::/64. R1 uses ::1 and FE80::1; R2 uses ::2 and FE80::2. R1 LAN is 2001:db8:10::/64; R2 LAN is 2001:db8:20::/64. Both PCs have the correct /64 and their own router as gateway. IPv6 forwarding is enabled on both routers and nothing filters traffic. Compare the evidence before changing the configuration.",
     "exhibits": [
       {
         "title": "R1 installed remote route",

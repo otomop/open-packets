@@ -6,9 +6,9 @@ minutes: 80
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Use Packet Tracer for the address/name comparison and IOS client configuration. Use the supplied paper records for types and response details that the simulator may not implement. The paper cases are required practice for record diagnosis, not claims of a working recursive or authoritative DNS deployment in Packet Tracer.
+You will build a small LAN with a DNS server and a web server, make a router and a PC resolve names through it, and then break resolution in three different ways so that you can tell a timeout, a missing name and a wrong answer apart. Packet Tracer's DNS service handles A and CNAME records; the AAAA, MX, NS and PTR cases in Step 10 are worked on paper.
 
-Start with new devices. Use their console CLI tabs, answer `no` to any initial configuration dialog, and inspect the named ports before cabling. This exact lab has not been executed in Packet Tracer during this review. Its GUI labels, cache behavior, and supported record/query types may vary; where a feature is absent, use the explicit paper alternative.
+Start with new devices and answer `no` to the initial configuration dialog. This lab has not been run end to end in Packet Tracer for this revision, so menu labels and cache behaviour may differ slightly. Where a feature is missing, use the paper alternative given in the step.
 
 ## Topology
 
@@ -23,7 +23,7 @@ Start with new devices. Use their console CLI tabs, answer `no` to any initial c
 | WEB1 FastEthernet0 | SW1 Fa0/3 | 10.1.1.80 / 255.255.255.0 | 10.1.1.1; 10.1.1.53 |
 | R1 Gi0/0 | SW1 Gi0/1 | 10.1.1.1 / 255.255.255.0 | No upstream route needed; DNS 10.1.1.53 |
 
-Use straight-through copper cables for all four links. Every switch port used here is access VLAN 1. This is a simple isolated addressing exercise, not a recommendation to use VLAN 1 for production management. No real Internet connection or public DNS change is required. Reserve unused 10.1.1.54 and 10.1.1.81 for the stated fault tests; do not add devices at those addresses until the optional challenge.
+Use straight-through copper cables for all four links. Every switch port stays in VLAN 1. Leave 10.1.1.54 and 10.1.1.81 unused: later steps point at them deliberately as addresses where nothing answers.
 
 ## Step 1: Configure and prove the IP path
 
@@ -60,7 +60,7 @@ SW1# show vlan brief
 From PC-A's Command Prompt, ping 10.1.1.1, 10.1.1.53, and 10.1.1.80. Repeat after link startup and ARP resolution if necessary.
 
 :::expected
-All three addresses respond once the links forward. This is local-subnet connectivity, so no route to another network is involved. An IP ping is not yet a DNS or HTTP test. Correct any addressing/cabling fault before proceeding.
+All three addresses reply once the links come up. Everything is on one subnet, so no routing is involved. This proves IP reachability only; DNS and HTTP are tested next.
 :::
 
 ```state
@@ -69,7 +69,7 @@ All three addresses respond once the links forward. This is local-subnet connect
 
 ## Step 2: Add controlled DNS records and a web service
 
-Before enabling DNS, predict which test can already work with HTTP enabled: the literal address, the app name or the alias. Record why the alias requires more than an address on WEB1.
+Before you enable DNS, predict which of these will work from PC-A once HTTP is on: the address `10.1.1.80`, the name `app.lab.example`, or the alias `www.lab.example`.
 
 On DNS1, open Services → DNS, turn it On, and add the following records with the Name, Type, and Address/target fields. Use Add or the equivalent save action for each entry.
 
@@ -80,12 +80,12 @@ On DNS1, open Services → DNS, turn it On, and add the following records with t
 | ns1.lab.example | A | 10.1.1.53 |
 | www.lab.example | CNAME | app.lab.example |
 
-If the selected simulator does not offer CNAME or does not follow it in a query, retain the A-record exercises and use this explicit paper result for the alias: `www.lab.example CNAME app.lab.example`, followed by `app.lab.example A 10.1.1.80`. Do not silently replace the alias with an A record and call that a CNAME test. Record the available type list; no fixed list of unsupported simulator types is assumed.
+If your Packet Tracer version does not offer CNAME, keep the A records and treat the alias as a paper result: `www.lab.example CNAME app.lab.example`, then `app.lab.example A 10.1.1.80`. Do not replace the alias with an A record, because that would no longer test a CNAME.
 
 On WEB1, enable Services → HTTP. Keep its default simple page or replace its title with `CCNA DNS lab`. From PC-A, open Web Browser and request `http://10.1.1.80`.
 
 :::expected
-The stored records match the table, and WEB1 serves the controlled HTTP page by address. This page is intentionally suitable for both IP-literal and hostname access. These local records do not simulate the public root/TLD delegation process.
+The stored records match the table and WEB1's page loads by address. DNS1 answers from its own records; this lab has no root or TLD servers.
 :::
 
 ```state
@@ -105,10 +105,10 @@ R1# ping app
 R1# show hosts
 ```
 
-The hyphenated lookup command and two-word form `ip domain lookup` are accepted/displayed differently by IOS releases. Use the image's supported spelling. If short-name completion is absent in the simulator, retain the successful full-name test and inspect the configured domain as a paper explanation of the documented IOS behavior.
+If Packet Tracer rejects `ip domain name`, use the older spelling `ip domain-name lab.example`. If `ping app` does not complete the short name in your version, keep the full-name result and note that IOS appends the configured suffix.
 
 :::expected
-The full name resolves to 10.1.1.80 and reaches WEB1. On the documented IOS behavior, `app` is completed with the default domain. `show hosts` identifies DNS1 and the configured suffix and may show a temporary cached mapping. Record what is actually present; no exact cache lifetime or formatting is required. Do not query `fresh.lab.example` yet.
+The full name resolves to 10.1.1.80 and the ping reaches WEB1. `ping app` works because R1 appends `lab.example`. `show hosts` lists the name server 10.1.1.53, the default domain and a temporary (cached) entry for the name you resolved. Do not look up `fresh.lab.example` yet: Step 4 needs a name that R1 has never cached.
 :::
 
 ```state
@@ -117,9 +117,7 @@ The full name resolves to 10.1.1.80 and reaches WEB1. On the documented IOS beha
 
 ## Step 4: Distinguish static mapping from disabled DNS lookup
 
-Predict the result for each of the two names before running its ping. Identify which one needs a new server query and which one can use local configuration.
-
-Create a local static name and disable the router's DNS client. Test the static name, then the deliberately unused fresh name so an earlier successful cache entry cannot hide the difference.
+Create a static name on R1 and turn its DNS client off. Before each ping, predict the result: which name needs a query to DNS1, and which can R1 answer from its own configuration? `fresh.lab.example` is used because R1 has never cached it.
 
 ```ios R1
 R1# configure terminal
@@ -132,7 +130,7 @@ R1# ping fresh.lab.example
 ```
 
 :::expected
-`localweb` is available through the static host table. The router cannot obtain a new DNS answer for `fresh.lab.example` while lookup is disabled, even though that name exists on DNS1. Existing cached entries may behave differently and are not the test target. Record the actual failure rather than requiring a particular error string. Leave the router disabled until the next recovery step.
+`ping localweb` succeeds from the static host table. `ping fresh.lab.example` fails with an unrecognized-host error: R1 sends no query while lookup is off, even though the record exists on DNS1. Leave lookup off until Step 5.
 :::
 
 ```state
@@ -152,7 +150,7 @@ R1# show hosts
 On PC-A, run `nslookup app.lab.example` and, where supported, `nslookup www.lab.example`. Then request `http://www.lab.example` in its browser, or use `http://app.lab.example` for the stated alias fallback. In Simulation mode, filter for DNS and inspect a new query/reply; return to Realtime afterward.
 
 :::expected
-The router's previously unavailable fresh name now resolves. PC-A asks 10.1.1.53 and receives the application address 10.1.1.80. For an observed UDP exchange, the query destination port is 53 and the reply source port is 53; the client's other port is not required to be 53. A cache or alias implementation can change the number of visible messages. If `nslookup` is missing, use the browser name test and available packet details, and interpret the lesson's supplied query output on paper.
+R1 now resolves `fresh.lab.example`. PC-A's query goes to 10.1.1.53 and returns 10.1.1.80. In Simulation mode the query's UDP destination port is 53 and the reply's source port is 53; PC-A's own port is an ephemeral number. If your version has no `nslookup`, use the browser test and the packet details instead.
 :::
 
 ```state
@@ -161,14 +159,14 @@ The router's previously unavailable fresh name now resolves. PC-A asks 10.1.1.53
 
 ## Step 6: Use an unreachable resolver and observe the difference
 
-Predict whether this client-only DNS change alters the stored record on DNS1, the IP-literal page, or the ability to receive a new DNS answer. Write your predictions before the test.
+This step gives PC-A a resolver address where nothing answers. Predict first: will the record on DNS1 change, will the page still load by address, and will a new lookup succeed?
 
-Save a working checkpoint. Change only PC-A's DNS setting to unused 10.1.1.54. Ask for `app.lab.example` with nslookup; the command sends a direct query rather than relying on an application's prior result. Also request `http://10.1.1.80` by address. Do not restore the setting until you have recorded the evidence.
+Save the project. Change only PC-A's DNS server to 10.1.1.54. Run `nslookup app.lab.example`, then request `http://10.1.1.80` in the browser. Leave the wrong setting in place until you have noted both results.
 
-If the simulator lacks direct lookup, compare its current DNS configuration with the unused-address plan and attempt an uncached name. Use the paper observation “no usable DNS reply arrived” instead of claiming a specific on-wire query was seen: local ARP failure can stop the UDP packet before transmission.
+No host owns 10.1.1.54, so PC-A's ARP request for it goes unanswered and the DNS query never leaves the PC. The symptom is the same as a DNS server that is down: no reply.
 
 :::expected
-The direct lookup cannot obtain a response from the selected unused resolver, while the simple IP-literal HTTP page remains reachable. This isolates the resolver selection in this controlled setup. A timeout does not mean that DNS1's app record has disappeared.
+`nslookup` times out, and the page still loads by address. The fault is PC-A's choice of resolver. A timeout says nothing about the records: `app.lab.example` is still stored on DNS1.
 :::
 
 ```state
@@ -180,7 +178,7 @@ The direct lookup cannot obtain a response from the selected unused resolver, wh
 Set PC-A's DNS address back to 10.1.1.53. Query `app.lab.example` to reestablish success, then query absent `nosuch.lab.example`. Keep WEB1's HTTP service unchanged.
 
 :::expected
-The real name returns 10.1.1.80. The absent name produces a negative/not-found result on a supporting simulator. This is different from failing to receive a reply from 10.1.1.54. If the simulator hides the response code, use the paper distinction: NXDOMAIN says the name is absent in this direct-name test; timeout says no usable response arrived. Do not invent an RCODE from a vague GUI error alone.
+`app.lab.example` returns 10.1.1.80. `nosuch.lab.example` returns a not-found result quickly, because DNS1 was reached and replied that the name does not exist (NXDOMAIN). Compare that with Step 6, where no reply arrived at all. Packet Tracer may not show the response code by name.
 :::
 
 ```state
@@ -189,7 +187,7 @@ The real name returns 10.1.1.80. The absent name produces a negative/not-found r
 
 ## Step 8: Install a wrong A record and inspect the answer
 
-Predict both the fresh query's answer and the HTTP result. A returned address can be valid DNS data while disagreeing with the intended service inventory.
+This step makes DNS return a well-formed answer that is wrong. Predict what a new query returns and whether the page loads by name.
 
 On DNS1, select `app.lab.example` and change its address to unused 10.1.1.81, saving the record. If the GUI has no edit action, remove only that entry and re-add the same name/type with .81. Leave WEB1 at .80 and leave the CNAME target unchanged. Query the app name directly from PC-A and compare the returned value with WEB1's actual address.
 
@@ -200,10 +198,10 @@ R1# clear host app.lab.example
 R1# ping app.lab.example
 ```
 
-If `clear host app.lab.example` is absent, use the direct PC query and record the router-cache inspection as a simulator limit. Do not predict that an earlier cached .80 entry must still exist; note whether it does before interpreting the first router ping.
+Check `show hosts` before the first ping: if R1 still holds the cached .80 entry, that ping succeeds from the cache. `clear host` removes the entry so that the second ping uses a new answer. If your Packet Tracer version lacks `clear host`, rely on the PC query.
 
 :::expected
-A fresh server answer supplies .81, which is inconsistent with WEB1's .80 address. Resolution can return a syntactically valid answer while the named application fails. The IP-literal .80 page still works. An earlier cache may temporarily retain .80, but that behavior is an observation to record, not a guaranteed part of this test. Stop before restoration.
+A new query returns 10.1.1.81, where nothing is listening, so the name-based ping and page fail while `http://10.1.1.80` still works. The lookup succeeded and the data is wrong. If R1's first ping succeeded, it used the cached .80 entry. Do not repair the record yet.
 :::
 
 ```state
@@ -212,7 +210,7 @@ A fresh server answer supplies .81, which is inconsistent with WEB1's .80 addres
 
 ## Step 9: Restore the record before clearing caches and saving
 
-Choose the narrow repair from the evidence before reading further. First correct DNS1's `app.lab.example` A record back to 10.1.1.80. Confirm the stored entry and PC-A's DNS setting of 10.1.1.53. Only after that correction, clear any supported temporary router cache and perform new tests.
+Correct DNS1's `app.lab.example` A record back to 10.1.1.80 and confirm that PC-A's DNS server is 10.1.1.53. Fix the record first and clear the cache second: clearing first would only let R1 cache the wrong answer again.
 
 ```ios R1
 R1# clear host app.lab.example
@@ -221,10 +219,10 @@ R1# show hosts
 R1# copy running-config startup-config
 ```
 
-Complete the startup-config filename prompt with Enter if offered. On SW1, run `copy running-config startup-config` from privileged EXEC and complete its prompt too. Use the direct PC query and browser to verify app and the supported alias. Save the project as `25-dns-complete.pkt`.
+Press Enter at the filename prompt, and save SW1 the same way. From PC-A, run `nslookup app.lab.example` and load the page by name and by alias. Save the project as `25-dns-complete.pkt`.
 
 :::expected
-Fresh answers again identify .80, and the controlled page works by the intended name. The negative test name remains absent; it was never supposed to be created. No wrong resolver, disabled router lookup, or wrong app record remains in the final state.
+New answers return .80 and the page loads by name. `nosuch.lab.example` is still absent, as intended. The final state has the correct resolver on PC-A, lookup enabled on R1 and the correct A record on DNS1.
 :::
 
 ```state
@@ -233,7 +231,7 @@ Fresh answers again identify .80, and the controlled page works by the intended 
 
 ## Step 10: Diagnose record types on paper
 
-These cases are independent of the Packet Tracer record store. Without opening the answer, record the exact owner/type/data to change, what should remain unchanged and the next query/service check for each one. They teach the record dependencies the v2 objective explicitly names.
+These four cases cover the record types Packet Tracer cannot serve. For each one, write the exact record to add or change (owner name, type and data), what must stay as it is, and the query you would run to confirm the repair. Then open the answers.
 
 | Case | Complete evidence supplied |
 |---|---|
@@ -243,11 +241,11 @@ These cases are independent of the Packet Tracer record store. Without opening t
 | Reverse name | app.lab.example A 10.1.1.80 works. A query for 80.1.1.10.in-addr.arpa returns no PTR data. The approved reverse name is app.lab.example. |
 
 :::solution Record worksheet answers
-IPv6: correct the AAAA address to ::80, query that type again, and test the IPv6 application path; changing A does not repair AAAA. Mail: add the intended exchanger address record, then verify MX → exchanger address → mail service, accounting for negative caches. Delegation: correct the parent NS delegation to the approved authority and ensure its hostname/address dependency is resolvable; verify through the affected recursive resolver after cache considerations. Reverse: add the approved PTR in the reverse zone under its actual administrator's control, then re-query the address and compare the forward name. None of these paper fixes authorizes changes to a real public DNS service.
+IPv6: change `app.lab.example AAAA` to 2001:db8:25::80, query AAAA again and test the service over IPv6. The A record is correct and stays. Mail: add `mail.lab.example A 10.1.1.25`; the MX record stays. Query the MX, then the exchanger's A record, and allow for the cached NXDOMAIN to expire. Delegation: in the parent zone, change the NS record for `branch.lab.example` to `ns2.lab.example` and make sure that name resolves to 10.2.2.54, with a glue record if needed. Verify through the resolver the clients use. Reverse: add `80.1.1.10.in-addr.arpa PTR app.lab.example` in the reverse zone, then query the address again. The A record stays.
 :::
 
 
-Keep an evidence table for the completed practice. For each test, record the exact name, type, server queried, returned result and application outcome. Include working A/alias resolution, unused resolver, absent name, wrong answer and repaired answer. Distinguish an actual packet/query observation from a supplied worksheet. The four paper repairs must identify the affected record owner and type, not just say “fix DNS.”
+To finish, list the five results you observed (working lookup, unused resolver, absent name, wrong answer, repaired answer) with the name, type and server queried for each. A repair is specific only when it names the record's owner and type; “fix DNS” is not an answer.
 
 ```state
 {"status":"Paper: four record cases","chips":[{"node":"R","text":"ip domain-lookup","tone":"ok"},{"node":"DNS","text":"DNS On","tone":"ok"},{"node":"WEB","text":"HTTP On","tone":"ok"}],"rows":[["IPv6 application","Server ::80 · A .80 · AAAA returns ::81"],["Mail","MX 10 mail.lab.example · name NXDOMAIN"],["Delegation","branch → oldns 10.2.2.53 · not serving"],["Reverse name","80.1.1.10.in-addr.arpa · no PTR data"]]}
@@ -258,7 +256,7 @@ Keep an evidence table for the completed practice. For each test, record the exa
 - IP path fails: correct address/mask, link, VLAN, and intended routing before attributing everything to DNS.
 - Query times out: identify the actual resolver, service state, transport/path, and whether a query was sent.
 - Name missing: verify spelling, type, queried server/view, and cached negative information.
-- Router alone cannot resolve: inspect lookup enablement, host mappings, domain/search list, resolver setting, and route.
+- Router alone cannot resolve: check `ip domain-lookup`, the `ip name-server` address, the default domain and `show hosts`.
 - Alias fails: follow the target chain and the requested address type; an unchanged alias may point at changed target data.
 - Correct name/address but application fails: inspect the required service. Ping success is not an HTTP, TLS, or mail-service test.
 
@@ -268,7 +266,7 @@ Work in a separate saved copy. Add Server-PT WEB2 at 10.1.1.81/24, gateway 10.1.
 
 The new service must use `files.lab.example`. Add that name as CNAME `web2.lab.example`, initially omitting the target's A record. Before opening the answer, predict and test the alias, then make the smallest record repair. Preserve the existing app service at .80. Use the explicit alias worksheet if the simulator cannot follow CNAMEs; still test WEB2 by address.
 
-For a separate record-only extension, the approved reverse name of 10.1.1.81 is web2.lab.example. Write its PTR owner/type/data. Explain why repairing that PTR alone would not fix the missing forward alias target. No production or public zone change is part of this exercise.
+For a separate record-only extension, the approved reverse name of 10.1.1.81 is web2.lab.example. Write its PTR owner/type/data. Explain why repairing that PTR alone would not fix the missing forward alias target.
 
 Submit a before/after query result (or clearly labeled worksheet), WEB2's address and name service tests, and proof that app.lab.example still works.
 

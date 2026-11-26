@@ -8,7 +8,7 @@
     "teaching": {
       "sectionId": "port-security-who-may-talk-on-this-port",
       "hint": "Ordinary MAC learning alone does not impose a secure-address limit.",
-      "takeaway": "Enabling port security establishes a limit and violation policy. It does not prove the identity of the device using an allowed MAC address.",
+      "takeaway": "This one command enables port security with the defaults: a maximum of 1 secure MAC address and violation mode shutdown. The port must already be a static access or trunk port.",
       "syntax": [
         {
           "text": "switchport port-security",
@@ -26,8 +26,8 @@
     "accept": [],
     "teaching": {
       "sectionId": "port-security-who-may-talk-on-this-port",
-      "hint": "Count required secure entries, not just physical sockets.",
-      "takeaway": "The maximum is the total allowed secure entries, not the number of additional devices. Check the phone/data VLAN behavior rather than assuming every phone always needs the same allowance.",
+      "hint": "Count the secure addresses the port must carry, not the wall sockets.",
+      "takeaway": "The maximum is the total number of secure addresses on the port, not the number of extra ones. A phone with a PC behind it needs two: the phone's MAC in the voice VLAN and the PC's in the data VLAN.",
       "syntax": [
         {
           "text": "switchport port-security maximum",
@@ -90,7 +90,7 @@
     "teaching": {
       "sectionId": "violation-modes-aging-and-err-disable-recovery",
       "hint": "Use the security-specific interface display, not only ordinary link status.",
-      "takeaway": "Secure-shutdown identifies a current port-security outage. A nonzero historical violation count alone does not; compare current state and retest the approved endpoint after recovery.",
+      "takeaway": "`Secure-shutdown` on the Port Status line means a violation has err-disabled the port; a healthy port shows `Secure-up`. The same output lists the violation mode, the maximum and the violation count.",
       "syntax": [
         {
           "text": "show port-security interface",

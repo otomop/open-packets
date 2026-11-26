@@ -8,7 +8,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which syntax difference is correct?",
+    "prompt": "Which statement correctly describes how an IPv6 static route differs from an IPv4 static route?",
     "options": [
       "IPv6 routes use dotted-decimal subnet masks.",
       "IPv4 static routes must always use link-local next hops.",
@@ -425,9 +425,9 @@
       "v2:3.2"
     ],
     "difficulty": 2,
-    "prompt": "Which neighbor-cache observation requires additional investigation rather than proving success or failure by its label alone?",
+    "prompt": "Which statement about entries in `show ipv6 neighbors` is correct?",
     "options": [
-      "STALE lacks recent confirmation; test the intended neighbor and inspect the resulting state and traffic.",
+      "STALE means the entry has not been confirmed recently; it is not a fault.",
       "An empty cache proves the configured peer is absent from the link.",
       "One INCOMPLETE entry proves the entire remote LAN is unreachable permanently.",
       "STALE means the address is duplicated and must be reassigned."
@@ -435,7 +435,7 @@
     "answer": [
       0
     ],
-    "explanation": "Neighbor states describe the local resolution/reachability process. Combine them with the intended interface, traffic and repeated observations.",
+    "explanation": "A STALE entry is normal: the router rechecks it when traffic next uses it. An entry that stays INCMP while pings fail is the one that points to a wrong next hop or interface.",
     "whyWrong": {
       "1": "The cache contains discovered bindings, not a complete device inventory.",
       "2": "Resolution can be in progress; persistent failure and the correct link/address must be checked.",
@@ -724,7 +724,7 @@
     "difficulty": 3,
     "prompt": "What happens while the selected host route remains installed and its next hop cannot be resolved?",
     "options": [
-      "Delivery through that host route fails; the router does not simply retry the less-specific /64 as a substitute.",
+      "Packets to that host are dropped; the router does not fall back to the /64 route.",
       "The default route automatically replaces the /128 for that packet.",
       "The router automatically forwards the same packet using the /64 because it has lower distance.",
       "The neighbor failure proves that the destination host itself is powered off."
@@ -732,7 +732,7 @@
     "answer": [
       0
     ],
-    "explanation": "Correct syntax and installation do not prove next-hop delivery. Repair the verified scope/address error or remove the incorrect host route after diagnosis.",
+    "explanation": "The router picks the longest installed match, the /128, before it tries to resolve the next hop. When resolution fails it drops the packet. Fix the next hop or remove the host route.",
     "whyWrong": {
       "1": "A default is less specific than both supplied routes.",
       "2": "Longest matching installed prefix is selected first; failed ND does not make a less-specific route the normal fallback.",

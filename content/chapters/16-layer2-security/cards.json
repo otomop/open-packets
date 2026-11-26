@@ -1,48 +1,48 @@
 [
   {
     "id": "layer2-security-c01",
-    "front": "On the documented Catalyst platform, what are the initial port-security settings after enablement?",
-    "back": "Maximum 1 secure MAC, violation mode shutdown and aging time 0 (disabled). Sticky learning is separate.",
+    "front": "What are the port-security defaults once the feature is enabled on a port?",
+    "back": "Maximum 1 secure MAC address, violation mode shutdown, aging disabled (time 0) and sticky learning off.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "layer2-security-c02",
-    "front": "What switchport mode should precede port security for one untagged PC?",
-    "back": "Use static access mode and the intended access VLAN. A dynamically negotiated switchport mode can prevent port-security configuration. Supported trunk use is platform dependent.",
+    "front": "Why is `switchport port-security` rejected on a port left in its default dynamic mode, and what fixes it?",
+    "back": "Port security needs a fixed mode. Configure `switchport mode access` (or a static trunk) first.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "layer2-security-c03",
-    "front": "What does protect mode do?",
-    "back": "Drops violating traffic while leaving permitted traffic forwarding, without restrict-mode violation counting and notifications.",
+    "front": "What does port-security violation mode `protect` do?",
+    "back": "Drops frames from violating addresses and keeps forwarding secure ones. No log message, no SNMP trap, no counter increase.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "layer2-security-c04",
-    "front": "What does restrict mode add to protect mode?",
-    "back": "Violation counting and reporting while the port remains available for permitted source MACs.",
+    "front": "What does violation mode `restrict` add to `protect`?",
+    "back": "Reporting: a syslog message, an SNMP trap and a rising violation counter. The port stays up for secure addresses.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "layer2-security-c05",
-    "front": "What does shutdown mode do to a violating port?",
-    "back": "Error-disables the port, stopping its forwarding. Inspect secure-shutdown/error-disable state and the recorded cause; a fixed counter value is not a universal diagnostic requirement.",
+    "front": "What does violation mode `shutdown` do, and how does the port appear afterward?",
+    "back": "It err-disables the whole port and counts the violation. Interface status shows `err-disabled`; port security shows `Secure-shutdown`.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "layer2-security-c06",
-    "front": "How does a newly learned sticky MAC survive restart?",
-    "back": "It appears as a sticky entry in running configuration. Save that configuration to startup configuration after verifying the address.",
+    "front": "Where is a sticky secure MAC address stored, and what keeps it across a reload?",
+    "back": "In the running configuration. Saving with `copy running-config startup-config` keeps it across a reload.",
     "tags": [
       "command"
     ]
@@ -50,143 +50,175 @@
   {
     "id": "layer2-security-c07",
     "front": "How do static, dynamic and sticky secure addresses differ?",
-    "back": "Static: explicitly configured. Dynamic: learned operationally without a configuration entry. Sticky: learned into running configuration and retained across restart only if saved.",
+    "back": "Static: typed by the administrator. Dynamic: learned, held in memory, lost at reload. Sticky: learned and written to the running configuration.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "layer2-security-c08",
-    "front": "How should a shutdown-mode violation be recovered?",
-    "back": "Correct the cause, then shut and re-enable the interface. Timed recovery is an optional global policy for the specific cause, not an automatic repair of a persistent violation.",
+    "front": "How do you manually recover a port that port security has err-disabled?",
+    "back": "Remove the cause, then enter `shutdown` followed by `no shutdown` on the interface.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "layer2-security-c10",
-    "front": "Which two settings enable snooping for VLAN 10?",
-    "back": "Global `ip dhcp snooping` and `ip dhcp snooping vlan 10`. Then establish a correct server-reply trust path.",
+    "id": "layer2-security-c27",
+    "front": "Which command enables automatic recovery from a port-security shutdown, and what is the default timer?",
+    "back": "`errdisable recovery cause psecure-violation` in global configuration. The port is re-enabled after 300 seconds.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "layer2-security-c11",
-    "front": "Which interfaces should receive DHCP snooping trust?",
-    "back": "Interfaces where legitimate server replies enter that switch. Trust is an ingress decision; a trunk or switch-to-switch cable alone is not sufficient justification.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "layer2-security-c12",
-    "front": "What does a DHCP snooping binding associate?",
-    "back": "A client MAC and IPv4 address with lease information, VLAN and access interface. It is learned from observed DHCP operation, not from every host that happens to have an address.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "layer2-security-c13",
-    "front": "Does DHCP failure after enabling snooping prove an Option 82 problem?",
-    "back": "No. Check the VLAN, reply ingress, pool and observed exchange. If logs show rejected inserted Option 82 with zero giaddr, choose a supported relay-information policy or disable insertion when the design does not use it.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "layer2-security-c14",
-    "front": "What does `ip dhcp snooping limit rate 15` configure?",
-    "back": "An interface DHCP-message limit of 15 packets/s on the documented platform. Exceeding it can error-disable the interface. Choose limits for actual traffic; aggregate links can carry many clients.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "layer2-security-c15",
-    "front": "How does DAI validate ARP on an untrusted interface?",
-    "back": "It checks sender claims against snooping bindings or an applied ARP ACL, with optional additional validation. Its trust setting is independent of DHCP snooping trust.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "layer2-security-c16",
-    "front": "What DAI rate defaults apply on the cited Catalyst configuration?",
-    "back": "Untrusted ports: 15 ARP packets/s with a 1-second burst interval. Trusted ports: unlimited by default. An exceeded rate can error-disable the interface; verify the actual device policy.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "layer2-security-c17",
-    "front": "What does optional DAI src-mac validation compare?",
-    "back": "The Ethernet source MAC with the ARP sender hardware address. This header/payload consistency check supplements binding or ACL validation.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "layer2-security-c18",
-    "front": "What does `static` mean when applying a DAI ARP ACL?",
-    "back": "It makes the ACL's implicit denial final. Without it, an ACL nonmatch can fall back to DHCP bindings. It does not mean that the ACL is required to authorize a static-IP host.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "layer2-security-c19",
-    "front": "How should rising and falling storm thresholds be read?",
-    "back": "The rising threshold triggers suppression; the falling threshold controls recovery. The default action filters the controlled traffic type. Exact measurement behavior depends on hardware, so do not assume precise excess-only trimming.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "layer2-security-c20",
-    "front": "What is required beyond defining an RA guard host policy?",
-    "back": "Attach it to the intended endpoint ingress. Establish the legitimate router-facing role too, then verify fresh blocked and permitted advertisements; old host state can outlive the change.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "layer2-security-c21",
-    "front": "Does excluding a static address from DHCP authorize its ARP claims?",
-    "back": "No. An exclusion prevents allocation; DAI still needs a valid binding or explicit ARP policy for the sender.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "layer2-security-c22",
-    "front": "Does ip dhcp snooping trust also enable DAI trust?",
-    "back": "No. ip arp inspection trust is separate. Trace and authorize each protocol’s ingress independently.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "layer2-security-c23",
-    "front": "Where do RA guard host and router roles belong in the documented design?",
-    "back": "Host roles on endpoint ingresses; the appropriate router role on the legitimate router ingress. Verify attachment, not just policy definitions.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "layer2-security-c24",
-    "front": "Does retained IPv6 addressing prove new RAs are passing a guard?",
-    "back": "No. Old learned state can remain until lifetimes expire. Compare fresh permitted and blocked advertisements.",
+    "id": "layer2-security-c29",
+    "front": "What does a MAC flooding attack do to a switch, and which feature stops it?",
+    "back": "Invented source MACs fill the MAC table, so frames to unlearned hosts are flooded in the VLAN. Port security limits addresses per port.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "layer2-security-c25",
-    "front": "Why is a secure MAC match not proof of user identity?",
-    "back": "The control checks a source address that another device may impersonate; it does not authenticate the person using it.",
+    "front": "Why does port security not prove who is using a port?",
+    "back": "It checks only the source MAC address, which another device can copy. Identifying the user needs authentication such as 802.1X.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c10",
+    "front": "Which two global commands make DHCP snooping inspect VLAN 10?",
+    "back": "`ip dhcp snooping` and `ip dhcp snooping vlan 10`. With only the first, no VLAN is inspected.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "layer2-security-c11",
+    "front": "Which ports should be trusted for DHCP snooping?",
+    "back": "Only the ports where the legitimate server's replies enter the switch: the server port or the uplink toward it. All others stay untrusted.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c26",
+    "front": "Which DHCP messages does snooping drop on an untrusted port?",
+    "back": "Server messages: Offer, ACK and NAK. Client Discover and Request messages are allowed in.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c12",
+    "front": "What does a DHCP snooping binding record?",
+    "back": "The client's MAC address, IP address, lease time, VLAN and switch port, learned from a lease exchange the switch watched.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c13",
+    "front": "A snooping access switch connects directly to a Cisco IOS DHCP server and clients get no lease. Which default is the usual cause, and what fixes it?",
+    "back": "The switch inserts Option 82, which the server rejects when `giaddr` is 0.0.0.0. Use `no ip dhcp snooping information option`.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "layer2-security-c14",
+    "front": "What does `ip dhcp snooping limit rate 15` do, and what is the default?",
+    "back": "Limits the port to 15 DHCP packets per second and err-disables it if exceeded. By default there is no limit.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "layer2-security-c15",
+    "front": "How does DAI decide whether to forward an ARP message from an untrusted port?",
+    "back": "The sender IP and MAC must match a DHCP snooping binding or an ARP ACL permit. Otherwise the message is dropped.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c22",
+    "front": "Which command makes a port trusted for DAI, and how does it relate to DHCP snooping trust?",
+    "back": "`ip arp inspection trust`. It is separate from `ip dhcp snooping trust`; a router-facing port can need both.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c16",
+    "front": "What are the default DAI rate limits?",
+    "back": "Untrusted ports: 15 ARP packets per second over a 1-second burst interval; exceeding it err-disables the port. Trusted ports: no limit.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "layer2-security-c21",
+    "front": "A static printer is excluded from the DHCP pool. Why does DAI still drop its ARP, and what fixes it?",
+    "back": "An exclusion creates no snooping binding. Permit the printer's exact IP and MAC in an ARP ACL applied to the VLAN.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c18",
+    "front": "What does the `static` keyword do in `ip arp inspection filter NAME vlan 10 static`?",
+    "back": "It drops any ARP the ACL does not permit. Without it, unmatched ARP is checked against the DHCP snooping bindings.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "layer2-security-c17",
+    "front": "What does `ip arp inspection validate src-mac` check?",
+    "back": "That the Ethernet source MAC equals the sender MAC inside the ARP message. A mismatch is dropped.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "layer2-security-c19",
+    "front": "In `storm-control broadcast level 1.00 0.50`, what do the two numbers mean?",
+    "back": "Rising threshold 1%: the port starts dropping broadcasts. Falling threshold 0.5%: dropping stops once broadcasts fall below it.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c28",
+    "front": "What is storm control's default action, and which two actions can you configure?",
+    "back": "Default: drop that traffic class while it is over the threshold. `storm-control action shutdown` err-disables the port; `action trap` sends an SNMP trap.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c20",
+    "front": "What two steps put an RA guard policy into effect?",
+    "back": "Define it with `ipv6 nd raguard policy NAME` and a `device-role`, then attach it on the interface with `ipv6 nd raguard attach-policy NAME`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "layer2-security-c23",
+    "front": "Which RA guard device role belongs on which ports?",
+    "back": "`device-role host` on endpoint ports, where RAs are dropped. `device-role router` on the port facing the legitimate router.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "layer2-security-c24",
+    "front": "After RA guard starts blocking a rogue router, why can a host still list it as a default router?",
+    "back": "RA guard blocks new RAs only. An address and router the host already learned stay until their lifetimes expire.",
     "tags": [
       "concept"
     ]

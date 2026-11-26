@@ -67,7 +67,7 @@
       2
     ],
     "explanation": "The displayed root inconsistency and interface root-guard configuration identify the mechanism. LAB1's priority zero is lower than CORE's stated 24576, so the boundary blocks VLAN 10 rather than accept its claim. The differing VLAN 20 result is consistent with separate Rapid PVST+ instances.",
-    "fix": "Restore the intended downstream priority on LAB1; preserve the boundary protection.\n```ios LAB1\nLAB1# configure terminal\nLAB1(config)# spanning-tree vlan 10 priority 32768\nLAB1(config)# end\nLAB1# show spanning-tree vlan 10\n```\nThen inspect `show spanning-tree inconsistentports` on DSW1 and verify VLAN 10 traffic. Recovery is automatic after superior information ceases and STP permits forwarding; no exact twenty-second guarantee or manual bounce is required."
+    "fix": "Restore the intended downstream priority on LAB1; preserve the boundary protection.\n```ios LAB1\nLAB1# configure terminal\nLAB1(config)# spanning-tree vlan 10 priority 32768\nLAB1(config)# end\nLAB1# show spanning-tree vlan 10\n```\nThen inspect `show spanning-tree inconsistentports` on DSW1 and verify VLAN 10 traffic. Recovery is automatic once the superior BPDUs stop; no `shutdown` and `no shutdown` is needed."
   },
   {
     "id": "stp-protection-t03",

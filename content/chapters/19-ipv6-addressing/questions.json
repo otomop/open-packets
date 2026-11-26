@@ -110,7 +110,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "The same MAC is available, but an automatically addressed host does not contain ff:fe in its identifier. Which conclusion is justified?",
+    "prompt": "A host configured its IPv6 address automatically, but its interface ID does not contain ff:fe. Which conclusion is justified?",
     "options": [
       "IPv6 cannot operate without a modified EUI-64 identifier.",
       "Another valid identifier method may be in use.",
@@ -120,7 +120,7 @@
     "answer": [
       1
     ],
-    "explanation": "SLAAC can use stable opaque or other supported identifiers; not all IIDs embed the MAC. Address appearance alone does not establish a fault.",
+    "explanation": "Modified EUI-64 is only one way to build an interface ID. Many operating systems use a random value with SLAAC, so an identifier without ff:fe is normal.",
     "whyWrong": {
       "0": "Modified EUI-64 is one method, not a universal requirement.",
       "2": "SLAAC can use identifiers that do not embed the MAC, so the suffix does not establish DHCPv6 use.",
@@ -174,7 +174,7 @@
     ],
     "explanation": "ND distinguishes initial address resolution from reachability confirmation. NS can be multicast or unicast depending on the operation.",
     "whyWrong": {
-      "1": "IPv6 has no IP broadcast; ordinary IPv6 multicast uses multicast delivery.",
+      "1": "IPv6 has no broadcast. An address-resolution NS goes to a solicited-node multicast group.",
       "3": "Stale means reachability is not recently confirmed, not that failure is proven."
     }
   },
@@ -699,14 +699,14 @@
     "prompt": "Which conclusion follows from this addressing evidence?",
     "options": [
       "L=0 invalidates the /64 and prevents any address from being formed.",
-      "SLAAC can form the address, but this PIO does not assert that the prefix is on-link.",
+      "SLAAC can form the address, but this RA does not advertise the prefix as on-link.",
       "A=1 also implies L=1, so the host must resolve every same-prefix destination directly.",
       "The host must replace its prefix length with /128 because L=0."
     ],
     "answer": [
       1
     ],
-    "explanation": "Address assignment and on-link determination are separate. Other valid on-link information could exist, but this particular PIO does not supply it.",
+    "explanation": "A and L are separate flags on the advertised prefix. A=1 allows SLAAC with the prefix. L=0 means this RA does not tell the host that the prefix is on-link.",
     "whyWrong": {
       "0": "L describes on-link information; A permits autonomous address formation.",
       "2": "The autonomous and on-link flags are independent.",
@@ -756,7 +756,7 @@
       "v2:1.4"
     ],
     "difficulty": 2,
-    "prompt": "Which two conclusions are supported, without claiming the router knows the cause of every failed test? Choose two.",
+    "prompt": "Which two conclusions does the exhibit support? Choose two.",
     "options": [
       "A static route to either directly connected /64 is the missing prerequisite.",
       "Successful local ping proves that R1 forwards between the LANs.",
@@ -768,7 +768,7 @@
       2,
       4
     ],
-    "explanation": "Local success and addressed interfaces establish less than transit success. The complete relevant configuration identifies the disabled forwarding prerequisite; no invented duplicate diagnosis is needed.",
+    "explanation": "Each PC reaches R1's own address, so R1 works as an endpoint. With no ipv6 unicast-routing, R1 does not forward between its two connected LANs, which is why the PC-to-PC ping fails.",
     "whyWrong": {
       "0": "The prefixes are already connected; the explicit global forwarding setting is the missing prerequisite.",
       "1": "An endpoint reply is different from transit forwarding.",

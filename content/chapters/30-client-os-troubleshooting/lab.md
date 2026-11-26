@@ -6,9 +6,9 @@ minutes: 105
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Work from a small test matrix: **active adapter/parameters → local peer → gateway → remote numeric destination → fresh DNS answer → application**. Write a prediction before each controlled fault, retain its actual observations, and repair it in a later step. A familiar symptom suggests a test; it does not prove the cause.
+You will build a small LAN, record what a healthy client looks like, then break one client setting at a time (DNS server, gateway, mask, DHCP, Wi-Fi passphrase) and see which tests fail. Run the same tests each time, in the lesson's order: **settings → local host → gateway → remote address → DNS lookup → application**. Before each fault, write down which tests you expect to fail, then repair the fault in the next step.
 
-Use Packet Tracer for deliberate changes. Inspect **one actual OS you have**, then interpret the supplied evidence for the others; three OS installations are not required. The wireless module is optional where the simulator lacks a working supported AP/client combination, but its evidence worksheet still needs an answer. None of the output here is presented as an executed simulator capture.
+Every fault is made in Packet Tracer. The last step reads the settings of one real computer you have, without changing anything; you do not need all three operating systems. The wireless steps (12–14) are optional if your Packet Tracer version lacks the devices; Step 13 includes a worksheet to use instead.
 
 ## Topology
 
@@ -28,11 +28,13 @@ Build a new isolated Packet Tracer project. Use an ISR 2911 R1, a 2960 SW1, two 
 
 Server-A provides DHCP, DNS and HTTP. Its DHCP range is **192.168.40.100–149**, safely excluding the router, wireless device and static server. There is no Internet connection. R1 needs only its connected routes.
 
-These are documented, reviewed procedures with expected results, not a record of an executed Packet Tracer run. Packet Tracer's PC shell and wireless controls differ by version. Use its IP Configuration GUI if a PC command is absent, and record unsupported observations honestly. The final OS inspection is read-only on a real Windows, Mac or Linux machine; all deliberate faults stay in the isolated simulator.
+Packet Tracer's PC command prompt and wireless screens differ by version. If a PC command is missing, use the IP Configuration window instead. The expected results were written from the design, not captured from a run, so wording may differ slightly in your version.
 
-## Step 1 — Configure router and static endpoints
+## Step 1: Configure router and static endpoints
 
 Set Server-A and PC-B in Desktop → IP Configuration → Static from the topology table, mask `255.255.255.0`. Server-A's DNS field is `192.168.40.20`; PC-B's is also `192.168.40.20`.
+
+The router configuration has one command you have not used before, `no ip proxy-arp`. Proxy ARP is on by default: the router answers ARP requests for hosts on other subnets with its own MAC address. That would let PC-A reach PC-B even with the wrong mask in Step 8, so turn it off on the client-facing interface.
 
 On a new router, decline the setup dialog if presented:
 
@@ -54,14 +56,14 @@ R1# show ip route connected
 ```
 
 :::expected
-Both router interfaces become up/up and both /24 networks are connected. Proxy ARP is explicitly disabled on Gi0/0 so the later mask error will not be concealed by the router answering for a remote host. If the filtered route command is unavailable, use `show ip route` and identify the connected routes. If `no ip proxy-arp` is rejected or its state cannot be verified, complete the wrong-mask steps as an address-decision worksheet: predict the on-link ARP request and explain why proxy ARP could conceal the fault. Do not record the predicted timeout as an observed result. The DNS, gateway and wireless exercises can still proceed.
+Both router interfaces are up/up and both /24 networks appear as connected routes. If `show ip route connected` is not accepted, use `show ip route`. If your version rejects `no ip proxy-arp`, the ping in Step 8 may succeed; in that case do Step 8 on paper by working out which address PC-A sends its ARP request for.
 :::
 
 ```state
 {"status":"R1 and static hosts set","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB"],"cabled":true,"led":true,"focus":["R1","SRV","PCB"],"chips":[{"node":"R1","text":"no ip proxy-arp · Gi0/0"}],"rows":[["R1 Gi0/0 and Gi0/1","up/up · two connected /24s","ok"],["Proxy ARP","Disabled on Gi0/0"],["Server-A and PC-B DNS","192.168.40.20"]]}
 ```
 
-## Step 2 — Configure DHCP, DNS and HTTP explicitly
+## Step 2: Configure DHCP, DNS and HTTP explicitly
 
 On Server-A → Services:
 
@@ -79,9 +81,9 @@ PC-A receives an address in .100–.149, /24 mask, gateway .40.1 and DNS .40.20.
 {"status":"PC-A leased from Server-A","tone":"ok","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["SRV","PCA"],"flows":[{"path":["PCA","SW1",["SRV","R1"]],"label":"PC-A asks for a lease","tags":{"PCA":"DHCP selected · broadcast","SW1":"Broadcast · flooded"}},{"path":["SRV","SW1","PCA"],"tone":"reply","label":"Server-A leases from CLIENTS","tags":{"SRV":"Pool CLIENTS · .100–.149","PCA":"/24 · GW .40.1 · DNS .40.20"}}],"chips":[{"node":"SRV","text":"DHCP · DNS · HTTP On","tone":"ok"}],"rows":[["PC-A address","In .100–.149 · /24","ok"],["Gateway · DNS","192.168.40.1 · 192.168.40.20","ok"],["A records","lab.example, fresh.example → .40.20"]]}
 ```
 
-## Step 3 — Record a known working baseline
+## Step 3: Record a known working baseline
 
-Before testing, make a six-row worksheet for the active adapter/parameters, local server, gateway, remote PC, fresh DNS and web service. Write what each test exercises; a local HTTP page cannot establish routed connectivity. On PC-A inspect its actual address with `ipconfig` or the GUI. Then use its command prompt:
+Make a six-row worksheet: settings, local server, gateway, remote PC, DNS lookup, web page. You will fill it in again after every fault. On PC-A, read the leased settings with `ipconfig /all` or the IP Configuration window. Then use its command prompt:
 
 ```text
 ping 192.168.40.20
@@ -100,7 +102,7 @@ After any initial ARP delay, local server, gateway and remote PC respond. The qu
 {"status":"Baseline recorded","tone":"ok","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["PCA"],"flows":[{"path":["PCA","SW1","SRV"],"back":true,"label":"Ping 192.168.40.20","tags":{"PCA":"On-link /24 · deliver directly"}},{"path":["PCA","SW1","R1"],"back":true,"label":"Ping 192.168.40.1"},{"path":["PCA","SW1","R1","PCB"],"back":true,"label":"Ping 192.168.50.10","tags":{"PCA":"Off-link · to gateway .40.1","R1":"Connected .50.0/24 · out Gi0/1"}},{"path":["PCA","SW1","SRV"],"back":true,"label":"nslookup lab.example","tags":{"SRV":"lab.example → 192.168.40.20"}},{"path":["PCA","SW1","SRV"],"back":true,"label":"Browse http://lab.example","tags":{"SRV":"HTTP · server page"}}],"rows":[["Server, gateway, PC-B","All reply","ok"],["lab.example","192.168.40.20","ok"],["Web by address and name","Server page","ok"],["Saved","clients-baseline.pkt"]]}
 ```
 
-## Step 4 — Introduce only a DNS-selection fault
+## Step 4: Introduce only a DNS-selection fault
 
 Predict which worksheet rows should change when only the DNS selection changes. Write down PC-A's leased address. Change PC-A to Static, retaining that exact address, /24 mask and gateway .40.1, but change DNS to unused `192.168.40.99`. No other device uses .99 in this topology.
 
@@ -114,7 +116,7 @@ Numeric local and routed tests should still work. The DNS request to .99 has no 
 {"status":"DNS set to unused .99","tone":"bad","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["PCA"],"chips":[{"node":"PCA","text":"Static · DNS 192.168.40.99","tone":"bad"}],"rows":[["PC-A","Static · same address, /24, GW .40.1"],["DNS server field","192.168.40.99 · unused","bad"],["Tests","Numeric pings · nslookup fresh.example"]]}
 ```
 
-## Step 5 — Restore DNS and verify its response
+## Step 5: Restore DNS and verify its response
 
 Keep the same static address, mask and gateway, and restore DNS to `192.168.40.20`. Repeat `nslookup fresh.example` or inspect the DNS exchange in Simulation mode, then open `http://fresh.example`.
 
@@ -126,7 +128,7 @@ The configured resolver is .40.20 and returns .40.20 for the name. The page open
 {"status":"DNS restored","tone":"ok","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["PCA","SRV"],"flows":[{"path":["PCA","SW1","SRV"],"back":true,"label":"nslookup fresh.example","tags":{"PCA":"Resolver 192.168.40.20","SRV":"fresh.example → 192.168.40.20"}},{"path":["PCA","SW1","SRV"],"back":true,"label":"Browse http://fresh.example","tags":{"SRV":"HTTP · server page"}}],"chips":[{"node":"PCA","text":"Static · DNS 192.168.40.20","tone":"ok"}],"rows":[["Resolver","192.168.40.20","ok"],["fresh.example","192.168.40.20","ok"],["http://fresh.example","Page opens","ok"]]}
 ```
 
-## Step 6 — Introduce only a gateway fault
+## Step 6: Introduce only a gateway fault
 
 Predict local delivery, remote delivery and the local DNS query separately. In PC-A's static IP settings, change gateway to unused `192.168.40.254`. Keep its address, /24 mask and correct local DNS. Test:
 
@@ -146,7 +148,7 @@ The local server remains reachable; the intended remote PC should fail because t
 {"status":"Gateway set to unused .254","tone":"bad","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["PCA"],"chips":[{"node":"PCA","text":"GW 192.168.40.254","tone":"bad"}],"rows":[["Gateway field","192.168.40.254 · unused","bad"],["Kept","Address, /24 mask, DNS .40.20"],["Tests","Ping .40.20 and .50.10 · arp -a"]]}
 ```
 
-## Step 7 — Restore the gateway
+## Step 7: Restore the gateway
 
 Return PC-A's gateway to `192.168.40.1` without changing its other values. Repeat the local and remote pings.
 
@@ -158,7 +160,7 @@ Both tests work after necessary address resolution. Successful recovery agrees w
 {"status":"Gateway restored","tone":"ok","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["PCA"],"flows":[{"path":["PCA","SW1","SRV"],"back":true,"label":"Ping 192.168.40.20"},{"path":["PCA","SW1","R1","PCB"],"back":true,"label":"Ping 192.168.50.10","tags":{"PCA":"Off-link · to gateway .40.1","R1":"Connected .50.0/24 · out Gi0/1"}}],"chips":[{"node":"PCA","text":"GW 192.168.40.1","tone":"ok"}],"rows":[["Gateway","192.168.40.1","ok"],["Local and remote pings","Work","ok"],["DNS and R1","Unchanged"]]}
 ```
 
-## Step 8 — Introduce only a subnet-mask fault
+## Step 8: Introduce only a subnet-mask fault
 
 Before testing, compute whether .40.20 and .50.10 appear on-link under the new mask, and name the ARP target for .50.10. Change PC-A's mask to `255.255.0.0`. Retain its address, gateway and DNS. Test the local server and remote `192.168.50.10`. In Simulation mode, filter ARP/ICMP, clear the event list, send a new PC-A-to-PC-B simple PDU and inspect PC-A's decision. Do not interpret an old event as a new test.
 
@@ -170,7 +172,7 @@ The local .40.20 server remains within the client's perceived /16. The client in
 {"status":"Mask changed to /16","tone":"bad","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["PCA"],"chips":[{"node":"PCA","text":"Mask 255.255.0.0","tone":"bad"}],"rows":[["PC-A mask","255.255.0.0","bad"],["Kept","Address, GW .40.1, DNS .40.20"],["Tests","Ping .40.20 and 192.168.50.10"]]}
 ```
 
-## Step 9 — Restore the mask and repeat the same destination test
+## Step 9: Restore the mask and repeat the same destination test
 
 Return PC-A's mask to `255.255.255.0`. Repeat the remote ping and inspect a new simulation event if available.
 
@@ -182,7 +184,7 @@ PC-A now recognizes .50.10 as outside its /24 and sends toward .40.1. The remote
 {"status":"Mask restored","tone":"ok","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["PCA"],"flows":[{"path":["PCA","SW1","R1","PCB"],"back":true,"label":"Ping 192.168.50.10","tags":{"PCA":".50.10 outside /24 · to .40.1","R1":"Connected .50.0/24 · out Gi0/1"}}],"chips":[{"node":"PCA","text":"Mask 255.255.255.0","tone":"ok"}],"rows":[["Mask","255.255.255.0","ok"],["PC-B .50.10","Via 192.168.40.1 · replies","ok"],["Saved","clients-recovered.pkt"]]}
 ```
 
-## Step 10 — Observe a DHCP acquisition failure
+## Step 10: Observe a DHCP acquisition failure
 
 Predict why leaving a still-valid lease in place would be a poor test of fresh DHCP acquisition. First return PC-A to DHCP and verify it again receives the correct settings. Turn **Server-A's DHCP service Off**, leaving DNS and HTTP On. On this isolated PC-A only, discard the existing lease and request another:
 
@@ -194,14 +196,14 @@ ipconfig /renew
 If those commands are unsupported, toggle PC-A's IP Configuration to Static, then back to DHCP after the server is Off. In Simulation mode, observe the client's DHCP attempts.
 
 :::solution
-PC-A cannot acquire a new lease from the disabled server. Depending on simulator timing, it may report a failed request, show no usable IPv4 configuration or display an autoconfiguration address. Record the actual result; do not require an invented exact APIPA address. The absence of a lease alone would not prove which DHCP message failed, but this controlled service-off change supplies the known cause.
+PC-A cannot get a lease from the disabled server. After the request times out, Packet Tracer reports the failure and gives PC-A a 169.254.x.x APIPA address with no gateway, as Windows does. Run the Step 3 tests: none of them work, because a link-local address cannot reach the /24 hosts. On a real network the same display would only tell you that DHCP failed; here you know why because you switched the service off.
 :::
 
 ```state
 {"status":"Server-A DHCP Off","tone":"bad","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["SRV","PCA"],"chips":[{"node":"SRV","text":"DHCP Off · DNS, HTTP On","tone":"bad"}],"rows":[["PC-A before the test","DHCP · correct settings","ok"],["Server-A DHCP","Off","bad"],["DNS and HTTP","Still On"],["PC-A","Lease released · new one requested"]]}
 ```
 
-## Step 11 — Restore DHCP without changing unrelated services
+## Step 11: Restore DHCP without changing unrelated services
 
 Turn Server-A's DHCP service On. Confirm the CLIENTS pool still contains .100–.149, gateway .40.1 and DNS .40.20. Renew on PC-A or click DHCP in its GUI. Repeat the baseline tests after a valid lease appears.
 
@@ -213,7 +215,7 @@ The client again obtains intended settings, resolves lab.example and reaches PC-
 {"status":"DHCP restored","tone":"ok","absent":["WRT1","LAP"],"addressed":["R1","SRV","PCB","PCA"],"focus":["SRV","PCA"],"flows":[{"path":["PCA","SW1",["SRV","R1"]],"label":"PC-A requests a lease","tags":{"PCA":"Request a lease · broadcast"}},{"path":["SRV","SW1","PCA"],"tone":"reply","label":"Lease from CLIENTS","tags":{"SRV":"Pool CLIENTS · .100–.149","PCA":"GW .40.1 · DNS .40.20"}},{"path":["PCA","SW1","SRV"],"back":true,"label":"nslookup lab.example","tags":{"SRV":"lab.example → 192.168.40.20"}},{"path":["PCA","SW1","R1","PCB"],"back":true,"label":"Ping 192.168.50.10"}],"chips":[{"node":"SRV","text":"DHCP · DNS · HTTP On","tone":"ok"}],"rows":[["PC-A lease","In .100–.149 · may differ","ok"],["lab.example, PC-B","Resolves · reachable","ok"],["DNS and HTTP","Not restarted"]]}
 ```
 
-## Step 12 — Build the optional wireless client path
+## Step 12: Build the optional wireless client path
 
 Add a WRT300N named WRT1. Connect **Ethernet 1, a LAN port**, to SW1 Fa0/4; leave its Internet/WAN port disconnected. Through WRT1's GUI:
 
@@ -233,7 +235,7 @@ The laptop joins the intended WLAN and obtains a .100–.149 address from Server
 {"status":"Laptop on CCNA-LAB","tone":"ok","focus":["WRT1","LAP"],"flows":[{"path":["LAP","WRT1","SW1",["PCA","SRV","R1"]],"label":"Laptop asks for a lease","tags":{"LAP":"Joined CCNA-LAB · DHCP","WRT1":"Bridges to SW1 · own DHCP off"}},{"path":["SRV","SW1","WRT1","LAP"],"tone":"reply","label":"Lease from Server-A","tags":{"SRV":"Pool CLIENTS · .100–.149","LAP":"GW .40.1 · DNS .40.20"}},{"path":["LAP","WRT1","SW1","R1","PCB"],"back":true,"label":"Ping 192.168.50.10","tags":{"LAP":"Off-link · to gateway .40.1"}}],"chips":[{"node":"WRT1","text":"CCNA-LAB · WPA2-Personal/AES"}],"rows":[["WRT1","192.168.40.2/24 · DHCP disabled"],["Laptop lease","From Server-A · .100–.149","ok"],["Tests","Server, PC-B, lab.example","ok"]]}
 ```
 
-## Step 13 — Observe a wireless credential fault
+## Step 13: Observe a wireless credential fault
 
 Predict whether a retained IP address alone can demonstrate a successful new protected connection. On the simulated laptop, disconnect from CCNA-LAB and change only its saved profile passphrase to `WrongStudyKey!`. Reconnect with that profile. Do not change the AP, DHCP pool or router.
 
@@ -247,7 +249,7 @@ The client should fail to establish usable protected access with the mismatched 
 {"status":"Laptop key mismatched","tone":"bad","focus":["LAP"],"chips":[{"node":"LAP","text":"Profile key WrongStudyKey!","tone":"bad"},{"node":"WRT1","text":"CCNA-LAB · WPA2-Personal/AES"}],"rows":[["AP, DHCP pool, router","Unchanged"],["Laptop profile","Only the passphrase changed","bad"],["Test","Reconnect with the edited profile"]]}
 ```
 
-## Step 14 — Repair wireless access and save the complete lab
+## Step 14: Repair wireless access and save the complete lab
 
 Correct the laptop's profile to `StudyNet2026!`, reconnect and request DHCP if needed. Retest the server, remote PC and name-based page. Confirm PC-A is also using correct DHCP settings. Save `clients-complete.pkt`. Save R1 separately:
 
@@ -265,7 +267,7 @@ Both clients have intended addresses and can use the lab services. WRT1's DHCP s
 {"status":"All faults repaired","tone":"ok","focus":["LAP","WRT1"],"flows":[{"path":["LAP","WRT1","SW1","R1","PCB"],"back":true,"label":"Laptop pings 192.168.50.10","tags":{"WRT1":"Key matches · bridged to SW1"}},{"path":["LAP","WRT1","SW1","SRV"],"back":true,"label":"Laptop opens http://lab.example","tags":{"SRV":"HTTP · server page"}}],"chips":[{"node":"LAP","text":"Profile key corrected","tone":"ok"},{"node":"WRT1","text":"CCNA-LAB · WPA2-Personal/AES"},{"node":"R1","text":"Saved to startup-config","tone":"ok"}],"rows":[["Laptop","Server, PC-B, lab.example","ok"],["PC-A","Correct DHCP settings","ok"],["WRT1 DHCP","Still disabled"],["Saved","clients-complete.pkt · R1 startup","ok"]]}
 ```
 
-## Step 15 — Inspect the operating systems without creating real faults
+## Step 15: Inspect the operating systems without creating real faults
 
 Choose one actual OS environment you have. For the other two, interpret this chapter's representative Windows/macOS/Linux outputs and record the commands you would use to obtain the missing route or resolver evidence. Do not install three operating systems to complete this exercise. These are **read-only inspections**: do not release a working lease, alter DNS, disconnect Wi-Fi or disable security on a personal/work machine. Its addresses will not match the simulator unless it is intentionally part of that isolated network. For an unavailable OS, interpret the chapter's representative output and mark direct practice pending.
 

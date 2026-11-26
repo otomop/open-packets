@@ -13,7 +13,7 @@
         "text": "ip dhcp snooping\nip dhcp snooping vlan 10\nno ip dhcp snooping information option\n!\ninterface GigabitEthernet0/2\n switchport mode trunk\n switchport trunk allowed vlan 10\n!\ninterface FastEthernet0/1\n switchport mode access\n switchport access vlan 10"
       },
       {
-        "title": "Authored verification observations",
+        "title": "Verification on ASW3",
         "text": "Gi0/2: up, VLAN 10 forwarding\nDHCP snooping: Gi0/2 untrusted\nValid DHCP Offer reaches Gi0/2; snooping records a server-message drop\nClient binding table: empty"
       }
     ],
@@ -27,7 +27,7 @@
     "answer": [
       2
     ],
-    "explanation": "The evidence locates a valid Offer at Gi0/2 and a snooping drop on that untrusted ingress. The necessary repair is server trust on this verified reply path. The exhibit does not establish a pool, port-security or Option 82 requirement.",
+    "explanation": "The server's Offer reaches Gi0/2, but Gi0/2 is untrusted, so DHCP snooping drops it as a server message on an untrusted port. Trust the uplink where the real server's replies enter. Nothing in the exhibits points to the pool, port security or Option 82.",
     "fix": "```ios ASW3\nASW3# configure terminal\nASW3(config)# interface gigabitethernet0/2\nASW3(config-if)# ip dhcp snooping trust\nASW3(config-if)# end\nASW3# show ip dhcp snooping\n```\nRequest a fresh client lease, inspect `show ip dhcp snooping binding`, and test the gateway. Keep client ports untrusted. Save only after the intended path and successful lease are verified."
   },
   {
@@ -56,13 +56,13 @@
     "options": [
       "The approved PC exceeds the one-entry total already occupied by the phone",
       "The phone's tagged voice traffic requires all data traffic to be trunked",
-      "The configured shutdown response permits only voice traffic after the second source arrives.",
-      "The existing sticky entry is removed automatically when the data VLAN begins forwarding."
+      "The configured shutdown response permits only voice traffic after the second source arrives",
+      "The existing sticky entry is removed automatically when the data VLAN begins forwarding"
     ],
     "answer": [
       0
     ],
     "explanation": "The one-entry maximum is already occupied by the phone. The approved PC becomes a second source and triggers shutdown mode. Correct the limit to the verified endpoint requirement before resetting the port; merely bouncing it would leave the cause intact.",
-    "fix": "```ios ASW1\nASW1# configure terminal\nASW1(config)# interface fastethernet0/7\nASW1(config-if)# switchport port-security maximum 2\nASW1(config-if)# shutdown\nASW1(config-if)# no shutdown\nASW1(config-if)# end\nASW1# show port-security interface fastethernet0/7\nASW1# show port-security address\n```\nGenerate phone and PC traffic, verify the two intended address/VLAN entries and restored service, then save. A different phone model or VLAN behavior may need a different total; derive it from the actual design."
+    "fix": "```ios ASW1\nASW1# configure terminal\nASW1(config)# interface fastethernet0/7\nASW1(config-if)# switchport port-security maximum 2\nASW1(config-if)# shutdown\nASW1(config-if)# no shutdown\nASW1(config-if)# end\nASW1# show port-security interface fastethernet0/7\nASW1# show port-security address\n```\nGenerate phone and PC traffic, check that `show port-security address` lists the phone in VLAN 20 and the PC in VLAN 10, confirm service, then save."
   }
 ]

@@ -9,7 +9,7 @@ Practice revised September 2026. If you completed an earlier version, repeat the
 
 Build one small LAN in Packet Tracer, verify it, and introduce one interface fault at a time. You will compare both ends of the same link, restore service between tests, and finish with supplied fiber and cable-test evidence.
 
-Packet Tracer does not reproduce every hardware counter, physical cable defect or optical power measurement. The configured speed/duplex and administrative states are the main observations in this lab. If the simulated traffic or error counters do not behave like hardware, record that limit and use the lesson's representative examples to explain the real mechanism. The optical exercise is paper-based; no optical meter or transceiver is required.
+Packet Tracer simulates speed, duplex and shutdown settings, but not error counters, cable defects or optical power. Where the simulator differs from real hardware, the step says so, and the fiber exercise in Step 7 is done on paper.
 
 ## Topology
 
@@ -68,7 +68,7 @@ SW2(config-if)# end
 ```
 
 :::expected
-The device prompts and cable endpoints match the diagram. After the switch ports initialize, all three links should be usable. A crossover is specified so the lab does not depend on auto-MDIX support during forced-setting tests. Do not deliberately use a wrong cable and assume it must fail; supported auto-MDIX can make either copper arrangement work.
+The device prompts and cable endpoints match the diagram. After the switch ports initialize, all three links should be usable. The switch-to-switch link uses a crossover cable because the two ports are alike, and because auto-MDIX needs automatic speed and duplex, which Step 5 turns off.
 :::
 
 ```state
@@ -96,7 +96,7 @@ Write down each end's administrative state, operational speed, duplex and displa
 :::expected
 Both PCs receive replies on a repeated test. Both interswitch ends should operate at 100 Mbps full duplex, with the compact display commonly showing `a-full` and `a-100`. Detailed output should show an up physical and line-protocol state. If a compact display command is unavailable, use the detailed interface output.
 
-Save the working topology as `03-interfaces-baseline.pkt`. Keep your first counter readings; later comparisons need a baseline. No conclusion should depend on all counters being exactly zero or on one particular simulator output layout.
+Save the working topology as `03-interfaces-baseline.pkt`. Keep your first counter readings; later comparisons need a baseline.
 :::
 
 ```state
@@ -181,9 +181,9 @@ Leave both settings in place while you inspect them. Repeat pings in each direct
 :::expected
 The two configurations and operational displays should show matching speed but opposing duplex settings. A real Ethernet link can remain up in this condition. Under traffic, the half-duplex end may accumulate collisions or late collisions, while the other end may see receive errors.
 
-The simulator may show successful pings and unchanged counters. That does not make the mismatch correct. The decisive evidence is the half/full disagreement on the two ends of this one connection. Record the actual behavior rather than inventing a target counter value.
+Packet Tracer does not behave like hardware here. Depending on the version, pings may keep working with unchanged counters, or the link may go down until the two settings agree. Record what you see. On real switches the link stays up, and the evidence that identifies the fault is the half/full disagreement between the two ends.
 
-If the simulator omits useful counter behavior, interpret this supplied example separately: before a transfer the half-duplex end has 10 collisions and 0 late collisions; afterward it has 420 and 180. The increases are 410 collisions and 180 late collisions. These readings are consistent with the documented mismatch, but the opposing duplex settings establish it directly. Do not record these supplied totals as measurements.
+For the counter part of your record, use this supplied example: before a transfer the half-duplex end shows 10 collisions and 0 late collisions; afterward it shows 420 and 180. Increases of 410 and 180 during one transfer are what a duplex mismatch looks like on the half-duplex end.
 :::
 
 ```state

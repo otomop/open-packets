@@ -17,11 +17,11 @@
     "answer": [
       2
     ],
-    "explanation": "A Type 1 hypervisor supplies virtual hardware directly over the physical platform. Its management tools may still run in an operating-system environment, as with Hyper-V's root partition.",
+    "explanation": "A Type 1 (bare-metal) hypervisor runs directly on the physical hardware. Its management tools may still run in an operating system, as with Hyper-V's root partition, but the hypervisor sits below that system.",
     "whyWrong": {
-      "0": "This describes ordinary process-isolated containers rather than separate guest machines.",
-      "1": "The general-purpose host OS below the virtualization application defines hosted Type 2.",
-      "3": "A virtual switch forwards frames; it does not supply the entire hypervisor's CPU/memory/guest execution functions."
+      "0": "This describes containers, which share one kernel, not virtual machines.",
+      "1": "A general-purpose host OS underneath the hypervisor defines a hosted Type 2 design.",
+      "3": "A virtual switch forwards frames between vNICs and uplinks; it does not create or run guests."
     }
   },
   {
@@ -32,21 +32,21 @@
       "v2:1.2"
     ],
     "difficulty": 1,
-    "prompt": "Why can ordinary process-isolated containers start with less overhead than full VMs?",
+    "prompt": "Why can a container start with less overhead than a full VM?",
     "options": [
-      "They start processes using the existing host-environment kernel.",
-      "They bypass IP and Ethernet when communicating externally.",
-      "They obtain a dedicated physical processor for each instance.",
-      "They boot a separate guest kernel with fewer network drivers."
+      "It starts processes on the host's already running kernel.",
+      "It bypasses IP and Ethernet when communicating externally.",
+      "It obtains a dedicated physical processor for each instance.",
+      "It boots a separate guest kernel with fewer network drivers."
     ],
     "answer": [
       0
     ],
-    "explanation": "Containers do not need to boot a complete guest OS for each instance. Actual startup time depends on the image, workload and platform; there is no universal seconds-per-container limit.",
+    "explanation": "A container does not boot a guest OS. It starts the application's processes on the kernel that is already running, while a VM must first boot its own operating system.",
     "whyWrong": {
-      "1": "Container traffic still uses the selected network stack and connectivity.",
-      "2": "Dedicated physical processors are not a defining container feature.",
-      "3": "An independent guest-kernel boot is characteristic of a VM."
+      "1": "Container traffic still uses IP and Ethernet through the host's network stack.",
+      "2": "A dedicated physical processor is not part of what defines a container.",
+      "3": "Booting its own guest kernel is what a VM does."
     }
   },
   {
@@ -68,7 +68,7 @@
       0,
       1
     ],
-    "explanation": "VRFs distinguish traffic and routes by context, allowing overlapping address space. They do not provide automatic inter-context routing or confidentiality.",
+    "explanation": "Each VRF is a separate routing table, which is why the same prefix can appear in two of them. A VRF does not encrypt, and a lookup never moves to another table by itself.",
     "whyWrong": {
       "2": "VRF separation does not provide encryption.",
       "3": "A routed interface has one routing context; separate subinterfaces can use separate VRFs.",
@@ -140,7 +140,7 @@
     "answer": [
       1
     ],
-    "explanation": "A hybrid deployment combines distinct cloud infrastructures with integration between them. Merely using unrelated services in two places would not demonstrate that integration.",
+    "explanation": "A hybrid cloud joins two or more distinct clouds, here private and public, so that an application can use both. Using unrelated services in two places would not be hybrid.",
     "whyWrong": {
       "0": "The arrangement explicitly integrates private and public environments.",
       "2": "SaaS is a service model, not this deployment classification.",
@@ -155,7 +155,7 @@
       "v2:2.2.d"
     ],
     "difficulty": 2,
-    "prompt": "A documented hypervisor uplink carries tagged VLANs 10 and 20. What is consistent with these stable entries?",
+    "prompt": "A hypervisor's uplink to SW1 Gi0/1 carries tagged VLANs 10 and 20. What do these MAC-table entries show?",
     "options": [
       "The same source is repeatedly moving between switch ports.",
       "SW1 has proved both guests use the correct default gateway.",
@@ -165,11 +165,11 @@
     "answer": [
       3
     ],
-    "explanation": "A virtual switch can forward different guest sources through one physical NIC. Learning their MACs in separate VLANs is expected, but it does not prove application connectivity.",
+    "explanation": "Each guest's vNIC has its own MAC address, and the virtual switch forwards all of them through the host's one physical NIC. SW1 therefore learns several MACs on Gi0/1, each in its own VLAN. The table says nothing about IP settings or applications.",
     "whyWrong": {
       "0": "The exhibit has distinct MACs on one port, not a source moving between ports.",
       "1": "A MAC table does not validate guest IP settings or gateway reachability.",
-      "2": "The scenario specifies tagged VLANs on a trunked host uplink."
+      "2": "Entries in two data VLANs fit the tagged trunk in the scenario, not an access port with a voice VLAN."
     },
     "exhibit": {
       "kind": "cli",
@@ -195,11 +195,11 @@
     "answer": [
       0
     ],
-    "explanation": "A trunk must permit the guest VLANs and agree with the host's treatment of untagged traffic. The physical port configuration follows the supplied host design, rather than a rule that every server requires a trunk.",
+    "explanation": "The trunk must allow every VLAN that the host tags (10, 20 and 30) and use the same VLAN for untagged frames as the host does (999).",
     "whyWrong": {
-      "1": "An access port does not implement the stated multi-VLAN trunk design.",
-      "2": "A routed interface does not terminate those VLANs without an appropriate subinterface design.",
-      "3": "This excludes tagged VLAN 30 and changes the untagged VLAN mapping."
+      "1": "An access port carries one untagged VLAN, so it cannot carry three tagged ones.",
+      "2": "A routed port does not switch tagged VLAN frames to the rest of the LAN.",
+      "3": "The host tags VLAN 30, but this trunk treats VLAN 30 as the untagged native VLAN and does not allow it."
     }
   },
   {
@@ -219,11 +219,11 @@
     "answer": [
       2
     ],
-    "explanation": "The ordinary ping consults the global routing table, which has no matching route. A VRF-aware ping tests RED's path; its eventual success still depends on the host and return path.",
+    "explanation": "A plain ping uses the global routing table, which has no route to 10.10.10.20. The route is in RED, so the test must be `ping vrf RED 10.10.10.20`.",
     "whyWrong": {
-      "0": "The explicit up/up RED state and separate contexts do not establish an address conflict.",
-      "1": "An ordinary console ping uses global, not RED, unless a context is selected.",
-      "3": "Select RED for this test rather than adding an unrelated global route to bypass its context."
+      "0": "Nothing in the exhibit shows an address conflict; the RED interface is up/up in its own VRF.",
+      "1": "A plain console ping uses the global table, not RED.",
+      "3": "A global default route would send the ping the wrong way. The destination is connected in RED."
     },
     "exhibit": {
       "kind": "cli",
@@ -248,7 +248,7 @@
     "answer": [
       3
     ],
-    "explanation": "The ingress context is RED, and its table has no route to the destination. The existence of matching routes in other tables does not make them usable.",
+    "explanation": "The packet arrived in RED, so only RED's table is searched, and it has no route to 172.16.1.10. Routes in BLUE or in the global table are not candidates.",
     "whyWrong": {
       "0": "There is no automatic global-table fallback.",
       "1": "VRF membership does not invoke NAT.",
@@ -277,7 +277,7 @@
     "answer": [
       2
     ],
-    "explanation": "A private connection can satisfy the transport requirement. Encryption, latency and availability still need separate design and contractual verification.",
+    "explanation": "Only the private provider connection keeps the traffic off the public internet. The VPN and HTTPS options encrypt traffic but still travel across it.",
     "whyWrong": {
       "0": "A remote-access VPN still uses the stated public transport.",
       "1": "IPsec protects traffic but does not change the public-internet transport.",
@@ -328,11 +328,11 @@
     "answer": [
       0
     ],
-    "explanation": "The dedicated management link requires only one untagged VLAN. The application link must preserve both tagged guest VLANs and its documented untagged policy.",
+    "explanation": "The management NIC sends one untagged VLAN, which is an access port in VLAN 99. The application NIC tags two VLANs, which needs a trunk that allows both.",
     "whyWrong": {
       "1": "This misclassifies management and cannot carry both application VLANs.",
       "2": "Both links omit their required VLANs.",
-      "3": "Neither setting implements the supplied Ethernet attachment contract."
+      "3": "A routed port and an access port in VLAN 99 match neither NIC."
     }
   },
   {
@@ -354,7 +354,7 @@
     "answer": [
       0
     ],
-    "explanation": "The stated local switching path does not use the failed NIC. Remote traffic still depends on an available physical path; this is not a promise about every hypervisor or policy design.",
+    "explanation": "Frames between two VMs in the same VLAN on the same virtual switch never leave the host, so they do not need the failed uplink. Anything outside the host does.",
     "whyWrong": {
       "1": "The gateway is remote across the failed sole link.",
       "2": "Same VLAN does not remove the failed physical dependency for a remote server.",
@@ -384,11 +384,11 @@
     "answer": [
       2
     ],
-    "explanation": "The physical trunk and independent wired VLAN 20 test establish that path, while the new guest's virtual port is explicitly in VLAN 10 despite its VLAN 20 IP plan. Correct only that membership and retest both guests.",
+    "explanation": "The trunk allows VLAN 20, and a wired VLAN 20 host reaches the gateway, so the physical path works. The new guest's virtual port is in VLAN 10 although its address belongs to VLAN 20. Correct that one port and retest both guests.",
     "whyWrong": {
       "0": "Management is a separate path; moving both guests breaks the approved design.",
-      "1": "The fault precedes the guest's local gateway reachability and is not repaired by a switch management route.",
-      "3": "An access link would break the working tagged VLAN 10 guest and contradict the host's trunk contract."
+      "1": "The guest cannot reach its own gateway at Layer 2, which a route on the switch does not change.",
+      "3": "An access port would cut off the working VLAN 10 guest, which needs the trunk."
     }
   }
 ]

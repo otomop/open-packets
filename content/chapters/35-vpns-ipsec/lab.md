@@ -6,13 +6,13 @@ minutes: 60
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The required exercise combines a reproducible Packet Tracer IP baseline with an IPsec evidence worksheet. Both exam versions ask you to **describe** these VPNs. You can complete the packet-path, protection, fault and recovery reasoning without an emulator that supports modern IPsec.
+This lab has two parts. In Packet Tracer you build the routed network that a VPN would cross and prove what works, and what does not, before any encryption. Then you work through a worksheet of supplied IKEv2 and IPsec output from that same network: a healthy tunnel, a tunnel broken by a filter, and its recovery. Both exam versions ask you to **describe** IPsec VPNs, so reading the evidence matters more than typing the configuration.
 
-Step 4 is an optional complete IKEv2 configuration reference for two supported IOS XE routers. It is **not a Packet Tracer instruction**. Cisco documents this crypto-map/IKEv2 configuration family on ISR 4351 with IOS XE 16.12; use a suitable supported image with the necessary IPsec capability and confirm its command support. The explicit optional hardware target is two physical ISR 4351 routers with that configuration family available; virtual-platform names and interface numbering require their own image documentation. An arbitrary CML node or Packet Tracer router is not assumed to emulate these features. Do not substitute an obsolete IKEv1 or weak-algorithm configuration merely to make a simulator accept the commands.
+Packet Tracer does not support the IKEv2 commands. Step 4 is therefore an optional configuration reference for two real IOS XE routers; it was written for ISR 4351 routers running IOS XE 16.12 with the IPsec feature set. Do not paste it into Packet Tracer, and do not swap in IKEv1 or weak algorithms to make a simulator accept it.
 
-The required path is Steps 1–3, the supplied-evidence parts of Steps 5–8, and the summary in Step 9. Allow about 60 minutes. Step 4 and every block marked optional live VPN are additional implementation practice, not prerequisites for completing the conceptual outcomes. Keep two columns in your notes: **predicted from the model** and **actually observed in your own environment**.
+The required path is Steps 1–3, the supplied output in Steps 5–8, and the summary in Step 9: about 60 minutes. Step 4 and the blocks marked “optional live VPN” are extra practice for anyone with suitable routers.
 
-No lab was executed in Packet Tracer or on IOS XE during this content review. All VPN status, counter and capture examples are representative teaching evidence. Keep the required baseline and worksheet separate from any claim that Packet Tracer encrypted a packet.
+The VPN status, counter and capture examples in this lab are representative teaching output, not captures from a live network.
 
 ## Topology
 
@@ -33,7 +33,7 @@ Use new/default devices. All host-to-switch and switch-to-router links use coppe
 | R-HQ G0/1 | SW-HQ Gi0/1 | `10.2.2.1 / 255.255.255.0` | None |
 | PC-HQ FastEthernet0 | SW-HQ Fa0/1 | `10.2.2.20 / 255.255.255.0` | `10.2.2.1` |
 
-For optional ISR 4351 edge routers, map baseline G0/0 to **GigabitEthernet0/0/0** and G0/1 to **GigabitEthernet0/0/1**. Use those substituted names when entering Step 1 on the edge devices. The optional Step 4 already uses the ISR 4351 names. For physical practice, use physical 2960 access switches, a 2911 transit router, and two Ethernet-connected host computers instead of PC-PT. On Windows, open the connected Ethernet adapter’s IPv4 properties, choose manual addressing, and enter the same address, mask and gateway from the table; DNS may remain blank. Use `ping` from the hosts’ command prompts. ISP uses G0/0 and G0/1. Do not configure NAT, GRE, OSPF or extra private routes on ISP.
+If you use ISR 4351 routers for the optional steps, baseline G0/0 becomes **GigabitEthernet0/0/0** and G0/1 becomes **GigabitEthernet0/0/1**; Step 4 already uses those names. Do not configure NAT, GRE, OSPF or any private routes on ISP.
 
 ## Step 1: Build the routed baseline
 
@@ -107,10 +107,10 @@ R-HQ# ping 198.51.100.1
 R-HQ# show ip route 198.51.100.1
 ```
 
-Before that final test, predict whether ISP can forward an ordinary packet to the private destination using its displayed table. Then, from PC-BR, ping `10.2.2.20`. Record the result without adding a private route to ISP.
+Now predict: can ISP forward a packet addressed to `10.2.2.20` using the routes it has? Then ping `10.2.2.20` from PC-BR and record the result. Do not add a private route to ISP.
 
 :::expected
-Local gateway pings and edge-to-edge public-address pings should succeed after links and ARP settle. The private host-to-host ping fails: ISP has no route for the inner LAN destinations. A timeout or an unreachable may be displayed. This establishes underlay IP/ICMP reachability, not working IPsec. Save this required Packet Tracer baseline as `vpn-underlay.pkt`.
+The gateway pings and the edge-to-edge public pings succeed (the first may time out while ARP resolves). The PC-BR to PC-HQ ping fails. R-BR's default route gets the packet to ISP, but ISP has no route to `10.2.2.0/24` and drops it, so PC-BR shows a timeout or “Destination host unreachable”. This is the problem a tunnel-mode VPN solves: ISP only ever has to route the public addresses. Save the file as `vpn-underlay.pkt`.
 :::
 
 ```state
@@ -122,7 +122,7 @@ Local gateway pings and edge-to-edge public-address pings should succeed after l
 For an ESP tunnel-mode VPN with encryption between R-BR and R-HQ, write the source and destination at three points: PC-BR to R-BR, R-BR to ISP, and R-HQ to PC-HQ. Identify where the original IP header is encrypted and which destination ISP uses. Then describe what plain GRE would change.
 
 :::solution Check the packet drawing
-Before R-BR: original IP `10.1.1.10 -> 10.2.2.20`. Across ISP: outer IP `198.51.100.1 -> 203.0.113.1`, followed by ESP and protected inner content. After R-HQ decrypts: original IP `10.1.1.10 -> 10.2.2.20` again. ISP forwards using `203.0.113.1`, not the encrypted inner destination. Plain GRE would provide encapsulation but no encryption; its inner content would remain readable to a suitable observer.
+Before R-BR: original IP `10.1.1.10 -> 10.2.2.20`. Across ISP: outer IP `198.51.100.1 -> 203.0.113.1`, then the ESP header, then the encrypted original packet. After R-HQ decrypts: original IP `10.1.1.10 -> 10.2.2.20` again. ISP forwards on `203.0.113.1` and never sees the inner destination. Plain GRE would add the same kind of outer header but no encryption, so anyone on the path could read the inner packet.
 :::
 
 ```state
@@ -131,14 +131,18 @@ Before R-BR: original IP `10.1.1.10 -> 10.2.2.20`. Across ISP: outer IP `198.51.
 
 ## Step 4: Optional supported IOS XE IKEv2 configuration
 
-Worksheet-only learners should skip this optional implementation and continue to Step 5. **Do not paste this into the Packet Tracer baseline.** For live optional practice, use the supported edge devices and interface mapping specified in Topology; complete Steps 1–2 on that environment first. Confirm `show version`, feature availability and the `crypto ikev2` command family. Use a fresh isolated configuration with no other crypto policy, NAT or ACL attachment.
-
-The complete reference below is optional. Worksheet-only learners may leave it closed and continue to Step 5; the endpoint and selector values they need are supplied there.
+This step is optional and needs real IOS XE routers; **do not paste it into Packet Tracer.** If you are working from the worksheet, read the explanation below to see how the parts of an IKEv2 configuration fit together, then continue to Step 5. If you have suitable routers, complete Steps 1–2 on them first and check that `crypto ikev2 ?` is accepted in global configuration mode.
 
 :::solution Optional IOS XE implementation reference
-The proposal specifies IKE algorithms; the policy references that proposal. The profile matches the peer's identity and configures authentication. The transform set specifies ESP data protection. The selector identifies the two LANs; the crypto map combines the peer, profile, transform and selector, then attaches to the WAN interface. The demonstration pre-shared key is the same at both ends and is intended only for this isolated exercise.
+The lesson described these ideas; here is how IOS XE expresses them. The configuration has five parts:
 
-Read the algorithm choices by role: `encryption aes-cbc-256` selects AES encryption with a 256-bit key; `integrity sha256` selects the integrity mechanism; `prf sha256` selects the pseudorandom function used to derive keying material; and `group 14` identifies the Diffie-Hellman group. The ESP transform independently selects `esp-aes 256` and SHA-256 HMAC, a keyed integrity/authentication mechanism. Both peers need compatible choices; local proposal/profile names need not match. These supplied settings make the lab reproducible, not a requirement to memorize cryptographic internals.
+- **IKEv2 proposal and policy:** the algorithms offered for the IKE SA (`encryption`, `integrity`, `prf` and the Diffie-Hellman `group`). The policy says which proposal to use.
+- **IKEv2 profile:** who the peer is (`match identity remote address`) and how each side authenticates, here with the same pre-shared key on both routers.
+- **Transform set:** the ESP algorithms and mode for the IPsec SAs, here AES-256 with a SHA-256 HMAC in tunnel mode.
+- **Crypto ACL (`VPN-SELECT`):** which traffic to encrypt.
+- **Crypto map:** ties the peer, profile, transform set and ACL together, and is applied to the WAN interface.
+
+`prf` is the pseudorandom function IKE uses to derive keys. The names (`CCNA-PROPOSAL` and so on) are local to each router; the algorithms and the key must match on both. The pre-shared key shown is for this isolated exercise only.
 
 ```ios R-BR — optional IOS XE
 R-BR# configure terminal
@@ -208,7 +212,7 @@ R-HQ(config-if)# crypto map CCNA-MAP
 R-HQ(config-if)# end
 ```
 
-The selector on each router is the reverse of the other's. The default routes send packets toward the WAN; the crypto map protects matching packets before they cross ISP. `ipsec-isakmp` in the crypto-map command is not evidence of IKEv1 here: the `set ikev2-profile` reference selects this IKEv2 implementation. No private route is added to ISP, and no GRE tunnel is required for these unicast host tests. If the required feature or algorithm is unavailable, use the evidence worksheet rather than assuming an equivalent command exists.
+The crypto ACL on each router is the mirror image of the other's. Each router's default route sends LAN traffic toward the WAN interface, where the crypto map encrypts whatever matches the ACL. The keyword `ipsec-isakmp` appears in every IKE-negotiated crypto map, IKEv1 or IKEv2; `set ikev2-profile` is what selects IKEv2. ISP still has no private routes, and these unicast pings need no GRE tunnel.
 :::
 
 ```state
@@ -217,7 +221,7 @@ The selector on each router is the reverse of the other's. The default routes se
 
 ## Step 5: Read negotiation and data evidence separately
 
-In the optional environment, send a fresh ping from PC-BR to PC-HQ. Initial requests may be lost while negotiation occurs; repeat after inspecting the status. Use the protected host as the source, not a router's public interface. The following commands are for supported IOS XE:
+On real routers, ping PC-HQ from PC-BR. The first one or two requests are usually lost while IKE negotiates, so ping again. Ping from the PC, not from the router: a router-sourced ping uses the WAN address and does not match the crypto ACL. Then run:
 
 ```ios R-BR
 R-BR# show crypto ikev2 sa
@@ -226,7 +230,7 @@ R-BR# show crypto map
 R-BR# show access-lists VPN-SELECT
 ```
 
-Run the IKEv2 and IPsec checks on R-HQ as well. Worksheet learners should interpret this supplied evidence instead. Before opening the answer, list what the IKE state, each counter direction and the host result separately establish. It assumes no NAT, native ESP and the selector pair from Step 4; fields are simplified and totals illustrative.
+Run the first two commands on R-HQ as well. If you have no live VPN, use the supplied output below, which summarizes those commands on both routers for the Step 4 configuration with no NAT on the path. Before opening the answer, write down what each of these proves on its own: the IKE status, each counter, and the ping result.
 
 ```output Representative evidence for one controlled test interval
 R-BR IKEv2: local 198.51.100.1/500, remote 203.0.113.1/500, READY
@@ -242,7 +246,7 @@ Host observation: echo replies received
 ```
 
 :::solution Compare negotiation, data and host evidence
-The IKE state shows a completed negotiation relationship. The selected IPsec SAs carried traffic in both directions during the interval, and the host test received replies. These conclusions rely on the combination of evidence, not on READY alone. Four is an illustrative test count, not an invariant command result. ISP can still have no route to either private LAN because it forwards the protected outer packets.
+`READY` proves that IKE negotiated and authenticated, nothing more. The counters prove data: R-BR encrypted four echo requests and R-HQ decrypted four, then R-HQ encrypted four replies and R-BR decrypted four. The ping result proves the application. ISP still has no route to either LAN; it forwarded outer packets between `198.51.100.1` and `203.0.113.1`.
 :::
 
 ```state
@@ -251,9 +255,7 @@ The IKE state shows a completed negotiation relationship. The selected IPsec SAs
 
 ## Step 6: Introduce a native-ESP filter fault and observe
 
-For the worksheet, assume the displayed native-ESP transport from Step 5. In the live optional lab, first verify that protected traffic actually uses native ESP; if it uses UDP encapsulation, this particular fault will not block that transport, so use the worksheet for this case.
-
-Before reading the fault evidence, predict which of public ICMP, IKE UDP and native ESP this filter can pass. On ISP, apply an outbound ACL toward R-HQ that denies native ESP from R-BR but leaves IKE and other IPv4 packets permitted. This configuration is a real interface filter, unlike the VPN-SELECT crypto selector.
+Now break the tunnel in a way that leaves IKE healthy. An ACL on ISP, applied outbound toward R-HQ, denies ESP from R-BR and permits everything else. Unlike the crypto ACL `VPN-SELECT`, this one is applied with `ip access-group`, so it really drops packets. Before reading on, predict which of these three it passes: a ping to R-HQ's public address, IKE on UDP 500, and ESP.
 
 ```ios ISP — optional live VPN environment
 ISP# configure terminal
@@ -281,7 +283,7 @@ During the fresh host test:
 ```
 
 :::solution Explain the supplied fault evidence
-The public ping uses ICMP, and IKE uses UDP; both can pass the final permit. The selected data packets use native ESP and hit the specific deny. This is why an underlay ping and an established IKE SA can coexist with failed user traffic. The ACL and controlled counter changes supply the fault evidence; the one-sided IPsec counters alone would not uniquely identify the cause. In the required Packet Tracer baseline no ESP is generated, so applying this ACL there would not reproduce an IPsec failure.
+The public ping is ICMP and IKE is UDP, so both match `permit ip any any`. The user data is ESP, IP protocol 50, and matches the deny. That is how a working ping and a `READY` IKE SA can sit alongside failing user traffic. R-BR's counters alone (encaps up, decaps flat) say only that nothing came back; the ACL's deny counter and R-HQ's flat decaps counter are what locate the fault on ISP. The Packet Tracer baseline carries no ESP, so this ACL would block nothing there.
 :::
 
 ```state
@@ -300,10 +302,10 @@ ISP(config-if)# end
 ISP# show ip interface gigabitethernet0/1
 ```
 
-Retry host-to-host traffic and recheck both IPsec counters. Existing SAs can carry the restored traffic; if negotiation expired, fresh matching traffic can establish it again. No broad clear-crypto reset is required merely to remove this filter fault.
+Ping between the hosts again and recheck the counters on both routers. The existing SAs carry the traffic as soon as the filter is gone; there is no need to clear them.
 
 :::solution Check the separate recovery prediction
-ISP reports no outbound ACL on G0/1. With the rest of the baseline unchanged, host replies resume and the appropriate encapsulation/decapsulation counters increase at both ends. Record new deltas instead of comparing cumulative counters with an earlier screenshot. Leave the now-unattached VPN-FAULT list as documentation or remove it only after confirming it has no other references.
+`show ip interface gigabitethernet0/1` reports “Outgoing access list is not set”. Pings succeed again, and encaps and decaps both rise on both routers. The `VPN-FAULT` ACL still exists but is applied nowhere; remove it with `no ip access-list extended VPN-FAULT` if you want a clean configuration.
 :::
 
 ```state
@@ -317,7 +319,7 @@ This is a paper exercise; the topology does not include a configured remote-acce
 Explain: which device is the remote IPsec endpoint; how the translated path can carry ESP; whether a public website outside the split route is protected by this tunnel; and whether a successful VPN login guarantees access to PC-HQ. Then contrast the arrangement with the site-to-site branch.
 
 :::solution Check the remote-access comparison
-The laptop, not the hotel's router, is the remote VPN endpoint. UDP NAT-T can carry ESP through PAT using UDP 4500. Traffic outside the split route follows the local connection in this stated policy and is not protected by this VPN. The client still needs an appropriate route, gateway policy, return route and working application service. In the site-to-site branch, R-BR protects traffic on behalf of its LAN hosts. DNS settings and DNS query routing require their own policy review.
+The laptop is the remote endpoint; the hotel router only translates. Because PAT is on the path, IKE detects it and both ends wrap ESP in UDP 4500 (NAT-T). The public website is outside the split-tunnel route, so that traffic goes straight out of the hotel connection without VPN protection. A successful login does not guarantee access to PC-HQ: the gateway's access policy must still allow it. In the site-to-site case R-BR is the endpoint, it protects traffic for every host on its LAN, and no host runs a client.
 :::
 
 ```state
@@ -341,16 +343,16 @@ ISP# copy running-config startup-config
 ```
 
 :::expected
-Accept each default startup-config filename. Your written summary identifies the two protected LANs, both public peer addresses, IKE version, ESP mode and algorithms, whether data is native ESP or UDP-encapsulated, the exact tested service (ICMP echo in this setup), and the separate fault/recovery observations. A successful echo is not a claim that an unconfigured HTTP or file service worked. If you used the worksheet only, label those observations as supplied representative evidence rather than live measurements.
+Accept the default filename `startup-config`. Your summary names the two protected LANs, both peer addresses, the IKE version, the ESP mode and algorithms, whether data travelled as ESP or inside UDP 4500, and what you saw in the healthy, faulted and recovered states. The only service tested was ICMP echo. If you worked from the supplied output, say so.
 :::
 
 ### Evidence to keep
 
-- Working local/WAN baseline observations and the expected private-path failure before protection.
-- Inner/outer endpoint drawings, the point where confidentiality begins/ends, and a transport-mode comparison.
-- Separate conclusions from peer reachability, negotiation state, protected-data deltas and the actual host test.
-- A bounded explanation for the supplied native-ESP fault, followed by the separate recovery prediction.
-- Remote-access endpoint, NAT-T and split-policy reasoning, plus the independent challenge. Label supplied evidence and unsupported actions clearly.
+- The baseline results: which pings worked, and why PC-BR could not reach PC-HQ.
+- Your drawing of the inner and outer packet, marking where encryption starts and ends.
+- What the IKE status, the counters and the ping each proved in Step 5.
+- Your explanation of the ESP filter fault and of the recovery.
+- Your answers to the remote-access comparison and the challenge.
 
 ```state
 {"status":"Saved and summarized","tone":"ok","focus":["B","I","H"],"chips":[{"node":"B","text":"startup-config saved","tone":"ok"},{"node":"I","text":"startup-config saved","tone":"ok"},{"node":"H","text":"startup-config saved","tone":"ok"}],"rows":[["Packet Tracer file","Labeled as an underlay exercise"],["Tested service","ICMP echo only"],["Worksheet results","Supplied, not live measurements"]]}

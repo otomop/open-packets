@@ -43,9 +43,9 @@ sources:
   - { title: "Ubuntu: OpenSSH server setup", url: "https://ubuntu.com/server/docs/how-to/security/openssh-server/" }
 ---
 
-A useful backup must be the right file, from the right device, at a known time, stored somewhere that survives the device's failure. A configuration sitting only on the same router's flash is useful for a local comparison, but it will not help if the router and its storage are lost.
+A switch fails at 02:00 and its replacement arrives with a blank configuration. Whether the site is back in ten minutes or two hours depends on whether a current copy of the old configuration exists somewhere other than on the dead switch, and on whether you can get it onto the new one. A software upgrade raises the same questions: the new image has to be copied to the device, checked, and only then made active.
 
-This chapter separates **moving files**, **applying configuration**, and **activating software**. The transfer protocol protects or transports the bytes. The destination determines whether a configuration changes immediately, is saved for boot, or merely becomes a staged file.
+You have been saving configurations with `copy running-config startup-config` since the first chapters. This chapter extends `copy` to files in flash and on remote servers. By the end you will be able to find where IOS keeps its files, read any `copy` command and predict what it changes, describe what TFTP and FTP do, move configuration and software files securely with SCP and SFTP, and verify a file before you rely on it.
 
 ## Why file management matters
 
@@ -67,7 +67,7 @@ Use filenames that identify the device and checkpoint, such as `R1-before-routin
 
 ## Find the file and its storage
 
-IOS exposes storage through file-system prefixes. Start with `show file systems`, then inspect a specific prefix with `dir`. Never assume a router or switch has a fixed flash capacity or the same aliases as a different model.
+IOS names every place a file can live with a prefix that ends in a colon, much as a PC uses drive letters. `show file systems` lists the prefixes a device has, and `dir flash:` lists the files in one of them. Prefixes differ between models (`flash:` on one, `bootflash:` on another), so look before you type.
 
 | Location | Purpose | Important distinction |
 |---|---|---|
@@ -112,17 +112,17 @@ A URL can specify protocol, user, server and path. For example, a supporting IOS
 
 ## TFTP, FTP, SCP and SFTP
 
-**TFTP** is a small UDP-based file-transfer protocol without built-in login authentication or encryption. A read or write request goes to server UDP port 69. The server selects a transfer identifier, used as its UDP port for the subsequent exchange with the client's selected port. Retransmitted requests can still target port 69, so “port 69 is used only by exactly one packet” is too rigid.
+**TFTP**, the Trivial File Transfer Protocol, is the simplest way to move a file. It runs over UDP, has no login and no encryption, and can only read or write a named file; it cannot even list a directory. That simplicity is why it is still used to load IOS images and configurations on a trusted management network, and why it must not carry secrets across an untrusted one. The client sends its first request to UDP port 69 on the server. The server answers from a new port that it picks for that transfer, and the rest of the exchange uses that port, so a firewall has to allow more than port 69.
 
-Base TFTP uses 512-byte data blocks with acknowledgments and retransmission. Extensions can negotiate a different block size; do not assume every observed TFTP block must contain exactly 512 bytes. A firewall must account for the transfer exchange, not just the listening port. Server permissions still control which files can be read or created, despite the protocol lacking user login.
+UDP does not guarantee delivery, so TFTP provides its own: data travels in numbered blocks of 512 bytes, and each block is acknowledged before the next is sent. A shorter block marks the end of the file. The only access control is the server's own file permissions.
 
-**FTP** uses a TCP control session, normally to server port 21, for login and commands. File contents and directory listings use a separate data connection. With classic active FTP, the server initiates that connection toward the client's advertised port; the standard default server data port is 20. In passive FTP, the client connects to a port advertised by the server.
+**FTP**, the File Transfer Protocol, is the fuller protocol. It runs over TCP, requires a username and password, and can list, rename and delete files as well as transfer them. It uses two connections. The **control connection**, to server TCP port 21, carries the login and the commands. Each file or directory listing travels on a separate **data connection**. In **active** mode the server opens the data connection, from its port 20, to a port the client announces. In **passive** mode the client opens it to a port the server announces, which works better through firewalls and NAT because both connections start from the client.
 
 ```diagram
 {"type":"sequence","title":"Passive FTP uses two connections","actors":["FTP client","FTP server"],"steps":[{"from":0,"to":1,"label":"TCP connection to port 21","note":"Login and control commands"},{"from":0,"to":1,"label":"Request passive transfer"},{"from":1,"to":0,"label":"Advertise a data endpoint"},{"from":0,"to":1,"label":"Separate TCP data connection","note":"File data or directory listing uses this connection"}],"caption":"A successful login tests the control session; it does not prove that the separate data connection works."}
 ```
 
-Classic FTP exposes credentials and data to observation along the path. It remains part of the v1.1 description objective, but use the isolated simulator for its practical exercise. IOS `ip ftp username` and `ip ftp password` configure client credentials, not a new FTP server. Stored credentials can appear in configuration backups. `ip ftp passive` restricts the client to passive mode; do not assume the default selection is identical across every release.
+FTP authenticates but does not encrypt: the username, password and file contents all cross the network in clear text. On IOS, `ip ftp username` and `ip ftp password` store the credentials the router uses as an FTP client. They do not make the router an FTP server, and they appear in the configuration and therefore in its backups. `ip ftp passive` makes the client use passive mode.
 
 | Protocol | Common transport | User authentication and encryption |
 |---|---|---|
@@ -131,13 +131,15 @@ Classic FTP exposes credentials and data to observation along the path. It remai
 | SCP | SSH, normally TCP 22 | SSH authentication and encrypted transport |
 | SFTP | SSH, normally TCP 22 | SSH authentication and encrypted transport |
 
-**SFTP is not FTP over TLS**, which is called FTPS. SFTP and classic SCP are different protocols carried over SSH. An SSH server has a related **public/private key pair**: the public key can be shared, while the server keeps the private key and proves possession during authentication. A **host-key fingerprint** is a hash of the public key used for comparison. Server identity matters: compare that fingerprint or key with a value obtained through a trusted path and ensure the client enforces the identity check. A changed host key deserves investigation instead of disabling checks.
+**SCP** (Secure Copy) and **SFTP** (SSH File Transfer Protocol) both run inside an SSH session on TCP port 22, so the login and the file contents are encrypted. They are the protocols to use for real configurations and images. SCP only copies files; SFTP can also list and manage them. Despite its name, SFTP is unrelated to FTP. FTP secured with TLS is a different protocol called FTPS.
 
-Cisco's cited IOS XE implementation supports an SCP server after SSH, authentication and EXEC authorization are correctly configured. Authentication checks the account; EXEC authorization determines whether that account may obtain the required session and privilege. The lab supplies a local-only AAA setup and explains its bindings before use. Chapter 33 develops central servers and fallback policies. The lab uses a privilege-15 local account on a fresh isolated device. That is a high-privilege lab account, not a reason to give all production backup users unrestricted access.
+SSH also lets the client check which server it has reached. Every SSH server has a **host key**, a public/private key pair, and presents the public half when a client connects. The client compares a **fingerprint**, a hash of that key, with one obtained by a trusted route such as the console. If a server's key changes unexpectedly, find out why before you send a password or a file.
 
-The cited Catalyst 9300 IOS XE SFTP implementation is a **client**, requires a configured SSH source interface, and does not provide an SFTP server or SFTP boot. Check the platform guide before applying those restrictions to another Cisco operating system.
+An IOS device can be an **SCP server**, so that a workstation can pull a file from it or push one to it. That needs working SSH, the command `ip scp server enable`, and a user who is both authenticated and authorized at privilege level 15. Authorization is configured with AAA, which Chapter 33 covers; the lab supplies the few commands needed and explains them.
 
-OpenSSH 9.0 changed the workstation `scp` program to use SFTP by default. A classic-SCP-only IOS server may reject that subsystem even after SSH authentication succeeds. For that known compatibility case, `scp -O` selects the legacy SCP protocol. It still uses SSH encryption. It does not repair an incorrect password, unsupported SSH algorithms or missing file authorization.
+For SFTP, IOS XE platforms such as the Catalyst 9300 are a **client** only. The device can fetch a file from an SFTP server with `copy sftp:`, but a workstation cannot open an SFTP session to the device. The 9300 also needs `ip ssh source-interface` set.
+
+One compatibility problem is common. Since OpenSSH 9.0, the workstation `scp` program uses the SFTP protocol underneath, which an IOS SCP server does not accept, so the copy fails after a successful login. `scp -O` forces the original SCP protocol. The session is still encrypted by SSH.
 
 ## Merge, replace and archive
 
@@ -157,7 +159,7 @@ If the intended outcome is to remove a temporary setting absent from a backup, m
 
 ## Stage and verify software before activation
 
-A software file needs three distinct decisions: is it appropriate, did it arrive intact, and should it become active? The v2.0 secure-file objective includes managing configuration and software files. It does not turn every image installation command into a safe universal upgrade recipe.
+An upgrade is three separate steps: choose the right image, copy it to the device and check that it arrived intact, and only then make it the image the device boots. The v2.0 objective covers the first two, for configuration files and software files alike. Copying an image to flash changes nothing about what the device is running.
 
 Before staging actual software, identify the exact device model, release, licensing and boot mode. Use Cisco's authorized download and release documentation, including memory requirements and supported upgrade paths. Keep a current working image and a recovery plan. Insufficient free space calls for a reviewed storage plan, not automatic deletion of the running image.
 
@@ -165,9 +167,9 @@ Transfer the approved file to a named local destination. Compare its size and a 
 
 A mismatch means stop: check the expected filename and hash, the transfer destination and the stored bytes. Keep the device running its current software while investigating. Cisco's digital-signature/authenticity features provide additional checks on supporting platforms.
 
-Older IOS commonly boots a monolithic image. IOS XE install mode may boot a provisioning file such as `packages.conf` that references multiple package files; copying only that manifest is not a complete software backup. Bundle and install workflows differ. Read the running image information with `show version` and the supported boot display, such as `show boot` or `show bootvar`.
+Older IOS routers boot a single image file. `boot system flash:FILENAME` in global configuration names the image to load at the next reload; without it the router loads the first image it finds in flash. IOS XE install mode may boot a provisioning file such as `packages.conf` that references multiple package files; copying only that manifest is not a complete software backup. Bundle and install workflows differ. Read the running image information with `show version` and the supported boot display, such as `show boot` or `show bootvar`.
 
-The legacy router configuration register is also platform-specific. On classic ISR examples, `0x2142` means to ignore startup-config, unlike normal `0x2102`. That recognition can explain an apparent missing configuration, but it is not a setting to experiment with during backup practice. Modern platform boot behavior should come from its own documentation, not the directory's first filename.
+The **configuration register** on classic routers controls how the device starts. The normal value is `0x2102`. `0x2142` tells the router to ignore startup-config at boot. Password recovery uses it to get past a forgotten password, and it explains a router that comes up with an empty configuration although startup-config is intact. `show version` displays the current value on its last line.
 
 ## Verify and troubleshoot transfers
 
@@ -179,6 +181,12 @@ Verify the destination after every copy: correct filename, plausible size, reada
 
 ## Exam focus
 
-For v1.1, explain TFTP/FTP roles, transports, security limits and control/data behavior. For v2.0, practice secure configuration backup and software-file staging with SCP/SFTP, including client/server roles, SSH prerequisites, permissions and verification.
+- `copy source destination`: a copy into running-config merges, a copy into startup-config replaces the saved file, and a copy into flash only stores a file.
+- TFTP uses UDP 69, has no authentication or encryption, and sends 512-byte blocks that are each acknowledged.
+- FTP uses TCP 21 for control and a separate data connection (server port 20 in active mode). Its username and password travel in clear text.
+- SCP and SFTP run over SSH on TCP 22 and encrypt both the login and the data.
+- An IOS SCP server needs SSH, `ip scp server enable` and a privilege-15 user. A modern OpenSSH client needs `scp -O`.
+- Check a transferred image with `verify /sha512` or `verify /md5` against the hash Cisco publishes before it is used.
+- `show file systems` and `dir` show where files are. `show version` shows the running image and the configuration register.
 
-The lab offers Packet Tracer TFTP/FTP practice plus a separate IOS XE/OpenSSH secure-transfer exercise. If the secure features are unavailable, work through the diagnostics and obtain time on a supporting image before treating those hands-on skills as complete. None of the representative output claims an executed transfer or an activated image.
+For v1.1, describe what TFTP and FTP do and how they differ. For v2.0, carry out a secure backup and a secure file transfer with SCP or SFTP; the second half of the lab needs an IOS XE device or image, which Packet Tracer does not provide.

@@ -6,7 +6,7 @@ minutes: 60
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The required outcome is to explain how a policy treats packets and which evidence would verify that treatment. Complete the paper exercises in Steps 1–4 and 11, then the independent challenge. Steps 5–10 and the device-save action in Step 12 are optional implementation support. They are supplied configuration, not a production policy-design requirement.
+The exam asks you to explain QoS, not to configure it, so the core of this lab is on paper: Steps 1–4 and 11, then the challenge. Steps 5–10 and the save in Step 12 are an optional router experiment that marks packets and shows why a policy's interface and direction matter. Its commands are given to you and you do not need to memorise them.
 
 ## Topology
 
@@ -14,7 +14,7 @@ The required outcome is to explain how a policy treats packets and which evidenc
 {"type":"topology","title":"Lab 28 — Optional marking experiment","caption":"PC-A and PC-B are on separate /24 subnets and use R1 at 10.28.1.1 and 10.28.2.1 as their gateways.","nodes":[{"id":"PCA","kind":"pc","label":"PC-A","sub":"10.28.1.10/24 · gw 10.28.1.1","x":1,"y":3},{"id":"SWA","kind":"switch","label":"SW-A","x":3,"y":3},{"id":"R1","kind":"router","label":"R1","sub":"Gi0/0 10.28.1.1/24 · Gi0/1 10.28.2.1/24","x":6,"y":3},{"id":"SWB","kind":"switch","label":"SW-B","x":9,"y":3},{"id":"PCB","kind":"pc","label":"PC-B","sub":"10.28.2.10/24 · gw 10.28.2.1","x":11,"y":3}],"links":[{"from":"PCA","to":"SWA","fromLabel":"Fa0","toLabel":"Fa0/1"},{"from":"SWA","to":"R1","fromLabel":"Fa0/2","toLabel":"Gi0/0"},{"from":"R1","to":"SWB","fromLabel":"Gi0/1","toLabel":"Fa0/2"},{"from":"SWB","to":"PCB","fromLabel":"Fa0/1","toLabel":"Fa0"}]}
 ```
 
-The core worksheet requires only a notebook and the supplied evidence. Optional implementation uses an isolated Packet Tracer project or a supporting IOS/IOS XE lab image. It does not measure real voice quality. The commands and outputs have been reviewed against Cisco documentation, but this lab has not been executed in Packet Tracer. Unsupported commands or absent counters are a simulator limitation; complete the paper path and record the limitation rather than inventing results.
+The paper steps need only a notebook. The optional experiment uses Packet Tracer or another IOS lab. Its commands were checked against Cisco documentation, but the lab has not been run in Packet Tracer, which supports only part of IOS QoS. If a command is rejected or a counter is missing, note it and continue on paper.
 
 For the optional experiment, create one ISR 2911 named R1, two 2960 switches named SW-A and SW-B, and two PC-PT endpoints. Use copper straight-through cables for every listed link. Default switch VLAN 1 is sufficient; neither switch needs an IP address or QoS commands.
 
@@ -27,9 +27,9 @@ For the optional experiment, create one ISR 2911 named R1, two 2960 switches nam
 
 No DNS, Internet connection, server, static route or traffic generator is needed. In CML, use an authorized IOS image, an unmanaged switch node on each side and Linux endpoints with these addresses; translate interface names from `show ip interface brief`.
 
-## Step 1 — Calculate the offered voice rate
+## Step 1: Calculate the offered voice rate
 
-Use these supplied assumptions: 160 payload bytes, 40 header bytes, one packet every 20 ms, in one direction. Calculate packets per second, bytes per second and bits per second. Then calculate the Layer 3 rate for two calls and compare it with a classic IOS congestion-time priority allowance of 128 kb/s. Treat the packetization values as exercise data, not codec details to memorize.
+Use these supplied assumptions: 160 payload bytes, 40 header bytes, one packet every 20 ms, in one direction. Calculate packets per second, bytes per second and bits per second. Then calculate the Layer 3 rate for two calls and compare it with a classic IOS congestion-time priority allowance of 128 kb/s.
 
 :::solution
 One call sends 50 packets/s, 10,000 bytes/s and 80,000 bits/s. Two calls require 160 kb/s before Layer 2 overhead. A 128 kb/s priority allowance is smaller than their sustained Layer 3 rate. This calculation predicts pressure on a congestion-time priority policer; it does not predict an exact drop count because burst allowances and actual packet sizes matter.
@@ -39,7 +39,7 @@ One call sends 50 packets/s, 10,000 bytes/s and 80,000 bits/s. Two calls require
 {"status":"Paper: offered voice rate","cabled":false,"addressed":false,"rows":[["Per packet","160 payload + 40 header bytes"],["Interval","One packet every 20 ms · one way"],["Compare","Two calls with a 128 kb/s allowance"]]}
 ```
 
-## Step 2 — Follow the classifier and marking
+## Step 2: Follow the classifier and marking
 
 For this worksheet, a boundary policy classifies managed phone traffic as VOICE and writes EF. Other client traffic receives DSCP 0. A later router selects its priority class using DSCP EF. Trace these two packets: a managed phone initially marked 0, and an ordinary PC initially marked EF.
 
@@ -51,7 +51,7 @@ After the boundary, the phone packet is EF and the PC packet is 0. At the later 
 {"status":"Paper: classify, then mark","cabled":false,"addressed":false,"rows":[["Boundary policy","Phone → VOICE, EF · others DSCP 0"],["Later router","Priority class matches DSCP EF"],["Packets to trace","Phone marked 0 · PC marked EF"]]}
 ```
 
-## Step 3 — Distinguish the two rate actions
+## Step 3: Distinguish the two rate actions
 
 On paper, compare these policies for a 20 Mb/s service: A transmits conforming packets and drops excess packets; B queues packets until allowed to transmit. A burst arrives after each rate meter's token allowance has been used. State what happens immediately and what happens if the offered rate stays above 20 Mb/s indefinitely.
 
@@ -63,7 +63,7 @@ A is policing and drops the excess described by its action. B is shaping and ini
 {"status":"Paper: police vs shape","cabled":false,"addressed":false,"rows":[["Service","20 Mb/s"],["Policy A","Sends conforming · drops excess"],["Policy B","Queues until allowed to transmit"],["Burst","After the token allowance is used"]]}
 ```
 
-## Step 4 — Read evidence before changing a policy
+## Step 4: Read evidence before changing a policy
 
 Study this representative worksheet excerpt. It is an authored example, not captured output.
 
@@ -87,7 +87,7 @@ There were 500 additional priority bandwidth-exceed drops during the interval. I
 {"status":"Paper: read the drop counter","cabled":false,"addressed":false,"rows":[["VOICE","priority 128 kb/s · dscp ef"],["b/w exceed drops","400, then 900 after a busy minute"],["DATA","bandwidth 512 kb/s"]]}
 ```
 
-## Step 5 — Build and verify the optional IP baseline
+## Step 5: Build and verify the optional IP baseline
 
 Configure both PC addresses in Desktop → IP Configuration → Static using the topology table. Leave DNS blank. On a new R1, decline the initial setup dialog if presented, then enter:
 
@@ -123,9 +123,9 @@ Both router interfaces should be up/up. After initial ARP resolution, PC-A shoul
 {"status":"IP baseline works","tone":"ok","cabled":true,"addressed":true,"led":true,"focus":["R1"],"flows":[{"path":["PCA","SWA","R1"],"back":true,"label":"ping 10.28.1.1","tags":{"PCA":"ping 10.28.1.1 · own gateway"}},{"path":["PCA","SWA","R1","SWB","PCB"],"back":true,"label":"ping 10.28.2.10","tags":{"PCA":"Off subnet → gateway 10.28.1.1","R1":"10.28.2.0/24 connected · Gi0/1"}}],"rows":[["R1 Gi0/0 and Gi0/1","up/up","ok"],["PC-A to 10.28.1.1","Replies","ok"],["PC-A to 10.28.2.10","Replies","ok"],["Project","qos-baseline.pkt, then qos-marking.pkt"]]}
 ```
 
-## Step 6 — Create a simple marking policy
+## Step 6: Create a simple marking policy
 
-This isolated demonstration changes default-marked IP packets to AF21; it is not a production classification design. Check `class-map ?` and `match dscp ?` if the image rejects a command. Do not enable global `mls qos` on the switches.
+The policy below uses the three MQC parts from the lesson. A class map named DEFAULT-IP matches packets whose DSCP is 0, and a policy map named MARK-IN sets those packets to AF21. Step 7 attaches it to an interface with a service policy. If a command is rejected, use `class-map ?` and `match ?` to find your version's spelling. Leave the switches alone: enabling `mls qos` on a 2960 would reset the markings.
 
 ```ios R1
 R1# configure terminal
@@ -148,7 +148,7 @@ DEFAULT-IP matches DSCP 0. MARK-IN contains the AF21 marking action. The policy 
 {"status":"MARK-IN defined","focus":["R1"],"chips":[{"node":"R1","text":"MARK-IN · not attached"}],"rows":[["DEFAULT-IP","match dscp default · DSCP 0"],["MARK-IN","DEFAULT-IP → set dscp af21"],["Traffic","Unchanged until attached","dim"]]}
 ```
 
-## Step 7 — Attach the policy where requests enter
+## Step 7: Attach the policy where requests enter
 
 PC-A's requests enter R1 on Gi0/0. Attach MARK-IN there in the input direction.
 
@@ -168,21 +168,21 @@ The output identifies MARK-IN as an input policy on Gi0/0. Record current DEFAUL
 {"status":"MARK-IN input on Gi0/0","focus":["R1"],"flows":[{"event":["R1"],"wait":1.2,"tags":{"R1":"service-policy input MARK-IN"}}],"chips":[{"node":"R1","text":"MARK-IN · not attached","until":0}],"roles":[{"node":"R1","peer":"SWA","text":"input MARK-IN","tone":"ok","from":0}],"rows":[["Gi0/0","Input policy MARK-IN","ok"],["DEFAULT-IP counters","Recorded before testing"],["show policy-map alone","Not proof of attachment","dim"]]}
 ```
 
-## Step 8 — Generate and inspect a known packet
+## Step 8: Generate and inspect a known packet
 
 Before sending a packet, draw its request and reply paths. Predict which packet crosses the input policy and whether observing replies in the wrong direction would prove the request was marked.
 
 From PC-A, ping `10.28.2.10` again. Read R1's interface policy counters after the test. In Packet Tracer Simulation mode, filter for ICMP, create a simple PDU from PC-A to PC-B, and step through R1. Open the packet details and compare the incoming and outgoing IPv4 service fields if your version exposes them. On CML, capture the two lab links and inspect the same echo request in Wireshark; start capture before sending it and stop afterward.
 
 :::expected
-On an implementation that models the policy, default-marked requests should match the input class and leave toward PC-B with DSCP AF21, decimal 18. If ECN is 0, the entire eight-bit service field is `18 × 4 = 72`, hexadecimal `0x48`. Do not confuse that byte with DSCP 72. Counter increments support matching; packet fields support marking. Absent packet fields or counters mean that observation is unavailable, not that you measured success. Echo replies enter the opposite interface and are not covered by this input policy.
+Requests from PC-A match DEFAULT-IP and leave toward PC-B marked AF21, decimal 18. With ECN at 0, the whole eight-bit field reads `18 × 4 = 72`, or `0x48`; that byte value is not DSCP 72. The class counters show that packets matched, and the packet's header shows that it was marked. Echo replies enter Gi0/1 and are not touched by this input policy. If your version shows neither counters nor header fields, record that the observation was unavailable.
 :::
 
 ```state
 {"status":"Request leaves as AF21","tone":"ok","focus":["R1"],"flows":[{"path":["PCA","SWA","R1","SWB","PCB"],"back":true,"label":"PC-A pings 10.28.2.10","tags":{"R1":"In Gi0/0 · DSCP 0 → AF21 (18)"},"backTags":{"R1":"Reply in Gi0/1 · no MARK-IN"}}],"roles":[{"node":"R1","peer":"SWA","text":"input MARK-IN","tone":"ok"}],"rows":[["Request toward PC-B","AF21 · decimal 18 where modeled","ok"],["Service byte, ECN 0","72 · 0x48, not DSCP 72"],["Echo reply","Enters Gi0/1 · not covered"],["Counters · packet fields","Support matching · marking"]]}
 ```
 
-## Step 9 — Introduce a direction fault
+## Step 9: Introduce a direction fault
 
 Remove the correct attachment and attach the same policy to Gi0/1 in the input direction.
 
@@ -207,7 +207,7 @@ The request enters Gi0/0, so it no longer encounters MARK-IN and should retain i
 {"status":"MARK-IN on Gi0/1 input","tone":"bad","focus":["R1"],"flows":[{"event":["R1"],"wait":1.2,"tags":{"R1":"MARK-IN moved to Gi0/1 input"}},{"path":["PCA","SWA","R1","SWB","PCB"],"back":true,"label":"PC-A pings 10.28.2.10","tags":{"R1":"In Gi0/0 · no MARK-IN · DSCP kept"},"backTags":{"R1":"Reply in Gi0/1 · may match"}}],"roles":[{"node":"R1","peer":"SWA","text":"input MARK-IN","tone":"ok","until":0},{"node":"R1","peer":"SWB","text":"input MARK-IN","tone":"bad","from":0}],"rows":[["Request","Keeps its original DSCP","bad"],["Replies","May match on Gi0/1"],["Gi0/1 counters","Do not prove the intended direction"],["Connectivity","Still works · marks, not drops","ok"]]}
 ```
 
-## Step 10 — Restore the intended direction
+## Step 10: Restore the intended direction
 
 Only after recording Step 9's observation, restore the attachments:
 
@@ -232,7 +232,7 @@ MARK-IN is input on Gi0/0 only. Requests again receive AF21 where the platform s
 {"status":"Gi0/0 input restored","tone":"ok","focus":["R1"],"flows":[{"event":["R1"],"wait":1.2,"tags":{"R1":"MARK-IN back on Gi0/0 input"}},{"path":["PCA","SWA","R1","SWB","PCB"],"back":true,"label":"Repeat the request","tags":{"R1":"In Gi0/0 · DSCP 0 → AF21 (18)"},"backTags":{"R1":"Reply in Gi0/1 · no MARK-IN"}}],"roles":[{"node":"R1","peer":"SWB","text":"input MARK-IN","tone":"bad","until":0},{"node":"R1","peer":"SWA","text":"input MARK-IN","tone":"ok","from":0}],"rows":[["MARK-IN","Input on Gi0/0 only","ok"],["Requests","AF21 again where supported","ok"],["Repair","Attachment and direction only"]]}
 ```
 
-## Step 11 — Predict a congestion-avoidance result
+## Step 11: Predict a congestion-avoidance result
 
 Given two traffic aggregates in the **same AF class**, one marked AF11 and one AF13, the downstream router is explicitly configured to give AF13 a higher WRED drop probability at the current average queue depth. Predict the relative treatment over many packets. Then state whether that determines which particular packet is dropped next.
 
@@ -244,9 +244,9 @@ AF13 has greater discard probability under the stated policy. It does not mean e
 {"status":"Paper: WRED prediction","roles":[{"node":"R1","peer":"SWA","text":"input MARK-IN","tone":"ok"}],"rows":[["Same AF class","One aggregate AF11 · one AF13"],["Downstream WRED","AF13 higher drop probability"],["Predict","Treatment over many packets"]]}
 ```
 
-## Step 12 — Save the evidence and finish cleanly
+## Step 12: Save the evidence and finish cleanly
 
-Record whether you used the worksheet, Packet Tracer or a specific IOS image, plus the actual supported observations. The paper submission must include the offered-rate calculation, two packet paths through classification/marking, a policing-versus-shaping comparison, the drop-counter delta and the probability/scheduling distinction. State the evidence that would verify each conclusion.
+For the paper steps, keep the voice-rate calculation, the two packet traces, the policing and shaping comparison, the drop-counter difference and the WRED prediction. For each, note what evidence on a real device would confirm it.
 
 If you performed the optional device experiment, add a three-state table for correct attachment, wrong-direction attachment and recovery. Record ingress/egress interface, request DSCP, relevant counter changes and an actual packet observation when available. Save that project as `qos-complete.pkt`. In an actual isolated router lab, save the intended configuration separately:
 
@@ -270,7 +270,7 @@ Your notes distinguish predicted behavior, representative examples and observati
 - No matches: inspect the actual ingress interface, direction and incoming DSCP. ICMP requests and replies are different packets.
 - Matches but no visible marking: confirm the action and inspect the egress header; document simulator limitations if it does not expose or implement the field.
 - Low average interface utilization with drops: identify whether the counter belongs to a policer or a queue, and consider bursts or a slower downstream service.
-- A command rejected by a simulator: use context help and the referenced platform guide. Do not substitute an unrelated hardware command merely to produce accepted syntax.
+- A command rejected by the simulator: use `?` to find the supported form. If there is none, finish that step on paper.
 
 ## Challenge
 

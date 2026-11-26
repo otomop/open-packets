@@ -24,15 +24,15 @@ sources:
   - { title: "Cisco: Configuring IPv4 Addresses", url: "https://www.cisco.com/c/en/us/td/docs/routers/ios-xe/ip-addressing/ip-addressing/m_config-ipv4-addr-0.html" }
 ---
 
-Subnetting starts with a practical requirement: several separate networks must fit inside an address block you are allowed to use. Your job is to give each network enough addresses, avoid overlap, and leave a plan another technician can understand.
+You have been given one block, `10.44.8.0/24`, for a branch with three LANs: 100 users, 50 operations hosts and 20 devices, with a router link still to come. Give each LAN its own /24 and you need three blocks you do not have. Cut the /24 into four equal quarters and the users no longer fit. Subnetting is how you cut one block into pieces of the right sizes, and it is the calculation CCNA candidates most often get wrong under time pressure.
 
-The previous chapter explained what an address and mask mean. Here you will use that knowledge to choose masks, assign subnets of different sizes, and check the result. Keep an address table as you work. It is easier to find a mistake in a table than after several devices have been configured.
+Chapter 04 showed how a mask turns one address into a network, a broadcast and a usable range. Here you use that in both directions: from a host count to a mask, and from a mask to exact boundaries. By the end you will be able to size a subnet for any requirement, place subnets of different sizes in one block without overlap, summarize a group of subnets, recognize the private ranges, and check a plan against a router's configuration. Keep an address table as you work: a mistake is easier to find in a table than on configured devices.
 
 ## Why one mask never fits everyone
 
-**Fixed-length subnet masking (FLSM)** divides a parent block into equal-size subnets. It is useful when similar sites or VLANs need a standard allocation. It is not inherently wrong or wasteful: consistent sizes can simplify administration and reserve growth. The problem arises when the chosen size cannot satisfy the largest LAN, or consumes too much space for the available block.
+**Fixed-length subnet masking (FLSM)** divides a parent block into equal-size subnets. It works well when every site or VLAN needs the same allocation. It fails when the sizes differ. Suppose `192.168.40.0/24` must hold LANs of 120, 55 and 25 hosts and two router links: five subnets. Five equal subnets need three extra prefix bits, which gives eight /27s of 30 hosts each, and the 120-host LAN does not fit. A mask large enough for that LAN, /25, gives only two subnets.
 
-**Variable-length subnet masking (VLSM)** uses different prefix lengths within a parent block. A branch may need a /25 for users, a /26 for operations, a /27 for devices, and a /30 for a router link. These are separate subnets, each with its own boundaries. Using the same first three octets does not make them one LAN.
+**Variable-length subnet masking (VLSM)** uses different prefix lengths within a parent block, so each subnet is only as large as it needs to be. The same branch can use a /25 for the largest LAN, a /26 and a /27 for the others, and a /30 for each router link. These are separate subnets, each with its own boundaries. Sharing the first three octets does not make them one LAN.
 
 :::facts
 - An ordinary subnet through /30 has `2^(32 − prefix) − 2` usable addresses.
@@ -45,11 +45,11 @@ The previous chapter explained what an address and mask mean. Here you will use 
 
 Write requirements in unambiguous terms. “50 hosts” may mean 50 workstations or 50 total interface addresses. In this chapter's allocation tables, the stated usable-address requirement includes the gateway unless explicitly stated otherwise. If a customer needs 50 workstations plus a gateway, calculate for 51 addresses before adding planned growth.
 
-Do not allocate addresses merely because a range appears unused. In a working organization, first confirm that the parent block is assigned to this site and not reserved elsewhere. Private addresses still require coordination across connected sites.
+Before you allocate, confirm that the parent block is assigned to your site. A range that looks unused may be reserved elsewhere, and private addresses must still be unique across connected sites.
 
 ## The block-size method in any octet
 
-Start by converting the prefix to a mask. Locate the partial octet, subtract its mask value from 256, and find the block boundary at or below the address. Zero all host bits for the network and set all host bits to one for the broadcast. For octet-aligned prefixes such as /16 and /24, retain the complete network octets and set the remaining octets to zero or 255.
+Every subnet question comes down to one number: the **block size**, the distance between subnet boundaries in the octet where the mask stops. Start by converting the prefix to a mask. Locate the partial octet, subtract its mask value from 256 to get the block size, and find the block boundary at or below the address. Zero all host bits for the network and set all host bits to one for the broadcast. For octet-aligned prefixes such as /16 and /24, retain the complete network octets and set the remaining octets to zero or 255.
 
 Take `172.16.77.210/20`. The mask is `255.255.240.0`, so the third-octet increment is 16. Boundaries around 77 are 64 and 80. The network is `172.16.64.0`, the broadcast is `172.16.79.255`, and the usable range is `172.16.64.1–172.16.79.254`. A /20 has 12 host bits, giving 4,096 total addresses and 4,094 usable addresses.
 
@@ -74,6 +74,8 @@ Compare `172.16.77.210/23`. Now the mask is `255.255.254.0`, with an increment o
 Choosing a prefix works in reverse. For 70 workstations and one gateway, you need 71 usable addresses. A /26 provides only 62; a /25 provides 126. Choose /25 if the requirement is the smallest subnet that fits. A longer prefix reduces the subnet's capacity; moving from /26 to /27 cannot solve a shortage of addresses.
 
 For equal-size subnet counts, compare the parent and child prefixes. Dividing `172.16.0.0/16` into /23s adds seven network bits: `2^7 = 128` subnets. Each /23 still has nine host bits and 510 usable addresses. Dividing a /24 into at least 12 equal subnets requires four added bits: /28 gives 16 subnets with 14 usable addresses each. Three bits would give only eight subnets.
+
+To list equal-size subnets in order, start at the parent's network address and keep adding the block size, carrying into the next octet at 256. Dividing `172.20.4.0/23` into /26s gives eight subnets with a block size of 64: `172.20.4.0`, `.4.64`, `.4.128` and `.4.192`. Adding 64 again carries into the third octet, so the fifth subnet is `172.20.5.0` and the eighth and last is `172.20.5.192`. The exam asks for "the fifth subnet" or "the last subnet" in exactly this way.
 
 The two formulas answer different questions. Do not subtract network and broadcast addresses from the number of subnets. You subtract them from an ordinary subnet's host capacity. As covered earlier, /31 point-to-point links use both endpoint addresses, and /32 identifies one address; treat those as explicit exceptions.
 
@@ -105,7 +107,7 @@ Some requirements cannot fit. Two LANs needing 100 addresses each require two /2
 
 ## Summarisation: keep the shared bits
 
-A **summary route** describes a larger address range with one prefix. It can replace several more specific routes in an appropriate routing design. Here, use summarization as an address-boundary exercise; configuring routing protocols and choosing where to advertise a summary belong in the routing chapters.
+A **summary route** describes several subnets with one shorter prefix, so a distant router can hold one route instead of many. Summarization is subnetting run backwards: instead of adding network bits to split a block, you keep only the bits the subnets share. Configuring a summary belongs in the routing chapters; here you calculate which prefix covers a set of subnets.
 
 For `10.44.8.0/24` through `10.44.11.0/24`, look at the third octet in binary. The values 8, 9, 10, and 11 share six leading bits. Together with the first two octets, that gives `16 + 6 = 22` shared bits.
 
@@ -121,11 +123,11 @@ The exact summary is `10.44.8.0/22`, covering `10.44.8.0–10.44.11.255`. Four /
 
 Now shift the requirement to `10.44.9.0/24` through `10.44.12.0/24`. These four networks straddle a /22 boundary. The smallest single containing prefix is `10.44.8.0/21`, which also includes the .8, .13, .14, and .15 /24s. An exact cover would instead use `10.44.9.0/24`, `10.44.10.0/23`, and `10.44.12.0/24`.
 
-A summary does not prove that every covered destination exists or is reachable. Advertising an overly broad range may attract traffic for addresses that should go elsewhere, or for which the summarizing router has no usable path. That risk exists inside an organization as well as at its boundary. Record the range a summary includes before treating it as a replacement.
+A summary that covers more than you own is a real risk. The router advertising it attracts traffic for every address in the range, including networks that live elsewhere or do not exist. Write down the exact range a summary covers before you use it.
 
 ## Private, public and special-purpose ranges
 
-**Private IPv4 addresses** are the three ranges designated by RFC 1918. Organizations may use them internally without obtaining globally unique allocations. Different organizations can therefore use the same private addresses independently. Inside a connected organization, however, each active subnet still needs a coordinated allocation.
+There are not enough IPv4 addresses for every device to have a globally unique one. **Private IPv4 addresses** are the three ranges that RFC 1918 sets aside for internal use, so any organization can use them without asking anyone. Different organizations reuse the same private addresses independently. Inside one connected organization, each subnet must still be unique.
 
 | Private block | First address | Last address |
 |---|---|---|
@@ -133,9 +135,9 @@ A summary does not prove that every covered destination exists or is reachable. 
 | `172.16.0.0/12` | `172.16.0.0` | `172.31.255.255` |
 | `192.168.0.0/16` | `192.168.0.0` | `192.168.255.255` |
 
-Only the second-octet values 16–31 of the 172 range are private. Thus `172.31.200.1` is private, but `172.32.5.10` is outside RFC 1918. Likewise, `192.169.1.1` is not in `192.168.0.0/16`. “Not RFC 1918” is the conclusion you can draw from these comparisons; it does not by itself prove that an arbitrary address is publicly usable.
+Only the second-octet values 16–31 of the 172 range are private. Thus `172.31.200.1` is private, but `172.32.5.10` is outside RFC 1918. Likewise, `192.169.1.1` is not in `192.168.0.0/16`. Being outside RFC 1918 does not make an address usable on the Internet: the special-purpose blocks below are not private either.
 
-Public unicast addresses are allocated for global uniqueness. Their actual reachability also depends on routing and policy. You cannot select an unassigned-looking public address for your own Internet connection. IANA maintains special-purpose ranges, and allocation and routing information must be checked when assigning real public space.
+Public addresses are globally unique because they are allocated, by IANA to regional registries, then to providers, then to customers. You cannot pick a public address that merely looks unused.
 
 | Address or block | Recognition needed here |
 |---|---|
@@ -143,7 +145,7 @@ Public unicast addresses are allocated for global uniqueness. Their actual reach
 | `169.254.0.0/16` | IPv4 link-local; may indicate a client did not obtain DHCP configuration |
 | `100.64.0.0/10` | Shared space, .64–.127 in the second octet; often used with provider NAT |
 | `192.0.2.0/24`, `198.51.100.0/24`, `203.0.113.0/24` | Documentation examples, not ordinary public deployment addresses |
-| `0.0.0.0` | Unspecified address in relevant host configuration contexts |
+| `0.0.0.0` | Unspecified address: a host that has no address yet |
 | `255.255.255.255` | Limited broadcast |
 | `224.0.0.0/4` | IPv4 multicast, not ordinary unicast interface addressing |
 
@@ -151,11 +153,11 @@ Public unicast addresses are allocated for global uniqueness. Their actual reach
 
 Keep the address `0.0.0.0` separate from the route prefix `0.0.0.0/0`. The address can indicate that a host has not yet selected its IPv4 address. The /0 prefix contains no fixed network bits and matches every IPv4 destination; it is used for a default route. The prefix changes the meaning of the notation.
 
-The table is a practical subset, not the entire special-purpose registry. In particular, neither link-local nor shared address space is RFC 1918 space. Recall that DHCP supplies a client's address settings automatically. A **lease** is an address assignment for an agreed period. A PC reporting an automatically assigned `169.254.x.x` address suggests checking why it did not obtain normal DHCP configuration, including connectivity and client settings. The address alone cannot establish the exact cause, and a link-local address could have been configured intentionally. Chapter 24 teaches the server, message exchange and lease process; here, recognize the range and the limit of that observation.
+Neither link-local nor shared address space is RFC 1918 space. Link-local is the one you will meet in troubleshooting. DHCP hands a client its address settings automatically; each assignment is a **lease**, valid for a set period. A client that asks for a lease and gets no answer assigns itself an address from `169.254.0.0/16`, which Windows calls Automatic Private IP Addressing (APIPA). A PC showing `169.254.x.x` is therefore telling you it did not reach a DHCP server. Check its link and the server before anything else. Chapter 24 teaches DHCP itself.
 
-Private traffic can be routed between internal LANs and sites. It is not intended to be routed as globally unique public traffic. An Internet edge commonly uses **Network Address Translation (NAT)** to translate addresses; **Port Address Translation (PAT)** also distinguishes exchanges by transport ports so clients can share an address. Chapter 06 teaches those ports and Chapter 26 teaches translation. An application proxy, which makes a request on a client's behalf, is another possible design. Translation does not replace firewall policy, and it does not need to occur at every internal router.
+Private addresses route normally between your own LANs and sites. Internet providers do not route them, so the Internet edge translates them. **Network Address Translation (NAT)** replaces a private source address with a public one, and **Port Address Translation (PAT)** lets many clients share one public address by tracking transport ports. Chapter 06 teaches ports and Chapter 26 teaches translation. NAT is needed only at that edge, not between internal subnets, and it is not a firewall.
 
-If two sites use the same private subnet, connecting them can create ambiguous destinations. A host may regard the remote address as local and attempt ARP instead of using a gateway. Renumbering is the most straightforward way to remove the overlap. Specialized translation and separate routing tables can also be used, but their configuration is outside this chapter. Do not claim that routers can never hold multiple paths to the same prefix; the problem here is overlapping address meaning.
+If two sites use the same private subnet, connecting them breaks communication between them: a host treats the remote address as local and sends ARP for it instead of using its gateway. The clean fix is to renumber one site.
 
 ## Ten drills
 
@@ -176,7 +178,7 @@ Use the table to check your work after attempting each calculation. In allocatio
 
 ## Verify and troubleshoot
 
-After allocating subnets, compare the plan against the devices. On a router, `show ip interface brief` checks addresses and state, while `show ip interface` includes the prefix. `show running-config` shows the configured dotted mask. The routing table shows connected prefixes when the corresponding interfaces are operational.
+A plan is only correct once the devices match it, so read the masks back from the router. On a router, `show ip interface brief` checks addresses and state, while `show ip interface` includes the prefix. `show running-config` shows the configured dotted mask. The routing table shows connected prefixes when the corresponding interfaces are operational.
 
 For the lab's operations LAN, the correct command sequence is:
 
@@ -190,7 +192,7 @@ R1# show ip interface gigabitethernet0/1
 R1# show ip route
 ```
 
-Representative, abbreviated output for the completed lab is shown below. These lines illustrate what to compare; they are not a captured simulator run.
+Representative, abbreviated output for the completed lab:
 
 ```output R1# show ip route
 ...
@@ -206,7 +208,7 @@ If Gi0/1 were configured with /25, its range would be .128–.255 and overlap th
 
 For a host fault, compute both the PC's subnet and the gateway's location. `10.44.9.140/25` belongs to `10.44.9.128/25`, while gateway `10.44.9.1` belongs to `10.44.9.0/25`. The correct repair must follow the intended LAN plan, not simply widen the mask until the numbers seem to fit. In the lab's expanded operations LAN, use `10.44.9.10/25` with gateway `10.44.9.1`.
 
-Test local and remote destinations separately. A working ping does not prove that a mask is correct, and a failed ping does not identify the mask as the only possible fault. Compare configuration and route evidence, make one change, then repeat the same tests.
+Test local and remote destinations separately. A PC whose mask is too wide still pings its own LAN, so a successful local ping does not clear the mask. Read the configured values, make one change, then repeat the same tests.
 
 ## Exam focus
 

@@ -21,11 +21,9 @@ sources:
   - { title: "Cisco: Understand Proxy ARP", url: "https://www.cisco.com/c/en/us/support/docs/ip/dynamic-address-allocation-resolution/13718-5.html" }
 ---
 
-An address by itself does not tell you which network a device belongs to. You need its subnet mask as well. Once you can use those two values together, you can choose valid addresses, understand when a host uses its gateway, and explain several common connection failures.
+PC-A is 192.168.44.130 and wants to reach 192.168.44.194. The two addresses look like neighbors, yet PC-A has to send this packet to a router. Change one number in PC-A's mask and it would instead search for .194 on its own LAN, where that address does not exist. An IPv4 address means nothing until you read it together with its subnet mask.
 
-Work through the calculations before trying to do them quickly. The lab uses the same two subnets throughout so that you can compare your paper answers with the configuration and the router's routing table.
-
-The first labs supplied complete address tables, and Chapter 01 used a /24 to explain local versus remote delivery. Here you learn to derive those tables for other masks. Carry forward Chapter 03's link checks: an enabled, working interface and a correct IP configuration are separate requirements.
+The earlier labs handed you finished address tables, and Chapter 01 used a /24 to explain local and remote delivery. Here you learn to work those tables out yourself for any mask. By the end you will be able to convert between binary, dotted masks and prefix lengths, find a subnet's network address, broadcast address and usable range, configure addresses on a router and its PCs, and diagnose a wrong mask or gateway. Chapter 03's link checks still apply: a working interface and a correct address are separate requirements.
 
 ## Why the mask decides everything
 
@@ -35,9 +33,11 @@ Consider PC-A at `192.168.44.130/26`. Its subnet contains addresses `192.168.44.
 
 Change only PC-A's mask to `/24` and it now considers `192.168.44.194` local. It may send ARP requests for a device that is physically on a different LAN. This is why a correct-looking address does not prove a correct configuration. Check the address, mask, and gateway together.
 
-For these examples, assume a workstation with one network connection and no manually added routes. Real hosts have routing tables, and a more specific route can change the next-hop decision. You do not need those exceptions to configure the basic LAN correctly.
+These examples assume a workstation with one network connection and no extra routes, which is the normal case.
 
 ## Binary and the 32-bit address
+
+A mask works on the bits of an address, so the calculations start in binary. These are the rules that this section and the next two build up to; come back to the list once you have worked the examples.
 
 :::facts
 - IPv4 addresses contain 32 bits, written as four 8-bit octets. Each octet is 0–255.
@@ -157,7 +157,7 @@ For each row, write the mask, locate the block, and identify the network and bro
 
 To choose a mask for 50 total interface addresses, compare capacities. A /27 gives 30 usable addresses and is too small. A /26 gives 62 and is the smallest subnet that fits. “Smallest subnet” means the fewest total addresses that satisfy the requirement, which corresponds to the longest suitable prefix.
 
-To check whether two hosts share a subnet, calculate each host's network using its configured mask. With matching masks, matching network addresses mean the addresses belong to the same subnet. If masks differ, also evaluate what each host believes about the destination; one may send directly while the other uses a gateway. Matching the first three decimal numbers is not a valid general test.
+To check whether two hosts share a subnet, calculate each host's network using its configured mask. With matching masks, matching network addresses mean the addresses belong to the same subnet. If masks differ, also evaluate what each host believes about the destination; one may send directly while the other uses a gateway. Matching the first three decimal numbers is not a valid test: `192.168.44.130/26` and `192.168.44.194/26` share three numbers and sit in different subnets, .128 and .192.
 
 ## Configuring addresses on IOS
 
@@ -180,7 +180,7 @@ R1(config-if)# end
 R1# show ip interface brief
 ```
 
-Each LAN needs its own nonoverlapping subnet. In this example, Gi0/0 uses `.128/26` and Gi0/1 uses `.192/27`. Configuring Gi0/1 with a /24 instead would include the first LAN's entire range. IOS normally rejects this overlap between routed interfaces in the same routing table. Read any error before continuing, then verify the configuration that was actually retained.
+Each LAN needs its own nonoverlapping subnet. In this example, Gi0/0 uses `.128/26` and Gi0/1 uses `.192/27`. Configuring Gi0/1 with a /24 instead would include the first LAN's entire range. IOS rejects the command with a message such as `% 192.168.44.0 overlaps with GigabitEthernet0/0`, and the interface keeps its previous setting. Read any error before continuing, then check what the configuration actually contains.
 
 To remove an IPv4 assignment from an interface that has only this one address, select that interface and enter `no ip address`. This removes the address; it does not shut the port down. Verify the result in `show running-config` and `show ip interface brief`. Use removal only when the intended plan calls for it, rather than deleting a working address to investigate an unrelated link fault.
 
@@ -188,7 +188,7 @@ A Catalyst 2960's physical switch ports operate at Layer 2. You do not assign th
 
 ## Verify and troubleshoot
 
-Use different commands for different questions. Running configuration shows the active settings; startup configuration shows the saved settings. Operational output reports whether the interface is currently usable. The following examples are representative, abbreviated IOS-style output for the stated topology, not a captured Packet Tracer run. Interface lists, spacing, and other details vary by software image.
+Use different commands for different questions. Running configuration shows the active settings; startup configuration shows the saved settings. Operational output reports whether the interface is currently usable. The following output is representative and abbreviated; spacing and detail vary by software image.
 
 ```output R1# show ip interface brief
 Interface              IP-Address      OK? Method Status                Protocol
@@ -216,7 +216,7 @@ Check a PC with `ipconfig` or its network settings. Ping its gateway first, then
 | Local traffic works; remote traffic fails | Both hosts' masks and gateway addresses, then router routes |
 | Address command rejected | Network/broadcast selection, mask validity, and overlap |
 
-A wrong mask can sometimes remain unnoticed because of **proxy ARP**: a router may answer an ARP request on behalf of a remote destination and then route the packet. A successful ping therefore does not certify the mask. Read the configuration. Proxy ARP behavior depends on the receiving interface and available route; do not assume it is enabled everywhere or depend on it to correct a bad address plan.
+A wrong mask can sometimes remain unnoticed because of **proxy ARP**: a router may answer an ARP request on behalf of a remote destination and then route the packet. A successful ping therefore does not prove that the mask is right; read the configuration. Proxy ARP is on by default on Cisco IOS router interfaces and is often turned off, so never rely on it to cover a bad address plan.
 
 ## Exam focus
 

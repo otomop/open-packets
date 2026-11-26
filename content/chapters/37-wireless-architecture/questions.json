@@ -69,7 +69,7 @@
     "answer": [
       0
     ],
-    "explanation": "CAPWAP control uses UDP 5246 and data uses UDP 5247. Discovery occurs before the established protected control session.",
+    "explanation": "CAPWAP control uses UDP 5246 and CAPWAP data uses UDP 5247, both on the controller.",
     "whyWrong": {
       "1": "1812/1813 are common RADIUS authentication/accounting ports.",
       "2": "This reverses the CAPWAP functions.",
@@ -99,7 +99,7 @@
     "answer": [
       3
     ],
-    "explanation": "The `Ap Mgr Yes` field identifies management as the AP-manager interface in this exhibit. Do not infer the role from an interface's IP address alone.",
+    "explanation": "The `Ap Mgr Yes` field marks the management interface as the one APs join. Dynamic interfaces map client VLANs, and the virtual interface serves functions such as DHCP relay and web authentication.",
     "whyWrong": {
       "0": "The users interface is a dynamic client VLAN interface and its Ap Mgr field is No.",
       "1": "The virtual interface is not the AP CAPWAP endpoint.",
@@ -127,7 +127,7 @@
       1,
       3
     ],
-    "explanation": "Monitor mode dedicates resources to monitoring; a sniffer radio forwards frames it can receive on the selected channel to a capture system. Actual mode availability depends on model and release.",
+    "explanation": "A monitor-mode AP is a dedicated sensor. A sniffer-mode AP captures the frames on one channel and sends them to an analyzer PC. Neither serves ordinary clients.",
     "whyWrong": {
       "0": "Local mode serves ordinary clients.",
       "2": "FlexConnect can serve ordinary clients.",
@@ -155,7 +155,7 @@
       0,
       2
     ],
-    "explanation": "Discovery precedes the established DTLS-protected control session. Wireless encryption terminates at the AP; protection of the CAPWAP data path is a separate capability/configuration.",
+    "explanation": "Discovery happens first and is unencrypted; the control tunnel is then protected with DTLS. Wireless encryption ends at the AP, and CAPWAP data encryption is a separate, optional setting.",
     "whyWrong": {
       "1": "WPA2 protects the radio link, not automatically the wired tunnel.",
       "3": "Data DTLS is separate from control protection.",
@@ -181,11 +181,87 @@
     "answer": [
       1
     ],
-    "explanation": "The service port provides a separate management path on platforms that include it. Its routing and addressing restrictions must be checked in that model's guide.",
+    "explanation": "The service port gives out-of-band management, for example during initial setup or recovery. It connects to a switch access port.",
     "whyWrong": {
       "0": "Client VLAN distribution normally uses distribution-system interfaces/ports.",
       "2": "The service port is not an AP link-aggregation mechanism.",
       "3": "The virtual interface is a separate logical construct."
+    }
+  },
+  {
+    "id": "wireless-architecture-q23",
+    "type": "single",
+    "objectives": [
+      "v1:2.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "A branch with eight APs has no separate controller hardware. One of the APs runs the controller function for the others. Which WLC deployment model is this?",
+    "options": [
+      "Unified (centralized)",
+      "Cloud-based",
+      "Embedded",
+      "Mobility Express"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Mobility Express places the controller function inside one of the APs, which suits a small branch. It serves the fewest APs of the four models.",
+    "whyWrong": {
+      "0": "A unified deployment uses a dedicated controller appliance at a central site.",
+      "1": "A cloud-based controller runs as a virtual machine in a data center or cloud.",
+      "2": "An embedded controller runs inside an access-layer switch, not inside an AP."
+    }
+  },
+  {
+    "id": "wireless-architecture-q24",
+    "type": "single",
+    "objectives": [
+      "v1:2.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "An engineer suspects a cordless phone system is interfering with a WLAN. Which AP mode dedicates the radios to spectrum analysis and feeds a PC running spectrum-analysis software?",
+    "options": [
+      "Sniffer",
+      "SE-Connect",
+      "Monitor",
+      "Rogue detector"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SE-Connect dedicates the radios to spectrum analysis, which can show interference that is not Wi-Fi. The AP serves no clients in this mode.",
+    "whyWrong": {
+      "0": "Sniffer mode captures 802.11 frames on one channel; a cordless phone does not send 802.11 frames.",
+      "2": "Monitor mode is a sensor for rogue devices, intrusion detection and location.",
+      "3": "A rogue detector listens on the wired network with its radios off."
+    }
+  },
+  {
+    "id": "wireless-architecture-q25",
+    "type": "single",
+    "objectives": [
+      "v1:2.6",
+      "v1:2.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On an AireOS controller, WLAN STAFF must place its clients in wired VLAN 20. Which interface type provides that mapping?",
+    "options": [
+      "Dynamic interface",
+      "Virtual interface",
+      "Management interface",
+      "Service-port interface"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A dynamic interface maps a WLAN to a wired VLAN. It has an IP address in that VLAN plus the VLAN's gateway and DHCP server.",
+    "whyWrong": {
+      "1": "The virtual interface is an address presented to clients for DHCP relay and web authentication.",
+      "2": "The management interface is for in-band management and is the address APs join.",
+      "3": "The service-port interface is for out-of-band management."
     }
   },
   {
@@ -340,9 +416,9 @@
     "answer": [
       1
     ],
-    "explanation": "The supplied design separates local forwarding from new authentication's unavailable dependency. It does not promise every mode or failure behaves this way.",
+    "explanation": "Local switching keeps forwarding for clients that are already connected. A new 802.1X client still needs the RADIUS server, which is across the failed WAN, so its authentication fails.",
     "whyWrong": {
-      "0": "The scenario explicitly provides retained local forwarding and local services.",
+      "0": "Forwarding is local and does not depend on the WAN; only new authentication does.",
       "2": "Local switching does not evaluate credentials on behalf of an unavailable required RADIUS service.",
       "3": "The failed WAN does not create a usable centrally switched transport."
     }
@@ -392,7 +468,7 @@
     "answer": [
       0
     ],
-    "explanation": "AP registration and management addressing establish infrastructure stages. A fresh client and application test establish the separate client path.",
+    "explanation": "A registered AP with a management address proves the infrastructure path. Only a client that authenticates, gets the intended IP settings and reaches a service proves the client path.",
     "whyWrong": {
       "1": "Saved intent and AP count do not show client authentication, addressing or service.",
       "2": "That repeats management-plane evidence.",
@@ -418,11 +494,36 @@
     "answer": [
       2
     ],
-    "explanation": "At least one LACP peer must initiate negotiation. Active matches the documented passive AP; generic two-port APs must not be assumed to support aggregation.",
+    "explanation": "At least one LACP end must be active. The AP is passive, so the switch must be active.",
     "whyWrong": {
       "0": "Passive on both ends does not initiate LACP.",
       "1": "PAgP is a different protocol.",
       "3": "A static bundle does not match the requested negotiated LACP contract."
+    }
+  },
+  {
+    "id": "wireless-architecture-q26",
+    "type": "single",
+    "objectives": [
+      "v1:2.7"
+    ],
+    "difficulty": 2,
+    "exhibit": null,
+    "prompt": "SW1 ports Gi1/0/1 and Gi1/0/2 connect to the distribution ports of an AireOS controller with LAG enabled. Both switch ports are matching 802.1Q trunks. Which command completes the bundle on SW1?",
+    "options": [
+      "channel-group 1 mode active",
+      "channel-group 1 mode desirable",
+      "channel-group 1 mode on",
+      "channel-group 1 mode passive"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "AireOS LAG is a static bundle that runs neither LACP nor PAgP, so the switch must use mode `on`.",
+    "whyWrong": {
+      "0": "Active starts LACP, which an AireOS controller does not run.",
+      "1": "Desirable starts PAgP, which an AireOS controller does not run.",
+      "3": "Passive waits for LACP packets that the controller never sends."
     }
   },
   {

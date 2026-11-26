@@ -24,7 +24,7 @@
     ],
     "explanation": "The destination and mask are both zero, identifying /0. The next hop is 10.0.12.2.",
     "whyWrong": {
-      "0": "ip default-gateway serves host-mode management; it does not create this static route on an IP-routing router.",
+      "0": "ip default-gateway gives a non-routing device, such as a Layer 2 switch, a gateway for its own traffic. It does not create a static route.",
       "1": "A /32 identifies one address, not a default.",
       "2": "This names the transit subnet as the destination and does not create a default."
     }
@@ -160,7 +160,7 @@
     "whyWrong": {
       "1": "The /24 applies to the whole subnet.",
       "2": "The default covers all destinations without a more specific match.",
-      "3": "The host bits are nonzero for that /24 network mask."
+      "3": "The address has host bits set under a /24 mask, so IOS rejects the line as an inconsistent address and mask."
     }
   },
   {

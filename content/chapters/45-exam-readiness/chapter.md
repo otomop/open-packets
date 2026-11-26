@@ -29,7 +29,9 @@ sources:
   - { title: "Cisco: Recertification policy", url: "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/recertification/index.html" }
   - { title: "Pearson VUE: Cisco OnVUE requirements", url: "https://www.pearsonvue.com/us/en/cisco/onvue.html" }
 ---
-Finishing a course gives you a set of resources and completed exercises. Readiness requires another check: can you apply the ideas when the addresses, outputs and requirements change? This chapter turns that question into a practical revision plan. Its checkpoint is a mixed sample of networking skills, not a full mock exam or a prediction of your result.
+You have finished the lessons and the capstone. The exam will not ask whether you finished. It will show you a routing table, a topology or a broken configuration you have never seen, and it will expect a decision against the clock. Being ready means you can apply what you know when the addresses, outputs and requirements change.
+
+This chapter turns the whole course into a revision plan. You will confirm the practical details of your appointment, pick the blueprint that applies on your exam date, practise a method for working through questions and lab items, rate yourself by domain from evidence instead of feeling, and lay out the final two weeks. The checkpoint questions sample every part of the course. They are practice, not a mock exam or a prediction of your score.
 
 ## Confirm the appointment requirements
 
@@ -169,7 +171,7 @@ Review your appointment instructions before leaving or beginning check-in. For o
 
 Cisco provides an exam score report with performance information. Use the official record rather than trying to reverse-engineer a passing score from domain percentages. If unsuccessful, identify the weakest objectives and repeat relevant work with new evidence. Cisco's current policy requires five calendar days of waiting, counted from the day after a failed associate attempt; a passed exam with the same number has a 180-day minimum retake interval.
 
-CCNA is normally valid for three years. After earning it, track its expiration. The current associate recertification route requires 30 eligible Continuing Education credits; qualifying activities and exams are listed in the [current recertification policy](https://www.cisco.com/site/us/en/learn/training-certifications/certifications/recertification/index.html). Complete requirements before expiry and check the recorded new date. Do not assume any higher-level exam automatically qualifies.
+CCNA is valid for three years. To recertify, do one of two things before it expires: pass the current CCNA exam or any higher-level Cisco certification exam, or earn 30 Continuing Education credits from approved training. Cisco does not grant extensions. The exams and activities that count are listed in the [current recertification policy](https://www.cisco.com/site/us/en/learn/training-certifications/certifications/recertification/index.html); check it before you book, then confirm the new expiry date in your Cisco account afterwards.
 
 Continue practising useful small changes: a new VLAN, a verified route, a narrowly scoped ACL or an inventory command. Keep your own configurations and explanations, while respecting Cisco's confidentiality rules for actual exam material. The course's questions are original teaching exercises, not recalled examination items.
 

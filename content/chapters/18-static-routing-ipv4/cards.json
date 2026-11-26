@@ -1,186 +1,202 @@
 [
   {
     "id": "static-routing-ipv4-c01",
-    "front": "IPv4 static-route core syntax?",
-    "back": "`ip route destination-network subnet-mask next-hop` in global configuration. Use the destination network and the actual next router's address.",
+    "front": "What is the basic syntax of an IPv4 static route?",
+    "back": "`ip route destination mask next-hop`, entered in global configuration mode.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "static-routing-ipv4-c02",
-    "front": "Ordinary IOS static and connected distances?",
-    "back": "Static: 1. Connected: 0. Compare candidate sources for the same prefix.",
+    "front": "What are the default administrative distances of a static route and a connected route?",
+    "back": "Static: 1. Connected: 0.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "static-routing-ipv4-c03",
-    "front": "Can distance 255 be a working floating static?",
-    "back": "No. Distance 255 is unusable. A backup must have a usable path and a distance greater than the primary but below 255.",
+    "front": "What happens to a static route configured with administrative distance 255?",
+    "back": "It is never installed. Distance 255 is unusable, so it cannot work as a backup.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "static-routing-ipv4-c04",
-    "front": "Mask for an IPv4 host route?",
-    "back": "`255.255.255.255`, or /32. It matches one destination address.",
+    "front": "Which mask makes a static route a host route?",
+    "back": "`255.255.255.255`, or /32. It matches exactly one address.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "static-routing-ipv4-c05",
-    "front": "How do you write an IPv4 default route?",
-    "back": "`ip route 0.0.0.0 0.0.0.0 next-hop`. Substitute the real peer address. A fully specified form also names the exit interface.",
+    "front": "Which command creates an IPv4 default route through next hop 10.0.12.2?",
+    "back": "`ip route 0.0.0.0 0.0.0.0 10.0.12.2`",
     "tags": [
       "command"
     ]
   },
   {
     "id": "static-routing-ipv4-c06",
-    "front": "What does S* identify in an IPv4 route table?",
-    "back": "S means static; * marks a candidate default. Inspect the /0 entry and gateway-of-last-resort line.",
+    "front": "What does `S*` mean in `show ip route`?",
+    "back": "`S` is a static route. `*` marks it as a candidate default, normally `0.0.0.0/0`.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "static-routing-ipv4-c07",
-    "front": "Read: S 192.168.20.0/24 [1/0] via 10.0.12.2",
-    "back": "A static route to /24 through 10.0.12.2. Brackets show administrative distance 1 and metric 0.",
+    "front": "In `S 192.168.20.0/24 [1/0] via 10.0.12.2`, what do the bracketed numbers mean?",
+    "back": "Administrative distance 1 and metric 0. A static route's metric is 0.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "static-routing-ipv4-c08",
-    "front": "Does 'S ... is directly connected' mean a C route?",
-    "back": "No. S still means static, commonly with an exit-interface-only form. C is derived from an interface's connected prefix.",
+    "front": "What kind of route is `S 192.168.20.0/24 is directly connected, GigabitEthernet0/0`, and what is its distance?",
+    "back": "A static route configured with only an exit interface. Its administrative distance is still 1, not 0.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "static-routing-ipv4-c09",
-    "front": "What makes a static route fully specified?",
-    "back": "It names both exit interface and next hop. On Ethernet ARP still resolves the next hop's MAC address.",
+    "front": "What is a fully specified static route?",
+    "back": "One that names both the exit interface and the next-hop address, such as `gigabitethernet0/0 10.0.12.2`.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "static-routing-ipv4-c10",
-    "front": "How is a recursive next hop resolved?",
-    "back": "Another usable routing-table entry determines the path to it. A connected transit prefix is the simplest case. Self-dependent resolution is invalid.",
+    "front": "Why is a next-hop-only static route called recursive?",
+    "back": "The router makes a second lookup: it finds the route that covers the next-hop address to learn the exit interface.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "static-routing-ipv4-c11",
-    "front": "Why avoid an Ethernet interface-only route to a remote LAN?",
-    "back": "It treats remote destinations as on-link and may ARP for each. Name the peer next hop; do not rely on proxy ARP hiding a mistake.",
+    "front": "Why is an exit-interface-only static route a problem on Ethernet?",
+    "back": "The router treats every destination as on-link and sends an ARP request for each one. It works only if the neighbor answers with proxy ARP.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "static-routing-ipv4-c12",
-    "front": "What makes a route a floating static?",
-    "back": "A higher distance than the preferred route to the same prefix. It can install after primary withdrawal if the backup path is usable.",
+    "front": "What is a floating static route?",
+    "back": "A backup static route with a higher administrative distance than the primary route to the same prefix. It installs only when the primary leaves the table.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "static-routing-ipv4-c13",
-    "front": "Example backup distances behind static 1 and OSPF 110?",
-    "back": "5 follows static 1; 120 follows OSPF 110. A distance-5 route would beat OSPF 110 for the same prefix.",
+    "front": "A static route must back up an OSPF route. What distance does it need?",
+    "back": "Higher than OSPF's 110, such as 120. A lower value would make the static route the primary.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "static-routing-ipv4-c15",
-    "front": "Where can you see an unselected floating static?",
-    "back": "`show running-config`. The static filter on the route table shows selected entries, not every candidate.",
+    "front": "Which command shows a floating static route while the primary is in use?",
+    "back": "`show running-config`. The routing table lists only installed routes, so `show ip route` does not show it.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "static-routing-ipv4-c16",
-    "front": "Does a /32 at distance 200 lose to a /24 at distance 1?",
-    "back": "When both are installed, /32 wins forwarding for its one destination. Distance selects candidates for the same prefix.",
+    "front": "A /24 at distance 1 and a /32 at distance 200 are both installed. Which one forwards a packet to the /32's address?",
+    "back": "The /32. Longest prefix match chooses between different prefixes. Distance only compares routes to the same prefix.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "static-routing-ipv4-c17",
-    "front": "Why select a source address in extended ping?",
-    "back": "An ordinary router ping normally uses its outgoing interface address. A LAN source tests the return route covering that LAN.",
+    "front": "Which source address does a router use for an ordinary ping?",
+    "back": "The address of the outgoing interface. Use an extended ping to choose another source, such as the LAN address.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "static-routing-ipv4-c18",
-    "front": "Router ping works but a LAN PC ping fails: what next?",
-    "back": "Compare test sources, reverse routes and PC addressing/gateway. The symptom alone does not uniquely identify a missing return route.",
+    "front": "R1 can ping PC-B, but PC-A behind R1 cannot. Which route is most likely missing?",
+    "back": "R2's route back to PC-A's LAN. R1's own ping comes from the transit subnet, which R2 knows as connected.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "static-routing-ipv4-c19",
-    "front": "Risk of two routers defaulting to one another?",
-    "back": "Unknown destinations can loop until TTL expires. The default is an instruction, not proof of delivery.",
+    "front": "What happens when two routers have default routes that point at each other?",
+    "back": "Packets for destinations neither knows loop between them until the TTL reaches 0.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "static-routing-ipv4-c20",
-    "front": "How do you verify forwarding when only a default matches?",
-    "back": "Inspect the installed /0 with `show ip route`, calculate the longest match, and test a real destination. Destination-specific diagnostic behavior can vary.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
     "id": "static-routing-ipv4-c21",
-    "front": "Can a configured static disappear from the routing table?",
-    "back": "Yes: its interface can fail, its next hop can stop resolving, or a better candidate can win. The configuration may remain unchanged.",
+    "front": "Name three reasons a configured static route is missing from the routing table.",
+    "back": "Its exit interface is down, its next hop does not resolve, or a lower-distance route holds the same prefix.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "static-routing-ipv4-c22",
-    "front": "Can an installed static still fail to deliver traffic?",
-    "back": "Yes. Installation does not prove Ethernet neighbor resolution, downstream delivery or the reply path.",
+    "front": "A static route is installed but pings still fail. What do you check next?",
+    "back": "That the next hop is the neighbor's real address, and that the far router has a route back to the source.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "static-routing-ipv4-c25",
+    "front": "Which line of `show ip route` confirms that the router has a default route in use?",
+    "back": "`Gateway of last resort is 10.0.12.2 to network 0.0.0.0`. Without a default it reads `is not set`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "static-routing-ipv4-c26",
+    "front": "What event makes a floating static route take over?",
+    "back": "The primary route leaves the table: its interface goes down or its next hop stops resolving. A failure further away is not detected.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "static-routing-ipv4-c23",
-    "front": "Why can a backup through the same far router fail to restore a LAN?",
-    "back": "Both paths may share the failed destination-facing router or interface. A second transit is not protection against every failure.",
+    "id": "static-routing-ipv4-c27",
+    "front": "Why does IOS reject `ip route 192.168.20.12 255.255.255.0 10.0.12.2`?",
+    "back": "The destination has host bits set for a /24 mask. Use `192.168.20.0` for the network, or a /32 mask for the host.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "static-routing-ipv4-c28",
+    "front": "Which address goes in the next-hop field of a static route?",
+    "back": "The neighboring router's address on the shared link. Never the configuring router's own address.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "static-routing-ipv4-c24",
-    "front": "Why name the exit interface as well as the next hop in the two-link lab?",
-    "back": "It binds that static candidate to the intended exit, preventing alternate recursive resolution from keeping the primary eligible through the backup link.",
+    "id": "static-routing-ipv4-c29",
+    "front": "What does the final `5` mean in `ip route 192.168.20.0 255.255.255.0 10.0.13.2 5`?",
+    "back": "Administrative distance 5. It is not a metric or a hop count.",
     "tags": [
-      "concept"
+      "number"
     ]
   }
 ]

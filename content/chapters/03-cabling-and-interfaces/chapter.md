@@ -25,9 +25,11 @@ sources:
   - { title: "Cisco: Catalyst 9300 interface and transceiver command reference", url: "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-3/command_reference/b_173_9300_cr/interface_and_hardware_commands.html" }
 ---
 
-## Why the wire still matters
+A PC has the right address and the right gateway, and still nothing works, or everything works slowly. Before you look at IP at all, check what lies underneath it: the cable, the two ports it joins, and the settings those ports agreed on. A link can be down, or it can be up and quietly damaging frames, and the two cases leave different evidence.
 
-Chapter 02 separated the switch's forwarding role from the server's application role. Start here with the physical connection between devices. You will reuse the interface prompts and local ping tests from the opening labs, then learn to read the cable and interface evidence that those earlier tests did not explain.
+Chapter 02 separated a switch's forwarding job from a server's application job. This chapter goes one layer down, to the wire between them. By the end you will be able to choose copper or fiber for a given speed and distance, pick the right cable between two devices, explain half and full duplex, and read `show interfaces` output well enough to tell a shut-down port, a broken link and a duplex mismatch apart.
+
+## Why the wire still matters
 
 Before investigating routing or an application, establish whether the network interface can carry traffic. A disconnected cable, disabled port or incompatible pair of transceivers prevents communication regardless of the IP addresses. A link can also come up and then lose or corrupt traffic. That second case requires more than looking for a green light.
 
@@ -37,10 +39,12 @@ In v1.1, you compare media and identify interface problems. The announced v2.0 o
 
 ## Copper: standards, categories and pinouts
 
+Most links to desks, phones and access points are copper twisted pair. Three things decide whether such a link works at the speed you want: the cable's category, its length, and whether each wire reaches the right pin at the far end.
+
 :::facts
 - Common twisted-pair Ethernet channels are designed for up to **100 m** with the specified cable category. Check the actual port or module specification; some copper transceiver modules have shorter limits.
 - **100BASE-TX** uses two pairs; **1000BASE-T** uses all four pairs. Cat5e is the normal minimum choice for new 1 Gbps cabling.
-- **Cat6A** supports 10GBASE-T over a 100 m channel. Cat6 does not guarantee that same 10 Gbps distance.
+- **Cat6A** supports 10GBASE-T over a 100 m channel. Cat6 carries 10GBASE-T only to about 55 m.
 - A straight-through cable keeps the same pin numbers at both ends. A conventional 10/100 crossover exchanges pins **1 with 3** and **2 with 6**.
 - On a full-duplex Ethernet link, normal operation has **no collisions**.
 :::
@@ -56,13 +60,13 @@ Link rates use bits per second: **Mbps** means one million bits per second and *
 | 1000BASE-T, 1 Gbps | Cat5e or better | 4 | 100 m |
 | 10GBASE-T, 10 Gbps | Cat6A for the full distance | 4 | 100 m on supporting ports |
 
-A channel includes the installed cable and patch leads. The usual structured-cabling arrangement allows 90 m of permanent link plus 10 m of patch cords. Do not treat the table as permission to extend every pluggable copper module to 100 m: for example, Cisco's SFP-10G-T-X supports a shorter 30 m 10 Gbps reach over Cat6A/7. Cable and interface specifications both matter.
+A channel includes the installed cable and patch leads. The usual structured-cabling arrangement allows 90 m of permanent link plus 10 m of patch cords. The port matters as well as the cable: Cisco's SFP-10G-T-X copper module, for example, reaches only 30 m at 10 Gbps over Cat6A.
 
 The common eight-position Ethernet connector is often called **RJ-45**. Numbered conductors must arrive at the intended pins. The physical pairs occupy pins 1–2, 3–6, 4–5 and 7–8. Notice that pins 3 and 6 form a pair even though they are not adjacent. Keeping the two wires of each pair together is essential.
 
-For traditional 10/100 Ethernet without automatic pair correction, a PC, server or router port uses one transmit/receive arrangement, called **MDI**, while a switch or hub uses **MDI-X**. A straight-through cable connects unlike arrangements, such as a PC to a switch. A crossover connects like arrangements, such as two switches or a PC directly to a router. These are electrical arrangements, not a rule that every pair of differently named devices uses straight-through.
+For traditional 10/100 Ethernet without automatic pair correction, a PC, server or router port uses one transmit/receive arrangement, called **MDI**, while a switch or hub uses **MDI-X**. An MDI port transmits on pins 1 and 2 and receives on pins 3 and 6; an MDI-X port does the reverse. A straight-through cable therefore joins transmitter to receiver between unlike ports, such as a PC and a switch. Between like ports a **crossover** cable has to swap the pairs. The rule to memorize: a PC, server or router to a switch or hub uses straight-through; switch to switch, router to router, PC to PC, and PC to router use crossover.
 
-**Auto-MDIX** detects the pair arrangement and compensates for it on supported ports. One working auto-MDIX end can remove the need to choose between straight-through and crossover. Cisco's documented 2960 procedure uses `speed auto`, `duplex auto` and `mdix auto`. Support depends on interface and software; it is not a feature of every fiber or copper port. In Packet Tracer, use the cable specified by the lab rather than assuming a particular simulated auto-MDIX implementation.
+**Auto-MDIX** detects the pair arrangement and compensates for it on supported ports. One working auto-MDIX end can remove the need to choose between straight-through and crossover. Cisco's documented 2960 procedure uses `speed auto`, `duplex auto` and `mdix auto`. Exam questions about cable choice assume there is no auto-MDIX unless they say otherwise. In Packet Tracer, use the cable each lab specifies.
 
 A cable tester can identify an **open** conductor, a **short** between conductors and a wrong pin connection. A **split pair** can preserve pin-to-pin continuity while using conductors from different twisted pairs. A simple continuity check may therefore pass a cable that performs badly. Check its wire map and, when quality or distance is in doubt, use a suitable cable qualification or certification test.
 
@@ -72,9 +76,9 @@ A traditional rollover console cable reverses pins and carries a serial console 
 
 ## Fiber: single-mode, multimode and optics
 
-**Fiber-optic cable** carries light rather than an electrical Ethernet signal. A **transceiver** converts between the device's electrical interface and the optical signal. The cable, transceivers and ports must form a compatible system: connector fit alone is insufficient. Check the module part number, supported Ethernet standard, fiber type, distance and switch support.
+**Fiber-optic cable** carries light rather than an electrical signal. That makes it immune to electrical interference and lets it reach far beyond copper's 100 m; in exchange it costs more and cannot carry PoE. A **transceiver** converts between the device's electrical interface and the optical signal. The cable, transceivers and ports must form a compatible system: connector fit alone is insufficient. Check the module part number, supported Ethernet standard, fiber type, distance and switch support.
 
-**Multimode fiber**, or MMF, has a larger core and supports multiple light paths. It is common for shorter building and data-center links. **Single-mode fiber**, or SMF, has a smaller core and supports longer-distance optical designs. Do not identify the supported distance from jacket color alone; use the cable's marking, documentation and transceiver specification.
+**Multimode fiber**, or MMF, has a larger core (50 or 62.5 µm) that lets light travel along many paths at once. The paths differ slightly in length, so a pulse spreads out as it travels, and that limits MMF to a few hundred meters. Its optics are cheaper, which makes it common inside buildings and data centers. **Single-mode fiber**, or SMF, has a much smaller core (about 9 µm) that carries a single path of laser light. It reaches kilometers and is used between buildings and between sites. Identify a fiber from its printed marking and documentation, not from its jacket color.
 
 | Example module or standard | Fiber and wavelength | Documented reach to recognize |
 |---|---|---|
@@ -83,9 +87,9 @@ A traditional rollover console cable reverses pins and carries a serial console 
 | 10GBASE-SR SFP+ | MMF, 850 nm | 300 m on OM3; 400 m on OM4 |
 | 10GBASE-LR SFP+ | SMF, 1310 nm | 10 km on the specified SMF |
 
-These are examples, not interchangeable distance promises. An older multimode cable may support much less distance than OM3 or OM4. Cisco's LX/LH module specification is also not a reason to assign its 10 km reach to every product labeled LX. For a real link, read the exact module's data sheet.
+Reach depends on the fiber grade as well as the module: the SR module that reaches 300 m on OM3 reaches much less on older multimode fiber. For a real link, read the module's data sheet.
 
-**SFP** and **SFP+** describe common pluggable module formats; 1 Gbps SFP and 10 Gbps SFP+ modules are familiar examples. A physically similar module does not guarantee that a port supports its speed or optical standard. Many duplex modules use LC connectors, but other connector arrangements exist. Use the device's compatibility information rather than forcing a module into an apparently suitable slot.
+**SFP** and **SFP+** describe common pluggable module formats; 1 Gbps SFP and 10 Gbps SFP+ modules are familiar examples. The two look alike, but whether a slot accepts a given module depends on the device, so check its compatibility list. Most duplex modules take LC connectors.
 
 A common duplex fiber link has two strands. The local transmitter must connect to the remote receiver, and the remote transmitter to the local receiver. If transmit is connected to transmit, both devices can be operational but no usable signal reaches the receivers. This is a **polarity** problem. Single-strand bidirectional modules are a separate design and require a compatible complementary pair.
 
@@ -93,27 +97,27 @@ A common duplex fiber link has two strands. The local transmitter must connect t
 {"type":"topology","title":"Fig 03.1 — A duplex optical path","caption":"Each transmitter reaches the other device's receiver; connector fit alone does not establish correct polarity.","nodes":[{"id":"AT","kind":"switch","label":"Switch A · Tx","x":2,"y":1},{"id":"AR","kind":"switch","label":"Switch A · Rx","x":2,"y":5},{"id":"BT","kind":"switch","label":"Switch B · Tx","x":10,"y":1},{"id":"BR","kind":"switch","label":"Switch B · Rx","x":10,"y":5}],"links":[{"from":"AT","to":"BR","label":"strand 1"},{"from":"BT","to":"AR","label":"strand 2"}]}
 ```
 
-Optical power is often displayed in **dBm**, a logarithmic value relative to 1 milliwatt. Here you need to compare a reading with the module's supported receive range, not memorize a fiber-engineering calculation. A reading of −16 dBm is lower power than −8 dBm. If a question supplies a low receive threshold of −12 dBm, −16 dBm is below that threshold.
+Optical power is often displayed in **dBm**, a logarithmic value relative to 1 milliwatt. The readings are usually negative, and a more negative number means less light: −16 dBm is weaker than −8 dBm. All you need to do is compare a reading with the module's supported receive range. If a question supplies a low receive threshold of −12 dBm, −16 dBm is below that threshold.
 
 Low received power suggests checking the far-end transmitter, fiber continuity, connectors, bends, polarity, distance and compatibility. It does not identify one unique cause. Excessive received power can also be a problem; use the module's upper limit rather than assuming more is always better. Never look into a live fiber or transceiver. Use the approved inspection and cleaning equipment for the installation.
 
 ## Shared media, point-to-point and duplex
 
-A **shared-media** Ethernet segment places multiple devices on the same transmission medium. A historical Ethernet hub repeats signals between its ports; it does not learn MAC addresses or select one destination port. Devices on that segment must take turns transmitting. If two transmit at once, their signals can collide.
+A **shared-media** Ethernet segment places multiple devices on the same transmission medium. A historical Ethernet hub repeats signals between its ports; it does not learn MAC addresses or select one destination port. Devices on that segment must take turns transmitting. If two transmit at once, their signals collide. All the devices whose transmissions can collide with each other form one **collision domain**; a hub and everything attached to it is a single collision domain.
 
 **Half duplex** allows transmission in one direction at a time. Traditional shared Ethernet uses carrier sense multiple access with collision detection, or **CSMA/CD**, to detect a collision and retry. Collisions can occur during normal half-duplex operation. They are not normal on a correctly operating full-duplex switched link.
 
-**Full duplex** allows both ends to transmit and receive simultaneously. A modern switch-to-PC connection is normally a point-to-point, full-duplex link. Each switch port separates its attached Ethernet segment from the others; devices on different switch ports do not share one hub-style collision domain. A hub connected to one switch port still leaves the devices behind that hub sharing their segment.
+**Full duplex** allows both ends to transmit and receive simultaneously. A modern switch-to-PC connection is normally a point-to-point, full-duplex link. Each switch port is its own collision domain, and with one full-duplex device on the port there is nothing left to collide with. A hub connected to a switch port still leaves the devices behind that hub sharing one collision domain.
 
-Keep collision domains separate from **broadcast domains**. A switch can forward broadcasts across ports in the same VLAN while keeping those ports on separate Ethernet segments. A router does not normally forward an Ethernet broadcast from one interface to another. VLANs and switching behavior are developed in later chapters; here, remember that eliminating collisions does not eliminate broadcasts.
+Keep collision domains separate from **broadcast domains**. A switch splits collision domains but forwards a broadcast to every port in the VLAN, so all of those ports remain one broadcast domain. Only a router, or a separate VLAN, ends a broadcast domain. The count to remember: one collision domain per switch port, one broadcast domain per VLAN or router interface.
 
 ## Autonegotiation and the mismatch
 
 **Autonegotiation** lets supported Ethernet interfaces exchange capabilities and choose compatible operating settings. For ordinary 10/100/1000 copper links, leaving both ends automatic is the usual starting point. Both sides must support the selected speed, and the cable must support it. An interface negotiating 100 Mbps does not by itself prove that the cable is defective: the far endpoint may only support 100 Mbps.
 
-A useful CCNA case is a **10/100 link with one end forced to 100 Mbps full duplex and the other automatic**. The automatic end can detect speed without receiving a full negotiation exchange, but it cannot determine the forced end's duplex that way. It can settle at 100 Mbps half duplex. The link may be up even though its ends disagree.
+A useful CCNA case is a **10/100 link with one end forced to 100 Mbps full duplex and the other automatic**. The automatic end can detect speed without receiving a full negotiation exchange, but it cannot determine the forced end's duplex that way. The standard tells it to fall back to half duplex, so it settles at 100 Mbps half duplex. The link comes up even though its two ends disagree.
 
-With a **duplex mismatch**, the full-duplex side transmits without the half-duplex side's collision-handling rules. Communication may work intermittently or become slow under load. The half-duplex end may record collisions and late collisions; the full-duplex end may record damaged received frames. Compare both operational settings before blaming a cable. Do not apply this 10/100 fallback example as a universal rule for every gigabit, fiber or multigigabit interface.
+With a **duplex mismatch**, the full-duplex side transmits without the half-duplex side's collision-handling rules. Communication may work intermittently or become slow under load. The half-duplex end may record collisions and late collisions; the full-duplex end may record damaged received frames. Compare both operational settings before blaming a cable. This fallback is a 10/100 case; gigabit copper links depend on autonegotiation to come up at all.
 
 For this lab's 2960 FastEthernet link, restore both ends to automatic settings. Apply the following to SW1, and apply the equivalent block to SW2 separately.
 
@@ -133,7 +137,7 @@ If both 10/100 ends are manually set to the same supported speed and duplex, the
 
 Use `show interfaces status` for a compact switch-port overview, `show interfaces <interface>` for detailed operational state and counters, and `show running-config` to inspect configured values. Some IOS versions support a narrower `show running-config interface <interface>` command; use the full configuration if your simulator does not. Always compare the named physical connection at both ends.
 
-The excerpts below are **representative IOS-style teaching output**, not a capture from an executed Packet Tracer lab. Columns, supported counters and wording vary by platform. The observations and relationships are what you need to interpret.
+The excerpts below are representative; columns and counters vary by platform.
 
 ```output Representative: SW1# show interfaces status
 Port      Name               Status       Vlan       Duplex  Speed Type
@@ -145,7 +149,7 @@ Port      Name               Status       Vlan       Duplex  Speed Type
 Fa0/24    To-SW1              connected    1          full    100   10/100BaseTX  ← Forced full duplex at the other end
 ```
 
-Both ends report a link, but SW1 operates half duplex and SW2 full duplex. The `a-` prefix indicates an automatically selected setting; it does not prove a complete negotiation exchange succeeded. Neither `connected` nor a matching speed proves the duplex settings match.
+Both ends report `connected` at 100 Mbps, yet SW1 runs half duplex and SW2 full duplex. The `a-` prefix means the value was chosen automatically rather than configured. You find a duplex mismatch only by reading both ends.
 
 ```output Representative: selected lines from show interfaces fastethernet0/24
 FastEthernet0/24 is up, line protocol is up (connected)
@@ -155,13 +159,22 @@ FastEthernet0/24 is up, line protocol is up (connected)
      0 babbles, 0 late collision, 0 deferred
 ```
 
-This excerpt shows counters since the last reset, not necessarily new errors. Record a baseline, generate controlled traffic and compare a later reading. A **CRC error** means a received frame failed its error check; damaged cabling, interference, hardware faults or duplex issues can contribute. A **late collision** occurs later than the permitted collision window on half-duplex Ethernet and warrants investigation of duplex and physical conditions. No single counter identifies every cause.
+This excerpt shows counters since the last reset, not necessarily new errors. Record a baseline, generate controlled traffic and compare a later reading. A **CRC error** means a received frame failed its error check; damaged cabling, interference, hardware faults or duplex issues can contribute. A **late collision** is one detected after the first 64 bytes of a frame have been sent, later than a correctly built half-duplex segment allows. Its usual causes are a duplex mismatch or a cable that is too long.
 
-**Runts** are undersized frames; **giants** exceed the permitted frame size for the interface's configuration and encapsulation. Do not blindly use 1518 bytes as the giant threshold on every port: VLAN tags and configured larger frames affect what is accepted. **Output drops** often indicate an egress queue that could not hold traffic. Investigate load and queue behavior rather than treating them as automatic proof of a broken cable.
+**Runts** are frames shorter than the 64-byte minimum, usually the remains of a collision. **Giants** are longer than the port's maximum, which is 1518 bytes for a standard frame and larger where VLAN tags or jumbo frames are configured. **Output drops** mean the port's output queue was full and frames were discarded: a sign of congestion, not of a bad cable.
 
-An `administratively down` interface is locally shut down. A disconnected or incompatible physical link usually presents a down state without that administrative wording. `err-disabled` indicates that a protection mechanism disabled the port; investigate its recorded cause before re-enabling it. Conversely, `up/up` establishes local link operation, not correct addressing, routing or application service.
+The first line of `show interfaces` gives two states, and `show interfaces status` sums up the same condition in one word:
 
-Use a repeatable sequence: identify both ends; check administrative and physical state; compare media, speed and duplex; compare counters over a test interval; change one justified item; retest. Keep the original readings. If you choose to reset counters in an isolated lab, target only the intended interface and answer the confirmation prompt. A supported `show interfaces transceiver detail` command adds physical optical measurements on suitable hardware; Packet Tracer and virtual routers do not provide a trustworthy replacement for real optical power testing.
+| First line of `show interfaces` | `show interfaces status` | Meaning |
+|---|---|---|
+| up, line protocol is up | connected | The link works. |
+| down, line protocol is down | notconnect | No link: no cable, a faulty cable, or a far end that is off or shut down. |
+| administratively down, line protocol is down | disabled | This port has `shutdown` configured. |
+| down, line protocol is down (err-disabled) | err-disabled | A protection feature shut the port; find the cause before re-enabling it. |
+
+`up/up` proves that the link works. It says nothing about addressing, routing or the application.
+
+Use a repeatable sequence: identify both ends; check administrative and physical state; compare media, speed and duplex; compare counters over a test interval; change one justified item; retest. Keep the original readings. In an isolated lab, `clear counters fastethernet0/24` resets one port's counters so that a new test starts from zero. On hardware with optical modules, `show interfaces transceiver detail` reports transmit and receive power in dBm; Packet Tracer cannot simulate those readings.
 
 ## Exam focus
 
@@ -169,9 +182,9 @@ Use a repeatable sequence: identify both ends; check administrative and physical
 - Recognize straight-through, crossover, console and auto-MDIX roles; a connector's shape does not prove compatibility.
 - Know the common 100 m copper design limit and the Cat6A requirement for a full-distance 10GBASE-T channel.
 - Compare single-mode and multimode fiber; match modules, fiber grade, reach and transmit-to-receive polarity.
-- Distinguish shared half-duplex Ethernet from point-to-point full-duplex Ethernet.
+- Distinguish shared half-duplex Ethernet from point-to-point full-duplex Ethernet, and count collision and broadcast domains.
 - Recognize a 10/100 forced-versus-auto duplex mismatch by comparing both ends.
-- Treat CRC, collisions, late collisions and drops as evidence to investigate, not a one-counter diagnosis.
+- Say what CRC errors, collisions, late collisions, runts, giants and output drops each indicate.
 - Compare optical receive power with supplied limits and verify the result of a repair.
 
 Once you can identify the two ends of a link and distinguish physical failure from an incorrect interface setting, continue to Chapter 04. Its addressing work assumes those links can carry frames and asks whether the hosts and router have the correct IP addresses, masks and gateways.

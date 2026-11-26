@@ -1,112 +1,144 @@
 [
   {
+    "id": "troubleshooting-toolkit-c04",
+    "front": "In IOS ping output, what do `!`, `.` and `U` mean?",
+    "back": "`!` a reply arrived. `.` no reply within the timeout. `U` an ICMP destination unreachable message came back.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c26",
+    "front": "What does IOS `ping` send by default?",
+    "back": "Five 100-byte ICMP echo requests, each with a two-second timeout.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c27",
+    "front": "Which ICMP types are echo request, echo reply and time exceeded?",
+    "back": "Echo request 8, echo reply 0, time exceeded 11.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "troubleshooting-toolkit-c03",
-    "front": "Does an initial .!!!! prove an ARP delay?",
-    "back": "No. ARP delay is possible, but the timeout itself does not identify a cause. Repeat and correlate current ARP/capture evidence.",
+    "front": "A first ping shows `.!!!!`. What is the usual cause, and how do you confirm it?",
+    "back": "The first packet was dropped while ARP resolved a next hop. Repeat the ping: `!!!!!` confirms it.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "troubleshooting-toolkit-c04",
-    "front": "How is a period different from an unreachable result?",
-    "back": "A period reports no timely usable reply. An unreachable result reports an error; inspect its source/code rather than assume one missing route.",
+    "id": "troubleshooting-toolkit-c06",
+    "front": "R1 can ping a remote server, but R1's LAN clients cannot. Which test narrows it down, and what does a failure show?",
+    "back": "`ping <server> source <R1 LAN address>`. If it fails, the far router has no route back to the client subnet.",
     "tags": [
-      "compare"
+      "troubleshoot"
     ]
   },
   {
-    "id": "troubleshooting-toolkit-c06",
-    "front": "What changes when you select a router ping source?",
-    "back": "The reply destination and possibly policy handling change. It helps test return reachability but does not reproduce the PC’s full ingress path.",
+    "id": "troubleshooting-toolkit-c28",
+    "front": "How does traceroute discover each router on a path?",
+    "back": "It sends probes with TTL 1, 2, 3 and so on. The router that reduces the TTL to zero returns ICMP time exceeded, revealing its address.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "troubleshooting-toolkit-c08",
-    "front": "Why can IOS traceroute and Windows tracert encounter different policies?",
-    "back": "Conventional IOS uses UDP probes; Windows uses ICMP echo. Both use increasing TTL, but their source and transport treatment can differ.",
+    "front": "Which probes do IOS `traceroute` and Windows `tracert` send?",
+    "back": "IOS: UDP to high ports starting at 33434. Windows: ICMP echo requests.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "troubleshooting-toolkit-c11",
-    "front": "What does a traceroute star report?",
-    "back": "No usable response for that probe within its wait. It does not prove the probe stopped at the last responding router.",
+    "front": "A traceroute shows `* * *` at hop 2, then replies from hop 3. What does that mean?",
+    "back": "Hop 2 forwards traffic but did not answer the probes, for example because of filtering or rate limiting. It is not a break.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "troubleshooting-toolkit-c13",
-    "front": "What do routed Ethernet administrative down and down/down suggest?",
-    "back": "Administrative down identifies local shutdown state. Down/down directs investigation toward link/media/peer availability; it is not a unique cable diagnosis.",
+    "front": "What do `administratively down/down` and `down/down` mean on a router interface?",
+    "back": "Administratively down: `shutdown` is configured locally. Down/down: no signal from the other end (cable, peer off or shut down, speed mismatch).",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "troubleshooting-toolkit-c14",
-    "front": "How do err-disabled and inactive guide switch diagnosis?",
-    "back": "Find the recorded error/protection cause for err-disabled. Inspect intended VLAN availability for inactive; recover only after correcting the demonstrated cause.",
+    "front": "What do `err-disabled` and `inactive` mean in `show interfaces status`?",
+    "back": "Err-disabled: a protection feature such as port security shut the port. Inactive: the port's access VLAN does not exist on the switch.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "troubleshooting-toolkit-c15",
-    "front": "What directly establishes a duplex mismatch?",
-    "back": "Different operational duplex settings at the two ends. Late collisions can support the diagnosis; compare both ends and fresh increments.",
+    "front": "Which counters reveal a duplex mismatch, and on which end?",
+    "back": "Late collisions on the half-duplex end; CRC errors and runts on the full-duplex end. The link stays up/up.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "troubleshooting-toolkit-c16",
-    "front": "Does a rising CRC counter identify one exact physical fault?",
-    "back": "No. It reports new received corruption; compare both endpoints and the medium before selecting a cause.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "troubleshooting-toolkit-c21",
-    "front": "Does a matching TCP reset prove the server application sent it?",
-    "back": "No. It is an active response, potentially from an endpoint or intermediary. Correlate server-side evidence; unanswered SYNs leave both directions uncertain.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "troubleshooting-toolkit-c22",
-    "front": "What should a useful troubleshooting note preserve?",
-    "back": "Affected flow/source, time and clock confidence, original evidence, hypothesis, focused change, and the final client/application retest.",
+    "id": "troubleshooting-toolkit-c29",
+    "front": "How does a duplex mismatch usually arise?",
+    "back": "One end is hard-set to full duplex with autonegotiation off. The auto end senses the speed but falls back to half duplex.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "troubleshooting-toolkit-c23",
-    "front": "What context must accompany a packet capture?",
-    "back": "Capture point, direction, filter, time interval and capture loss. Missing traffic there is not proof it was absent everywhere.",
+    "id": "troubleshooting-toolkit-c16",
+    "front": "What does a rising CRC counter on an interface mean?",
+    "back": "Received frames are arriving damaged: a bad cable or connector, interference, or a duplex mismatch.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "troubleshooting-toolkit-c24",
-    "front": "How do two counter snapshots distinguish current activity from history?",
-    "back": "Compare their delta over a known interval, checking for a clear, wrap or restart. Preserve the original observations.",
+    "front": "An interface shows 900 CRC errors. How do you tell whether the problem is current?",
+    "back": "Read the counter twice and compare. Only the increase over the interval is current; the total may be months old.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "troubleshooting-toolkit-c25",
-    "front": "Can two device timestamps alone establish event order?",
-    "back": "Only with adequate clock confidence. Unknown offsets, adjustments and collector delays can make apparent order misleading.",
+    "id": "troubleshooting-toolkit-c32",
+    "front": "What do a switch's MAC address table and a router's ARP table each map?",
+    "back": "MAC address table: MAC address and VLAN to a switch port. ARP table: IPv4 address to MAC address.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c30",
+    "front": "Name the syslog severity levels 0 to 7.",
+    "back": "0 emergency, 1 alert, 2 critical, 3 error, 4 warning, 5 notification, 6 informational, 7 debugging.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c31",
+    "front": "A logging destination has the threshold `warnings`. Which severities does it receive?",
+    "back": "Levels 0 to 4: warning and everything more severe.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "troubleshooting-toolkit-c21",
+    "front": "In a capture, a TCP SYN is answered by RST. How does that differ from no answer at all?",
+    "back": "RST: something actively refused the connection, such as a closed port or a firewall. Silence: the SYN or its reply was lost or filtered.",
     "tags": [
       "troubleshoot"
     ]

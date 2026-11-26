@@ -47,7 +47,7 @@
       1,
       3
     ],
-    "explanation": "Store-and-forward has the full frame available for checking before forwarding it. Cut-through can begin earlier and therefore cannot wait for the entire frame’s FCS result before that initial transmission. Hardware behavior varies; family names alone are insufficient to select a mode.",
+    "explanation": "Store-and-forward has the full frame available for checking before forwarding it. Cut-through can begin earlier and therefore cannot wait for the entire frame’s FCS result before that initial transmission.",
     "whyWrong": {
       "0": "Waiting for the complete frame describes store-and-forward rather than the defining early-start behavior.",
       "2": "Destination MAC is used for the destination lookup in either forwarding method.",

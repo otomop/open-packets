@@ -71,7 +71,7 @@
     "answer": "spanning-tree vlan 10 root primary",
     "accept": [],
     "teaching": {
-      "sectionId": "bridge-ids-and-the-root-election",
+      "sectionId": "configuring-rapid-pvst",
       "hint": "Choose the per-VLAN root preference, not an interface role.",
       "takeaway": "The macro sets a bridge priority based on the current root. It does not reserve the role permanently; verify the resulting Root ID and local priority.",
       "syntax": [
@@ -102,7 +102,7 @@
     "answer": "spanning-tree vlan 10 root secondary",
     "accept": [],
     "teaching": {
-      "sectionId": "bridge-ids-and-the-root-election",
+      "sectionId": "configuring-rapid-pvst",
       "hint": "Choose the secondary root macro for the same VLAN.",
       "takeaway": "The macro sets priority 28672. That is the desired order under these priorities, not a guarantee of second place against every future switch.",
       "syntax": [
@@ -133,7 +133,7 @@
     "answer": "spanning-tree vlan 20 priority 4096",
     "accept": [],
     "teaching": {
-      "sectionId": "bridge-ids-and-the-root-election",
+      "sectionId": "configuring-rapid-pvst",
       "hint": "Configurable bridge priority changes in blocks of 4096.",
       "takeaway": "Use 4096, not the displayed priority including the VLAN ID. Within one VLAN, priority is compared before the bridge MAC address.",
       "syntax": [
@@ -168,7 +168,7 @@
     "answer": "spanning-tree vlan 10 cost 8",
     "accept": [],
     "teaching": {
-      "sectionId": "port-roles-root-designated-alternate-backup",
+      "sectionId": "configuring-rapid-pvst",
       "hint": "This is a per-interface, per-VLAN cost override.",
       "takeaway": "The value changes STP’s path comparison, not the interface’s physical speed. Recalculate the total root cost and inspect the new role before calling the path correct.",
       "syntax": [

@@ -26,6 +26,11 @@ sources:
   - { title: "Cisco: Troubleshoot OSPF Neighbors Stuck in Exstart/Exchange", url: "https://www.cisco.com/c/en/us/support/docs/ip/open-shortest-path-first-ospf/13684-12.html" }
   - { title: "RFC 2328: OSPF Version 2", url: "https://www.rfc-editor.org/rfc/rfc2328.html" }
 ---
+
+In Chapter 18 you typed every remote network into every router by hand. That works for three routers. With thirty, one new LAN means editing dozens of devices, and when a link fails nothing reroutes unless you planned a floating static route in advance. A routing protocol does that work: routers tell each other what they are connected to, each calculates its own best paths, and all recalculate when the topology changes.
+
+This chapter teaches **OSPF version 2 (OSPFv2)**, the IPv4 routing protocol the CCNA expects you to configure. It builds on Chapter 17: OSPF offers routes to the routing table with administrative distance 110, and forwarding still uses longest prefix match. By the end you will be able to configure single-area OSPF, say why two routers do or do not become neighbors, predict which router becomes DR and BDR, calculate a route's cost, and pick the show command that locates a fault.
+
 ## How OSPF learns the topology
 
 :::facts
@@ -33,64 +38,110 @@ sources:
 - On Cisco IOS, the default OSPF administrative distance is **110**.
 - This chapter uses one area, **area 0**, throughout.
 - For the broadcast and point-to-point interfaces studied here, normal IOS defaults are Hello **10 seconds** and dead **40 seconds**.
+- Hellos go to multicast **224.0.0.5** (all OSPF routers). **224.0.0.6** reaches only the DR and BDR.
 - A lower total **cost** is better. A higher OSPF interface **priority** is better for DR/BDR election. These select different things.
 :::
 
-A static route records a forwarding decision that you supply. **Open Shortest Path First (OSPF)** lets routers exchange information and calculate paths as the topology changes. It is a **link-state routing protocol**: a router describes its participating links in **link-state advertisements (LSAs)**, and routers in an area synchronize that information in a **link-state database (LSDB)**.
+**Open Shortest Path First (OSPF)** is a **link-state routing protocol**. Instead of passing finished routes along, each router describes its own links: which networks it is attached to, which routers it has met on them, and what each link costs. These descriptions are **link-state advertisements (LSAs)**. Routers pass LSAs on unchanged until every router in the area holds the same set, the **link-state database (LSDB)**. The LSDB is a map of the area that all its routers share.
 
-Each router runs the **shortest path first (SPF)** calculation with itself as the starting point. Routers can agree about the topology and still have different next hops: R1 and R3 begin their calculations in different places. The useful output is a set of candidate routes. The routing table then compares these with other route sources, and packet forwarding still uses longest prefix matching as explained in Chapter 17.
+Each router then runs the **shortest path first (SPF)** algorithm over that map with itself as the starting point, and offers the lowest-cost path to each network to its routing table. Every router holds the same map but starts from a different place, so R1 and R3 can choose different next hops.
 
-Keep three kinds of evidence separate. The neighbor table tells you which routers are communicating. The LSDB contains the information available to the calculation. The routing table tells you which routes were installed. A Full adjacency does not promise an OSPF route to every subnet: the far LAN might not participate, or a connected or static route might already be preferred.
+That gives you three places to look: the neighbor table (`show ip ospf neighbor`), the LSDB (`show ip ospf database`) and the installed routes (`show ip route ospf`). A fault can sit in any of the three. Neighbors can be healthy while a route is missing, because the far LAN was never enabled in OSPF or because a static route with a lower administrative distance already holds that prefix.
 
-Imagine two branches attached to R1 and R3. Advertising both branch LANs lets each router learn the remote destination and the return path. PCs continue using their ordinary default gateways; they do not become OSPF neighbors. Area 0 is the backbone area and is a straightforward choice for this single-area exercise. Multi-area design, redistribution, and detailed LSA-type memorization are outside this chapter's practical scope.
+An **area** is a group of routers that share one LSDB. Large networks are split into several areas to keep each map small, and every other area must attach to **area 0**, the backbone. The CCNA asks you to configure a single area, so every OSPF interface in this chapter is in area 0.
+
+The examples use three routers. R1, R2 and R3 share the Ethernet segment `10.0.123.0/24`. R1 and R3 also have a direct link, `10.0.13.0/30`, and each has a client LAN: `192.168.10.0/24` behind R1 and `192.168.30.0/24` behind R3. The PCs keep using their default gateways and never become OSPF neighbors.
 
 ## Router ID and process ID
 
-The **router ID (RID)** is a 32-bit identifier displayed in dotted-decimal notation, such as `1.1.1.1`. It identifies the originating router in OSPF information. It must be unique within this routing domain; it need not be a reachable interface address when manually configured.
+Every router needs a name in the shared map. That name is the **router ID (RID)**, a 32-bit number written in dotted decimal, such as `1.1.1.1`. It looks like an IPv4 address but it is only a label: a configured RID does not have to exist on any interface. It does have to be unique, and two routers with the same RID will not become neighbors.
 
-On the IOS implementation used here, an explicit `router-id` takes precedence. Without one, selection normally uses the highest IPv4 address on an eligible, up loopback interface; if there is no such loopback, it uses the highest eligible active IPv4 interface address. For example, an up loopback at `10.1.1.1` takes precedence over an up physical interface at `192.168.1.1`. The loopback preference is applied before comparing numeric addresses. Use explicit IDs in your labs so startup order and interface state do not obscure the intended result.
+IOS chooses the RID when the OSPF process starts, using the first of these that exists:
 
-The **process ID** in `router ospf 10` selects a local configuration process. It is not the identity announced to neighbors. IOS accepts process IDs from 1 through 65535, and R1's process 10 can form an adjacency with R2's process 20. By contrast, the area assigned to their common link must agree: area `0` and `0.0.0.0` are equivalent notations.
+1. The value in the `router-id` command.
+2. The highest IPv4 address on a loopback interface that is up.
+3. The highest IPv4 address on any other interface that is up.
 
-Configure the RID before enabling OSPF interfaces. Changing the configured RID on an already running IOS process may require a process restart to apply; check `show ip ospf` for the active RID. `clear ip ospf process` is disruptive: it drops the local process's adjacencies. It is appropriate only during an authorized lab or maintenance change, not as a first response to a missing route. Restarting one router also does not erase surviving neighbors' DR/BDR history.
+Suppose a router has Loopback0 at `10.1.1.1` and GigabitEthernet0/0 at `192.168.1.1`, with no `router-id` command. Its RID is `10.1.1.1`: any loopback beats any physical interface, even one with a numerically higher address. Add Loopback1 at `10.9.9.9` and the next process start selects `10.9.9.9`, the higher loopback. Configure `router-id 1.1.1.1` and that value wins over both.
+
+The RID is chosen once and kept. A higher address that appears later does not change it, and neither does typing a new `router-id` after neighbors have formed. IOS then tells you to reload or run `clear ip ospf process`, which restarts OSPF and drops every adjacency of that process until they form again. Set the RID first, before you enable any interface, and you avoid the restart. `show ip ospf` and `show ip protocols` both display the RID in use; `show ip protocols` also lists the passive interfaces.
+
+The `10` in `router ospf 10` is the **process ID**. It names one of this router's own OSPF processes, from 1 through 65535, and is never sent to neighbors, so R1's process 10 forms an adjacency with R2's process 20. The area is different: it is carried in every Hello and must match on both ends of a link. Area `0` and area `0.0.0.0` are the same area.
 
 ## From neighbor discovery to a full adjacency
 
-A **Hello** discovers and maintains neighbors. On a normal IPv4 Ethernet segment, OSPF Hellos go to `224.0.0.5` (AllSPFRouters). `224.0.0.6` identifies the designated routers for exchanges that use that group. These are local-link control multicasts, not ordinary traffic forwarded between subnets.
+Before two routers trade LSAs, each checks that the other is a compatible OSPF router on the same link. They do it with **Hello** packets, and most OSPF faults on the exam come down to a Hello that was never sent, never arrived, or was rejected.
 
-For two addressed Ethernet interfaces to establish the intended relationship, first establish Layer 1/2 connectivity and a common IPv4 subnet with matching masks. Enable OSPF on both interfaces in the same area. Compare Hello/dead intervals and ensure neither interface is passive. Router IDs must be different. Compatible network types matter to correct adjacency and route calculation; configure both ends of a two-router point-to-point link consistently.
+A router sends a Hello every 10 seconds out of each OSPF-enabled interface that is not passive. The destination is the multicast address `224.0.0.5`, so every OSPF router on the link hears it and none forwards it. Each Hello carries the sender's RID, area and timers, and the RIDs of the neighbors it has already heard. If a router hears nothing from a neighbor for the **dead interval**, 40 seconds by default, it declares that neighbor down and recalculates.
 
-Authentication, when configured, is another compatibility requirement, but authentication configuration is excluded from v2.0 objective 3.3.a and is not used in this lab. An ACL or other filtering can also prevent protocol 89 from reaching the peer. Ping success alone does not prove OSPF traffic is permitted.
+Two routers become neighbors only when their Hellos agree:
+
+- **Must match:** the area ID, the subnet and mask, the Hello and dead intervals, and authentication when it is configured.
+- **Must be different:** the router IDs.
+- **May differ:** the process ID, interface priority and interface cost.
+
+Both interfaces must also be up, enabled for OSPF and not passive, and no ACL may block IP protocol 89; a successful ping does not prove that. Authentication configuration is excluded from v2.0 objective 3.3.a and is not used here. MTU and network type should match too; their failures are described below.
+
+Once the Hellos are accepted, the pair works through a fixed series of states:
+
+```diagram
+{"type":"sequence","title":"Fig 21.1 — Two routers reach Full","caption":"Hellos establish two-way contact; the other four packet types then synchronize the databases.","actors":["R1 · RID 1.1.1.1","R2 · RID 2.2.2.2"],"steps":[{"from":0,"to":1,"label":"Hello","note":"I am 1.1.1.1, heard no one. R2: Init"},{"from":1,"to":0,"label":"Hello","note":"I am 2.2.2.2, heard 1.1.1.1. R1: 2-Way","accent":true},{"from":0,"to":1,"label":"Hello","note":"Heard 2.2.2.2. Both 2-Way"},{"from":1,"to":0,"label":"DBD","note":"ExStart: higher RID leads; MTU compared"},{"from":0,"to":1,"label":"DBD","note":"Exchange: each lists its LSAs"},{"from":0,"to":1,"label":"LSR","note":"Loading: R1 requests missing LSAs"},{"from":1,"to":0,"label":"LSU","note":"R2 sends them"},{"from":0,"to":1,"label":"LSAck","note":"Both are Full","accent":true}]}
+```
 
 | State | What it establishes | What to investigate if it persists |
 |---|---|---|
 | Down | No current usable Hello relationship | Link, addressing, process activation, passive setting |
 | Init | A Hello arrived, but it does not list the local RID | One-way communication or filtering |
-| 2-Way | Each router has seen itself in the other's Hello | May be normal between two DROTHERs |
-| ExStart / Exchange | Routers negotiate and exchange database descriptions | Compare MTU and inspect repeated errors |
+| 2-Way | Each router has seen itself in the other's Hello | Normal between two DROTHERs |
+| ExStart / Exchange | Routers negotiate and exchange database descriptions | MTU mismatch |
 | Loading | Requested link-state information is being obtained | Missing updates, retransmissions, connectivity |
 | Full | Database synchronization for this adjacency completed | Move on to route and forwarding verification |
 
-The five OSPF packet types have jobs, not a rigid one-time sequence: Hello maintains neighbors; **Database Description (DBD)** summarizes database contents; **Link-State Request** asks for missing information; **Link-State Update** carries LSAs; **Link-State Acknowledgment** confirms receipt. Updates and acknowledgments continue after Full when information changes.
+OSPF has five packet types, and each has one job:
 
-Default dead time is documented as four times the Hello interval on this IOS family, but an explicitly configured dead interval can differ. Inspect the effective values with `show ip ospf interface`. When changing timers for a controlled exercise, set both values deliberately on both peers. Do not infer the effective dead timer from a single Hello command or assume every Cisco software family adjusts unspecified timers identically.
+| Packet | Job |
+|---|---|
+| Hello | Discover neighbors and keep them alive |
+| Database Description (DBD) | Summarize the LSAs the sender holds |
+| Link-State Request (LSR) | Ask for specific LSAs |
+| Link-State Update (LSU) | Carry the LSAs themselves |
+| Link-State Acknowledgment (LSAck) | Confirm that an update arrived |
+
+Updates and acknowledgments are sent again whenever a link changes.
+
+The timers are set per interface with `ip ospf hello-interval 5` and `ip ospf dead-interval 20`. If you change only the Hello interval, IOS sets the dead interval to four times the new value, but a dead interval you typed yourself stays as typed. Both numbers must match the neighbor's, so set both on both ends and read the values in effect with `show ip ospf interface`.
 
 ## Broadcast and point-to-point networks
 
-Ethernet uses the OSPF **broadcast network type** by default. A multiaccess segment elects one **designated router (DR)** and one **backup designated router (BDR)**, where enough eligible routers are present. Other routers are **DROTHERs**. Each DROTHER forms Full adjacencies with the DR and BDR; two DROTHERs normally remain 2-Way with each other.
+A link with two routers needs one adjacency. An Ethernet segment can hold many routers, and if each synchronized with every other, ten routers would need 45 adjacencies. OSPF avoids that by electing one router per segment as a hub for LSA exchange.
 
-The election ranks eligible routers by interface priority, then RID. IOS priority is 0–255, default 1; priority 0 makes that interface ineligible. Priority is per interface, and the election is per segment, not for the entire area. Existing roles matter: the election is **non-preemptive**. A new router with a higher priority does not displace a healthy existing DR or BDR.
+Ethernet interfaces use the OSPF **broadcast network type** by default. Each broadcast segment elects a **designated router (DR)** and a **backup designated router (BDR)**. Every other router is a **DROTHER**. A DROTHER becomes Full with the DR and the BDR only, and two DROTHERs stay at 2-Way with each other. A DROTHER sends its updates to `224.0.0.6`, where only the DR and BDR listen, and the DR floods them to everyone on `224.0.0.5`. The BDR holds the same information and takes over if the DR disappears.
 
-For a clean election in which all candidates know one another before roles are selected, suppose R1 has priority 100, R2 has 50, and R3 has 0. R1 is DR, R2 is BDR, and R3 is DROTHER. If R1 fails, the current BDR R2 takes over as DR. A returning R1 does not automatically reclaim DR. This is why a question must state whether an election is fresh or roles already exist.
+The DR is a role for exchanging LSAs, not a gateway. User packets go straight to the best next hop, whichever router that is.
+
+The election follows four rules:
+
+1. The highest interface **priority** wins DR, and the next highest wins BDR. Priority is 0 through 255, default 1, set with `ip ospf priority`.
+2. If priorities tie, the highest router ID wins.
+3. Priority 0 means the interface can never be DR or BDR.
+4. The election is **non-preemptive**. A working DR and BDR keep their roles when a better candidate arrives.
+
+Priority is set per interface and the election runs per segment, not per area. In the figure below, suppose all three routers start together. R1 has priority 100 and becomes DR, R2 has 50 and becomes BDR, and R3 has 0 and is a DROTHER. Had all three kept the default priority of 1, the router IDs would decide: R3 (`3.3.3.3`) would be DR and R2 (`2.2.2.2`) BDR.
+
+Now R1 fails. The BDR, R2, is promoted to DR. R3 cannot be BDR with priority 0, so the segment has none. When R1 returns it does not take the DR role back. It fills the vacant BDR role and R2 stays DR.
+
+Rule 4 has a practical side. A router joining a broadcast segment listens for the **wait time**, equal to the dead interval, and accepts a DR that already exists. The first router up therefore usually becomes DR whatever its priority, so check whether a question describes a new election or existing roles.
 
 :::trap Full is not required between every pair
 A stable `2WAY/DROTHER` entry is normal when both local and remote routers are DROTHERs on a broadcast segment. The same state on an intended two-router point-to-point adjacency needs investigation.
 :::
 
-On an Ethernet link containing exactly two OSPF routers, configure `ip ospf network point-to-point` on both ends if that is the intended design. The Ethernet framing stays Ethernet; only OSPF's treatment changes. No DR/BDR is needed, and the neighbor state shows `FULL/ -`. Do not use this change as a remedy for an unexplained fault on a shared LAN.
+On an Ethernet link that joins exactly two routers, an election adds a wait and no benefit. Configure `ip ospf network point-to-point` on both interfaces. The frames are still Ethernet; only OSPF's treatment changes. There is no DR or BDR, the adjacency forms without the wait, and the neighbor state shows `FULL/ -`. Serial interfaces are point-to-point by default.
+
+Set the same type on both ends. If one side is broadcast and the other point-to-point, the default timers still match and the neighbors reach Full, but the two routers describe the link differently in their LSAs, so the routes across it are missing.
 
 ```diagram
-{ "type": "topology", "title": "Fig 21.1 — Elections belong to individual segments", "caption": "The shared LAN elects a DR and BDR; the separate two-router link can run as point-to-point.", "nodes": [
+{ "type": "topology", "title": "Fig 21.2 — Elections belong to individual segments", "caption": "The shared LAN elects a DR and BDR; the separate two-router link can run as point-to-point.", "nodes": [
 { "id": "R1", "kind": "router", "label": "R1", "sub": "RID 1.1.1.1", "x": 2, "y": 1 },
 { "id": "SW", "kind": "switch", "label": "Shared Ethernet", "x": 6, "y": 1 },
 { "id": "R2", "kind": "router", "label": "R2", "sub": "RID 2.2.2.2", "x": 10, "y": 1 },
@@ -105,19 +156,28 @@ On an Ethernet link containing exactly two OSPF routers, configure `ip ospf netw
 
 ## Cost and the best path
 
-OSPF adds the costs of outgoing interfaces along a path, including the last router's interface toward the destination subnet. Unlike Chapter 14's STP calculation that adds the local receiving port cost to an advertised root cost, start this OSPF sum at the calculating router and follow outgoing interfaces toward the destination. This direction matters. Changing R1's outgoing cost changes R1's calculation; it does not automatically change R3's reverse-direction cost.
+SPF needs a number for each link so that it can compare paths. That number is the **cost** of the outgoing interface. A route's metric is the sum of the outgoing interface costs from the calculating router to the destination, including the last router's interface onto the destination network. The lowest total wins.
 
-For IOS automatic calculation, cost is the reference bandwidth divided by the configured interface bandwidth, using integer values with minimum 1. The default reference is 100 Mbps. A 10-Mbps interface therefore has cost 10; 100 Mbps and 1 Gbps both calculate to 1. `auto-cost reference-bandwidth 10000` uses Mbps, so 100-Mbps, 1-Gbps, and 10-Gbps links calculate to 100, 10, and 1. Use a consistent reference across the routing domain. The bandwidth setting is an input to routing metrics; it does not physically change link speed.
+IOS calculates the cost as reference bandwidth divided by interface bandwidth, rounded down, with a minimum of 1. The default reference bandwidth is 100 Mbps:
 
-An explicit interface command such as `ip ospf cost 25` overrides automatic calculation for that interface. Our lab uses explicit costs to avoid simulator link-speed differences.
+| Interface | Default reference (100 Mbps) | Reference 10000 Mbps |
+|---|---|---|
+| Ethernet, 10 Mbps | 10 | 1000 |
+| FastEthernet, 100 Mbps | 1 | 100 |
+| GigabitEthernet, 1 Gbps | 1 | 10 |
+| TenGigabitEthernet, 10 Gbps | 1 | 1 |
 
-Work this example from R1 to R3's LAN. R1 can reach R3 directly with cost 25, or through a shared transit LAN with cost 10. R3's outgoing LAN cost is 1. The choices are **26** and **11**, so the shared path wins. If that shared adjacency fails but the direct one remains Full, R1 should install cost 26. Do not add R3's incoming transit cost a second time.
+With the default, OSPF cannot tell FastEthernet from 10-Gigabit Ethernet, because every result below 1 becomes 1. There are two fixes. `auto-cost reference-bandwidth 10000`, entered under `router ospf`, raises the reference; the value is in Mbps and should be the same on every router. `ip ospf cost 25`, entered on an interface, sets that interface's cost directly and overrides the calculation.
 
-Cost 11 is not administrative distance 110. In `[110/11]`, 110 ranks OSPF against other route sources for the same prefix, while 11 is the OSPF metric. Equal-cost OSPF paths may be installed together; the supported/default maximum varies by platform. Router ID is not a general replacement for metric comparison when forwarding packets.
+Work an example from R1 to R3's LAN, `192.168.30.0/24`. R1's interface on the direct link has cost 25. Its interface on the shared segment has cost 10. R3's LAN interface has cost 1. Through the direct link the total is 25 + 1 = **26**. Through the shared segment it is 10 + 1 = **11**, so R1 installs the shared path. If the shared adjacency fails while the direct one stays Full, R1 installs the cost-26 route instead.
+
+Only outgoing interfaces count; R3's cost on the interface where the packet arrives is not added. Direction therefore matters: changing R1's cost changes R1's routes toward R3, while R3's routes back are still built from R3's own outgoing costs.
+
+In `[110/11]`, 110 is the administrative distance and 11 is the OSPF cost. When two paths to a prefix have the same total cost, OSPF installs both; IOS allows up to four by default.
 
 ## Configuring single-area OSPFv2
 
-Start with a working addressed interface. Then create the process, set its RID, select participating interfaces, and decide where Hellos are allowed. The following is a configuration pattern for R1, not the complete multi-device lab:
+Start with working, addressed interfaces. Then make three decisions: the process and its RID, which interfaces take part, and which of those may form neighbors. This is the pattern for R1:
 
 ```ios R1
 R1# configure terminal
@@ -130,13 +190,23 @@ R1(config-router)# network 192.168.10.1 0.0.0.0 area 0
 R1(config-router)# end
 ```
 
-The `network` command selects local interfaces by address and wildcard; it is not a command to invent or summarize an advertised route. A wildcard 0 bit must match; a 1 bit is ignored. `0.0.0.0` therefore matches that one interface address. The interface's actual prefix is then advertised. Thus an interface at `172.16.5.33/27` can be selected with `network 172.16.5.33 0.0.0.0 area 0`, and its connected network remains `172.16.5.32/27`.
+The `network` command selects local interfaces. IOS compares each interface address with the address and **wildcard mask** in the command, and enables OSPF in the stated area on every interface that matches. In a wildcard mask, a 0 bit means "this bit must match" and a 1 bit means "ignore this bit". It is the inverse of a subnet mask, so subtract each octet of the mask from 255: `255.255.255.252` becomes `0.0.0.3`, and `255.255.255.0` becomes `0.0.0.255`.
 
-For a range example, `network 10.0.13.0 0.0.0.3 area 0` ignores the last two address bits and matches local interface addresses from .0 through .3. It includes the lab's .1 and .2 addresses. The /30 subnet mask is `255.255.255.252`; its corresponding contiguous wildcard is `0.0.0.3`. Do not type the subnet mask into the wildcard position. The command still needs a matching local interface; naming a remote network here does not manufacture a route to it.
+R1's direct-link interface is `10.0.13.1/30`. Any of these statements selects it:
 
-Alternatively, `ip ospf 10 area 0` in interface mode activates that interface directly. Use one method consistently in an exercise. A **passive interface** does not form OSPF neighbors, but its enabled connected prefix is still advertised through other participating interfaces. Making the PC-facing LAN passive avoids looking for routers where only hosts should exist. Making the transit link passive prevents the very adjacency needed to exchange routes. `passive-interface default` applies that suppression to all interfaces in this process, including interfaces activated later; each `no passive-interface INTERFACE` is an explicit exception. The exception permits neighbors but still does not activate OSPF by itself.
+| Statement | Interface addresses it matches |
+|---|---|
+| `network 10.0.13.1 0.0.0.0 area 0` | Exactly 10.0.13.1 |
+| `network 10.0.13.0 0.0.0.3 area 0` | 10.0.13.0 through 10.0.13.3 |
+| `network 10.0.0.0 0.255.255.255 area 0` | Anything beginning with 10 |
 
-A branch can also learn its default from an OSPF edge router. This separate worked example assumes EDGE already has an area-0 adjacency toward the branch and an up upstream link `10.255.0.1/30` to router `10.255.0.2`:
+All three advertise the same thing: the interface's own prefix, `10.0.13.0/30`. The wildcard only chooses local interfaces. It never sets the advertised prefix length, and it cannot advertise a network the router is not attached to. An interface at `172.16.5.33/27` selected with `network 172.16.5.33 0.0.0.0 area 0` is still advertised as `172.16.5.32/27`.
+
+You can skip the `network` command and enable OSPF on the interface itself with `ip ospf 10 area 0` in interface mode. Both methods give the same result.
+
+A **passive interface** is in OSPF but sends no Hellos, so no neighbor can form on it. Its network is still advertised through the router's other OSPF interfaces. Make client LANs passive, because only hosts live there, and never a transit link, because that blocks the adjacency you need. `passive-interface gigabitethernet0/2` makes one interface passive. `passive-interface default` makes every interface passive, including any enabled later, and `no passive-interface gigabitethernet0/0` then opens a transit link. That exception permits neighbors; it does not enable OSPF on the interface.
+
+A branch can also learn its default route from OSPF. In this separate example, EDGE already has an area-0 adjacency toward the branch and an upstream link `10.255.0.1/30` to router `10.255.0.2`:
 
 ```ios EDGE
 EDGE# configure terminal
@@ -147,24 +217,56 @@ EDGE(config-router)# end
 EDGE# show ip route
 ```
 
-The static supplies EDGE's forwarding default. The OSPF command advertises a default while an eligible default exists in EDGE's table. Without `always`, loss of that source default withdraws the advertisement; verify convergence on the branch. A reachable next hop does not establish that every upstream destination works.
+The static route is EDGE's own default. `default-information originate` advertises a default into OSPF for as long as EDGE has one in its routing table. Adding the `always` keyword advertises it regardless.
 
-On the branch, `show ip route ospf` should show the learned default as `O*E2 0.0.0.0/0` when it wins installation. `E2` identifies an external OSPF route; `*` marks a candidate default. It still loses a packet's lookup to a more-specific matching prefix. Test an actual destination and its return path. Chapter 44 reuses this pattern; external-route metric tuning is outside this exercise.
+On the branch router, `show ip route ospf` shows the learned default as `O*E2 0.0.0.0/0`. `E2` marks an external route, one that entered OSPF from another source, and `*` marks a candidate default. Chapter 44 reuses this pattern.
 
 ## Verify and troubleshoot
 
-Read this authored, abbreviated example as a set of claims to verify, not a recorded device run:
+Check OSPF in the order it builds: interfaces, neighbors, then routes. These representative outputs are from R1 in the example topology.
+
+```output R1# show ip ospf interface gigabitethernet0/0 — representative, abbreviated
+GigabitEthernet0/0 is up, line protocol is up
+  Internet Address 10.0.123.1/24, Area 0                              ← must match the neighbor
+  Process ID 10, Router ID 1.1.1.1, Network Type BROADCAST, Cost: 10
+  Transmit Delay is 1 sec, State DR, Priority 100                     ← R1's role on this segment
+  Designated Router (ID) 1.1.1.1, Interface address 10.0.123.1
+  Backup Designated router (ID) 2.2.2.2, Interface address 10.0.123.2
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5  ← must match the neighbor
+```
+
+```output R1# show ip ospf neighbor — representative
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2          50   FULL/BDR        00:00:33    10.0.123.2      GigabitEthernet0/0
+3.3.3.3           0   FULL/DROTHER    00:00:38    10.0.123.3      GigabitEthernet0/0
+3.3.3.3           0   FULL/  -        00:00:31    10.0.13.2       GigabitEthernet0/1
+```
+
+Neighbor ID is the neighbor's RID, not an interface address. State shows the adjacency state, then the neighbor's role; `-` means the link has no DR. Dead Time counts down from 40 and resets with each Hello. Address is the neighbor's interface address and Interface is the local interface. R3 appears twice because R1 reaches it on two links.
 
 ```output R1# show ip route ospf — representative
 O    192.168.30.0/24 [110/11] via 10.0.123.3, 00:00:22, GigabitEthernet0/0  ← AD 110, cost 11, first-hop address
 ```
 
-Start with `show ip interface brief`, then `show ip ospf interface` and `show ip ospf neighbor`. `show ip ospf interface brief` gives a compact participation/cost summary; use the full interface form to compare effective timers. Check the active RID, area, network type, timers, neighbor role, and Full state where expected. Use `show ip protocols` to inspect process participation/passive configuration and `show ip ospf database` to confirm the router has topology information. Finally inspect the destination route and ping with a source in the actual client network. A router ping sourced from a transit address can succeed while the remote router lacks the client's LAN route.
+| Symptom | Likely cause | Check |
+|---|---|---|
+| No neighbor listed | Interface down, not in OSPF, or passive; area, subnet or timers differ | `show ip ospf interface` on both ends |
+| 2-Way where Full is expected | Every router has priority 0, so no DR exists | `ip ospf priority` on the segment |
+| Full, but a route is missing | Far LAN not in OSPF, network types differ, or a static route holds the prefix | Far router's OSPF interfaces; `show ip route` |
+| Route present, client still fails | Host mask or gateway, return route, filtering | Ping from the client LAN |
 
-If the neighbor table is empty, compare both ends before changing either. If ExStart/Exchange repeats, compare interface MTUs and database exchange evidence; MTU mismatch is common, not the only possible cause. Correct the underlying mismatch. `mtu-ignore` bypasses one check and can hide a real packet-size problem.
+With an MTU mismatch, the router with the smaller MTU shows its neighbor in ExStart and the other router shows Exchange. Neither reaches Full. Compare `show ip interface` on both ends and make the MTUs equal; `ip ospf mtu-ignore` only skips the check.
 
-If neighbors are Full but a LAN route is missing, check that the LAN is up and enabled in OSPF, then look for a preferred connected or static route. If routes look correct but a client still fails, check its mask, gateway, return route, and filtering. Change one variable, observe the result, and restore deliberate faults before saving.
+Test the finished path from the clients, or with a client-LAN source such as `ping 192.168.30.1 source 192.168.10.1`. A ping sourced from a transit address can succeed while the far router has no route back to the client LAN.
 
 ## Exam focus
 
-Explain the relationship among neighbors, the LSDB, SPF, and installed routes. Distinguish a local process ID from the unique RID. Predict DR/BDR results using priority, RID, and existing roles, and recognize normal 2-Way relationships. Calculate outgoing costs in the correct direction, configure area 0 and passive LANs, and verify a client-to-client path in both directions. OSPFv2 is required in both tracks; v2.0 adds OSPFv3 in Chapter 22.
+- Know the numbers: protocol 89, distance 110, Hello 10 and dead 40, 224.0.0.5 and 224.0.0.6, default priority 1, reference bandwidth 100 Mbps.
+- Separate neighbors, the LSDB, SPF and installed routes.
+- Apply the RID order: `router-id`, highest loopback, highest other interface. The process ID is local.
+- List what must match for neighbors (area, subnet, timers, authentication) and what must differ (RID).
+- Predict DR and BDR from priority, then RID, then existing roles. 2-Way between DROTHERs is normal.
+- Add outgoing interface costs in the direction of travel.
+- Write a `network` statement with the correct wildcard, make client LANs passive, and verify the path in both directions.
+
+OSPFv2 is required in both tracks; v2.0 adds OSPFv3 in Chapter 22.

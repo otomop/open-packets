@@ -39,7 +39,7 @@ sources:
 
 A branch has a fast LAN but a slower connection to its headquarters. During a backup, users hear gaps in telephone calls. The router may have working routes and error-free interfaces: the problem is that more traffic wants the output link than the link can carry at that moment.
 
-**Quality of Service (QoS)** controls how competing traffic uses limited resources. It can identify traffic, change a marking, choose what waits, and decide what to discard. A **per-hop behavior (PHB)** is the forwarding treatment a device gives a traffic aggregate at one hop. Good treatment at one router does not guarantee the same treatment throughout a path.
+**Quality of Service (QoS)** is the set of tools that decide which traffic gets the link first when not everything can go at once. Each router and switch on the path decides for itself, and the treatment one device gives a class of traffic is called its **per-hop behavior (PHB)**. You already know the fields these tools read: TCP and UDP ports from Chapter 6 and the 802.1Q tag from Chapter 10. By the end of this chapter you will be able to explain the six tools the exam names (classification, marking, queuing, congestion avoidance, policing and shaping), work out a DSCP value, and say where markings should be trusted.
 
 ## Why a busy link needs a policy
 
@@ -55,15 +55,15 @@ Start with the application's needs. A copied file must arrive intact, but finish
 
 Delay includes processing, waiting in queues, serialization onto a link, and propagation across the medium. Serialization is packet size in bits divided by bit rate. Ignoring framing overhead, 1,500 bytes take 12 ms at 1 Mb/s: `1,500 × 8 ÷ 1,000,000` seconds. A small voice packet arriving behind that transmission must wait for the transmission already in progress on ordinary, non-preemptive Ethernet. Priority scheduling can choose the next packet; it cannot recover time already spent.
 
-A **codec** encodes and decodes media; G.711 is a voice codec used in the following example. **RTP (Real-time Transport Protocol)** commonly carries media over UDP and adds sequence numbers and timestamps. It does not itself guarantee timely delivery. You need those roles to understand the overhead, not the codec's internal mathematics.
+A **codec** encodes and decodes media; G.711 is a voice codec used in the following example. **RTP (Real-time Transport Protocol)** commonly carries media over UDP and adds sequence numbers and timestamps. It does not itself guarantee timely delivery.
 
 A useful voice calculation separates payload from overhead. Assume G.711 sends 160 payload bytes every 20 ms, with 20-byte IPv4, 8-byte UDP and 12-byte RTP headers. That is 200 bytes, 50 times a second, or **80,000 bits/s per direction at Layer 3**. Ethernet framing, other encapsulation and different packetization change the required link rate. Do not reserve capacity using the codec's 64 kb/s payload rate alone.
 
-Cisco branch design guidance uses about 150 ms one-way delay, 30 ms jitter and 1% loss as voice planning limits. These are engineering guidelines, not promises that every application fails at precisely one threshold. Interactive video also needs timely delivery, while buffered streaming has different tolerance. Identify the application and its service requirements before assigning priority.
+Cisco's planning limits for voice are 150 ms of one-way delay, 30 ms of jitter and 1% loss. Interactive video has similar limits and needs far more bandwidth. Streaming video and file transfers tolerate delay because they buffer or retransmit.
 
 ## Classification: identify the traffic
 
-**Classification** places a packet into a category according to configured criteria. A router might examine source and destination addresses, transport protocol, TCP/UDP ports, an existing DSCP value or a supported application signature. Classification itself does not change the packet or reserve bandwidth.
+**Classification** places a packet into a category according to configured criteria. A router might examine source and destination addresses, transport protocol, TCP/UDP ports, an existing DSCP value or a supported application signature. Classification changes nothing in the packet and reserves nothing. Every other QoS tool depends on it, because a device cannot treat voice differently until it can tell which packets are voice.
 
 Suppose a branch policy identifies traffic from managed phones separately from ordinary client traffic. A packet from the phone subnet and a packet merely marked EF by an untrusted PC should not automatically receive identical treatment. Addresses and ports are useful evidence, but neither proves a user's identity or an application's legitimacy.
 
@@ -75,13 +75,13 @@ Cisco's Modular QoS CLI, **MQC**, separates three tasks:
 | Policy map | What action applies to that class? | Mark, police or assign queue service |
 | Service policy | Where and in which direction does the policy run? | Input on the LAN interface |
 
-A `match-all` class requires every configured criterion; `match-any` accepts any one. If a rule requires “source is in the phone subnet AND DSCP is EF,” an EF-marked packet from another subnet fails that rule. Replacing AND with OR would accept it. Do not confuse this logic with the order of access-list entries.
+A `match-all` class requires every configured criterion; `match-any` accepts any one. If a rule requires “source is in the phone subnet AND DSCP is EF,” an EF-marked packet from another subnet fails that rule. Replacing AND with OR would accept it.
 
-Application recognition, often called **NBAR** on Cisco platforms, can classify supported applications beyond simple port matching. Its capabilities depend on the image, signatures and visibility into traffic. Encryption or tunneling can limit what the classifier can observe. Signature counts and deep inspection configuration are outside the required CCNA QoS explanation.
+Application recognition, often called **NBAR** on Cisco platforms, can classify supported applications beyond simple port matching. Its capabilities depend on the image, signatures and visibility into traffic. Encryption or tunneling can limit what the classifier can observe.
 
 ## Marking: CoS, IP precedence and DSCP
 
-**Marking** writes a value that another policy can use. Think separately about the header carrying it and the behavior selected from it.
+Classifying by addresses and ports on every device would be slow and repetitive. **Marking** avoids that: the first trusted device classifies a packet once and writes the result into a header field, and every later device reads that field.
 
 | Marking | Location | Size and range |
 |---|---|---|
@@ -89,7 +89,7 @@ Application recognition, often called **NBAR** on Cisco platforms, can classify 
 | IP precedence | Older interpretation of the high-order IP service bits | 3 bits, 0–7 |
 | DSCP | IPv4 DS field or IPv6 Traffic Class | 6 bits, 0–63 |
 
-An untagged Ethernet frame has no 802.1Q PCP field. It can still contain an IP packet with DSCP, and a switch can assign an internal traffic class. CoS and DSCP are not the same field: converting between them uses policy or a mapping table. Rebuilding a Layer 2 header during routing does not inherently remove the IP marking, although a configured router may remark it.
+CoS lives in the 802.1Q tag, so it exists only on tagged links such as trunks, and it does not survive a routed hop unless the router writes it again. DSCP is in the IP header and travels with the packet from end to end unless a device rewrites it. That is why DSCP is the marking used across routed networks. The two are separate fields, and a switch converts between them with a mapping table.
 
 The remaining two bits of the eight-bit IP service field are used for **ECN**, Explicit Congestion Notification. Thus DSCP is six bits, not the entire eight-bit field.
 
@@ -105,9 +105,9 @@ Recognize these common codepoints:
 | AF41 / AF42 / AF43 | 34 / 36 / 38 | AF class 4, increasing drop precedence |
 | CSn | 8 × n | Class-selector codepoint; for example CS3 = 24 |
 
-For AFxy, calculate `8x + 2y`. AF32 is `24 + 4 = 28`. Within an AF class, higher drop precedence makes a packet more eligible for discard when congestion requires it. AF13 does not mean “higher priority than AF11,” and AF4 does not universally receive more bandwidth than AF2. Queue resources and mappings still need configuration.
+In AFxy, x is the class (1 to 4) and y is the drop precedence (1 to 3). The decimal value is `8x + 2y`, so AF32 is `24 + 4 = 28`. A higher y means the packet is discarded sooner when its class is congested: within class 1, AF13 is dropped before AF11. The class number is only a label. AF4 gets more bandwidth than AF2 only if a policy says so.
 
-EF is commonly used for voice media. Application-to-marking recommendations are design choices: RFC 4594 uses CS5 for signaling, while some Cisco enterprise designs use CS3. Read the stated policy instead of assuming that one application's DSCP is mandatory everywhere.
+EF (46) is the standard marking for voice media and the one value to know without calculating. Cisco designs commonly mark call signaling CS3 (RFC 4594 suggests CS5) and interactive video AF41, and leave ordinary data at 0.
 
 :::trap A larger DSCP number is not a universal priority ranking
 DSCP identifies a behavior aggregate. A receiver can map several codepoints to one queue, remark them at a boundary, or apply a different local policy. A packet marked EF has no automatic reservation across the Internet.
@@ -117,7 +117,7 @@ DSCP identifies a behavior aggregate. A receiver can map several codepoints to o
 
 A **trust boundary** is the point where the network decides whether to accept incoming markings as policy input. A managed phone may mark its own voice correctly. An ordinary PC can also set EF, so blindly trusting all endpoint markings allows unwanted traffic into preferred service.
 
-Place classification and validation where reliable information is available. For a managed phone with a PC connected through it, the design must specify what the phone does to the PC's markings and what the switch accepts. “A phone is present” alone is insufficient evidence of a secure policy. Rate controls may still be needed for otherwise legitimate preferred traffic.
+The usual design puts the boundary at the access layer. Markings from an IP phone are trusted because the phone is managed. A PC plugged into the back of the phone is not trusted, and the phone resets the PC's frames to CoS 0 before passing them on. A PC connected directly to a switch port has its markings reset by the switch. Beyond the boundary every device trusts what it receives, so traffic is classified and marked once, as close to its source as possible.
 
 A useful troubleshooting example comes from older Catalyst 2960 IOS software. With QoS disabled and other relevant settings at defaults, markings pass unchanged. Enabling `mls qos` with the remaining defaults classifies traffic as best effort and can rewrite DSCP to zero on untrusted ports. That is a **platform-specific example**, not a command to apply to every Cisco switch.
 
@@ -125,11 +125,11 @@ Similarly, a legacy default CoS-to-DSCP map of `0 8 16 24 32 40 48 56` maps CoS 
 
 ## Queuing: decide what goes next
 
-**Queuing** holds packets that cannot immediately transmit. A scheduler selects packets from those queues. Queue size and service order are separate decisions: adding buffer space can reduce short-burst drops but also allow more waiting time.
+Queuing matters only during congestion. While the output link is free, each packet is sent as it arrives and no queuing policy has any effect. **Queuing** holds packets that cannot immediately transmit. A scheduler selects packets from those queues. Queue size and service order are separate decisions: adding buffer space can reduce short-burst drops but also allow more waiting time.
 
 A single FIFO queue serves packets in arrival order. Multiple classes permit differentiated service. **Class-based weighted fair queuing (CBWFQ)** can give classes minimum bandwidth under congestion while allowing them to use available excess capacity. A configured minimum is not necessarily a maximum.
 
-**Low Latency Queuing (LLQ)** adds priority service for selected traffic. In the classic IOS `priority 128` example, the number is kilobits per second. During congestion, a built-in policer limits that priority class according to its configured rate and burst allowance, protecting other classes. The exact priority implementations available on newer hardware vary, so do not assume every priority queue has identical policing behavior.
+**Low Latency Queuing (LLQ)** adds priority service for selected traffic. In the classic IOS `priority 128` example, the number is kilobits per second. During congestion, a built-in policer limits that priority class according to its configured rate and burst allowance, protecting other classes. Without that limit a busy priority queue would always be served first and the other queues would starve.
 
 Compare `bandwidth 512` with `priority 128` in a supporting IOS policy. The first supplies a minimum share for the class during congestion; it does not cap it at 512 kb/s. The second adds priority scheduling with the classic congestion-time limit. Neither makes unused capacity unavailable to other traffic. Both need a feasible policy for the link.
 
@@ -139,11 +139,11 @@ Compare `bandwidth 512` with `priority 128` in a supporting IOS policy. The firs
 
 ## Congestion avoidance: act before the queue fills
 
-**Tail drop** discards an arriving packet when its queue has no room. If many TCP flows lose packets together, their congestion controls may reduce sending together, then increase together. This coordinated response can produce oscillating utilization. It is a possible consequence, not a guaranteed pattern for every TCP version.
+**Tail drop** discards an arriving packet when its queue has no room. If many TCP flows lose packets together, their congestion controls may reduce sending together, then increase together. This coordinated response can produce oscillating utilization. The effect is called **TCP global synchronization**.
 
 **Random Early Detection (RED)** starts probabilistic action before a queue reaches its full limit, based on average queue depth. **WRED** can give different markings different thresholds or drop probabilities. This may spread congestion signals across flows instead of waiting for one large tail-drop event.
 
-WRED does not determine which queue transmits next; that is scheduling. Nor does it guarantee loss-free service. Where supported and configured, ECN can mark congestion for capable transports rather than dropping selected packets. Persistent overload can still cause drops. Some applications carried over UDP implement congestion control, but a generic nonresponsive UDP stream will not necessarily slow down when packets disappear. The configured traffic policy must account for the actual application.
+WRED does not determine which queue transmits next; that is scheduling. Nor does it guarantee loss-free service. Where supported and configured, ECN can mark congestion for capable transports rather than dropping selected packets. Persistent overload can still cause drops. WRED helps only traffic that slows down when it loses packets, which in practice means TCP. A voice stream over UDP keeps sending at the same rate, so WRED is not used on the voice queue.
 
 ## Policing and shaping: enforce a rate
 
@@ -160,7 +160,7 @@ A **shaper** delays traffic in a queue to regulate its departure rate. It still 
 
 Consider a 1 Gb/s handoff with a provider contract of 20 Mb/s. The interface may look lightly utilized while short bursts exceed the provider's allowance. An outbound shaper can regulate those bursts before they reach the provider. However, a shaper set above the contract, or using unsuitable burst/overhead accounting, can still exceed the provider's policer. If sustained offered traffic exceeds 20 Mb/s, some combination of waiting, application backoff or loss is unavoidable.
 
-Both mechanisms commonly use token-bucket accounting. The tokens represent permission to transmit an amount of traffic; accumulated tokens permit a burst. Policing and shaping therefore have state. Do not describe a policer as having “no memory,” and do not memorize one burst interval as a universal default.
+Both mechanisms commonly use token-bucket accounting. The tokens represent permission to transmit an amount of traffic; accumulated tokens permit a burst. Policing and shaping therefore have state.
 
 ## Verify the behavior, not just the configuration
 
@@ -186,6 +186,12 @@ When a policy has zero matches, check attachment, direction and real packet fiel
 
 ## Exam focus
 
-Explain the purpose and interaction of classification, marking, queuing, congestion avoidance, policing and shaping. Work out a simple AF codepoint, distinguish DSCP from CoS, and predict how a trust or rate policy changes traffic.
+- Classification identifies traffic. Marking records the result in CoS (3 bits, 802.1Q tag) or DSCP (6 bits, IP header).
+- EF is 46. AFxy is `8x + 2y`, and a higher y is dropped first. CSn is `8n`.
+- Trust markings only from devices you manage; the trust boundary is normally the access switch or the IP phone.
+- Queuing acts only during congestion. CBWFQ guarantees each class a minimum bandwidth; LLQ adds a policed strict-priority queue for voice.
+- Tail drop causes TCP global synchronization; WRED drops selected packets early to avoid it.
+- Policing drops or remarks excess traffic. Shaping queues it, which adds delay.
+- Voice guidelines: 150 ms one-way delay, 30 ms jitter, 1% loss.
 
-The v1.1 objective asks for an explanation of forwarding PHBs. The optional configuration makes those concepts concrete; detailed hardware queue tuning is not required here. QoS is not separately listed in the announced v2.0 blueprint. Packet Tracer can illustrate selected features, but neither its command availability nor its timing should be treated as proof of production QoS performance.
+The v1.1 objective asks you to explain these per-hop behaviors, not to configure them. QoS is not separately listed in the announced v2.0 blueprint.

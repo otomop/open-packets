@@ -7,7 +7,7 @@ minutes: 75
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The OSPF and SSH blocks are supplied preparation from earlier chapters, not new controller-deployment skills. Build routed connectivity, observe OSPF and forwarding, then deliberately block one management session while leaving transit traffic working. Finish by classifying controller and overlay scenarios on paper. This lab does not emulate an SDN controller, VXLAN, NETCONF or RESTCONF. All displayed sample outputs are representative, not recorded device results.
+This lab makes the three planes visible on two routers. You build OSPF (control plane), ping across it (data plane), then block one SSH source with a VTY ACL (management plane) and see that forwarding and OSPF carry on untouched. You finish with a paper exercise on controller APIs and VXLAN overhead. The OSPF and SSH configuration is revision from chapters 21 and 08. Packet Tracer cannot emulate a controller or VXLAN, so those parts stay on paper. Sample outputs are representative.
 
 ## Topology
 
@@ -151,7 +151,7 @@ ssh -l observer 10.2.2.1
 Enter the fictional password at its prompt. On R2's console use `show users`; then type `exit` in the PC's SSH session.
 
 :::expected
-The VTY session identifies observer and source 10.1.1.10. R2 is the management endpoint; R1 forwards the same packets as transit traffic. This is a simulator exercise, not a claim to have verified production SSH host identity.
+The VTY session identifies observer and source 10.1.1.10. R2 is the management endpoint; R1 forwards the same packets as transit traffic.
 :::
 
 ```state
@@ -213,7 +213,7 @@ On paper, the approved description for R2 Gi0/1 is exactly `Branch-B LAN`. Read:
 R2# show running-config interface gigabitethernet0/1
 ```
 
-If PT rejects that form, read the full running configuration and locate the interface stanza. Identify the smallest change needed. This is a harmless metadata example, not a claim to have run an automation engine.
+If PT rejects that form, read the full running configuration and find the interface. Identify the smallest change needed. This is what an automation tool does on every run: compare desired state with observed state and change only the difference.
 
 :::expected
 The fresh interface has no description, so it differs from approved intent. Existing addresses, OSPF and interface state already match the required network; changing them would be unnecessary.
@@ -236,7 +236,7 @@ R2# show interfaces description
 Use the full running configuration if the description summary is unavailable. Explain what a second comparison should report.
 
 :::expected
-The description matches and no further description change is needed. Reapplying the identical desired description has the same intended result; this illustrates idempotence. It does not establish that every arbitrary script is idempotent.
+The description matches, so a second comparison reports no difference. Entering the same description again changes nothing: that is idempotence.
 :::
 
 ```state
@@ -272,7 +272,7 @@ R2# copy running-config startup-config
 Accept R2's destination filename with Enter and wait for completion. Save `management-planes-baseline.pkt` with a short record of each successful and failed test.
 
 :::expected
-The saved design includes both authorized management sources, correct routing and the intended description. Neither router exposes a NETCONF or RESTCONF server as part of this lab.
+The saved design includes both authorized management sources, correct routing and the intended description.
 :::
 
 ```state

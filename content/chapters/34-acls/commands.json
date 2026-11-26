@@ -334,7 +334,9 @@
     "task": "After controlled allowed and denied tests, display the configured ACL entries and supported match counters so you can compare their increments with the recorded baseline.",
     "mode": "R1#",
     "answer": "show access-lists",
-    "accept": [],
+    "accept": [
+      "show ip access-lists"
+    ],
     "teaching": {
       "sectionId": "verify-and-troubleshoot",
       "hint": "Inspect effective entry order as well as counter changes.",

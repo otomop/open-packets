@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The group still hears a healthy Active router on the LAN, and R1 remains priority 110. Its failed uplink is not tracked, so that failure does not lower its preference. A tracking decrement of 20 makes R1 90 and permits preempt-enabled R2 at 100 to take over.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# track 1 interface gigabitethernet0/1 line-protocol\nR1(config-track)# exit\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# standby 1 track 1 decrement 20\nR1(config-if)# end\nR1# show standby\n```\nUse this object form on a supporting IOS image; the legacy interface form is an alternative as explained in the lab. Verify R2 Active and a real remote destination. Restore the physical fault separately, then verify R1 priority returns to 110 and routing works."
+    "explanation": "R1 still sends Hellos on the LAN at priority 110, so the group sees a healthy Active router. Nothing ties R1's priority to its uplink. With tracking and a decrement of 20, R1 would drop to 90 and R2, at 100 with preempt, would take over.",
+    "fix": "```ios R1\nR1# configure terminal\nR1(config)# track 1 interface gigabitethernet0/1 line-protocol\nR1(config-track)# exit\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# standby 1 track 1 decrement 20\nR1(config-if)# end\nR1# show standby\n```\nOn an image without track objects, use the older `standby 1 track gigabitethernet0/1 20` instead. Confirm that R2 becomes Active and that a host reaches a real remote destination. After the uplink is repaired, confirm that R1's priority returns to 110."
   },
   {
     "id": "fhrp-hsrp-vrrp-t02",
@@ -37,7 +37,7 @@
       "v1:3.5",
       "v2:3.4"
     ],
-    "scenario": "R1 and R2 should share group 1 and VIP 192.168.10.1. Their switch ports are confirmed in VLAN 10, both real addresses can ping, and the condition persists after convergence time. Each device reports Active with unknown Standby. These are representative excerpts.",
+    "scenario": "R1 and R2 should share group 1 and VIP 192.168.10.1. Their switch ports are confirmed in VLAN 10, the two real addresses can ping each other, and the condition has lasted several minutes. Each router reports Active with Standby unknown.",
     "exhibits": [
       {
         "title": "R1 show standby excerpt",
@@ -45,10 +45,10 @@
       },
       {
         "title": "R2 show standby excerpt",
-        "text": "GigabitEthernet0/0 - Group 1 (version 1)\nState Active; Priority 100; Preemption enabled\nVirtual IP 192.168.10.1\nActive virtual MAC 0000.0c07.ac01\nStandby router unknown"
+        "text": "GigabitEthernet0/0 - Group 1\nState Active; Priority 100; Preemption enabled\nVirtual IP 192.168.10.1\nActive virtual MAC 0000.0c07.ac01\nStandby router unknown"
       }
     ],
-    "question": "Which fault is directly established?",
+    "question": "Which fault do the two excerpts establish?",
     "options": [
       "Both routers must have identical real interface addresses.",
       "Both priorities must be equal before any election can occur.",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The version lines and virtual MAC patterns identify v2 on R1 and v1 on R2. They do not exchange compatible group Hellos, so each can consider itself Active. Raising priority will not repair the version mismatch.",
-    "fix": "```ios R2\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# standby version 2\nR2(config-if)# end\nR2# show standby\nR2# show standby brief\n```\nThis scenario assumes version 2 is the intended supported design. Verify one Active, one Standby, peer addresses known, and successful client traffic before saving."
+    "explanation": "R1's heading says version 2 and its virtual MAC has the 0000.0c9f.f format. R2's heading has no version tag, which is how IOS shows version 1, and its virtual MAC has the 0000.0c07.ac format. The two versions do not interoperate, so each router ignores the other's Hellos and stays Active. Raising a priority cannot fix that.",
+    "fix": "```ios R2\nR2# configure terminal\nR2(config)# interface gigabitethernet0/0\nR2(config-if)# standby version 2\nR2(config-if)# end\nR2# show standby\nR2# show standby brief\n```\nThis assumes version 2 is the intended design. Confirm one Active router, one Standby, no `unknown` peer, and a successful client ping before you save."
   }
 ]

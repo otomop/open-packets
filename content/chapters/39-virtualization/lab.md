@@ -7,7 +7,7 @@ minutes: 70
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The first exercise uses a second physical switch as an explicit **model** of a virtual switch. It demonstrates VLAN tags and MAC learning; it does not create VMs or emulate a hypervisor. The optional VRF exercise uses a supported IOS image or the supplied paper interpretation. No Packet Tracer VRF support is assumed. Expected outputs are authored examples, not recorded simulator runs.
+Packet Tracer has no hypervisor, so in steps 1 to 5 a second 2960 stands in for a host's virtual switch. Its access ports are the virtual ports, the two PCs behind it are the VMs, and its Gi0/1 is the host's physical uplink. The tagging and MAC learning you see on SW1 are what a real virtualized host produces. Steps 6 to 9 are optional: they build two VRFs on one router and need a full IOS image, such as IOSv in Cisco Modeling Labs (CML). Without one, read those steps as a paper exercise and work from the outputs shown.
 
 ## Topology
 
@@ -22,14 +22,14 @@ The first exercise uses a second physical switch as an explicit **model** of a v
 | PEER-A | SW1 Fa0/1, VLAN 10 | 10.39.10.20 / 255.255.255.0 | Leave blank |
 | PEER-B | SW1 Fa0/2, VLAN 20 | 10.39.20.20 / 255.255.255.0 | Leave blank |
 
-Use straight-through PC-to-switch cables and crossover or auto-connect for Gi0/1-to-Gi0/1. There is no router, internet connection or inter-VLAN service.
+Use straight-through cables from the PCs to the switches, and a crossover cable or auto-connect between the two Gi0/1 ports. There is no router, so nothing routes between VLAN 10 and VLAN 20.
 
 ## Step 1: Build and label the model
 
-Create a new Packet Tracer file, cable the listed ports and enter the four static addresses through Desktop → IP Configuration. Identify the modeled VMs, virtual switch and physical uplink.
+Create a new Packet Tracer file, cable the listed ports and enter the four static addresses through Desktop → IP Configuration. Rename the devices as in the topology so that the model stays clear.
 
 :::expected
-VM-A/VM-B represent guest vNIC attachments. VSW represents the virtual switch and Gi0/1 its physical uplink. All actual PCs still run Packet Tracer's simulated client, not separate guest operating systems.
+VM-A and VM-B stand for two guests' vNICs. VSW stands for the virtual switch, and its Gi0/1 for the host's physical uplink to SW1.
 :::
 
 ```state
@@ -38,7 +38,9 @@ VM-A/VM-B represent guest vNIC attachments. VSW represents the virtual switch an
 
 ## Step 2: Configure both ends of the trunk
 
-Before applying the supplied model setup, predict the VLAN tag carried by each guest over Gi0/1, and whether sharing a physical cable permits communication between VLANs. Start from each new switch's console. These blocks omit PortFast on the interswitch trunk: the model uses a simulated switch that runs STP.
+Before you configure anything, predict two things: which VLAN tag each guest's frames carry over Gi0/1, and whether sharing that cable lets VLAN 10 talk to VLAN 20.
+
+Both switches get the lesson's configuration: access ports for the endpoints, and a trunk with native VLAN 999 that allows VLANs 10, 20 and 999. PortFast goes on the access ports only. VSW is a real switch running spanning tree, so Gi0/1 is not an edge port in this model; on a real host uplink you could use `spanning-tree portfast trunk`.
 
 ```ios VSW
 Switch> enable
@@ -96,10 +98,10 @@ SW1(config-if)# no shutdown
 SW1(config-if)# end
 ```
 
-On both consoles run `show vlan brief` and `show interfaces trunk`.
+On both switches run `show vlan brief` and `show interfaces trunk`.
 
 :::expected
-Fa0/1 belongs to VLAN 10 and Fa0/2 to VLAN 20. Gi0/1 is trunking, native VLAN 999, with 10/20/999 allowed at both ends. Wait for STP to forward. VLAN 999 has no endpoint here.
+Fa0/1 is in VLAN 10 and Fa0/2 in VLAN 20. Gi0/1 is trunking with native VLAN 999 and VLANs 10,20,999 allowed at both ends. Give spanning tree up to 30 seconds to move Gi0/1 to forwarding. VLAN 999 has no endpoints.
 :::
 
 ```state
@@ -108,17 +110,17 @@ Fa0/1 belongs to VLAN 10 and Fa0/2 to VLAN 20. Gi0/1 is trunking, native VLAN 99
 
 ## Step 3: Observe successful forwarding
 
-Write the expected MAC-table VLAN/port on SW1 for each guest before generating traffic. From VM-A run `ping 10.39.10.20`; from VM-B run `ping 10.39.20.20`. Repeat after initial ARP learning.
+Write down the VLAN and port where you expect SW1 to learn each guest's MAC address. Then from VM-A run `ping 10.39.10.20`, and from VM-B run `ping 10.39.20.20`. The first ping can lose a packet while ARP resolves, so run each one twice.
 
 ```ios SW1
 SW1# show mac address-table
 SW1# show interfaces trunk
 ```
 
-Use Simulation mode filtered to ARP and ICMP if available. Follow an ARP exchange and the later ICMP exchange.
+To see the tags themselves, switch to Simulation mode, filter on ARP and ICMP, and open a frame as it crosses the Gi0/1 link. Its details show the 802.1Q header with the VLAN number.
 
 :::expected
-Each same-VLAN pair communicates. SW1 learns VM-A's MAC on Gi0/1 in VLAN 10 and VM-B's in VLAN 20. MAC values differ by simulator file. A ping from VM-A to 10.39.20.20 has no routed path; a shared uplink does not provide inter-VLAN routing.
+Each same-VLAN pair replies. SW1 learns VM-A's MAC on Gi0/1 in VLAN 10 and VM-B's MAC on Gi0/1 in VLAN 20; the MAC values depend on your file. A ping from VM-A to 10.39.20.20 fails, because the PCs have no gateway and nothing routes between the VLANs. A shared uplink is not inter-VLAN routing.
 :::
 
 ```state
@@ -127,7 +129,7 @@ Each same-VLAN pair communicates. SW1 learns VM-A's MAC on Gi0/1 in VLAN 10 and 
 
 ## Step 4: Remove one allowed VLAN and observe
 
-Predict which same-VLAN pair should fail and which should remain available. On SW1 only:
+A guest VLAN missing from the physical trunk is the most common fault on a virtualized host's port. Predict which pair will fail and which will keep working. Then replace the allowed list on SW1 only. Without the `add` keyword, this command overwrites the whole list:
 
 ```ios SW1
 SW1# configure terminal
@@ -137,10 +139,10 @@ SW1(config-if)# end
 SW1# show interfaces trunk
 ```
 
-Repeat both same-VLAN pings. Record the difference before repairing.
+Repeat both same-VLAN pings and note the difference before you repair anything.
 
 :::expected
-VLAN 10 remains permitted; VLAN 20 cannot traverse this trunk end. Existing MAC entries may remain until aged out, so a stored entry does not establish current reachability.
+VLAN 10 still passes. VLAN 20 is no longer allowed on SW1's end of the trunk, so VM-B's pings fail even though VSW still tags and sends them. If SW1 still lists VM-B's MAC for a while, it is an old entry: the MAC table records what was learned, not what is reachable now.
 :::
 
 ```state
@@ -158,16 +160,16 @@ SW1# show interfaces trunk
 SW1# copy running-config startup-config
 ```
 
-Finish SW1's filename prompt with Enter and wait for completion. Then on the other console:
+Press Enter at the `Destination filename` prompt. Then save VSW as well:
 
 ```ios VSW
 VSW# copy running-config startup-config
 ```
 
-Finish VSW's prompt with Enter, then repeat both pings and save `host-uplink-baseline.pkt`.
+Press Enter at the prompt, repeat both pings and save the file as `host-uplink-baseline.pkt`.
 
 :::expected
-Both VLANs pass again. Your record includes baseline, failure and recovery evidence.
+Both VLANs pass again, and both switches keep their configuration after a reload.
 :::
 
 ```state
@@ -176,9 +178,9 @@ Both VLANs pass again. Your record includes baseline, failure and recovery evide
 
 ## Step 6: Optional VRF setup on a supported image
 
-The required outcome is to explain the routing-context observations. Configuration is an **optional supplied demonstration**, not VRF CLI memorization. Use a new isolated Cisco CML lab with **one IOSv router** and its console. No external connector, cables or PCs are required. Use your available CML/IOSv entitlement; no public sandbox is required. Start the node and inspect `show version`. Cisco lists VRF-lite among IOSv features; command forms depend on the image.
+Steps 6 to 9 are optional. The exam asks you to explain VRFs, and these steps let you see the behaviour for yourself. Start a new CML lab with one IOSv router and open its console. It needs no cables, PCs or external connector. If you have no CML, or your image rejects `vrf definition`, read on and work from the outputs shown. A Packet Tracer router is not a substitute.
 
-If `vrf definition` or verification commands are absent, use the supplied outputs as a paper exercise and label it unexecuted. Do not assume a similarly named Packet Tracer router supports VRFs.
+The configuration creates VRFs BLUE and RED, then gives a loopback in each of them the same address. Loopback0 stays in the global table for comparison. Each `vrf forwarding` line comes before its `ip address` line, because assigning a VRF removes an address that is already there.
 
 ```ios R1
 Router> enable
@@ -206,12 +208,12 @@ R1(config-if)# end
 ```
 
 :::expected
-Loopback10 and Loopback20 have the same /32 in different contexts. Loopback0 belongs to the global table. This exercise does not establish remote-host or inter-VRF forwarding.
+IOS accepts 10.39.0.1/32 on both Loopback10 and Loopback20, because they are in different VRFs. Loopback0 is in the global table.
 :::
 
 ## Step 7: Compare three contexts
 
-From the supplied setup, predict which table contains each /32 and whether a plain global ping can find 10.39.0.1. If using paper, write those predictions before opening the answer; if using IOSv, run the following checks first.
+Predict which table holds each /32, and whether a plain `ping 10.39.0.1` will succeed. Write your predictions down, then check them:
 
 ```ios R1
 R1# show vrf
@@ -220,10 +222,11 @@ R1# show ip route vrf BLUE
 R1# show ip route vrf RED
 R1# ping vrf BLUE 10.39.0.1
 R1# ping vrf RED 10.39.0.1
+R1# ping 10.39.0.1
 ```
 
 :::solution
-The global table contains 192.0.2.39/32. BLUE and RED each contain 10.39.0.1/32 through different loopbacks. Local pings in each VRF can answer. Representative abbreviated entries:
+`show vrf` lists BLUE with Lo10 and RED with Lo20. The global table holds only 192.0.2.39/32. BLUE and RED each hold 10.39.0.1/32 through their own loopback, and both VRF pings succeed. Abbreviated entries:
 
 ```output Context comparison
 Routing Table: BLUE
@@ -232,12 +235,12 @@ Routing Table: RED
 C 10.39.0.1/32 is directly connected, Loopback20   ← RED's interface
 ```
 
-Exact local/connected presentation varies by release. Ordinary `ping 10.39.0.1` uses the global table, which has no route in this isolated configuration.
+The plain `ping 10.39.0.1` fails. It uses the global table, which has no route to that address. The exact layout of the route entries varies by release.
 :::
 
 ## Step 8: Observe address removal on reassignment
 
-Move only Loopback10 to RED. Do not restore its address yet:
+Move Loopback10 into RED, and do not re-enter its address yet:
 
 ```ios R1
 R1# configure terminal
@@ -249,7 +252,7 @@ R1# show ip route vrf BLUE
 ```
 
 :::expected
-The former IP address is removed on reassignment. BLUE loses its connected /32. RED's existing Loopback20 retains its own address. Changed membership and the missing address identify the injected change.
+IOS warns that the interface's IPv4 address was removed. The running configuration shows `vrf forwarding RED` and no IP address on Loopback10, and BLUE's table has lost its connected /32. Loopback20 in RED keeps its own address.
 :::
 
 ## Step 9: Restore membership and address
@@ -268,30 +271,31 @@ R1# copy running-config startup-config
 ```
 
 :::expected
-Loopback10 again belongs to BLUE with its /32. Both local VRF pings answer: BLUE's restored address works, and RED's original address remains usable. Accept the save prompt and retain your CML lab separately. For the paper path, record these as predicted results rather than executed tests.
+Loopback10 is back in BLUE with its /32, and both VRF pings succeed. Press Enter at the save prompt. If you worked on paper, record these as predictions, not test results.
 :::
 
 ## Troubleshooting
 
-- A peer ping fails: verify addresses, access VLANs, trunk operation and allowed list.
-- One VM VLAN works: compare every trunk segment carrying the failed VLAN.
-- A global ping fails while a VRF ping succeeds: compare routing contexts before changing routes.
-- A command is unsupported: record platform/version and use the interpretation fallback.
+- A same-VLAN ping fails: check the PC's address and mask, the access VLAN at each end, and `show interfaces trunk` on both switches.
+- Only one VLAN works: compare the allowed list at both ends of the trunk.
+- Gi0/1 is not trunking: confirm `switchport mode trunk` at both ends and wait for spanning tree.
+- A plain ping fails but `ping vrf` works: the address is in a VRF and the plain ping used the global table. No route needs changing.
+- IOS rejects `vrf definition`: note the platform and version, then continue on paper.
 
 ### Evidence to keep
 
-Keep the guest-to-virtual-port-to-uplink drawing, both baseline ping results, actual MAC/VLAN/port observations, separate fault and recovery results, and the context worksheet. Mark whether the VRF operations were executed on an identified image or interpreted from supplied data.
+Keep your drawing of guest, virtual port and uplink, both baseline ping results, SW1's MAC-table entries, the fault and recovery results, and your step 7 predictions. Note whether you ran the VRF steps on a real image or on paper.
 
 ## Challenge
 
-In a copy, extend the host model with a third application network while preserving both original pairs. Add PC-PT VM-C to VSW Fa0/3 and PC-PT PEER-C to SW1 Fa0/3 using straight-through cables. Use `10.39.30.10/24` and `10.39.30.20/24` with no gateways. Their traffic must be tagged VLAN 30 over the existing Gi0/1 trunk; native VLAN 999 remains unchanged.
+In a copy of the file, add a third application network without disturbing the first two. Connect a new PC, VM-C, to VSW Fa0/3 and another, PEER-C, to SW1 Fa0/3 with straight-through cables. Give them `10.39.30.10/24` and `10.39.30.20/24` with no gateways. Their traffic must cross the existing Gi0/1 trunk tagged for VLAN 30, and native VLAN 999 must stay as it is.
 
-Write your plan before using the answer. Configure only the needed VLAN, endpoint membership and allowed-list additions at both ends. Verify the new pair and both original pairs, then record the new MAC's expected and observed VLAN/port on SW1. Explain why this does not make VM-C communicate with VLAN 10 without a router.
+Write your plan before you open the answer. Configure only what is needed at both ends: the VLAN, the access port and the addition to the allowed list. Verify the new pair and both original pairs, and record the VLAN and port where SW1 learns VM-C's MAC. Explain why VM-C still cannot reach VLAN 10.
 
-Separately, a real host has a dedicated management NIC sending only untagged VLAN 99 and an application NIC tagging VLANs 10,20,30. Specify the physical port type for each. In a supplied VRF record, BLUE has no route to `192.0.2.39/32` while global does; explain the result of BLUE's lookup.
+Then answer two questions on paper. A real host has a management NIC that sends only untagged frames in VLAN 99, and an application NIC that tags VLANs 10, 20 and 30: which port type does each switch port need? On R1 from step 6, BLUE has no route to `192.0.2.39/32` but the global table does: what happens to a packet for that address that arrives in BLUE?
 
 :::solution
-Create VLAN 30 and add it without replacing working VLANs:
+Create VLAN 30 and add it to the trunk without replacing the working VLANs:
 
 ```ios VSW
 VSW# configure terminal
@@ -326,9 +330,9 @@ SW1# show interfaces trunk
 SW1# show mac address-table
 ```
 
-Enter the supplied IP/mask values on the new PCs. VM-C should ping `10.39.30.20`; VM-A still pings `10.39.10.20` and VM-B still pings `10.39.20.20`. After fresh traffic, SW1 learns VM-C's actual MAC on Gi0/1 in VLAN 30. No inter-VLAN route was added, so a shared trunk does not connect the three IP networks at Layer 3.
+Enter the addresses and masks on the new PCs. VM-C pings `10.39.30.20`, VM-A still pings `10.39.10.20` and VM-B still pings `10.39.20.20`. After fresh traffic, SW1 learns VM-C's MAC on Gi0/1 in VLAN 30. VM-C cannot reach VLAN 10 because nothing routes between the VLANs; a shared trunk carries them side by side without joining them.
 
-For the real-host contract, the management NIC can use access VLAN 99. The application NIC needs a matching trunk permitting tagged VLANs 10,20,30 and the documented native/untagged treatment. Teaming or a port-channel requires a separate supported host contract.
+For the real host, the management NIC's port is an access port in VLAN 99. The application NIC's port is a trunk that allows VLANs 10, 20 and 30, with a native VLAN that matches how the host treats untagged frames.
 
-BLUE's lookup cannot automatically use the global route. It fails in BLUE unless deliberately configured inter-context connectivity supplies a usable path. Do not add route leaking merely to make this conceptual exercise pass.
+The packet that arrives in BLUE is dropped. BLUE's lookup uses only BLUE's table, and the global route is not a fallback. Reaching that address would need deliberate route leaking, which this lab does not configure.
 :::

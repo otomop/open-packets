@@ -1,162 +1,184 @@
 [
   {
-    "id": "ansible-terraform-c01",
-    "front": "What format describes an Ansible playbook?",
-    "back": "YAML: mappings, lists and indentation organize the plays and tasks.",
+    "id": "ansible-terraform-c31",
+    "front": "Ansible versus Terraform?",
+    "back": "Ansible: agentless configuration management, YAML tasks pushed over SSH. Terraform: declarative provisioning in HCL, with providers and state.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c02",
+    "front": "What does agentless mean for Ansible?",
+    "back": "Nothing is installed on the managed device. The control node connects over SSH and pushes the work when you run it.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ansible-terraform-c02",
-    "front": "What does agentless push mean for the IOS CLI example?",
-    "back": "The control node initiates an SSH session when the job runs. Network modules execute on the controller; no Ansible agent or Python interpreter is installed on IOS.",
+    "id": "ansible-terraform-c01",
+    "front": "What language are Ansible playbooks written in?",
+    "back": "YAML.",
     "tags": [
-      "concept",
-      "compare"
+      "concept"
     ]
   },
   {
-    "id": "ansible-terraform-c05",
-    "front": "What distinguishes Terraform's configuration and state?",
-    "back": "HCL configuration describes intended resources. State associates those resource addresses with managed objects and recorded attributes.",
+    "id": "ansible-terraform-c26",
+    "front": "Ansible inventory, playbook and module?",
+    "back": "The inventory lists the target devices, a playbook is the YAML file of plays and tasks, and a module is the code a task runs.",
     "tags": [
-      "compare"
+      "concept"
     ]
   },
   {
-    "id": "ansible-terraform-c06",
-    "front": "How do you select an explicit Ansible inventory?",
-    "back": "Use -i inventory.yml (or another inventory path). An explicit inventory avoids relying on a default location or other configured source.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "ansible-terraform-c07",
-    "front": "Which two inventory variables identify the IOS CLI connection and platform?",
-    "back": "ansible_connection: ansible.netcommon.network_cli and ansible_network_os: cisco.ios.ios.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "ansible-terraform-c08",
-    "front": "How can an authorized IOS task request enable mode?",
-    "back": "Use ansible_become: true and ansible_become_method: enable with the appropriate enable credential. A separate escalation is unnecessary when the account already has sufficient privilege.",
+    "id": "ansible-terraform-c27",
+    "front": "What is the Ansible control node?",
+    "back": "The computer where Ansible is installed and playbooks are run. Network modules execute there, not on the device.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ansible-terraform-c10",
-    "front": "How does a play differ from a task?",
-    "back": "A play selects hosts and organizes work. A task invokes a module with arguments for those selected hosts.",
+    "front": "Play versus task?",
+    "back": "A play selects hosts and holds a list of tasks. A task calls one module with arguments.",
     "tags": [
-      "concept"
+      "compare"
     ]
   },
   {
-    "id": "ansible-terraform-c11",
-    "front": "After register: result, where is the second ios_command result?",
-    "back": "result.stdout[1] contains its output string; result.stdout_lines[1] contains that output split into lines. Indexing begins at zero.",
+    "id": "ansible-terraform-c06",
+    "front": "Which option points ansible-playbook at an inventory file?",
+    "back": "-i, as in ansible-playbook -i inventory.yml collect.yml.",
     "tags": [
-      "concept",
+      "command"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c07",
+    "front": "Which inventory variables select the IOS CLI connection and platform?",
+    "back": "ansible_connection: ansible.netcommon.network_cli and ansible_network_os: cisco.ios.ios.",
+    "tags": [
       "command"
     ]
   },
   {
     "id": "ansible-terraform-c12",
     "front": "ios_command versus ios_config?",
-    "back": "ios_command runs operational EXEC commands. ios_config manages supported configuration sections.",
+    "back": "ios_command runs show and other EXEC commands. ios_config manages configuration lines.",
     "tags": [
       "compare"
     ]
   },
   {
+    "id": "ansible-terraform-c11",
+    "front": "After register: result, where is the second command's output?",
+    "back": "result.stdout[1], or result.stdout_lines[1] as a list of lines. Indexes start at 0.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
     "id": "ansible-terraform-c13",
-    "front": "What does --syntax-check establish?",
-    "back": "It checks playbook syntax and structure without executing tasks. It does not validate live reachability, device privilege, or IOS command support.",
+    "front": "What does --syntax-check do?",
+    "back": "Checks the playbook's YAML and structure without running any task. It does not contact devices.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c28",
+    "front": "What does --limit r1 do?",
+    "back": "Narrows the play's hosts to r1. It can only remove hosts, never add one outside the play's group.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "ansible-terraform-c14",
-    "front": "Does --check guarantee that a playbook cannot affect a device?",
-    "back": "No. Behavior depends on module support and task settings; review actual commands and permissions.",
+    "front": "What does --check (check mode) do?",
+    "back": "Asks modules to report what they would change without changing it. Not every module supports it.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c29",
+    "front": "In a play recap, what do ok, changed, unreachable and failed count?",
+    "back": "Per host: tasks that succeeded, tasks that changed something (also counted in ok), connection failures and task failures.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ansible-terraform-c15",
-    "front": "Does failed=1 prove SSH login succeeded?",
-    "back": "No. A network connection or authentication error can appear as a task failure. Read the error text. An IOS invalid-command response is stronger evidence that the device processed the command.",
+    "id": "ansible-terraform-c08",
+    "front": "How does an Ansible task enter enable mode on IOS?",
+    "back": "Set ansible_become: true and ansible_become_method: enable, and supply the enable password.",
     "tags": [
-      "troubleshoot"
+      "concept"
     ]
   },
   {
     "id": "ansible-terraform-c16",
-    "front": "What does Ansible Vault protect?",
-    "back": "Stored files or variables. Decrypted values can still be exposed by task output; Vault does not automatically redact them.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "ansible-terraform-c17",
-    "front": "What is the basic Terraform workflow?",
-    "back": "Write configuration, initialize its directory, validate and plan, review, then apply. Later changes repeat planning and verification; destroy is removal, not a required step in every run.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ansible-terraform-c18",
-    "front": "What does Terraform -/+ indicate?",
-    "back": "Destroy the existing instance, then create a replacement. It is not an in-place update.",
+    "front": "What does Ansible Vault do?",
+    "back": "Encrypts secret variables or files stored alongside your playbooks.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ansible-terraform-c20",
-    "front": "What does idempotence mean in configuration management?",
-    "back": "Once the intended state is satisfied, repeating the operation does not introduce additional changes. It depends on module behavior, arguments, and platform normalization.",
+    "front": "What is idempotence in configuration management?",
+    "back": "Once the device is in the intended state, running the task again changes nothing.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ansible-terraform-c22",
-    "front": "Why is a valid inventory group not enough to authorize a run?",
-    "back": "The selected devices and the task contents both need to match the approved scope. --limit narrows targets but cannot make an unsafe command safe.",
+    "id": "ansible-terraform-c33",
+    "front": "Declarative versus procedural?",
+    "back": "Declarative states the end result and lets the tool work out the steps (Terraform). Procedural lists the steps in order (a playbook's tasks).",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c05",
+    "front": "Terraform configuration versus state?",
+    "back": "Configuration (HCL) describes what should exist. State records what Terraform has created and manages.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ansible-terraform-c30",
+    "front": "What is a Terraform provider?",
+    "back": "A plugin that lets Terraform manage one platform through its API.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ansible-terraform-c23",
-    "front": "What can a local debug playbook prove without a router?",
-    "back": "That the controller can parse and execute that local task. It cannot prove IOS connectivity or make IOS modules run against a Linux shell.",
+    "id": "ansible-terraform-c17",
+    "front": "Terraform's core workflow commands, in order?",
+    "back": "terraform init, terraform plan, terraform apply. terraform destroy removes what it manages.",
     "tags": [
-      "concept"
+      "command"
     ]
   },
   {
-    "id": "ansible-terraform-c24",
-    "front": "Why prepare known_hosts before an Ansible network run?",
-    "back": "The persistent SSH connection cannot rely on an interactive first-use prompt. Verify the target key through a trusted process and keep checking enabled.",
+    "id": "ansible-terraform-c18",
+    "front": "In a Terraform plan, what do +, ~, - and -/+ mean?",
+    "back": "Create, update in place, destroy, and destroy then re-create (replace).",
     "tags": [
-      "troubleshoot"
+      "concept"
     ]
   },
   {
     "id": "ansible-terraform-c25",
-    "front": "What happens when applying a saved Terraform plan?",
-    "back": "Terraform applies that plan without another confirmation prompt. The saved plan may contain sensitive data and does not automatically include later configuration edits.",
+    "front": "What happens when you apply a saved Terraform plan file?",
+    "back": "Terraform applies exactly that plan without asking for confirmation. Later edits to the files are not included.",
     "tags": [
       "concept"
     ]

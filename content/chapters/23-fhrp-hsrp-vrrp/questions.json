@@ -99,7 +99,7 @@
     "answer": [
       1
     ],
-    "explanation": "VRRP reserves priority 255 for the address owner. Identify ownership before applying ordinary non-owner priority and preemption assumptions.",
+    "explanation": "VRRP reserves priority 255 for the address owner, the router whose real interface address is the virtual IP.",
     "whyWrong": {
       "0": "100 is the normal non-owner default.",
       "2": "254 is the highest ordinary non-owner configurable priority.",
@@ -136,6 +136,31 @@
     }
   },
   {
+    "id": "fhrp-hsrp-vrrp-q25",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 1,
+    "prompt": "Which statement correctly contrasts the defaults of HSRP and VRRP?",
+    "options": [
+      "HSRP preemption is off by default; VRRP preemption is on.",
+      "HSRP sends a Hello every second; VRRP advertises every 3 seconds.",
+      "HSRP is carried as IP protocol 112; VRRP uses UDP port 1985.",
+      "HSRP is an open standard; VRRP is Cisco proprietary."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "HSRP is Cisco proprietary, uses UDP 1985, sends a Hello every 3 seconds and leaves preemption off. VRRP is an open standard, uses IP protocol 112, advertises every second and preempts by default.",
+    "whyWrong": {
+      "1": "The timers are reversed: the HSRP Hello is 3 seconds and the VRRP advertisement is 1 second.",
+      "2": "The transports are reversed: HSRP uses UDP 1985 and VRRP uses IP protocol 112.",
+      "3": "The origins are reversed: HSRP is Cisco proprietary and VRRP is the open standard."
+    }
+  },
+  {
     "id": "fhrp-hsrp-vrrp-q02",
     "type": "single",
     "objectives": [
@@ -168,7 +193,7 @@
       "v2:3.4"
     ],
     "difficulty": 2,
-    "prompt": "An IOS interface is currently using HSRPv1. Group 300 is rejected. Which required version change supports that IPv4 group number?",
+    "prompt": "An interface running HSRP version 1 rejects group number 300. What must change before the group is accepted?",
     "options": [
       "Change the virtual IP to another address in the same subnet.",
       "Set standby 300 priority 255 before creating the virtual address.",
@@ -178,9 +203,9 @@
     "answer": [
       3
     ],
-    "explanation": "HSRPv1 supports groups 0–255; HSRPv2 supports 0–4095. Both peers need compatible version configuration, and a version change also changes the ordinary IPv4 virtual MAC format.",
+    "explanation": "HSRPv1 supports groups 0–255 and HSRPv2 supports 0–4095. Both routers must run the same version, and changing the version also changes the virtual MAC format.",
     "whyWrong": {
-      "0": "The error concerns the version group-number range, not the virtual IP.",
+      "0": "The group number is out of range for version 1; the virtual IP is not the problem.",
       "1": "Priority does not expand the HSRPv1 group range.",
       "2": "HSRP group support is independent of the chosen VLAN number."
     }
@@ -203,7 +228,7 @@
     "answer": [
       2
     ],
-    "explanation": "HSRP preemption is disabled by default. A higher-priority recovered router does not necessarily displace a healthy active router unless preemption is enabled.",
+    "explanation": "HSRP preemption is disabled by default. A recovered router with a higher priority does not take the role from a healthy Active router unless it has preempt configured.",
     "whyWrong": {
       "0": "Taking over from a healthy active router requires preemption in this scenario.",
       "1": "Different priorities are normal and do not cause isolation.",
@@ -233,7 +258,7 @@
     "answer": [
       2
     ],
-    "explanation": "For ordinary non-owner VRRP routers, preemption is enabled by default and higher priority is preferred. R1 can reclaim the forwarding role after protocol processing and any configured delay.",
+    "explanation": "VRRP preemption is enabled by default and the higher priority wins, so R1 takes the Master role back from R2.",
     "whyWrong": {
       "0": "VRRP normally enables preemption by default.",
       "1": "Ownership depends on real/virtual address identity, not startup order.",
@@ -258,7 +283,7 @@
     "answer": [
       0
     ],
-    "explanation": "Identify ownership before applying ordinary non-owner rules. The owner uses priority 255 and has special ownership preference.",
+    "explanation": "The address owner uses priority 255, which beats every configurable priority (1–254). R1 is therefore Master whenever it is up.",
     "whyWrong": {
       "1": "The owner priority 255 is above the ordinary non-owner range.",
       "2": "An arbitrary most-recent sender is not the owner-priority rule.",
@@ -288,10 +313,10 @@
     "answer": [
       3
     ],
-    "explanation": "Cisco distinguishes election tiebreaking from equal-priority preemption. A higher interface IP can break an election tie, but an equal-priority arriving router does not preempt a healthy Active router merely for that reason.",
+    "explanation": "The higher interface IP address breaks a tie only when the group has no Active router. An equal-priority router does not preempt a healthy Active router, even with preempt configured.",
     "whyWrong": {
-      "0": "The initial-election tiebreaker is not an equal-priority preemption guarantee.",
-      "1": "Preemption still depends on the required priority relationship.",
+      "0": "The IP address decides an election between equal priorities; it does not trigger preemption.",
+      "1": "Preemption requires a strictly higher priority.",
       "2": "Duplicate real interface addresses would be a fault."
     }
   },
@@ -313,7 +338,7 @@
     "answer": [
       1
     ],
-    "explanation": "The configured 110 minus decrement 5 equals 105. A decrement must give R2 the intended strict priority advantage; in this pair, decrement 20 gives R1 90.",
+    "explanation": "110 − 5 = 105, which is still higher than R2's 100, so R1 stays Active. The decrement must take R1 below R2: a decrement of 20 would give 90.",
     "whyWrong": {
       "0": "The decrement is subtracted from the configured priority; it does not replace it.",
       "2": "The standby needs preemption to take over from a live lower-priority active router.",
@@ -343,7 +368,7 @@
     "answer": [
       0
     ],
-    "explanation": "The remaining interval is 10 − 3 = 7 seconds before timer expiry. Actual forwarding recovery also includes state processing and the rest of the network, so this is not an exact application-recovery promise.",
+    "explanation": "The hold timer restarts at 10 seconds each time the Standby hears a Hello from the Active router. Three seconds have passed, so 10 − 3 = 7 seconds remain before the Standby takes over.",
     "whyWrong": {
       "1": "Three seconds is elapsed time in the question, not the remaining hold time.",
       "2": "The timer was already started by the last accepted Hello.",
@@ -368,7 +393,7 @@
     "answer": [
       3
     ],
-    "explanation": "Switches learn source MAC addresses on incoming ports. The new active router announcements and traffic using the virtual MAC update that location while the host can retain the same IP-to-MAC mapping.",
+    "explanation": "A switch learns source MAC addresses. The new Active router sends frames, including gratuitous ARP, from the virtual MAC, so the switch moves that MAC to the new port. Hosts keep the same IP-to-MAC mapping.",
     "whyWrong": {
       "0": "The virtual gateway lets hosts retain their configured gateway.",
       "1": "The switch must learn which local port leads to the virtual MAC; a host-only cache update does not supply that location.",
@@ -507,7 +532,7 @@
     "answer": [
       0
     ],
-    "explanation": "135-40=95, below R2 at 110. R2 has preempt, so it can take over from the still-live LAN peer; then verify actual service delivery.",
+    "explanation": "135 − 40 = 95, which is below R2's 110. R2 has preempt, so it takes the role from R1 even though R1 is still alive on the LAN. A role change says nothing about routes beyond the gateway, so test a real destination.",
     "whyWrong": {
       "1": "Tracking changes effective priority to 95; configured priority is not the current comparison value.",
       "2": "Tracking changes priority, not the intended virtual gateway identity.",
@@ -517,6 +542,31 @@
       "kind": "cli",
       "title": "Tracking state and effective priority (exercise)",
       "text": "R1 configured HSRP priority 135; tracked uplink Down; decrement 40.\nR1 LAN remains up; R1 is the incumbent Active.\nR2 effective priority 110; preemption enabled; uplink healthy.\nBoth agree on group, version, VIP and VLAN."
+    }
+  },
+  {
+    "id": "fhrp-hsrp-vrrp-q24",
+    "type": "single",
+    "objectives": [
+      "v1:3.5",
+      "v2:3.4"
+    ],
+    "difficulty": 2,
+    "prompt": "SW1's MAC address table lists 0000.0c07.ac14 on the port toward R2. What does this address identify?",
+    "options": [
+      "The HSRP version 1 virtual MAC for group 20.",
+      "The HSRP version 2 virtual MAC for group 14.",
+      "The VRRP virtual MAC for IPv4 group 20.",
+      "The burned-in MAC of R2's LAN interface."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "0000.0c07.acXX is the HSRP version 1 format, and XX is the group number in hexadecimal: hex 14 is decimal 20. Because the switch learned it toward R2, R2 is the Active router for that group.",
+    "whyWrong": {
+      "1": "HSRP version 2 virtual MACs begin 0000.0c9f.f, and the 14 is hexadecimal.",
+      "2": "VRRP IPv4 virtual MACs begin 0000.5e00.01.",
+      "3": "The 0000.0c07.ac prefix is reserved for HSRP version 1 virtual MACs."
     }
   },
   {
@@ -537,7 +587,7 @@
     "answer": [
       2
     ],
-    "explanation": "Two Active states are a symptom requiring correlated evidence. Unlike the version-mismatch ticket, this excerpt does not yet identify a single cause.",
+    "explanation": "Two Active routers mean the peers are not hearing each other's Hellos. The excerpt does not show why, so compare VLAN, HSRP version and group number on both before choosing a fix.",
     "whyWrong": {
       "0": "Duplicate real addressing does not repair an unknown peer relationship.",
       "1": "Preemption alone does not explain peers failing to recognize each other.",

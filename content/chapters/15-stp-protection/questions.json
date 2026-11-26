@@ -389,7 +389,7 @@
     "answer": [
       3
     ],
-    "explanation": "Unconditional interface filtering suppresses BPDU participation and conflicts with the goal of using received BPDUs to expose a wrong connection. Remove the unwanted filter and verify a supported PortFast/BPDU-guard policy, rather than relying on mixed-feature precedence assumptions.",
+    "explanation": "When the interface BPDU filter and BPDU guard are on the same port, the filter wins: received BPDUs are dropped before BPDU guard sees them, so the port never err-disables. Remove the filter and keep PortFast with BPDU guard.",
     "whyWrong": {
       "0": "Root guard reacts to superior information and uses inconsistency, not the required any-BPDU errdisable.",
       "1": "The conditional fallback belongs to the global PortFast filter, not unconditional interface filtering.",

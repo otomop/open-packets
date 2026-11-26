@@ -123,7 +123,7 @@
       1,
       3
     ],
-    "explanation": "DNS uses both UDP and TCP port 53. Truncation can require TCP retry, full zone transfers use TCP, and TCP is also a valid transport for ordinary queries. The older unextended 512-byte UDP limit is not a universal current response ceiling because EDNS can advertise larger sizes.",
+    "explanation": "DNS uses both UDP and TCP port 53. Truncation can require TCP retry, full zone transfers use TCP, and TCP is also a valid transport for ordinary queries.",
     "whyWrong": {
       "0": "UDP success does not prove that a required TCP exchange can pass.",
       "2": "RFC 7766 supports TCP for ordinary DNS operation, not only transfers."
@@ -246,7 +246,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "What does no ip domain-lookup change on the documented IOS router?",
+    "prompt": "What does no ip domain-lookup change on an IOS router?",
     "options": [
       "It prevents clients from using the router to forward DNS traffic.",
       "It removes the router's configured DNS resolver addresses.",
@@ -336,7 +336,7 @@
       "title": "Representative authoritative data and completed query",
       "text": "app.lab.example. A 10.1.1.80\nQuery: app.lab.example. AAAA\nStatus: NOERROR\nAnswer: no AAAA data\nAuthority: zone SOA; this is a completed NODATA answer, not a referral."
     },
-    "prompt": "An IPv6-only test application requests an AAAA record. No DNS64 synthesis or IPv4 fallback is provided. What is missing from the completed DNS result?",
+    "prompt": "An IPv6-only application requests an AAAA record and cannot fall back to IPv4. What is missing from the completed DNS result?",
     "options": [
       "A valid A record to replace the existing IPv4 answer.",
       "A new alias that still targets only the existing A record.",

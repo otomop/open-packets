@@ -83,19 +83,19 @@
       "v2:3.3.a"
     ],
     "difficulty": 1,
-    "prompt": "On a healthy IPv6 Ethernet link with unique RIDs and link-local addresses, which two values must agree for the intended classic OSPFv3 relationship? Choose two.",
+    "prompt": "Two routers share a healthy IPv6 Ethernet link and have unique RIDs and link-local addresses. Which two values must match before they become OSPFv3 neighbors? Choose two.",
     "options": [
       "Local process ID",
       "Area ID",
       "Global unicast prefix",
-      "Classic IPv6 instance ID",
+      "Instance ID",
       "Interface priority"
     ],
     "answer": [
       1,
       3
     ],
-    "explanation": "The area and instance identify the intended OSPFv3 relationship on the link. Local process labels and interface priorities may differ; matching global prefixes are not a Hello requirement.",
+    "explanation": "The area ID and the instance ID travel in every OSPFv3 packet, and a router ignores a Hello when either differs from its own. Process IDs and interface priorities may differ, and the OSPFv3 Hello carries no prefix to compare.",
     "whyWrong": {
       "0": "The process number is local and is not compared between neighbors.",
       "2": "OSPFv3 neighbor exchange uses link-local addressing and does not require identical global prefixes.",
@@ -119,11 +119,11 @@
     "answer": [
       0
     ],
-    "explanation": "The IOS broadcast and point-to-point types studied here use 10/40 by default. Always inspect effective values because explicit timer configuration can override defaults.",
+    "explanation": "OSPFv3 keeps the OSPFv2 defaults: on broadcast and point-to-point interfaces the Hello interval is 10 seconds and the dead interval is four times that, 40 seconds.",
     "whyWrong": {
-      "1": "Those are ordinary HSRP Hello/hold values, not these OSPF defaults.",
-      "2": "Those resemble VRRP timing, not OSPFv3 defaults.",
-      "3": "Those are associated with other OSPF network types, not the types named here."
+      "1": "3 and 10 seconds are the HSRP defaults you meet in Chapter 23, not OSPF timers.",
+      "2": "Those values belong to VRRP (Chapter 23), not OSPFv3.",
+      "3": "30 and 120 seconds are the OSPF defaults for non-broadcast network types, not for Ethernet or point-to-point."
     }
   },
   {
@@ -537,7 +537,7 @@
     "exhibit": {
       "kind": "cli",
       "title": "Representative configuration or output",
-      "text": "R3# show running-config — relevant excerpts\nipv6 router ospf 30\n router-id 3.3.3.3\n passive-interface gigabitethernet0/2\ninterface GigabitEthernet0/2\n ipv6 address 2001:db8:30::1/64\n no shutdown"
+      "text": "R3# show running-config — relevant excerpts\ninterface GigabitEthernet0/2\n ipv6 address FE80::30:1 link-local\n ipv6 address 2001:DB8:30::1/64\n!\nipv6 router ospf 30\n router-id 3.3.3.3\n passive-interface GigabitEthernet0/2"
     }
   },
   {
@@ -547,7 +547,7 @@
       "v2:3.3.a"
     ],
     "difficulty": 3,
-    "prompt": "What evidence best distinguishes a neighbor problem from a missing advertised LAN in this case?",
+    "prompt": "What is the best next step in this case?",
     "options": [
       "Clear both OSPFv3 processes first because any missing route requires a fresh election.",
       "Enable Hellos on the passive client LAN before checking its OSPFv3 activation.",
@@ -557,7 +557,7 @@
     "answer": [
       2
     ],
-    "explanation": "Local gateway success, Full transit and a missing remote route narrow the next inspection to prefix participation. They do not establish one unique cause until the remote interface configuration is read.",
+    "explanation": "The remote PC reaches its gateway and the transit adjacency is Full, so the link and the neighbors are healthy. A missing /64 then points at the remote LAN interface: check that it is up and enabled for OSPFv3, and leave the working adjacency alone.",
     "whyWrong": {
       "0": "A restart discards useful evidence and does not enroll a missing LAN.",
       "1": "A client LAN can remain passive while its prefix is advertised. Inspect activation and prefix participation before changing neighbor policy.",

@@ -7,8 +7,8 @@
     "accept": [],
     "teaching": {
       "sectionId": "access-or-trunk-and-lag-cabling-the-pieces",
-      "hint": "Follow the frames on this cable, rather than the wireless clients’ eventual VLANs.",
-      "takeaway": "An access port is sufficient because only one untagged Ethernet VLAN crosses this AP link. Different client subnets at the controller do not by themselves require a trunk at the AP.",
+      "hint": "Follow the frames on this cable, not the wireless clients’ eventual VLANs.",
+      "takeaway": "An access port is enough because only one untagged VLAN crosses this AP link. The clients’ VLANs appear at the controller, not at the AP.",
       "syntax": [
         {
           "text": "switchport mode access",
@@ -31,7 +31,7 @@
     "teaching": {
       "sectionId": "access-or-trunk-and-lag-cabling-the-pieces",
       "hint": "The untagged management frames determine the native VLAN.",
-      "takeaway": "The native VLAN maps the untagged management traffic; VLAN 20 remains tagged. A controller-based label alone does not decide these settings—the AP’s actual forwarding and tagging contract does.",
+      "takeaway": "The native VLAN carries the AP’s untagged management traffic; VLAN 20 stays tagged. The AP’s forwarding and tagging decide these settings, not the label “controller-based”.",
       "syntax": [
         {
           "text": "switchport trunk native vlan",
@@ -51,14 +51,14 @@
   },
   {
     "id": "wireless-architecture-d07",
-    "task": "An AP on SW1 FastEthernet0/1 has an Ethernet link but reports reduced radio operation. On a PoE-capable Cisco switch, display this port’s inline-power state and allocation before changing VLANs.",
+    "task": "An AP on SW1 FastEthernet0/1 has an Ethernet link but reports reduced radio operation. On a PoE-capable Cisco switch, display this port’s inline-power state and allocation.",
     "mode": "SW1#",
     "answer": "show power inline fastethernet0/1",
     "accept": [],
     "teaching": {
       "sectionId": "verify-and-troubleshoot",
-      "hint": "Ethernet link state does not establish that the AP received its required power.",
-      "takeaway": "Compare allocated power with the AP’s documented requirement and the switch budget. A power display narrows the investigation; it does not independently validate wireless security, registration or client service.",
+      "hint": "A link that is up does not show how much power the AP received.",
+      "takeaway": "Compare the allocated power with the AP’s documented requirement and the switch’s remaining budget. An underpowered AP can join its controller and still limit its radios.",
       "syntax": [
         {
           "text": "show power inline",
@@ -73,6 +73,37 @@
       "focusByTrack": {
         "v1": "supporting",
         "v2": "core"
+      }
+    }
+  },
+  {
+    "id": "wireless-architecture-d08",
+    "task": "SW1 FastEthernet0/23 and 0/24 connect to an AireOS controller with LAG enabled. Both ports are already matching trunks. Add them to channel group 1 with the mode this controller requires.",
+    "mode": "SW1(config-if-range)#",
+    "answer": "channel-group 1 mode on",
+    "accept": [],
+    "teaching": {
+      "sectionId": "access-or-trunk-and-lag-cabling-the-pieces",
+      "hint": "An AireOS LAG runs neither LACP nor PAgP.",
+      "takeaway": "AireOS LAG is a static bundle, so the switch must also use static mode on. LACP active or PAgP desirable would wait for negotiation that the controller never sends.",
+      "syntax": [
+        {
+          "text": "channel-group",
+          "kind": "keyword"
+        },
+        {
+          "text": "1",
+          "kind": "argument"
+        },
+        {
+          "text": "mode on",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core",
+      "focusByTrack": {
+        "v1": "core",
+        "v2": "supporting"
       }
     }
   }

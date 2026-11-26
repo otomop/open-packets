@@ -8,7 +8,7 @@
     "teaching": {
       "sectionId": "why-the-table-is-the-whole-story",
       "hint": "Begin with the complete installed table so a more-specific route is not hidden.",
-      "takeaway": "This shows selected routes, not every configured candidate. Choose a packet's longest matching prefix after reading the entries; administrative distance does not override a longer installed match.",
+      "takeaway": "The table lists only installed routes, not every configured candidate. For a packet, pick the longest matching prefix; administrative distance never overrides a longer match.",
       "syntax": [
         {
           "text": "show ip route",
@@ -27,7 +27,7 @@
     "teaching": {
       "sectionId": "longest-prefix-match-the-forwarding-decision",
       "hint": "A destination-specific lookup takes the packet's address, not a guessed network address.",
-      "takeaway": "Use the returned prefix to explain the forwarding choice. If only a default should apply, inspect the full table as well because destination-lookup display behavior varies by IOS image.",
+      "takeaway": "The output names the longest matching installed prefix with its source, distance and next hop. If only the default route matches, IOS reports that the network is not in the table, so read the full table too.",
       "syntax": [
         {
           "text": "show ip route",

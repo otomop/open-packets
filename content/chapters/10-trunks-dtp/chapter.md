@@ -26,18 +26,19 @@ sources:
   - { title: "Cisco: VMware Infrastructure in a Cisco Network — VLAN tagging architecture", url: "https://www.cisco.com/c/en/us/td/docs/solutions/Enterprise/Data_Center/vmware/vmware/VMware.html" }
 ---
 
-VLANs separate Layer 2 traffic. A trunk lets you extend several of those VLANs across one Ethernet connection without joining their broadcast domains. This chapter builds on access-port membership: you will follow a frame across a trunk, configure both ends deliberately, and use the switch's evidence to distinguish a working link from a working VLAN.
+You have two switches, and each has PCs in VLAN 10 and VLAN 20. Chapter 9 gave every access port exactly one VLAN, so joining the switches with access ports would cost one cable and two ports for every VLAN you extend. A trunk removes that cost: one link carries many VLANs, and a small tag on each frame says which VLAN it belongs to.
 
-Static 802.1Q configuration is the main skill. DTP is supporting knowledge for recognizing existing Cisco configurations. The endpoint examples teach the switch-side tagging requirements of APs, virtual hosts and appliances; their complete wireless, virtualization and security configurations come later.
+In this chapter you follow a frame across a trunk, read the 802.1Q tag, and configure both ends of a static trunk with a native VLAN and an allowed list. You also learn how Cisco's DTP can form a trunk by negotiation, and why you normally turn it off. By the end you can build a trunk, predict what any two DTP modes produce, and work out why one VLAN fails on a link that is otherwise up.
 
 ## Why one link must carry many VLANs
 
 :::facts
-- An 802.1Q trunk carries the VLANs permitted and operational on that link.
+- An 802.1Q trunk carries every VLAN that is allowed and active on that link.
 - Tagging identifies a frame's VLAN; it does not route between VLANs.
-- A normal 802.1Q tag adds **4 bytes**. Its VLAN ID field is **12 bits**.
-- VLAN IDs **1–4094** are usable identifiers in the standard; platform reservations and VLAN support still apply.
-- On the Catalyst configurations used here, the default native VLAN is **1**. Ordinary native-VLAN data is untagged unless native tagging is explicitly enabled on a supporting platform.
+- An 802.1Q tag adds **4 bytes**. Its VLAN ID field is **12 bits**.
+- Usable VLAN IDs are **1–4094**; 0 and 4095 are reserved.
+- The native VLAN is **1** by default. Frames in the native VLAN cross the trunk untagged.
+- A Catalyst 2960 port defaults to **dynamic auto**: it becomes a trunk only if the other end asks.
 :::
 
 Suppose SW1 has a PC in VLAN 10 and another in VLAN 20. SW2 has the same arrangement. Connecting an access port in VLAN 10 on each switch extends VLAN 10, but does nothing for VLAN 20. Two separate access links could carry the two VLANs, but that consumes another port and cable for every added VLAN. A trunk carries both on one connection while retaining their identities.
@@ -60,13 +61,13 @@ The tag sits after the source MAC address and before the original EtherType fiel
 
 The **tag protocol identifier**, or TPID, identifies the 802.1Q tag. The **priority code point** is a three-bit priority value; it does not choose a VLAN or guarantee that a packet receives priority throughout a network. The **drop eligible indicator** supports traffic treatment under congestion. The **VLAN identifier**, or VID, determines the tagged VLAN. Older documentation may call the one-bit field CFI; DEI is the terminology used here.
 
-Twelve bits provide 4,096 numeric values. VID 0 is used for priority tagging without identifying a VLAN, and 4095 is reserved. That leaves identifiers 1 through 4094. This is an identifier range, not a promise that every switch supports 4,094 simultaneously active VLANs or allows you to create every number. For these labs, ordinary VLANs 10, 20, 30 and 99 avoid platform-specific reserved ranges.
+Twelve bits provide 4,096 numeric values. VID 0 is used for priority tagging without identifying a VLAN, and 4095 is reserved. That leaves identifiers 1 through 4094. A particular switch may support fewer active VLANs than that, and Cisco reserves 1002–1005 for legacy uses, so the labs stay with ordinary numbers such as 10, 20, 30 and 99.
 
 ## Native VLAN and untagged traffic
 
-A receiving trunk needs a rule for a frame that has no VLAN tag. Under the default behavior used in this chapter, it assigns ordinary untagged data to the port's **native VLAN**. In the reverse direction, ordinary data belonging to that native VLAN leaves untagged. Data in the other allowed VLANs carries a tag. Configure native VLAN 99 at both ends and an untagged frame retains the intended VLAN 99 membership across the link.
+A trunk needs a rule for a frame that arrives with no VLAN tag. It puts that frame in the port's **native VLAN**. In the other direction, frames that belong to the native VLAN leave the trunk untagged, and frames in every other allowed VLAN carry a tag. The native VLAN is 1 unless you change it. Configure native VLAN 99 at both ends and an untagged frame stays in VLAN 99 across the link.
 
-A native mismatch breaks that agreement. If SW1 sends untagged VLAN 99 traffic but SW2 classifies untagged traffic as VLAN 999, the two switches interpret the same frame differently. This can misclassify traffic or trigger protective spanning-tree behavior. Cisco discovery protocols may report a mismatch, but the exact messages and consequences depend on the platform and features in use. Compare both ends instead of waiting for a particular warning.
+A native mismatch breaks that agreement. If SW1 sends VLAN 99 frames untagged but SW2's native VLAN is 999, SW2 puts those frames in VLAN 999. Traffic leaks from one VLAN into the other, and hosts in the native VLAN lose contact. Cisco switches usually warn you: CDP (chapter 12) logs `%CDP-4-NATIVE_VLAN_MISMATCH`, and per-VLAN spanning tree can block the affected VLANs on that port. The reliable check is to compare the `Native vlan` column of `show interfaces trunk` on both ends.
 
 | Setting | What it controls | What it does not establish |
 |---|---|---|
@@ -77,19 +78,19 @@ A native mismatch breaks that agreement. If SW1 sends untagged VLAN 99 traffic b
 
 Management traffic can be tagged. Calling VLAN 99 “management” does not make it native; setting it as native does not give any device an IP address. In the main lab, VLAN 99 is an unused native VLAN with no attached endpoints.
 
-:::trap Native VLAN is a configuration agreement
-Some platforms support explicit native-VLAN tagging. Those configurations change the default treatment described above and require compatible settings at the peer. Do not enable a new tagging feature or change a live native VLAN simply because an example uses VLAN 99. Establish the intended design and a recovery path first.
+:::trap The native VLAN is not negotiated
+Each end sets its own native VLAN and nothing forces them to match. A trunk with mismatched native VLANs still comes up and still carries its tagged VLANs, so the mistake is easy to miss. Set the same native VLAN on both ends. Common practice is to use a VLAN with no hosts, such as 99, so that no user traffic crosses the trunk untagged.
 :::
 
 ## The allowed VLAN list
 
-The **allowed list** is configured independently on each trunk port. It limits the VLANs eligible to cross that port. On the Catalyst defaults described by the cited guides, all supported VLAN IDs are allowed initially. Explicitly listing the required VLANs makes the intended connection easier to review. Both ends must permit a VLAN, and the VLAN must exist and be operational wherever the switching path needs it.
+The **allowed list** is set separately on each trunk port and limits which VLANs may cross it. By default a trunk allows all VLANs, 1–4094. Listing only the VLANs you need keeps unwanted broadcasts off the link and makes the design easy to review. A VLAN crosses the trunk only if both ends allow it and the VLAN exists on both switches.
 
 The difference between replacing and modifying a list matters. If the current list is `10,20,99`, the command `switchport trunk allowed vlan 30` replaces it with just 30. The command `switchport trunk allowed vlan add 30` preserves the existing list and adds 30. Likewise, `remove 20` removes only VLAN 20. The `all` keyword restores permission for all supported VLANs; it is not the intended restricted list for this lab. Before changing a live trunk, record its current list and identify which users and management sessions rely on it.
 
 A configured VLAN can still be unable to forward. Think through three questions in order: is it allowed, is it active locally, and is this port forwarding it? Spanning tree may hold a redundant path out of forwarding to prevent a loop; you will learn those decisions in chapter 14. For now, recognize that physical link state and VLAN forwarding state are separate.
 
-Removing VLAN 1 from the user VLAN list does not silence every link-control protocol. Cisco documents continued transmission of several control protocols despite that removal. Treat a VLAN filter as a user-traffic setting, not as a general instruction to disable discovery, negotiation or loop prevention.
+Removing VLAN 1 from the allowed list stops user data in VLAN 1, but the switch still sends its own link-control protocols, such as CDP and DTP, on that trunk. The allowed list filters user traffic; it does not turn those protocols off.
 
 ## Configure a static trunk
 
@@ -111,7 +112,7 @@ SW1# show interfaces gigabitethernet0/1 switchport
 
 The mode command establishes the local trunk configuration. The native and allowed commands define its VLAN behavior. `switchport nonegotiate` suppresses DTP messages; it does not disable 802.1Q tagging. `no shutdown` removes an administrative shutdown, but cannot fix a cable or power problem.
 
-A Catalyst 2960 uses 802.1Q without an encapsulation-selection command. Some older interfaces that support a choice of trunk encapsulations require `switchport trunk encapsulation dot1q` before accepting static trunk mode. Use the actual interface's help and platform documentation; do not paste that selector into every model. ISL recognition is historical context, not a second trunk technology to deploy in this lab.
+A Catalyst 2960 uses 802.1Q without an encapsulation-selection command. Some older interfaces that support a choice of trunk encapsulations require `switchport trunk encapsulation dot1q` before accepting static trunk mode. The other choice on those interfaces is ISL, Cisco's older proprietary trunk encapsulation. Current switches support only 802.1Q.
 
 ## Trunks to APs and virtual hosts
 
@@ -138,18 +139,24 @@ The same question applies to a firewall or other network appliance: does this pa
 
 ## Recognize DTP negotiation
 
-**Dynamic Trunking Protocol**, or DTP, is Cisco negotiation for trunk formation on supporting switch ports. It is distinct from 802.1Q, which identifies VLANs in frames. A device can understand 802.1Q without participating in DTP. Routers and ordinary virtual-host uplinks should therefore receive an explicitly configured switch trunk.
+**Dynamic Trunking Protocol (DTP)** is a Cisco protocol that lets two switch ports agree whether their link is a trunk. It is separate from 802.1Q: DTP decides whether the link trunks, and 802.1Q is how frames are tagged once it does. Only Cisco switches speak DTP. Routers, servers, firewalls and APs do not, so a port that faces one of them must be made a trunk by hand.
 
-| Local mode | Meaning | Common peer result |
-|---|---|---|
-| `access` | Keep the local port nontrunking | Use for a single ordinary access VLAN |
-| `trunk` | Keep the local port trunking | With DTP enabled, a compatible auto peer can form a trunk; with `nonegotiate`, configure the peer statically |
-| `dynamic auto` | Willing to trunk if the peer initiates | Auto with auto remains nontrunking |
-| `dynamic desirable` | Actively tries to negotiate a trunk | Desirable with auto can form a trunk |
+| Mode command | What the port does |
+|---|---|
+| `switchport mode access` | Never trunks |
+| `switchport mode trunk` | Always trunks, and still sends DTP so that a dynamic neighbor follows |
+| `switchport mode dynamic auto` | Passive: trunks only if the neighbor is `trunk` or `dynamic desirable` |
+| `switchport mode dynamic desirable` | Active: asks the neighbor to trunk |
 
-These dynamic-mode results assume compatible, operational Cisco peers with DTP running. The cited Catalyst 2960 guide documents dynamic auto as its default; verify actual defaults rather than extending that claim to every Catalyst platform. `nonegotiate` is not another switchport mode. With static trunk mode, it stops sending negotiation messages while the trunk continues to carry tagged traffic.
+The rule behind every combination is that one side must ask. `trunk` and `dynamic desirable` ask; `dynamic auto` only answers; `access` refuses.
 
-For CCNA preparation, recognize why two passive ports do not form a trunk and why a non-DTP peer requires manual configuration. The lab deliberately builds static trunks. Memorizing negotiation timers, destination MAC addresses or every obsolete encapsulation combination adds little to that task.
+```diagram
+{"type":"matrix","title":"Fig 10.3 — What two DTP modes produce","rows":["dynamic auto","dynamic desirable","trunk","access"],"cols":["dynamic auto","dynamic desirable","trunk","access"],"cells":[["Access","Trunk","Trunk","Access"],["Trunk","Trunk","Trunk","Access"],["Trunk","Trunk","Trunk","Mismatch"],["Access","Access","Mismatch","Access"]],"tones":{"Trunk":"accent","Access":"neutral","Mismatch":"bad"},"caption":"Rows are one end, columns the other. Trunk with access is a misconfiguration: one end tags frames and the other does not."}
+```
+
+Two results are worth memorizing. Auto with auto stays an access link, because neither side asks. The Catalyst 2960 and most current Catalyst switches default to dynamic auto, so two new switches cabled together do not trunk until you configure one end. Older models defaulted to dynamic desirable, which is why the exam gives you the modes instead of expecting you to assume them.
+
+`switchport nonegotiate` stops a port sending DTP. It is not a fifth mode: you add it to a port already set to `trunk` or `access`. The trunk keeps tagging frames, but a dynamic auto neighbor no longer hears a request and stays an access port, so set the neighbor to `trunk` as well. Leaving DTP running on ports that face users lets an attacker's device ask for a trunk, which is the main reason to configure every port as a static access or trunk port and disable negotiation.
 
 ## Verify and troubleshoot
 

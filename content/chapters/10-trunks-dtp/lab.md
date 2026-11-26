@@ -148,7 +148,7 @@ SW2# show interfaces trunk
 ```
 
 :::expected
-Gi0/1 is an operational 802.1Q trunk with native VLAN 99 at both ends. The allowed list is 10,20,99. After startup convergence, those active VLANs should also appear in the forwarding list for this single interswitch path. The 2960 does not need an encapsulation-selection command. If your simulator rejects a command, record the model and rejection; do not substitute dynamic mode for the static trunk.
+Gi0/1 is an operational 802.1Q trunk with native VLAN 99 at both ends. The allowed list is 10,20,99. After startup convergence, those active VLANs should also appear in the forwarding list for this single interswitch path. The 2960 does not need an encapsulation-selection command.
 :::
 
 ```state
@@ -239,7 +239,7 @@ The list again contains 10,20,99. After the VLAN is forwarding, both same-VLAN p
 
 ## Step 7: Introduce a native mismatch and inspect both ends
 
-Change SW2's native VLAN to 999 while leaving SW1 at 99. Create VLAN 999 locally and allow it so its local existence is not an additional fault. Before the commands, predict the VLAN into which SW2 would classify an ordinary untagged frame from SW1. This exercise observes a configuration mismatch; no endpoint uses the native VLAN, so a particular ping failure is not required.
+Change SW2's native VLAN to 999 while leaving SW1 at 99. Create VLAN 999 locally and allow it so its local existence is not an additional fault. Before the commands, predict the VLAN into which SW2 would classify an ordinary untagged frame from SW1. No PC uses the native VLAN, so this step is about reading the mismatch, not about a failed ping.
 
 ```ios SW2
 SW2# configure terminal
@@ -260,7 +260,7 @@ SW1# show interfaces trunk
 ```
 
 :::expected
-The explicit evidence is native VLAN 99 on SW1 versus 999 on SW2. If CDP warnings or spanning-tree protection appear, record them; their exact behavior is platform dependent. Tagged VLAN tests may continue working or be affected by protective behavior. Explain the fundamental fault: an ordinary untagged frame sent as VLAN 99 by SW1 would be classified into VLAN 999 by SW2. Do not disable spanning tree to make the symptom disappear.
+`show interfaces trunk` reports native VLAN 99 on SW1 and 999 on SW2. Both consoles should also log `%CDP-4-NATIVE_VLAN_MISMATCH`: CDP is a Cisco neighbor protocol, covered in chapter 12, that compares the native VLAN each end advertises. Spanning tree may log that it is blocking VLAN 99 or 999 on Gi0/1 as inconsistent. Record the messages you see. The fault itself is that an untagged frame sent by SW1 in VLAN 99 is placed in VLAN 999 by SW2. The VLAN 10 and 20 pings carry tags, so they normally still pass.
 :::
 
 ```state
@@ -292,7 +292,7 @@ Both ends again use native VLAN 99 and allow 10,20,99. Allow convergence and rep
 
 ## Step 9: Prepare a disconnected AP port
 
-Leave SW1 Gi0/2 uncabled and administratively shut down. Configure only the switch side of an AP design: untagged management VLAN 100 and tagged client VLANs 110 and 120. This is a configuration inspection exercise; it does not simulate a FlexConnect AP. Write the required mode, native VLAN, allowed list and DTP setting before opening the reference. Then apply it to the disconnected port and record what configuration can prove without a working link.
+Leave SW1 Gi0/2 uncabled and administratively shut down. Configure only the switch side of an AP design: untagged management VLAN 100 and tagged client VLANs 110 and 120. No AP is attached; you are practising the switch-side template from the lesson. Write the required mode, native VLAN, allowed list and DTP setting before opening the reference. Then apply it to the disconnected port and record what configuration can prove without a working link.
 
 :::solution Switch-side reference
 
@@ -368,7 +368,7 @@ Submit the following evidence before completion:
 - Gi0/2 is missing from operational trunks: expected in step 9 because it is shut and uncabled; inspect its administrative configuration.
 - Pings between different VLANs fail: expected in this lab because no inter-VLAN gateway exists.
 - First ping partly fails: repeat after ARP resolution and spanning-tree startup. Persistent failure needs investigation.
-- A native mismatch produces a different warning or state: rely on the demonstrated settings at both ends, not a memorized message.
+- No native-mismatch message appears: the settings are still the evidence. Compare the native VLAN in `show interfaces trunk` on both switches.
 
 ## Challenge
 

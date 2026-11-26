@@ -90,7 +90,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two protocol identifiers are correct for the ordinary IPsec arrangements in this chapter? Choose two.",
+    "prompt": "Which two protocol identifiers are correct? Choose two.",
     "options": [
       "AH is UDP destination port 51",
       "Native ESP is IP protocol 50",

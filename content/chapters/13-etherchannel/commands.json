@@ -79,7 +79,7 @@
     "answer": "show lacp neighbor",
     "accept": [],
     "teaching": {
-      "sectionId": "negotiating-the-bundle-lacp-pagp-and-on",
+      "sectionId": "reading-the-output",
       "hint": "Use protocol-partner evidence, not only local group numbers.",
       "takeaway": "Both members should identify the intended common partner system, with the appropriate remote ports. Matching local channel-group numbers alone does not establish that relationship.",
       "syntax": [

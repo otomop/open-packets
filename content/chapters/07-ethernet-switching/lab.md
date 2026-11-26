@@ -2,9 +2,9 @@
 title: Watch a switch learn, flood and forget
 environment: packet-tracer
 devices: ["2 × Catalyst 2960 (S1, S2)", "3 × PC-PT (PC-A, PC-B, PC-C)"]
-minutes: 65
+minutes: 80
 ---
-Build a small LAN and follow the switch's table as hosts transmit. Separate host ARP state from switch MAC state, then move two hosts behind another switch and diagnose a deliberately incorrect static entry. Output below is representative teaching output, not a record of an executed Packet Tracer session; use the MAC addresses and supported commands shown by your installed version.
+You will watch the lesson's learn, forward and flood rules happen one frame at a time. First a single switch learns three hosts and floods an unknown unicast. Then two hosts move behind a second switch, so one port learns several addresses. Finally a wrong static entry breaks one host, and you find and remove it. Output below is representative, not captured from Packet Tracer; your MAC addresses will differ, so record and use your own.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
@@ -42,7 +42,7 @@ Create S1 and the three PCs, connect their initial ports, and set each static ad
 ipconfig /all
 ```
 
-The interface-range and switchport commands below are supplied setup for one VLAN: they select several ports, make them ordinary access ports in VLAN 1, and enable them. You are not yet expected to design a VLAN configuration independently; Chapter 09 teaches that work.
+The switch commands below are setup that Chapter 09 teaches properly; for now, type them as given. `interface range` selects several ports at once, and the two `switchport` commands make them ordinary host (access) ports in VLAN 1. `show interfaces status` then lists each port's link state and VLAN, and `show vlan brief` lists the ports in each VLAN.
 
 On S1, decline an initial setup dialog if offered, enter the CLI, and configure the host ports explicitly:
 
@@ -60,7 +60,7 @@ S1# show vlan brief
 ```
 
 :::expected
-The selected ports belong to VLAN 1 and the cabled links become operational. Wait until the ports are forwarding before beginning captures. Record real MAC values from your PCs; the sample addresses used later are illustrations. Link initialization can take time, but no exact color-change timer is a success criterion.
+Fa0/1–3 show as connected in VLAN 1. Wait until the link lights turn green, about 30 seconds, before you capture anything. The sample MAC addresses used later stand for the real ones you recorded.
 :::
 
 ```state
@@ -69,7 +69,7 @@ The selected ports belong to VLAN 1 and the cabled links become operational. Wai
 
 ## Step 2: Start from an empty table
 
-Before generating test traffic, inspect and clear S1's dynamic table. This clears learned forwarding state on the switch, not the PCs' ARP caches. Do not clear or change configuration on any other device.
+Before generating test traffic, inspect and clear S1's dynamic table. This removes what the switch has learned; it does not touch the PCs' ARP caches.
 
 ```ios S1
 S1# show mac address-table
@@ -78,7 +78,7 @@ S1# show mac address-table
 ```
 
 :::expected
-The dynamic host entries have been removed. Reserved/static rows can differ by platform and simulator; do not require a completely blank display. If a host transmits background traffic, a dynamic row can reappear immediately. Identify it by the source MAC you recorded and clear again just before the next controlled test if necessary.
+The dynamic host entries are gone. If a PC sends background traffic, its row reappears at once; clear again just before the next test if that happens.
 :::
 
 ```state
@@ -86,10 +86,10 @@ The dynamic host entries have been removed. Reserved/static rows can differ by p
 ```
 
 ## Step 3: One ping, one frame at a time
-Before advancing a frame, write its source, destination, expected learned row and expected egress ports. Use the first ARP request as your worked example; predict the reply before clicking Capture/Forward again.
 
+Before you advance each frame, write down its source, its destination, the row the switch will learn and the ports the frame will leave by.
 
-Enter **Simulation** mode and use **Edit Filters** to select ARP and ICMP. On PC-A, inspect `arp -a`; because this is a fresh topology, PC-B's mapping should be absent. If it is already present, restart with a fresh PC or clear that PC's ARP cache using its supported command (`arp -d` in versions that support it), and verify absence with `arp -a`. Clear S1's dynamic table again after any preparatory traffic.
+Enter **Simulation** mode and use **Edit Filters** to select ARP and ICMP. On PC-A, run `arp -a`; PC-B's mapping should be absent. If it is present, remove it with `arp -d` and check again. Clear S1's dynamic table again after any preparatory traffic.
 
 Start the ping on PC-A and use **Capture/Forward** to follow events:
 
@@ -121,7 +121,7 @@ Vlan    Mac Address       Type        Ports
 
 ## Step 4: Bring PC-C into the table
 
-From PC-A, ping C and then display the table. A successful reply requires C to transmit, providing a source from which the switch can learn.
+PC-C has received frames but never sent one, so S1 has not learned it. From PC-A, ping C and then display the table. To reply, C must transmit, and that gives the switch a source to learn.
 
 ```text PC-A
 ping 192.168.90.30
@@ -129,11 +129,10 @@ ping 192.168.90.30
 
 ```ios S1
 S1# show mac address-table
-S1# show mac address-table count
 ```
 
 :::expected
-C appears as a dynamic address on Fa0/3, and A and B may remain if their entries have not aged out. Count the three recorded host addresses rather than assuming all table rows are host rows. If `count` is unsupported, the plain display is sufficient; it is the MAC-to-port mapping that proves the result.
+C appears as a dynamic entry on Fa0/3. A and B are still present unless five minutes have passed since they last sent a frame.
 :::
 
 ```state
@@ -165,13 +164,13 @@ A already knows B's MAC, so it can send an ICMP frame addressed to that unicast 
 
 ## Step 6: Explain aging from source evidence
 
-Inspect the currently configured timer if your image supports this command:
+Display the aging timer, if your Packet Tracer release supports the command:
 
 ```ios S1
 S1# show mac address-table aging-time
 ```
 
-The following is a paper experiment, so no timer change or several-minute wait is required. Complete the last row before reading the answer.
+Waiting five minutes proves little, so work the timeline below on paper. Complete the last row before reading the answer.
 
 | Time | Event on an otherwise quiet VLAN 1 |
 |---|---|
@@ -179,10 +178,10 @@ The following is a paper experiment, so no timer change or several-minute wait i
 | 200 s | A sends a frame to B; B sends no response or other frame |
 | 301 s | Inspect B's entry, with the dynamic aging interval explicitly set to 300 s |
 
-Explain whether the frame **to** B refreshed B's entry. Then compare a static B entry with the dynamic one. If you choose to observe real aging, record your image's timer and all actual source traffic; do not assume the worksheet guarantees a simulator timing result.
+Decide whether the frame sent **to** B at 200 s refreshed B's entry. Then say what would differ if B's entry were static.
 
 :::expected
-The frame from A refreshes A, not B. In this stated worksheet, B supplies no source frame after time 0, so its dynamic entry is eligible to age out after the configured interval. A configured static entry is different: it does not age and is not removed by clearing dynamic state. Unsupported timer displays can be replaced by this explicitly labeled worksheet.
+The frame from A refreshes A, not B. B sends nothing after time 0, so its dynamic entry has aged out by 301 s, and the next frame for B is flooded. A static entry would still be there: it does not age and is not removed by `clear mac address-table dynamic`.
 :::
 
 ```state
@@ -191,9 +190,7 @@ The frame from A refreshes A, not B. In this stated worksheet, B supplies no sou
 
 ## Step 7: Add a second switch and watch one port learn two MACs
 
-Reuse the supplied one-VLAN setup pattern from Step 1; the learning task is the MAC path across the link.
-
-Add a new 2960 named S2. Connect S1 Fa0/24 to S2 Fa0/24, then move B to S2 Fa0/2 and C to S2 Fa0/3. Keep A on S1 Fa0/1. Both ends of the inter-switch link are deliberately access ports in VLAN 1; this exercise carries one VLAN and does not require a trunk.
+Add a new 2960 named S2. Connect S1 Fa0/24 to S2 Fa0/24, then move B to S2 Fa0/2 and C to S2 Fa0/3. Keep A on S1 Fa0/1. The port setup repeats Step 1. Both ends of the link between the switches are access ports in VLAN 1, which is enough to carry one VLAN.
 
 ```diagram
 { "type": "topology", "title": "Step 7 topology: B and C behind S2",
@@ -262,7 +259,7 @@ S2# show mac address-table
 ```
 
 :::expected
-S1 reaches B and C through Fa0/24, so their two different MACs appear on that one port. A is learned DYNAMIC on S1 Fa0/1. S2 learns A through its Fa0/24, B on Fa0/2, and C on Fa0/3. Check the three known host addresses rather than predicting every control-plane entry the simulator may show.
+S1 reaches B and C through Fa0/24, so their two different MACs appear on that one port. A is learned DYNAMIC on S1 Fa0/1. S2 learns A through its Fa0/24, B on Fa0/2, and C on Fa0/3. Each switch may also show the other switch's own port MAC on Fa0/24; ignore it.
 :::
 
 ```state
@@ -301,7 +298,7 @@ Press Enter at each destination-filename prompt. Save `07-switching-baseline.pkt
 :::expected
 For the paper exchange, S2 sees B on Fa0/2 and S1 sees B through Fa0/24 because the broadcast crosses the uplink. C's reply goes directly from S2 Fa0/3 to its known B port, so S1 does not learn C from that reply.
 
-For the live move, A's first new source frame updates its dynamic entry to Fa0/4. Correct host ARP information can remain; the switch learns a new physical path for the same source MAC. After the explicit restoration and new source traffic, A should be learned on Fa0/1 again. Record actual table rows and any simulator limitation separately.
+For the live move, A's first new source frame updates its dynamic entry to Fa0/4. Correct host ARP information can remain; the switch learns a new physical path for the same source MAC. After you restore the cable and A sends again, A is learned on Fa0/1 once more.
 :::
 
 ```state
@@ -310,7 +307,7 @@ For the live move, A's first new source frame updates its dynamic entry to Fa0/4
 
 ## Step 9: Introduce one incorrect static entry
 
-In this isolated lab only, point B's MAC at S1 Fa0/1, which actually leads to A. Substitute **B's actual MAC for `00bb.bbbb.bbbb`**. This is one deliberate change; do not change addresses, cabling, or VLANs.
+The lesson said a static entry on the wrong port keeps sending a host's traffic the wrong way. Create that fault: point B's MAC at S1 Fa0/1, which actually leads to A. Substitute **B's actual MAC for `00bb.bbbb.bbbb`**. Change nothing else.
 
 ```ios S1
 S1# configure terminal
@@ -321,7 +318,7 @@ S1# clear mac address-table dynamic
 S1# show mac address-table
 ```
 
-From A, retry a ping to B and then to C. If supported, inspect B's unicast request in Simulation mode after address resolution. Read the STATIC row before attempting any repair.
+From A, ping B and then C. In Simulation mode, watch what S1 does with the frame addressed to B. Read the STATIC row before you attempt any repair.
 
 ```text PC-A
 ping 192.168.90.20
@@ -329,7 +326,7 @@ ping 192.168.90.30
 ```
 
 :::expected
-Traffic for B is directed by the incorrect static row. In particular, a B-destined unicast frame arriving from A on Fa0/1 has a destination mapped to that same ingress port, so S1 filters it rather than forwarding toward S2. A-to-B ping fails while A-to-C can still work. Clearing dynamic entries does not remove this fault because the offending entry is static. If the simulator rejects static configuration, use this as a paper diagnosis from the displayed command rather than claiming to have reproduced the failure.
+S1 now believes B is on Fa0/1. A frame from A to B arrives on Fa0/1 with a destination mapped to that same port, so S1 filters it instead of forwarding it toward S2. The ping from A to B fails while the ping from A to C still works. Clearing dynamic entries does not help because the entry is static. If your Packet Tracer release rejects the static command, work the diagnosis on paper from the command shown.
 :::
 
 ```state
@@ -338,7 +335,7 @@ Traffic for B is directed by the incorrect static row. In particular, a B-destin
 
 ## Step 10: Recover the fault and confirm the baseline
 
-Remove only the B static entry created in Step 9. Substitute B’s actual recorded MAC for 00bb.bbbb.bbbb in the removal command, exactly as you did when creating the fault. Generate traffic again to relearn the correct path and verify both hosts. Do not save until the correct behavior has returned.
+Remove the static entry with the `no` form of the command that created it, again using B's actual MAC in place of `00bb.bbbb.bbbb`. Then send traffic so the switch relearns the correct path, and verify both hosts before you save.
 
 ```ios S1
 S1# configure terminal
@@ -358,23 +355,18 @@ S1# copy running-config startup-config
 ```
 
 :::expected
-B is learned dynamically through Fa0/24, both pings succeed, and the wrong static row is absent. Accept the destination filename prompt when saving the device. Save the repaired topology as `switching-lab.pkt`. Your notes should connect the symptom, incorrect entry, failed dynamic clear, precise removal, and successful retest.
+B is learned dynamically through Fa0/24, both pings succeed, and the static row is gone. Accept the destination filename prompt when saving the device. Save the repaired topology as `switching-lab.pkt`.
 :::
 
+Before the challenge, check that you can explain each result from your notes:
 
-
-Before saving completion, submit the following evidence. State whether each part was observed or completed from a supplied worksheet.
-
-| Skill | Required evidence |
+| Step | What you should be able to explain |
 |---|---|
-| Learning versus lookup | Identify the source that was learned and the destination that selected egress |
-| Unknown unicast | Show a unicast destination, missing switch entry and eligible egress set |
-| Host state versus switch state | Explain why a retained ARP mapping can coexist with an empty MAC table |
-| Two-switch path | Give the MAC/port rows on both switches and explain any absent source |
-| Source movement | Show the updated location after the host transmits |
-| Fault and repair | Identify the static row, remove that exact entry, and verify correct relearning |
-
-The fault in Step 9 was deliberately known. The challenge below is your independent prediction: write the result before consulting its answer key.
+| 3 and 4 | Which source each frame taught the switch, and which destination chose the egress port |
+| 5 | Why a unicast frame was flooded while PC-A's ARP cache still held B's MAC |
+| 7 | Why S1 shows two MAC addresses on Fa0/24 |
+| 8 | Why A's entry moved as soon as A sent a frame on the new port |
+| 9 and 10 | Why clearing dynamic entries did not fix B, and what did |
 
 ```state
 {"topology":2,"status":"Static removed · B relearned","tone":"ok","focus":["S1"],"chips":[{"node":"S1","text":"STATIC B's MAC → Fa0/1","tone":"bad","until":0},{"node":"S1","text":"B DYNAMIC via Fa0/24","tone":"ok","from":2}],"flows":[{"event":["S1"],"wait":1.2,"tags":{"S1":"Static B row removed · dynamic cleared"}},{"path":["A","S1","S2","B"],"back":true,"label":"Ping A to B","backTags":{"S1":"Learn B on Fa0/24 · DYNAMIC"}},{"path":["A","S1","S2","C"],"back":true,"label":"Ping A to C"}],"rows":[["STATIC row","Removed","ok"],["B","DYNAMIC via Fa0/24","ok"],["A to B, A to C","Both succeed","ok"],["Saved","switching-lab.pkt"]]}
@@ -385,7 +377,7 @@ The fault in Step 9 was deliberately known. The challenge below is your independ
 - **Host absent from the MAC table:** verify the link and VLAN, generate traffic from that host, then inspect promptly. Merely connecting or receiving is insufficient evidence of learning.
 - **ARP appears before the intended unknown-unicast test:** A lacks a current mapping for B; refresh ARP, clear only S1's dynamic entries, and repeat immediately.
 - **Multiple hosts appear on Fa0/24:** compare with the final topology; this is expected for B and C behind S2.
-- **Aging or a display keyword is unsupported:** record the simulator limitation; use the full table and controlled dynamic clear. CML images also differ, so do not assume every virtual image implements every hardware command.
+- **A display keyword is unsupported:** use the plain `show mac address-table` and `clear mac address-table dynamic` instead.
 - **Failure persists after clearing dynamic entries:** check for the deliberately configured STATIC row and remove its exact configuration.
 - **Ping fails after moving cables:** check final port assignments, VLAN 1 on both inter-switch ends, and forwarding state. Do not add a second switch link to troubleshoot the first.
 

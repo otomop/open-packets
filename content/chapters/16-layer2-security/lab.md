@@ -6,11 +6,11 @@ minutes: 110
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build a working IPv4 LAN, apply one control at a time, and diagnose a controlled failure from its evidence. The final exercise covers IPv6 RA guard. Keep the exercises on an isolated lab network.
+You will build a small IPv4 LAN, then add port security, DHCP snooping, DAI and storm control one at a time. For each control you watch it block something, read the evidence on the switch, and repair the fault. The last module applies RA guard to IPv6. Keep everything on an isolated lab network.
 
-Record your Packet Tracer version and check the selected switch's command help. It implements a subset of IOS; DHCP snooping, DAI, ARP ACL and storm-control support vary by simulated device and version. If a required command is missing, use a supporting image or switch, or complete that step as an interpretation exercise and record it as **not executed**. For v2.0, return to any unexecuted configuration objective on a supporting platform.
+Packet Tracer implements a subset of IOS, and its support for DHCP snooping, DAI, ARP ACLs and storm control varies with the switch model and Packet Tracer version. If a command is missing, use a switch that supports it, or work the step from the supplied values and record it as **not executed**. For v2.0, come back to any step you could not run when you have a supporting platform.
 
-Use four separate study sessions if needed: **A, Steps 1–4: source-MAC policy**; **B, Steps 5–9: DHCP and ARP dependencies**; **C, Step 10: storm-policy interpretation**; **D, Steps 11–13: supported IPv6 RA guard or its worksheet**. Step 14 verifies and saves the results. DHCP server and IPv6 router setup are supplied supporting configuration; their full operation is taught in Chapters 24 and 19. Revisit these controls after those protocol chapters.
+The lab has four modules that you can do in separate sessions: **A, Steps 1–4: port security**; **B, Steps 5–9: DHCP snooping and DAI**; **C, Step 10: storm control**; **D, Steps 11–13: IPv6 RA guard on a supporting switch, or its paper path**. Step 14 verifies and saves the results. The DHCP server and IPv6 router commands are supplied and explained briefly where they appear; Chapters 24 and 19 teach them in full.
 
 ## Topology
 
@@ -35,7 +35,7 @@ Set the printer's address and gateway in its Config tab. R1 is the supplied DHCP
 - `ip dhcp pool USERS` opens a named set of lease settings; `network` identifies this pool's client subnet.
 - `default-router` supplies the client's gateway option. It does not create a route on R1.
 
-The switch's snooping binding is learned separately when it observes the PCs obtain leases. Configure R1 and SW1:
+Configure R1 and SW1:
 
 ```ios R1
 Router> enable
@@ -71,10 +71,10 @@ SW1(config-if)# end
 SW1# show vlan brief
 ```
 
-On each PC select Desktop → IP Configuration → DHCP. Record `ipconfig /all`, then ping `10.1.10.1` and `10.1.10.20`. Wait for ports to forward and repeat initial pings if ARP resolution consumed an attempt. Record the printer's MAC from its interface information.
+On each PC select Desktop → IP Configuration → DHCP. Run `ipconfig /all` and record the PC's address and MAC, then ping `10.1.10.1` and `10.1.10.20`. A newly connected switch port takes about 30 seconds to start forwarding, and a first ping can time out while ARP resolves, so repeat a failed first attempt. Record the printer's MAC address from its Config tab; you need it in Step 9.
 
 :::expected
-R1 Gi0/0 is up/up and the switch ports belong to VLAN 10. The PCs have unique addresses in the pool and gateway `10.1.10.1`; both reach the gateway and printer. Correct this baseline before continuing.
+R1 Gi0/0 is up/up and the four switch ports belong to VLAN 10. Each PC has its own address from `10.1.10.50` upward and gateway `10.1.10.1`, and both reach the gateway and the printer. Get this baseline working before you continue.
 :::
 
 ```state
@@ -83,7 +83,7 @@ R1 Gi0/0 is up/up and the switch ports belong to VLAN 10. The PCs have unique ad
 
 ## Step 2: Module A — learn the authorized MAC
 
-Predict which MAC should occupy the single entry and whether that learned value will already be in startup configuration. Leave only PC-A attached to Fa0/1. Enable sticky learning and send another PC-A ping.
+Before you start, predict which MAC address will fill the single secure entry and whether it will be in the startup configuration. Make sure PC-A is the only device on Fa0/1, enable port security with sticky learning, then ping the gateway from PC-A so that the switch sees a frame from it.
 
 ```ios SW1
 SW1# configure terminal
@@ -96,22 +96,22 @@ SW1# show port-security address
 SW1# show running-config interface fastethernet0/1
 ```
 
-If the image rejects the interface-specific running-config command, find the block in `show running-config`. Compare the learned address with PC-A's actual MAC before saving.
+If your switch rejects `show running-config interface`, find the Fa0/1 block in `show running-config`. Compare the sticky address with the MAC you recorded for PC-A.
 
 :::expected
-Fa0/1 is secure-up with maximum 1, shutdown violation mode and PC-A's sticky entry in running configuration. Its presence there does not establish that startup configuration contains it.
+Fa0/1 is `Secure-up` with maximum 1 and violation mode shutdown, the defaults. PC-A's MAC appears as a sticky line in the running configuration. It is not in the startup configuration until you save.
 :::
 
 ```state
-{"status":"PC-A's MAC is sticky","tone":"ok","focus":["SW1","A"],"flows":[{"event":["SW1"],"wait":1.2,"tags":{"SW1":"Fa0/1 learns PC-A's MAC as sticky"}}],"roles":[{"node":"SW1","peer":"A","text":"secure-up","tone":"ok"}],"rows":[["Fa0/1","Secure-up · maximum 1","ok"],["Violation mode","Shutdown"],["Sticky entry","PC-A's MAC · running-config"],["Startup-config","Not shown to contain it yet","dim"]]}
+{"status":"PC-A's MAC is sticky","tone":"ok","focus":["SW1","A"],"flows":[{"event":["SW1"],"wait":1.2,"tags":{"SW1":"Fa0/1 learns PC-A's MAC as sticky"}}],"roles":[{"node":"SW1","peer":"A","text":"secure-up","tone":"ok"}],"rows":[["Fa0/1","Secure-up · maximum 1","ok"],["Violation mode","Shutdown"],["Sticky entry","PC-A's MAC · running-config"],["Startup-config","Not saved yet","dim"]]}
 ```
 
 ## Step 3: Module A — trigger a MAC-limit violation
 
-Disconnect PC-B from Fa0/2 and PC-A from Fa0/1. Connect PC-B to Fa0/1 and generate traffic. Keep PC-A's sticky entry and the existing maximum. Inspect `show port-security interface fastethernet0/1` and `show interfaces status`.
+Now put the wrong device on the secured port. Disconnect PC-B from Fa0/2 and PC-A from Fa0/1, then connect PC-B to Fa0/1. Leave the sticky entry and the maximum as they are. When the link comes up, ping the gateway from PC-B, then inspect `show port-security interface fastethernet0/1` and `show interfaces status`.
 
 :::expected
-PC-B presents a different source MAC while the one permitted entry belongs to PC-A. Shutdown mode error-disables the port; the security display indicates secure-shutdown and a violation. The whole port stops forwarding. If it remains up, verify the actual MACs and that PC-B transmitted.
+PC-B's source MAC is not the one secure address, so shutdown mode err-disables Fa0/1. The port status is `Secure-shutdown`, the violation count is 1 and `show interfaces status` lists the port as `err-disabled`. If the port stays up, check that PC-B really sent a frame and that the sticky entry is PC-A's MAC.
 :::
 
 ```state
@@ -131,10 +131,10 @@ SW1(config-if)# end
 SW1# show port-security interface fastethernet0/1
 ```
 
-Ping the gateway from PC-A. Keep maximum 1 because that is the intended policy here. Automatic error recovery cannot correct an unauthorized device that remains attached.
+Ping the gateway from PC-A. The order matters: remove the cause first, then reset the port. If PC-B were still attached, the port would shut down again at PC-B's next frame, and automatic err-disable recovery would repeat the same cycle.
 
 :::expected
-Fa0/1 returns to secure-up and PC-A regains service. Historical violation counters may remain; verify current state and a fresh traffic test.
+Fa0/1 returns to `Secure-up` and PC-A reaches the gateway. Judge the result by the current port status and a fresh ping; the violation count may still show the earlier incident.
 :::
 
 ```state
@@ -143,9 +143,9 @@ Fa0/1 returns to secure-up and PC-A regains service. Historical violation counte
 
 ## Step 5: Module B — establish snooping and fresh bindings
 
-Before configuration, trace R1’s Offer/ACK back to each client and mark the ingress at SW1. Predict which trust setting admits those server messages and why the client ports do not need it.
+Before you configure anything, trace R1’s Offer and ACK back to a client and note the port where they enter SW1. That port needs DHCP snooping trust. The client ports never receive server messages, so they stay untrusted.
 
-This simple design does not use Option 82 for server policy. Disable its insertion explicitly and trust the interface receiving R1's replies. Client ports remain untrusted.
+Nothing in this design uses Option 82, and R1 would reject requests that carry it, so turn its insertion off. The rate limit of 15 DHCP packets per second on the two PC ports is this lab's choice; there is no limit by default.
 
 ```ios SW1
 SW1# configure terminal
@@ -161,12 +161,12 @@ SW1(config-if-range)# end
 SW1# show ip dhcp snooping
 ```
 
-Run `ipconfig /release` and `ipconfig /renew` on each PC. If unavailable, use its IP Configuration controls to request a fresh lease. Compare `show ip dhcp snooping binding` on SW1 with `show ip dhcp binding` on R1. The server lease table and switch binding table are separate records.
+The PCs obtained their leases before snooping was on, so the switch has no bindings yet. On each PC run `ipconfig /release` to give up the lease and `ipconfig /renew` to request a new one, or switch IP Configuration to Static and back to DHCP. Then compare `show ip dhcp snooping binding` on SW1 with `show ip dhcp binding` on R1, which lists the leases the server has handed out. They are separate tables: the server records every lease, and the switch records only the exchanges it watched.
 
 :::expected
-Snooping covers VLAN 10, Gi0/1 is trusted, and each PC has a binding with its actual IP, MAC, VLAN and access port. No dynamic binding is expected for the static printer. A lease acquired before snooping was enabled does not establish a switch binding.
+`show ip dhcp snooping` lists VLAN 10 as inspected and Gi0/1 as trusted. Each PC has a binding with its own IP, MAC, VLAN 10 and access port. The static printer has none.
 
-If the feature is unavailable, use this separate authored binding worksheet: PC-A 10.1.10.50 / 00aa.0000.0001, VLAN 10, Fa0/1; PC-B 10.1.10.51 / 00bb.0000.0002, VLAN 10, Fa0/2. R1 lists those leases and the switch learned matching entries after the exchanges. Identify the fields needed to compare an ARP sender claim; do not substitute these illustrative identities for actual devices.
+If your switch lacks the feature, work from these supplied bindings instead: PC-A `10.1.10.50` / `00aa.0000.0001`, VLAN 10, Fa0/1; PC-B `10.1.10.51` / `00bb.0000.0002`, VLAN 10, Fa0/2. Pick out the fields DAI will compare with an ARP sender in Step 8.
 :::
 
 ```state
@@ -174,6 +174,8 @@ If the feature is unavailable, use this separate authored binding worksheet: PC-
 ```
 
 ## Step 6: Module B — observe a missing server-trust fault
+
+A missing `ip dhcp snooping trust` is a common snooping fault. Remove the trust on purpose to see how it looks from the client and from the switch.
 
 ```ios SW1
 SW1# configure terminal
@@ -183,10 +185,10 @@ SW1(config-if)# end
 SW1# show ip dhcp snooping
 ```
 
-Release PC-B's lease and request a new one. Where supported, inspect snooping statistics or use Simulation mode filtered to DHCP to follow R1's reply into SW1. Retaining an old lease does not test the new policy.
+Release PC-B's lease and request a new one; a PC that keeps its old lease does not test the change. In Simulation mode, filter on DHCP and follow R1's Offer to SW1 to see where it stops.
 
 :::expected
-A fresh DHCP exchange cannot complete through the now-untrusted server ingress, even though R1's interface and pool can be operational. The configuration and reply-path evidence identify the cause; a failed lease alone would not.
+PC-B gets no lease and falls back to a `169.254.x.x` address. R1's interface and pool are still healthy: its Offer reaches SW1 and is dropped at untrusted Gi0/1. The untrusted port in `show ip dhcp snooping` names the cause. A failed lease alone could have several causes.
 :::
 
 ```state
@@ -203,7 +205,7 @@ SW1(config-if)# end
 SW1# show ip dhcp snooping
 ```
 
-Renew PC-B's lease, inspect its binding and ping the gateway. Do not make every port trusted as a workaround.
+Renew PC-B's lease, check its binding and ping the gateway. Only Gi0/1 should be trusted. Trusting every port would also bring the lease back, but it would let any port act as a DHCP server.
 
 :::expected
 The fresh lease completes and PC-B's binding names Fa0/2 and VLAN 10. Only Gi0/1 has server trust.
@@ -215,7 +217,7 @@ The fresh lease completes and PC-B's binding names Fa0/2 and VLAN 10. Only Gi0/1
 
 ## Step 8: Module B — inspect ARP and observe the static-host failure
 
-Predict which of the two DHCP clients, static router and static printer will have a DHCP-client binding. Name the separate DAI policy that covers each legitimate source, then confirm both PC bindings first. Trust ARP from the controlled router connection separately, then enable inspection.
+Four devices send ARP on this LAN: two DHCP clients, the router and the printer. Predict which of them have a snooping binding and how DAI will treat the others. Confirm that both PC bindings are present, trust ARP on the router port with its own command, then enable inspection for VLAN 10.
 
 ```ios SW1
 SW1# configure terminal
@@ -229,19 +231,19 @@ SW1# show ip arp inspection interfaces
 SW1# show ip arp inspection statistics vlan 10
 ```
 
-Ping the gateway from both DHCP clients. For a fresh printer ARP exchange, clear PC-B's printer entry with `arp -d 10.1.10.20` if supported, or restart only PC-B and renew its lease. Ping the printer and compare DAI counters before and after. Existing ARP caches can temporarily conceal the missing binding.
+Ping the gateway from both PCs. PC-B may still hold the printer's MAC in its ARP cache from Step 1, which would hide the problem, so force a new ARP exchange: on PC-B run `arp -d` to clear its ARP cache, or power-cycle PC-B and renew its lease. Note the DAI statistics, ping the printer from PC-B, and read the statistics again.
 
 :::expected
-The DHCP clients' valid ARP claims pass. The printer has no snooping binding, so its fresh ARP claim entering Fa0/3 is rejected by the binding check. A legitimate static host needs an explicit exception; this result does not establish malicious activity.
+Both PCs still reach the gateway: their ARP matches their bindings, and R1's ARP enters on trusted Gi0/1. The ping to the printer fails and the dropped count rises, because the printer's ARP reply enters untrusted Fa0/3 and matches no binding. Nothing is attacking the network. A legitimate static host needs an explicit permit, which Step 9 adds.
 :::
 
 ```state
-{"status":"Printer ARP rejected","tone":"bad","focus":["SW1","P"],"flows":[{"path":["A","SW1","R1"],"back":true,"label":"PC-A pings the gateway","tags":{"SW1":"PC-A's ARP matches its binding"}},{"path":["B","SW1","P"],"label":"PC-B's fresh ARP for 10.1.10.20","tags":{"SW1":"PC-B's ARP matches its binding"}},{"path":["P","SW1"],"tone":"reply","label":"Printer's ARP reply","stop":"SW1","stopText":"No binding · Fa0/3 claim rejected"}],"roles":[{"node":"SW1","peer":"R1","text":"DHCP · DAI trusted","tone":"ok"},{"node":"SW1","peer":"P","text":"DAI untrusted"}],"rows":[["Gi0/1","DHCP and DAI trusted"],["DHCP clients","Valid ARP claims pass","ok"],["Printer 10.1.10.20","No binding · ARP rejected","bad"],["Not evidence of","Malicious activity","dim"]]}
+{"status":"Printer ARP rejected","tone":"bad","focus":["SW1","P"],"flows":[{"path":["A","SW1","R1"],"back":true,"label":"PC-A pings the gateway","tags":{"SW1":"PC-A's ARP matches its binding"}},{"path":["B","SW1","P"],"label":"PC-B's fresh ARP for 10.1.10.20","tags":{"SW1":"PC-B's ARP matches its binding"}},{"path":["P","SW1"],"tone":"reply","label":"Printer's ARP reply","stop":"SW1","stopText":"No binding · Fa0/3 claim rejected"}],"roles":[{"node":"SW1","peer":"R1","text":"DHCP · DAI trusted","tone":"ok"},{"node":"SW1","peer":"P","text":"DAI untrusted"}],"rows":[["Gi0/1","DHCP and DAI trusted"],["DHCP clients","Valid ARP claims pass","ok"],["Printer 10.1.10.20","No binding · ARP rejected","bad"],["Cause","Static host · not an attack","dim"]]}
 ```
 
 ## Step 9: Module B — permit the verified printer pair
 
-Substitute the printer's actual MAC recorded in Step 1. The following example assumes `000c.2911.7a3e`.
+An ARP ACL permits one exact IP-and-MAC pair while Fa0/3 stays untrusted. Use the printer's MAC that you recorded in Step 1 in place of the example `000c.2911.7a3e`. `show arp access-list` displays the ACL's entries.
 
 ```ios SW1
 SW1# configure terminal
@@ -255,10 +257,10 @@ SW1# show ip arp inspection vlan 10
 SW1# show ip arp inspection statistics vlan 10
 ```
 
-Repeat a fresh printer ping and the client gateway tests. Omitting `static` allows ACL nonmatches to continue to DHCP-binding validation. Adding it would make the ACL's implicit denial final, blocking unlisted DHCP clients.
+Clear PC-B's ARP cache again, ping the printer and repeat the gateway pings. The `filter` command has no `static` keyword, so ARP that the ACL does not match is still checked against the bindings. With `static`, the PCs' ARP would be dropped, because the ACL does not list them.
 
 :::expected
-The verified printer pair passes and DHCP clients still work. Fa0/3 remains untrusted: the ACL authorizes a specific claim instead of bypassing inspection on the entire port.
+The printer answers and both PCs still reach the gateway. Fa0/3 remains untrusted: the ACL admits one IP-and-MAC pair, and every other ARP message on the port is still inspected.
 :::
 
 ```state
@@ -275,14 +277,14 @@ SW1(config-if)# end
 SW1# show storm-control fastethernet0/2 broadcast
 ```
 
-Record the configured thresholds. Before opening the worksheet answer, predict the suppression state when broadcast utilization reaches 3.2%, then falls to 0.7%, then to 0.3%. Also calculate the nominal 1% rate on this 100 Mb/s port. These are supplied observations, not captured results; do not create a switching loop.
+You will not generate a storm in this lab, and you should never build a loop to make one. Configure the thresholds on PC-B's port, confirm them in the output, then work this out on paper before opening the answer: are broadcasts being dropped when they reach 3.2% of the port's bandwidth, then fall to 0.7%, then to 0.3%? What is 1% in Mb/s on this 100 Mb/s port?
 
 :::expected
-The configured policy should display rising 1.00% and falling 0.50%. Inspect the actual port state and repeat a low-volume client test; do not claim a live threshold event when none was generated.
+The output shows an upper threshold of 1.00% and a lower threshold of 0.50%, with the filter state `Forwarding`. PC-B still pings the gateway, because ordinary traffic is far below the threshold.
 :::
 
 :::solution
-Suppression is active at 3.2% and remains active at 0.7%, which is above the falling 0.50% threshold. It ends below that threshold at 0.3%. One percent of 100 Mb/s is a nominal 1 Mb/s; hardware measurement can differ. Without a shutdown action, the default filters the selected traffic type rather than err-disabling the whole interface.
+Broadcasts are dropped at 3.2% and still dropped at 0.7%, which is above the 0.50% falling threshold. Dropping ends at 0.3%. One percent of 100 Mb/s is 1 Mb/s. With no `storm-control action shutdown` configured, the switch drops only the broadcast class and the port stays up.
 :::
 
 ```state
@@ -291,15 +293,15 @@ Suppression is active at 3.2% and remains active at 0.7%, which is above the fal
 
 ## Step 11: Module D — prepare a separate IPv6 test baseline
 
-Use a separate isolated LAN, two fresh IPv6-capable IOS routers with Gi0/0 (2911 hardware or a verified equivalent), a Windows PC with a capture-capable Ethernet adapter, and a supporting switch; the command reference is Catalyst 9300 with IOS XE 17.12. Connect a test PC to SW-H Gi1/0/1, legitimate R1 Gi0/0 to Gi1/0/24, and test R2 Gi0/0 to Gi1/0/4. Use compatible copper media and substitute verified interface names for your hardware. All three switch ports use access VLAN 10.
+This module needs real equipment: a switch that supports RA guard (the commands here are from a Catalyst 9300 running IOS XE 17.12), two IPv6-capable routers with a Gi0/0 interface such as 2911s, and a Windows PC with Wireshark. If you do not have it, read the steps and answer the paper path in each expected-result box. Build a separate isolated LAN: the test PC on SW-H Gi1/0/1, the legitimate router R1 Gi0/0 on Gi1/0/24, and the test router R2 Gi0/0 on Gi1/0/4. Use your own interface names if your hardware differs. All three switch ports are access ports in VLAN 10.
 
 ```diagram
 {"type":"topology","title":"Separate IPv6 test LAN","caption":"Legitimate R1 connects to SW-H Gi1/0/24, test router R2 to Gi1/0/4 and the test PC to Gi1/0/1, all in access VLAN 10.","nodes":[{"id":"R1","kind":"router","label":"R1","sub":"fe80::1","x":3,"y":0.5},{"id":"R2","kind":"router","label":"R2","sub":"fe80::2","x":9,"y":0.5},{"id":"SWH","kind":"switch","label":"SW-H","sub":"VLAN 10","x":6,"y":3,"highlight":true},{"id":"PC","kind":"pc","label":"Test PC","sub":"Windows · Wireshark","x":6,"y":5.5}],"links":[{"from":"PC","to":"SWH","toLabel":"Gi1/0/1"},{"from":"R1","to":"SWH","fromLabel":"Gi0/0","toLabel":"Gi1/0/24","accent":true},{"from":"R2","to":"SWH","fromLabel":"Gi0/0","toLabel":"Gi1/0/4"}]}
 ```
 
-Before configuring the feature, run `show version` and `show sdm prefer` on SW-H. Confirm a supported image and an active resource template that accommodates IPv6; the cited 9300 Access template supports IPv6 entries. If this isolated 9300 needs that template selected, enter `sdm prefer access` in global configuration, return to EXEC, save with `copy running-config startup-config`, and `reload` before starting the exercise. Verify the active template after restart. A pending template change is not yet active, and template names on other Catalyst families differ. Do not apply a 2960-specific SDM command to the 9300 by assumption.
+Before you configure RA guard, run `show version` and `show sdm prefer` on SW-H. The **SDM template** decides how the switch divides its hardware table space between features, and the active one must leave room for IPv6; the 9300's Access template does. If you have to select it, enter `sdm prefer access` in global configuration, save with `copy running-config startup-config`, and `reload`, because a new template takes effect only after a restart. Template names differ on other Catalyst families.
 
-The supplied router setup enables advertisements on this LAN. Explicit link-local addresses identify their sources. Chapter 19 explains IPv6 addressing and neighbor discovery in detail.
+The router configuration is supplied. `ipv6 unicast-routing` makes a router forward IPv6 and send Router Advertisements on its IPv6 interfaces. The `link-local` keyword sets each router's link-local address by hand, so that in the capture `fe80::1` is always R1 and `fe80::2` is always R2. R2 starts shut down. Chapter 19 explains IPv6 addressing and neighbor discovery in detail.
 
 ```ios R1
 Router> enable
@@ -352,14 +354,14 @@ SW-H# show ipv6 nd raguard policy ROUTERS
 SW-H# show running-config interface gigabitethernet1/0/4
 ```
 
-On the Windows test PC, use the lab adapter’s IPv6 properties to obtain an address and DNS information automatically. This isolated exercise does not require DNS or Internet access. Use a PC with Wireshark installed and permission to capture on the connected Ethernet adapter; its current installer and capture prerequisites are documented by [Wireshark](https://www.wireshark.org/docs/wsug_html_chunked/ChapterIntroduction.html). Record the adapter name so an unrelated Wi-Fi capture is not mistaken for this LAN.
+On the Windows test PC, set the lab adapter’s IPv6 properties to obtain an address automatically. You need [Wireshark](https://www.wireshark.org/docs/wsug_html_chunked/ChapterIntroduction.html) installed and permission to capture on that Ethernet adapter. Note the adapter's name so that you do not capture on Wi-Fi by mistake.
 
-Start a capture on that adapter and apply display filter `icmpv6.type == 134`. With R2 still shut, observe an RA from `fe80::1` and record PC addressing with `ipconfig /all`. Allow for the actual advertisement interval. Verify the two policy definitions and their attachments before the comparison.
+Start a capture on that adapter and apply the display filter `icmpv6.type == 134`. Router Advertisements are ICMPv6 type 134, so the filter shows nothing else. With R2 still shut down, wait for an RA from `fe80::1`; a router sends one every few minutes, and at once when a host asks for it. Record the PC's addressing with `ipconfig /all`. Check both policy definitions and their attachments on SW-H before you go on.
 
 :::expected
-Fresh legitimate R1 RAs reach the test PC. R2 is still shut; its absence is not evidence of RA guard. The switch has ENDPOINTS on Gi1/0/1 and Gi1/0/4 and ROUTERS on Gi1/0/24. Record unsupported configuration or capture operations as unexecuted.
+R1's RAs from `fe80::1` reach the test PC. SW-H has ENDPOINTS on Gi1/0/1 and Gi1/0/4 and ROUTERS on Gi1/0/24. No RA from R2 appears, but R2 is shut down, so that says nothing about RA guard yet.
 
-For the paper path use this labeled supplied baseline: R1 sends from fe80::1 into Gi1/0/24; its RA appears on the PC capture; R2 is administratively shut. Explain which policy/attachment permits the legitimate path. These are authored observations, not simulator measurements.
+Paper path: R1 sends RAs from `fe80::1` into Gi1/0/24, they appear in the PC's capture, and R2 is shut down. Explain which policy and attachment let R1's RAs through.
 :::
 
 ```state
@@ -368,7 +370,7 @@ For the paper path use this labeled supplied baseline: R1 sends from fe80::1 int
 
 ## Step 12: Module D — expose the test advertisement on a permitted comparison path
 
-On supported isolated equipment only, predict the effect of removing ENDPOINTS from the R2 ingress while leaving R1’s policy unchanged. Then enable R2 and temporarily remove that one attachment. Leave the changed state in place long enough to record a fresh R2 advertisement.
+A blocked RA and a router that never sent one look the same in a capture. So first prove that R2's RAs can reach the PC: enable R2 and temporarily remove the host-role policy from its port, leaving R1’s policy alone. Predict what the capture will show, then wait long enough to record a fresh RA from R2.
 
 ```ios R2
 R2# configure terminal
@@ -385,12 +387,12 @@ SW-H(config-if)# end
 SW-H# show running-config interface gigabitethernet1/0/4
 ```
 
-In the same adapter capture, find a fresh RA from fe80::2 and confirm fe80::1 still appears. Record multiple R2 arrivals and their observed intervals. Do not change cables, R2 addressing or VLAN membership between the permitted and guarded tests.
+In the capture, find a fresh RA from `fe80::2` and confirm that `fe80::1` still appears. Record several R2 arrivals and the time between them. Do not change cables, R2's addressing or VLAN membership between this test and Step 13.
 
 :::expected
-R2’s fresh RA reaches the PC when the host-role attachment is absent. This establishes that the test sender and path work, rather than interpreting a negative capture from an inactive router. The PC may learn additional addressing/router information; its exact selection is not the pass criterion.
+With no policy on Gi1/0/4, R2’s RAs reach the PC, which proves that R2 is sending and the path works. The PC may add an address from R2's prefix and a second default router. That is the effect a rogue router has.
 
-Paper fallback: supplied capture before protection shows RAs sourced from fe80::1 and fe80::2 arriving on the PC’s lab adapter. The configured interface Gi1/0/4 has no RA guard attachment. State why this is a useful positive control.
+Paper path: the capture shows RAs from `fe80::1` and `fe80::2` on the PC’s lab adapter while Gi1/0/4 has no RA guard policy. Explain why you need this result before testing the guard.
 :::
 
 ```state
@@ -399,7 +401,7 @@ Paper fallback: supplied capture before protection shows RAs sourced from fe80::
 
 ## Step 13: Module D — restore the boundary and compare fresh evidence
 
-Before restoring the policy, write which RA source should remain visible and which should stop arriving. Keep R2 active for this comparison.
+Before you restore the policy, write down which RA source should stay visible and which should stop. Leave R2 running.
 
 ```ios SW-H
 SW-H# configure terminal
@@ -410,12 +412,12 @@ SW-H# show ipv6 nd raguard policy ENDPOINTS
 SW-H# show running-config interface gigabitethernet1/0/4
 ```
 
-Start a new capture on the same PC adapter and compare several of the R2 advertisement intervals observed in Step 12. Record continued fe80::1 reception and the absence of fresh fe80::2 RAs. If R2 timing changes or neither source is visible, investigate before declaring enforcement. Retained SLAAC addresses/default-router state may remain until advertised lifetimes expire.
+Start a new capture on the same adapter and watch for longer than several of the R2 intervals you recorded in Step 12. RAs from `fe80::1` should keep arriving and none should arrive from `fe80::2`. If neither router appears, fix that before you draw a conclusion. The PC may keep the address and default router it learned from R2 until their lifetimes expire, because RA guard blocks new RAs and does not erase what a host already learned.
 
 :::expected
-The restored host-role ingress blocks the test router’s fresh RAs while the legitimate router path continues. This controlled comparison supports the result for the tested traffic and platform; policy text or an old default-router entry alone would not.
+With ENDPOINTS back on Gi1/0/4, SW-H drops the test router’s RAs while R1's still arrive. The attachment was the only change between Steps 12 and 13, so the capture shows that RA guard is doing the blocking.
 
-Paper fallback: over the supplied repeated comparison, fe80::1 RAs continue, fe80::2 RAs cease, R2 continues sending, and the only change is restoring ENDPOINTS on its actual switch ingress. Explain the bounded conclusion and why immediately clearing all client addresses is unnecessary.
+Paper path: RAs from `fe80::1` continue, RAs from `fe80::2` stop, R2 is still sending, and the only change was restoring ENDPOINTS on Gi1/0/4. Explain what this shows, and why the PC's old address from R2 does not contradict it.
 :::
 
 ```state
@@ -424,11 +426,11 @@ Paper fallback: over the supplied repeated comparison, fe80::1 RAs continue, fe8
 
 ## Step 14: Save each verified checkpoint and clean up
 
-Repeat fresh DHCP leases, gateway pings and static-printer communication in the IPv4 lab. Check port-security state, separate DHCP/DAI trust, actual bindings, DAI rejection evidence and the configured storm thresholds. If a feature was unavailable, leave that hands-on result pending rather than claiming its success.
+In the IPv4 lab, renew both leases and repeat the gateway and printer pings. Check the port-security status on Fa0/1, the DHCP snooping and DAI trust on Gi0/1, both bindings, the DAI statistics and the storm thresholds on Fa0/2. Mark any feature your switch could not run as still to do.
 
-On SW1 and R1 individually, enter `copy running-config startup-config` from privileged EXEC, accept the destination filename with Enter, and wait for completion. Save the Packet Tracer project as `16-ipv4-security-baseline.pkt`. Saving configuration preserves verified sticky entries present in it; it does not automatically persist the operational snooping database.
+On SW1 and on R1, enter `copy running-config startup-config` and press Enter to accept the filename. Save the Packet Tracer project as `16-ipv4-security-baseline.pkt`. The save keeps PC-A's sticky entry. It does not keep the snooping bindings, which the switch relearns as clients renew their leases.
 
-After the supported RA comparison is complete, stop its test source:
+If you ran Module D on real equipment, stop the test router:
 
 ```ios R2
 R2# configure terminal
@@ -438,10 +440,10 @@ R2(config-if)# end
 R2# show ipv6 interface brief
 ```
 
-Verify the ENDPOINTS attachment remains on SW-H Gi1/0/4. Save each extension device separately, accepting its save prompt. Keep this topology isolated.
+Check that ENDPOINTS is still attached to SW-H Gi1/0/4, then save the configuration on SW-H, R1 and R2.
 
 :::expected
-Submit a checkpoint table with each feature’s intended ingress, expected accepted traffic, controlled rejected traffic, cause/state evidence, repair and fresh retest. Mark values as observed or supplied. Preserve the three IPv4 repairs separately: wrong MAC, missing DHCP server trust, and absent static-printer ARP policy. The RA record identifies permitted R1, permitted R2 control, restored R2 rejection, and final R2 shutdown.
+Every service works with all the controls on. Finish with a short table of your own: for each feature, the port it protects, what it blocked in this lab, the command output that showed the block, and the repair. Include the three IPv4 faults (wrong MAC on Fa0/1, missing DHCP snooping trust on Gi0/1, static printer with no ARP permit) and, for Module D, R2's RAs passing without the policy and blocked with it. Mark each result as observed or taken from the paper path.
 :::
 
 ```state
@@ -452,26 +454,27 @@ Submit a checkpoint table with each feature’s intended ingress, expected accep
 
 | Symptom | Check |
 |---|---|
-| PC-A immediately violates again | Correct endpoint, actual MAC and sticky entry; a reset cannot correct a mismatch |
-| No fresh lease | VLAN, server reply path, pool and Option 82 policy; a self-assigned address alone does not identify the fault |
-| DAI blocks a DHCP client | Current IP/MAC/VLAN/port binding and the relevant counters |
-| Printer still blocked | Actual MAC, ACL permit, VLAN application and unintended final implicit denial |
-| All ARP on a busy port stops | Error-disable reason and rate policy; individual validation drops differ from a rate-limit shutdown |
-| RA policy exists but RAs pass | Attachment on the actual ingress port, role, VLAN path and whether these are fresh advertisements |
-| Legitimate IPv6 setup is delayed | Router-facing role, solicitation forwarding and observed advertisements |
+| Fa0/1 violates again as soon as it is reset | PC-A must be the device on Fa0/1 and the sticky entry must be its MAC; resetting the port cannot fix a mismatch |
+| No fresh lease | VLAN 10 in the snooping VLAN list, trust on Gi0/1, `no ip dhcp snooping information option`, then R1's interface and pool |
+| DAI blocks a DHCP client | The client's binding: IP, MAC, VLAN and port must all match; renew a lease that predates snooping |
+| Printer still blocked | The MAC in the ACL, the VLAN on the `filter` command, and whether the test used a fresh ARP exchange |
+| PCs lose ARP after the ACL is applied | A `static` keyword on the `filter` command, which stops the fallback to bindings |
+| All traffic on a port stops while DAI is on | `show interfaces status` and the log: an ARP rate-limit shutdown err-disables the port, unlike a single dropped ARP message |
+| RA policy exists but RAs pass | The policy must be attached to the port where the RAs enter, with the host role |
+| IPv6 hosts do not learn R1 | The router-role policy on Gi1/0/24, then wait for R1's next RA |
 
 ## Challenge
 
 Use a copy of the restored IPv4 baseline. Add a second Printer-PT, PRINTER-2, to SW1 Fa0/4 using straight-through copper. Set `10.1.10.30/24` and gateway `10.1.10.1`; that address is already inside R1’s excluded range. Record its actual MAC.
 
-Before opening the answer, write the additions needed to permit this verified static IP/MAC pair while keeping both DHCP clients validated by their snooping bindings. Keep the original printer working and leave all client/printer ports untrusted for DAI. Do not replace the existing ARP ACL or add the `static` application keyword. Predict why the DHCP exclusion alone is insufficient.
+Before opening the answer, write the commands that let PRINTER-2 use ARP while both DHCP clients are still validated by their snooping bindings. Keep the original printer working and leave every PC and printer port untrusted for DAI. Do not replace the existing ARP ACL or add the `static` keyword. Explain why the DHCP exclusion alone is not enough.
 
-Verify fresh ARP/communication for both printers and the clients’ gateways. Record the actual added ACL line, binding evidence and test results. If your simulator cannot implement the ARP ACL, use the supplied answer as a configuration worksheet and record the practical check as pending.
+Test with fresh ARP exchanges: both printers from PC-B, and the gateway from both PCs. Record the ACL line you added and the results. If your simulator has no ARP ACL, use the answer as a configuration worksheet and mark the hands-on check as still to do.
 
-Then complete a short paper variation: a new SW2 uplink Gi0/1 connects to SW1 Fa0/5 and serves only DHCP clients. Both switches snoop VLAN 10 and disable Option 82 insertion. Name the server-reply ingress that needs DHCP trust on each switch. Do not actually cable SW2 in the printer exercise.
+Then answer one question on paper, without cabling anything: a new switch SW2 connects its uplink Gi0/1 to SW1 Fa0/5 and serves only DHCP clients. Both switches snoop VLAN 10 with Option 82 insertion off. Which port on each switch needs DHCP snooping trust?
 
 :::solution
-Configure the new endpoint port and add one permit under the existing ACL. Replace `0011.2233.0030` below with PRINTER-2’s recorded MAC; the illustrated MAC is not a measured value.
+Configure the new access port and add one permit to the existing ACL. Replace the example `0011.2233.0030` with PRINTER-2’s recorded MAC.
 
 ```ios SW1
 SW1# configure terminal
@@ -490,9 +493,9 @@ SW1# show ip arp inspection vlan 10
 SW1# show ip dhcp snooping binding
 ```
 
-The original printer permit remains; the new exact pair is permitted. Implicit ACL nonmatches can still use DHCP bindings because the filter lacks `static`. The DHCP exclusion prevents allocation of .30 but does not authorize its ARP. Keep Fa0/4 untrusted.
+The ACL now permits both printers, each as an exact IP-and-MAC pair. The filter was already applied to VLAN 10, so re-entering that command changes nothing. Because it has no `static` keyword, the PCs' ARP still falls through to the DHCP bindings. The DHCP exclusion only stops R1 leasing `.30`; it does not authorize the printer's ARP. Fa0/4 stays untrusted.
 
-From PC-B, test .20 and .30. Make the .30 test a fresh resolution by removing that specific ARP entry if supported or using a freshly restarted/released-and-renewed client; verify its new binding before testing. Inspect DAI counters across the test interval. Verify both client gateway pings, then save the separate challenge project.
+From PC-B, clear the ARP cache with `arp -d`, then ping `.20` and `.30`. Compare the DAI statistics before and after, repeat both gateway pings, and save the challenge as a separate project.
 
-For the SW2 paper variation, trust SW1 Gi0/1 where R1’s replies enter and SW2 Gi0/1 where upstream replies enter SW2. SW1 Fa0/5 receives client-side traffic, so it does not need server trust merely because it links to a switch. Disabling insertion on both switches avoids an undeclared upstream Option 82 acceptance requirement. DAI still needs its own trust/binding/static-host policy, and IPv6 RA guard requires separate roles and attachments.
+For SW2: trust SW1 Gi0/1, where R1’s replies enter SW1, and SW2 Gi0/1, where they enter SW2. SW1 Fa0/5 receives only client messages from SW2, so it stays untrusted even though it connects to a switch. With Option 82 insertion off on SW2, SW1 never receives a request carrying Option 82 on that untrusted port. DAI on the two switches would need its own trust settings as well.
 :::

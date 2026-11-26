@@ -1,56 +1,56 @@
 [
   {
     "id": "stp-protection-c01",
-    "front": "What does PortFast change on a genuine edge port?",
-    "back": "It permits immediate forwarding and avoids topology-change generation from ordinary edge transitions; STP still runs.",
+    "front": "What does PortFast do on an edge port?",
+    "back": "The port forwards as soon as the link comes up, skipping listening and learning. STP still runs on the port.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "stp-protection-c02",
-    "front": "2960-style interface command for PortFast on an access port?",
-    "back": "`spanning-tree portfast`. Use only where the port is a genuine end-device edge.",
+    "front": "Interface command for PortFast on an access port (2960-style IOS)?",
+    "back": "`spanning-tree portfast`. IOS XE spells it `spanning-tree portfast edge`.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "stp-protection-c03",
-    "front": "PortFast command for a trunk to a genuine end device?",
-    "back": "`spanning-tree portfast trunk`; some IOS XE images use `spanning-tree portfast edge trunk`. Verify that the host cannot form a Layer 2 transit loop.",
+    "front": "PortFast command for a trunk to a server or hypervisor?",
+    "back": "`spanning-tree portfast trunk` (IOS XE: `spanning-tree portfast edge trunk`). Never use it on a link to another switch.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "stp-protection-c04",
-    "front": "Global PortFast command and its scope on 2960-style IOS?",
-    "back": "`spanning-tree portfast default` applies to operationally nontrunking ports; a trunk is not covered by that default.",
+    "front": "Global command that enables PortFast, and which ports does it cover?",
+    "back": "`spanning-tree portfast default`. It covers nontrunking (access) ports only; trunks are not included.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "stp-protection-c05",
-    "front": "Does PortFast disable STP or permanently guarantee edge status?",
-    "back": "No. BPDUs are still processed; with PortFast alone a received BPDU removes operational edge status. The configured command can remain.",
+    "front": "What happens when a PortFast port without BPDU guard receives a BPDU?",
+    "back": "It loses operational edge status and becomes a normal STP port. The `spanning-tree portfast` command stays in the configuration.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "stp-protection-c06",
-    "front": "BPDU guard: trigger and conventional Catalyst result?",
-    "back": "Any received BPDU, not just a superior one, causes interface errdisable and stops traffic on the port.",
+    "front": "What triggers BPDU guard, and what does it do to the port?",
+    "back": "Any received BPDU, superior or not. The whole port goes err-disabled.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "stp-protection-c07",
-    "front": "Interface versus global BPDU-guard scope?",
-    "back": "`spanning-tree bpduguard enable`: the interface, independently of PortFast. `spanning-tree portfast bpduguard default`: operational PortFast ports.",
+    "front": "Interface versus global BPDU guard: commands and scope?",
+    "back": "`spanning-tree bpduguard enable`: that interface, with or without PortFast. `spanning-tree portfast bpduguard default`: every operational PortFast port.",
     "tags": [
       "compare",
       "command"
@@ -58,108 +58,130 @@
   },
   {
     "id": "stp-protection-c08",
-    "front": "Safe recovery after BPDU-guard errdisable?",
-    "back": "Remove/correct the BPDU source, then `shutdown` / `no shutdown`, or use an explicitly enabled recovery policy. Verify traffic and roles afterward.",
+    "front": "How do you recover a port that BPDU guard err-disabled?",
+    "back": "Remove the BPDU source, then enter `shutdown` and `no shutdown`. Automatic recovery works only if it is enabled for bpduguard.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "stp-protection-c09",
-    "front": "Does the default 300-second errdisable interval enable recovery?",
-    "back": "No. Enable recovery for the specific cause separately; the interval sets retry timing. A retry does not remove an attached BPDU source.",
+    "front": "Default errdisable recovery interval, and what turns recovery on for BPDU guard?",
+    "back": "300 seconds. `errdisable recovery cause bpduguard` turns it on; recovery is off for every cause by default.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "stp-protection-c10",
-    "front": "Which log evidence distinguishes BPDU guard from other errdisable causes?",
-    "back": "Look for the affected interface and the `bpduguard` cause, such as `BLOCK_BPDUGUARD` or an `ERR_DISABLE` line naming bpduguard.",
+    "front": "Which log messages identify a BPDU guard violation?",
+    "back": "`%SPANTREE-2-BLOCK_BPDUGUARD`, then `%PM-4-ERR_DISABLE: bpduguard error detected` naming the port.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "stp-protection-c11",
-    "front": "Root guard: what triggers it and what state results?",
-    "back": "Superior BPDU information received at the protected boundary creates root inconsistency for the affected STP instance.",
+    "front": "What triggers root guard, and what state results?",
+    "back": "A superior BPDU on the guarded port. The port becomes root-inconsistent and blocks that VLAN; the link stays up.",
     "tags": [
-      "concept",
-      "command"
+      "concept"
     ]
   },
   {
     "id": "stp-protection-c12",
-    "front": "Where should root guard be placed?",
-    "back": "On a designated boundary toward a switch through which the root must not be learned; not on the legitimate root-facing uplink.",
+    "front": "Where do you place root guard?",
+    "back": "On designated ports facing switches that must never become root. Never on the uplink toward the real root.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "stp-protection-c13",
-    "front": "How does root inconsistency recover?",
-    "back": "Automatically after superior information ceases and STP permits normal forwarding; correct the source rather than removing the guard to hide it.",
+    "front": "How does a root-inconsistent port recover?",
+    "back": "Automatically, once the superior BPDUs stop. No `shutdown` and `no shutdown` is needed.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "stp-protection-c14",
-    "front": "Loop guard: what triggers it and what state results?",
-    "back": "Expected BPDUs expire on an applicable root or alternate port, causing loop inconsistency. It clears when the required BPDU information resumes.",
+    "front": "What triggers loop guard, and what state results?",
+    "back": "BPDUs stop arriving on a root or alternate port. It becomes loop-inconsistent instead of designated, and recovers when BPDUs resume.",
     "tags": [
-      "concept",
-      "command"
+      "concept"
     ]
   },
   {
     "id": "stp-protection-c15",
-    "front": "What is the operational scope of loop guard?",
-    "back": "Applicable point-to-point root/alternate ports with received information to monitor; not ordinary host edges or shared segments.",
+    "front": "On which ports does loop guard act?",
+    "back": "Root and alternate ports on point-to-point links: the ports that expect to keep receiving BPDUs. It does nothing on host ports.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "stp-protection-c16",
-    "front": "Root guard versus BPDU guard?",
-    "back": "Root guard reacts to superior information and blocks the affected instance; BPDU guard reacts to any BPDU and conventionally err-disables the port.",
+    "front": "Root guard versus BPDU guard: trigger and result?",
+    "back": "Root guard: superior BPDU, blocks that VLAN, clears by itself. BPDU guard: any BPDU, err-disables the whole port.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "stp-protection-c17",
-    "front": "Can root guard and loop guard operate on one interface together?",
-    "back": "No. Their designated versus root/alternate expectations differ, and IOS treats them as mutually exclusive.",
+    "front": "Which two STP guards cannot be active on the same port?",
+    "back": "Root guard and loop guard. Root guard is for designated ports; loop guard is for root and alternate ports.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "stp-protection-c18",
-    "front": "What does *ROOT_Inc in a Rapid PVST+ port row mean?",
-    "back": "Root inconsistency: a superior BPDU was rejected at a guarded boundary. It is not proof that the physical port is err-disabled.",
+    "front": "What does `*ROOT_Inc` beside a port in `show spanning-tree` mean?",
+    "back": "Root guard is blocking that VLAN on the port because a superior BPDU arrived. The port is up, not err-disabled.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "stp-protection-c19",
-    "front": "BPDU filter: interface form versus global PortFast form?",
-    "back": "Interface filtering suppresses BPDUs independently. Global PortFast filtering withdraws filtering/operational edge status on received BPDUs. Filter is explicit v1.1 context.",
+    "front": "BPDU filter (v1.1): interface form versus global form?",
+    "back": "Interface `spanning-tree bpdufilter enable`: never sends or accepts BPDUs. Global `spanning-tree portfast bpdufilter default`: PortFast ports only; a received BPDU ends the filtering.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "stp-protection-c20",
-    "front": "Which command lists STP inconsistent interfaces and affected VLANs?",
-    "back": "show spanning-tree inconsistentports. Use interface status and the cause-specific log separately for an err-disabled port.",
+    "front": "Which command lists ports in root-inconsistent or loop-inconsistent state?",
+    "back": "`show spanning-tree inconsistentports`. It names the VLAN, the interface and the type of inconsistency.",
     "tags": [
       "command"
+    ]
+  },
+  {
+    "id": "stp-protection-c21",
+    "front": "Interface commands for root guard and loop guard?",
+    "back": "`spanning-tree guard root` and `spanning-tree guard loop`. Loop guard also has a global form: `spanning-tree loopguard default`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "stp-protection-c22",
+    "front": "How much traffic stops on an err-disabled port, compared with a root- or loop-inconsistent port?",
+    "back": "Err-disabled: the whole port, every VLAN. Inconsistent: only the affected VLAN; other VLANs on the trunk keep forwarding.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "stp-protection-c23",
+    "front": "Which protection fits a PC port, a port to a switch that must not be root, and an uplink toward the root?",
+    "back": "PC port: PortFast plus BPDU guard. Subordinate switch: root guard. Uplink: loop guard.",
+    "tags": [
+      "concept"
     ]
   }
 ]

@@ -25,9 +25,9 @@ sources:
   - { title: "RFC 1812: Requirements for IPv4 Routers", url: "https://www.rfc-editor.org/rfc/rfc1812.html" }
 ---
 
-A trunk extends several VLANs while keeping them separate. To send an IP packet from a host in one VLAN to a host in another, you need Layer 3 forwarding. You will build that function two ways: router subinterfaces sharing a trunk, and VLAN interfaces on a multilayer switch. The same addressing and packet-forwarding principles apply to both.
+Your trunk from chapter 10 carries VLAN 10 and VLAN 20 between switches, and PCs in the same VLAN can ping each other. A PC in VLAN 10 still cannot reach a PC in VLAN 20. Each VLAN is its own broadcast domain with its own IP subnet, and a Layer 2 switch never moves a frame from one VLAN to another. Something has to route.
 
-The examples use one IPv4 subnet per VLAN, which keeps host membership and routing boundaries clear. This is the design being taught, not a claim that an Ethernet VLAN can contain only one IP subnet. Complete routing-table selection and routes to remote networks come later; the first task is to make directly connected VLANs communicate reliably.
+This chapter gives each VLAN a default gateway in two ways: subinterfaces on a router that shares one trunk (router-on-a-stick), and switch virtual interfaces (SVIs) on a multilayer switch. The subnet mask from chapter 4 decides when a host uses its gateway, and the trunk from chapter 10 delivers the frames. By the end you can configure both designs, follow a packet from one VLAN to the other, and find the fault when a gateway does not answer. Routes to networks that are not directly connected come in chapters 17 and 18.
 
 ## Why a VLAN boundary needs a router
 
@@ -44,7 +44,7 @@ PC-A is `192.168.10.11/24` and PC-B is `192.168.20.12/24`. PC-A calculates that 
 
 A common failed design has correct host addresses and VLANs but no routing device. Adding VLAN 20 to an allowed list will not fix that absence. Another has a working gateway but no gateway entered on a host. That host may communicate with local neighbors while failing to reach another subnet. Check the host's address, mask and gateway together; the mask determines when it uses that gateway.
 
-**Router-on-a-stick** uses one physical router connection with several logical subinterfaces, normally one for each routed VLAN. A **multilayer switch** can perform the same routing through SVIs without sending every inter-VLAN packet over a separate router cable. Device features and performance depend on the model; choose an appropriate platform rather than assuming a product name guarantees routing capacity.
+**Router-on-a-stick** uses one physical router connection with several logical subinterfaces, normally one for each routed VLAN. A **multilayer switch** can perform the same routing through SVIs without sending every inter-VLAN packet over a separate router cable.
 
 ## Follow a packet through two VLANs
 
@@ -65,7 +65,7 @@ The outgoing frame uses the router's VLAN 20 interface MAC as its source and PC-
 | PC-B sends the echo reply | Gateway's VLAN 20 MAC | `192.168.10.11` | 20 |
 | Router sends the echo reply onward | PC-A's MAC | `192.168.10.11` | 10 |
 
-With router-on-a-stick, the request travels toward the router tagged 10 and back toward the switch tagged 20 over the same physical link. With SVIs, the switch performs the Layer 3 transition internally. An endpoint's access link remains an ordinary untagged connection. Actual MAC values may be shared among logical interfaces on some platforms, so identify addresses from the device rather than expecting a different physical-looking MAC for every subinterface.
+With router-on-a-stick, the request travels toward the router tagged 10 and back toward the switch tagged 20 over the same physical link. With SVIs, the switch performs the Layer 3 transition internally. An endpoint's access link remains an ordinary untagged connection. A router's subinterfaces normally share the parent interface's MAC address, so do not expect a different gateway MAC in each VLAN.
 
 ## Router-on-a-stick
 
@@ -95,11 +95,11 @@ R1(config-subif)# no shutdown
 R1(config-subif)# end
 ```
 
-The suffix `.20` is a locally chosen subinterface number. It does not select VLAN 20 by itself; `encapsulation dot1Q 20` does that. Matching numbers make maintenance easier, but `Gi0/0.200` with `encapsulation dot1Q 20` would still identify VLAN 20. Configure encapsulation before the IP address so the router knows the VLAN interface's encapsulation.
+The suffix `.20` is a locally chosen subinterface number. It does not select VLAN 20 by itself; `encapsulation dot1Q 20` does that. Matching numbers make maintenance easier, but `Gi0/0.200` with `encapsulation dot1Q 20` would still identify VLAN 20. Configure encapsulation before the IP address: IOS rejects an IP address on a subinterface that has no VLAN encapsulation yet, and you must enter the address again afterward.
 
 In this design the parent interface has no IP address. Its operational state is still essential: shutting it down removes connectivity for every subinterface sharing it. An individual subinterface can also be shut down. Conversely, a subinterface can show up/up even when the far-end trunk omits its VLAN or its encapsulation identifies the wrong VLAN. Its state is not proof of end-to-end Layer 2 delivery.
 
-The native subinterface explicitly represents untagged VLAN 99 and has no IP address because this example offers no VLAN 99 gateway. Tagged VLANs 10 and 20 are matched independently by their tags. Do not invent an IP address for every configured subinterface or assume every native VLAN must provide a routed service.
+The native subinterface explicitly represents untagged VLAN 99 and has no IP address because this example offers no VLAN 99 gateway. Tagged VLANs 10 and 20 are matched independently by their tags. If the native VLAN did need a gateway, you would add an IP address to this subinterface in the same way.
 
 ## SVIs on a multilayer switch
 
@@ -124,7 +124,7 @@ DSW1# show ip route
 
 The logical interface and the VLAN database are different objects. `interface vlan 20` opens the SVI configuration; explicitly use `vlan 20` to create the Layer 2 VLAN. Then verify the state of both. A configured address cannot make an absent or nonforwarding VLAN usable.
 
-With ordinary Catalyst SVI autostate behavior, three conditions are needed for the SVI to operate: the VLAN exists and is active, the SVI is not administratively shut down, and at least one eligible Layer 2 port in that VLAN is linked and spanning-tree forwarding. An access port can satisfy that last condition. A trunk can also satisfy it if it carries and forwards the VLAN. Advanced autostate exceptions exist, but the labs do not configure them.
+With ordinary Catalyst SVI autostate behavior, three conditions are needed for the SVI to operate: the VLAN exists and is active, the SVI is not administratively shut down, and at least one eligible Layer 2 port in that VLAN is linked and spanning-tree forwarding. An access port can satisfy that last condition. A trunk can also satisfy it if it carries and forwards the VLAN.
 
 These conditions explain why unplugging the only active host in VLAN 20 can take the SVI line protocol down. They also explain why unplugging one host might not do so when an active trunk still carries VLAN 20. Inspect all participating ports before drawing a conclusion from one disconnected cable.
 
@@ -148,7 +148,7 @@ DSW1(config-if)# end
 DSW1# show interfaces gigabitethernet1/0/24 switchport
 ```
 
-This example creates an ordinary untagged Layer 3 Ethernet connection to a router at `10.0.12.1/30`. It still uses Ethernet MAC addresses and ARP to reach that neighbor. “Routed” does not mean “no Layer 2 header”; it means the port is not participating as an access or trunk switchport. The displayed `Switchport: Disabled` confirms that role. Do not assume every switch model or interface supports conversion.
+This example creates an ordinary untagged Layer 3 Ethernet connection to a router at `10.0.12.1/30`. It still uses Ethernet MAC addresses and ARP to reach that neighbor. “Routed” does not mean “no Layer 2 header”; it means the port is not participating as an access or trunk switchport. The displayed `Switchport: Disabled` confirms that role, and `show interfaces status` lists the port with `routed` in its Vlan column. A Layer 2-only switch such as the 2960 rejects `no switchport`.
 
 | Design | Gateway location | Physical connection | Main consideration |
 |---|---|---|---|
@@ -163,7 +163,7 @@ These designs can coexist. A distribution switch might use SVIs toward access VL
 
 Verify in layers. First inspect the host's IP address, mask and gateway. Then prove its access VLAN and local gateway reachability. For router-on-a-stick, inspect the switch trunk, router parent state, subinterface VLAN identifiers and gateway addresses. For SVIs, inspect VLAN existence, member-port forwarding, interface state and `ip routing`. Finally, verify a route to the destination and a return path.
 
-Two narrower displays support this investigation. `show interfaces vlan 10` reports detailed state and the hardware address of that SVI. `show ip route connected` filters the routing display to connected routes; use the full `show ip route` when you also need local-address entries. These commands inspect different objects, even though both concern the same VLAN's gateway.
+Two narrower displays support this investigation. `show interfaces vlan 10` reports detailed state and the hardware address of that SVI. `show ip route connected` filters the routing display to connected routes; use the full `show ip route` when you also need local-address entries. On a switch with IP routing off, `show ip route` prints a single line such as `Default gateway is not set` instead of a routing table. That line tells you the switch is behaving as a host and will not route between its SVIs.
 
 The following is a representative, abbreviated modern IOS routing-table example for working VLANs 10 and 20. Older software may display connected entries without separate `L` entries.
 
@@ -184,7 +184,7 @@ The `C` route represents the directly connected subnet. The `L` route represents
 | Every host reaches its own SVI but cross-VLAN traffic fails | `ip routing`, routes, addressing and any actual filtering |
 | One-way or selective IP communication | Both hosts' masks/gateways and the return route |
 
-Do not assign a unique cause to every up/down versus down/down combination across platforms. Those states narrow the search; `show vlan brief`, `show interfaces status` and the actual configuration establish the cause. Likewise, do not repair a missing VLAN by repeatedly applying `no shutdown` to an SVI that is already enabled.
+Interface states narrow the search; `show vlan brief`, `show interfaces status` and the running configuration establish the cause. If an SVI is already enabled, repeating `no shutdown` will not bring it up. Find the missing VLAN or member port instead.
 
 ## Exam focus
 

@@ -1,152 +1,168 @@
 [
   {
     "id": "vlans-and-access-ports-c26",
-    "front": "Do matching IP subnet settings put two ports in the same VLAN?",
-    "back": "No. Port membership determines the Layer 2 domain; host addressing does not change that membership.",
+    "front": "What decides which VLAN a host belongs to?",
+    "back": "The access VLAN of the switch port it is plugged into. The host's IP address and mask have no effect on it.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c01",
-    "front": "What are the normal and extended VLAN ranges on the lab Catalyst platform?",
-    "back": "Normal range: 1–1005. Extended range: 1006–4094. Usable user IDs also depend on reserved VLANs and platform support.",
+    "front": "What are the normal and extended VLAN ranges?",
+    "back": "Normal range: 1–1005. Extended range: 1006–4094.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "vlans-and-access-ports-c03",
-    "front": "Does default VLAN 1 imply secure management or static access mode?",
-    "back": "No. VLAN 1 is the default data access VLAN, but port mode, IP management and authentication are separate configuration.",
+    "front": "What is special about VLAN 1?",
+    "back": "It is the default VLAN. Every port starts in it, and it cannot be deleted or renamed.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c05",
-    "front": "Create VLAN 10 named USERS: commands and modes?",
-    "back": "At global configuration, enter `vlan 10`; at VLAN configuration, enter `name USERS`. The number identifies the VLAN; the name is a label.",
+    "front": "Which commands create VLAN 10 and name it USERS?",
+    "back": "`vlan 10` in global configuration, then `name USERS` in VLAN configuration.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "vlans-and-access-ports-c08",
-    "front": "Two commands for a fixed access port in VLAN 10?",
-    "back": "`switchport mode access` and `switchport access vlan 10`. Verify operational mode and that VLAN 10 is active.",
+    "front": "Which two commands make a port a fixed access port in VLAN 10?",
+    "back": "`switchport mode access` and `switchport access vlan 10`, in interface configuration.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "vlans-and-access-ports-c04",
-    "front": "Why inspect both the VLAN database and interface configuration?",
-    "back": "The database defines VLANs; interface configuration assigns ports. Normal-range VLAN data may persist separately from startup configuration, with VTP/platform-dependent storage behavior.",
+    "id": "vlans-and-access-ports-c31",
+    "front": "What is a Catalyst port's default mode, and what does `switchport mode access` change?",
+    "back": "The default is dynamic: the port can negotiate a trunk. `switchport mode access` fixes it as an access port.",
     "tags": [
-      "troubleshoot"
+      "concept"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c04",
+    "front": "Where does a switch store its normal-range VLANs?",
+    "back": "In the VLAN database, `vlan.dat` in flash, not in the startup configuration. Erasing startup-config leaves them in place.",
+    "tags": [
+      "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c07",
-    "front": "What happens to a port’s data-VLAN assignment when that VLAN is deleted?",
-    "back": "The configured assignment remains, but the data VLAN becomes inactive. Recreate the VLAN or deliberately assign the port to the correct active VLAN.",
+    "front": "What happens to a port when its access VLAN is deleted?",
+    "back": "It keeps its VLAN assignment but goes inactive and forwards no data. It does not return to VLAN 1.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
+    "id": "vlans-and-access-ports-c28",
+    "front": "Which command lists the VLANs that exist, their status and their access ports?",
+    "back": "`show vlan brief`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c27",
+    "front": "Which command shows one port's administrative mode, operational mode, access VLAN and voice VLAN?",
+    "back": "`show interfaces <interface> switchport`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
     "id": "vlans-and-access-ports-c09",
-    "front": "Access VLAN 10 plus voice VLAN 30: ordinary PC data and tagged voice?",
-    "back": "Untagged PC data enters VLAN 10; correctly provisioned phone voice tagged with 30 enters VLAN 30. The port can remain in access mode.",
+    "front": "A port has access VLAN 10 and voice VLAN 30. Which frames go where?",
+    "back": "Untagged frames from the PC go to VLAN 10. Frames the phone tags with 802.1Q VLAN 30 go to VLAN 30.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c10",
-    "front": "How can a phone obtain voice-VLAN policy?",
-    "back": "Supported CDP or LLDP-MED discovery, or device provisioning/manual settings. Missing CDP alone does not prove every phone uses a particular fallback VLAN.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "vlans-and-access-ports-c21",
-    "front": "Does successful PC traffic through a phone prove voice service works?",
-    "back": "No. Verify voice VLAN, power, provisioning and IP/call services separately. Switch-side voice configuration is not proof of a registered call endpoint.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "vlans-and-access-ports-c22",
-    "front": "Does a missing data VLAN prove all traffic on a phone port must fail?",
-    "back": "No. A separate configured voice VLAN has its own forwarding context; investigate each traffic type and VLAN.",
+    "front": "How does an IP phone learn which voice VLAN to use?",
+    "back": "The switch tells it, through CDP for Cisco phones or LLDP-MED.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c18",
-    "front": "Port-selection starting point for one untagged PC, printer or IoT network?",
-    "back": "A static access port in the intended VLAN. Add suitable PoE only when required; apply later security features after reviewing the endpoint’s behavior.",
+    "front": "Which port settings suit a PC, printer or IoT device?",
+    "back": "A static access port in the device's VLAN, with PoE only if the device needs it.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c19",
-    "front": "AP with one untagged management VLAN versus several locally presented VLANs?",
-    "back": "The first can use an access port. Several VLANs presented on the uplink require compatible trunk tagging. Verify the AP’s actual forwarding design.",
+    "front": "When does an access point need an access port, and when a trunk?",
+    "back": "An access port if it tunnels client traffic to a controller. A trunk if it places several VLANs on the wire itself.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "vlans-and-access-ports-c20",
-    "front": "What must be known before choosing a virtual-host uplink's VLAN mode?",
-    "back": "Which networks the host presents, and whether each is tagged or untagged. A virtual host does not automatically require a trunk or an LACP bundle.",
+    "front": "Which port type suits a virtualized host whose virtual machines sit in several VLANs?",
+    "back": "A trunk that carries those VLANs with 802.1Q tags.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c24",
-    "front": "Why distinguish PSE power from PD power?",
-    "back": "The PSE supplies power; the PD receives it after cable losses. Compare a requirement with a rating measured at the same end.",
+    "front": "What are the PSE and the PD in PoE?",
+    "back": "The PSE (switch or injector) supplies power. The PD (phone, AP, camera) receives it, less what the cable loses.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "vlans-and-access-ports-c23",
-    "front": "Can configuration add PoE capability to a non-PoE Ethernet port?",
-    "back": "No. The PSE hardware must support it. Then check per-port capability, PD requirements, cabling, administrative state and shared allocation.",
+    "id": "vlans-and-access-ports-c29",
+    "front": "How much power do 802.3af and 802.3at (PoE+) supply?",
+    "back": "802.3af: 15.4 W at the switch port, 12.95 W at the device. 802.3at: 30 W at the port, 25.5 W at the device.",
     "tags": [
-      "concept"
+      "number"
+    ]
+  },
+  {
+    "id": "vlans-and-access-ports-c30",
+    "front": "How much power can 802.3bt Type 3 and Type 4 supply at the switch port?",
+    "back": "Type 3: up to 60 W. Type 4: up to 90 W.",
+    "tags": [
+      "number"
     ]
   },
   {
     "id": "vlans-and-access-ports-c15",
-    "front": "How do PoE automatic and never modes differ on a supporting port?",
-    "back": "`power inline auto` enables detection and allocation. `power inline never` prevents that port from supplying PoE; it does not choose the data VLAN.",
+    "front": "`power inline auto` versus `power inline never`?",
+    "back": "`auto`, the default, detects a powered device and supplies power. `never` disables PoE on the port.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "vlans-and-access-ports-c25",
-    "front": "Which two limits must a new PoE allocation satisfy?",
-    "back": "The port must support it, and the switch must have sufficient shared available budget. Passing one check does not establish the other.",
+    "front": "Which two limits must a PoE device fit within?",
+    "back": "The maximum power of its port, and the power remaining in the switch's shared budget.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vlans-and-access-ports-c16",
-    "front": "What should you check after a power-denied indication?",
-    "back": "Requested allocation, remaining shared budget, configured per-port limit, device compatibility and cabling. Do not infer a unique cause from one status label.",
+    "front": "A PoE port reports power-deny. What are the likely causes?",
+    "back": "The request exceeds the switch's remaining power budget or the port's configured maximum.",
     "tags": [
       "troubleshoot"
     ]

@@ -1,8 +1,8 @@
 [
   {
     "id": "ipv6-addressing-c01",
-    "front": "How long is an IPv6 address?",
-    "back": "128 bits: eight 16-bit groups. Each full group has four hexadecimal digits.",
+    "front": "How long is an IPv6 address, and how is it written?",
+    "back": "128 bits: eight 16-bit groups, each written as four hexadecimal digits.",
     "tags": [
       "number"
     ]
@@ -10,31 +10,71 @@
   {
     "id": "ipv6-addressing-c02",
     "front": "Why may an IPv6 address contain :: only once?",
-    "back": "It represents omitted zero groups. Two occurrences make the number of zeros in each run ambiguous.",
+    "back": "With two ::, nobody could tell how many zero groups each one replaces.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c24",
+    "front": "Two zero runs are equally long. Which one does canonical IPv6 text replace with ::?",
+    "back": "The leftmost. A single zero group is written as 0, never as ::.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ipv6-addressing-c03",
-    "front": "Which space is commonly allocated for global unicast?",
-    "back": "2000::/3. Having a global-form address does not itself prove Internet reachability; allocation, routes and policy also matter.",
+    "front": "Which prefix holds global unicast addresses?",
+    "back": "2000::/3, so the first hex digit is 2 or 3. These are the publicly routable addresses.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c31",
+    "front": "What are the three parts of a typical global unicast address?",
+    "back": "Global routing prefix (often /48), 16-bit subnet ID, 64-bit interface ID.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ipv6-addressing-c04",
-    "front": "What is the ULA block and locally generated half?",
-    "back": "fc00::/7 is ULA. Locally generated prefixes use fd00::/8, with a pseudorandom 40-bit Global ID. They are not intended for global Internet routing.",
+    "front": "Which block is unique local, and how do its addresses start in practice?",
+    "back": "fc00::/7; addresses in use start fd. They are private: routed inside an organization, not on the Internet.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ipv6-addressing-c05",
-    "front": "What is link-local scope?",
-    "back": "The reserved block is fe80::/10; a normal link-local address has fe80 followed by zero prefix bits and its identifier. It is meaningful on one link and is not forwarded onto another.",
+    "front": "Which prefix marks a link-local address, and how far does it reach?",
+    "back": "fe80::/10. It works on one link only; routers never forward it. Every IPv6 interface has one.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c26",
+    "front": "Why must you name an interface when you ping a link-local address from a router?",
+    "back": "The same fe80:: address can exist on every link, so the address alone does not say which link to use.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c29",
+    "front": "IPv6 has three address types. Which are they, and which IPv4 type is missing?",
+    "back": "Unicast, anycast and multicast. There is no broadcast; multicast does that work.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c32",
+    "front": "What is an anycast address?",
+    "back": "One unicast address assigned to several devices. Routing delivers each packet to one of them, normally the nearest. No prefix identifies it.",
     "tags": [
       "concept"
     ]
@@ -42,7 +82,7 @@
   {
     "id": "ipv6-addressing-c06",
     "front": "Which multicast groups mean all nodes and all routers on a link?",
-    "back": "ff02::1 is all IPv6 nodes; ff02::2 is all IPv6 routers. Multicast addresses are in ff00::/8.",
+    "back": "ff02::1 is all nodes; ff02::2 is all routers. Every multicast address begins ff (ff00::/8).",
     "tags": [
       "number"
     ]
@@ -50,7 +90,7 @@
   {
     "id": "ipv6-addressing-c08",
     "front": "How do you form a solicited-node multicast address?",
-    "back": "Append the address's last 24 bits to ff02::1:ff00:0/104. For an address ending 12:3456, the group is ff02::1:ff12:3456.",
+    "back": "Append the address's last 24 bits to ff02::1:ff00:0/104. An address ending 12:3456 gives ff02::1:ff12:3456.",
     "tags": [
       "concept"
     ]
@@ -58,153 +98,129 @@
   {
     "id": "ipv6-addressing-c09",
     "front": "What do ::1 and :: mean?",
-    "back": "::1/128 is loopback, the local node itself. ::/128 is the unspecified address, used when no source address is assigned in permitted initialization cases.",
+    "back": "::1 is the loopback address, the device itself. :: is the unspecified address, used as a source before a host has an address.",
     "tags": [
       "compare"
     ]
   },
   {
+    "id": "ipv6-addressing-c21",
+    "front": "What is 2001:db8::/32 reserved for?",
+    "back": "Documentation and lab examples. It is never routed on the Internet.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c19",
+    "front": "How many /64 prefixes fit in a /56?",
+    "back": "2^(64 − 56) = 256. The eight borrowed bits are the last two hex digits of the fourth group.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c33",
+    "front": "Which /60 network contains 2001:db8:5:c7f2::1?",
+    "back": "2001:db8:5:c7f0::/60. A /60 keeps three hex digits of the fourth group; zero everything after them.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c34",
+    "front": "Why do IPv6 LANs use a /64 prefix?",
+    "back": "SLAAC adds a 64-bit interface ID to the advertised prefix, and the two must total 128 bits.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "ipv6-addressing-c10",
-    "front": "How is modified EUI-64 derived from a MAC?",
-    "back": "Split the six MAC bytes after byte three, insert ff:fe, invert the first byte's U/L bit with XOR 02, and regroup into four 16-bit groups.",
+    "front": "How is a modified EUI-64 interface ID built from a MAC address?",
+    "back": "Split the MAC in half, insert fffe in the middle, and flip the seventh bit of the first byte.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ipv6-addressing-c11",
-    "front": "EUI-64 first byte: 00 becomes what, and 02 becomes what?",
-    "back": "00 becomes 02; 02 becomes 00. Invert the bit rather than always adding 2.",
+    "front": "In modified EUI-64, what does a first MAC byte of 00 become? A first byte of 02?",
+    "back": "00 becomes 02, and 02 becomes 00. The seventh bit is flipped, not always set.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "ipv6-addressing-c13",
-    "front": "What does the A flag in an RA prefix-information option permit?",
-    "back": "Autonomous address formation from that prefix when the other SLAAC conditions are met. It does not itself declare the prefix on-link.",
+    "id": "ipv6-addressing-c35",
+    "front": "Name the four main Neighbor Discovery messages and their ICMPv6 types.",
+    "back": "Router Solicitation 133, Router Advertisement 134, Neighbor Solicitation 135, Neighbor Advertisement 136.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c36",
+    "front": "What does IPv6 use instead of an ARP request and reply?",
+    "back": "A Neighbor Solicitation sent to the target's solicited-node multicast address, answered by a Neighbor Advertisement carrying the MAC address.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c37",
+    "front": "How does a host build its address with SLAAC?",
+    "back": "It takes the /64 prefix from a Router Advertisement and adds its own 64-bit interface ID. No DHCP server is involved.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ipv6-addressing-c14",
-    "front": "Where does an automatically learned IPv6 default router come from?",
-    "back": "A valid RA with a usable nonzero router lifetime. Its link-local source identifies the router; the host's address may separately come from SLAAC or DHCPv6.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c16",
-    "front": "What does ipv6 unicast-routing enable on a basic IOS router?",
-    "back": "IPv6 forwarding. With enabled IPv6 interfaces and normal unsuppressed RA settings, it also lets the device operate as an advertising router. Addressing alone is not inter-interface forwarding.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c17",
-    "front": "ipv6 enable versus ipv6 address prefix/64 eui-64?",
-    "back": "ipv6 enable supplies IPv6 processing and automatic link-local addressing without a global prefix. The eui-64 form also creates a global-form address using the supplied prefix and derived identifier.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c19",
-    "front": "How many /64 prefixes fit in a /56?",
-    "back": "2^(64 - 56) = 256. This counts subnets; do not subtract IPv4-style network and broadcast addresses.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c20",
-    "front": "What does a duplicate IPv6 address indication require you to investigate?",
-    "back": "Another use of that unicast address on the local link. Exact duplicate labels vary by image; do not bypass the conflict check.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c21",
-    "front": "Is 2001:db8::/32 public Internet address space for deployment?",
-    "back": "No. It is reserved for documentation. Use it in written examples and isolated labs, not as an assigned public production prefix.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c22",
-    "front": "Does assigning an IPv6 address automatically prove its prefix is on-link?",
-    "back": "No. On-link information is separate from address assignment. RA prefix L flags and other explicit on-link configuration supply that information.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c23",
-    "front": "What does Duplicate Address Detection test?",
-    "back": "Whether a tentative unicast address conflicts on its local link. A DAD NS can use the unspecified source ::. It does not check uniqueness across the entire Internet.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c24",
-    "front": "Two equally long zero runs: which does canonical IPv6 text compress?",
-    "back": "The leftmost run. Canonical text does not compress a single zero group.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c25",
-    "front": "In a /61, how many low bits of the fourth IPv6 group lie outside the prefix?",
-    "back": "Three. Clear those bits to calculate the containing prefix; a hex digit contains four bits.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "ipv6-addressing-c26",
-    "front": "What extra information makes FE80::2 a specific neighbor?",
-    "back": "Its link or local exit interface. The same address text can exist on separate links.",
+    "front": "Where does an IPv6 host learn its default gateway automatically?",
+    "back": "From the Router Advertisement: the gateway is the RA's link-local source address. DHCPv6 has no default-gateway option.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ipv6-addressing-c27",
-    "front": "What do the RA M and O flags describe?",
-    "back": "M indicates managed address configuration; O indicates other DHCPv6 configuration. Neither flag supplies a DHCPv6 default-router option.",
+    "front": "What do the M and O flags in a Router Advertisement tell a host?",
+    "back": "M: get the address from DHCPv6. O: get other settings, such as DNS, from DHCPv6. The default gateway still comes from the RA.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ipv6-addressing-c28",
-    "front": "Can an RA provide a usable autonomous prefix but no default router?",
-    "back": "Yes. A usable A-flagged prefix can remain valid while router lifetime zero excludes the sender as a default router.",
+    "id": "ipv6-addressing-c23",
+    "front": "What does Duplicate Address Detection check, and how?",
+    "back": "That no other device on the link has the new address. The host sends a Neighbor Solicitation for it from source ::; no reply means unique.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ipv6-addressing-c29",
-    "front": "Does an IPv6 /64 have an IPv4-style broadcast address?",
-    "back": "No. IPv6 uses multicast for group delivery. Subnet counts do not subtract network and broadcast addresses.",
+    "id": "ipv6-addressing-c16",
+    "front": "What does ipv6 unicast-routing do on an IOS router?",
+    "back": "Makes it an IPv6 router: it forwards IPv6 packets between interfaces and sends Router Advertisements. It is off by default.",
     "tags": [
-      "concept"
+      "command"
     ]
   },
   {
-    "id": "ipv6-addressing-c30",
-    "front": "Can two router interfaces use FE80::1 on different LANs?",
-    "back": "Yes, because link-local scope is per link. Reusing an ordinary unicast address on the same link would be a conflict.",
+    "id": "ipv6-addressing-c17",
+    "front": "How do ipv6 enable and ipv6 address 2001:db8:acad:2::/64 eui-64 differ?",
+    "back": "ipv6 enable creates only a link-local address. The eui-64 command also creates a global address: your prefix plus an interface ID from the MAC.",
     "tags": [
-      "concept"
+      "compare"
+    ]
+  },
+  {
+    "id": "ipv6-addressing-c38",
+    "front": "Which interface command makes a router interface get its address by SLAAC?",
+    "back": "ipv6 address autoconfig. The interface builds its address from the prefix in another router's RA.",
+    "tags": [
+      "command"
     ]
   }
 ]

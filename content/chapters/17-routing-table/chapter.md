@@ -32,85 +32,91 @@ sources:
   - { title: "Cisco: CCNA v2.0 exam topics", url: "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301_CCNA_v2.0_Exam_Topics_PDF.pdf" }
 ---
 
-A routing table tells you which destination networks a router currently knows and how it intends to reach them. Reading that table is an essential troubleshooting skill: before changing a route, identify the destination that fails and the entry it actually matches. Two hosts in the same subnet can take different paths if a more-specific route covers only one of them.
+A user reports that one server in a branch subnet has stopped answering while the server beside it still works. Both are in the same /24, both are powered on, and nothing changed on the switches. The cause is sitting in a router's routing table: those two addresses match different routes. Until you can read the table line by line and say which entry a given packet will use, you can only guess at faults like this one.
 
-This chapter develops that interpretation skill before you configure static routing in Chapter 18 and OSPF in Chapter 21. Supplied dynamic-route examples let you practice reading output without needing to build those protocols yet. All sample output here is representative teaching output; spacing, abbreviations and additional fields vary by image.
+In Chapter 11 a router moved traffic between VLANs using only the `C` and `L` routes it builds from its own interfaces. This chapter adds everything else that `show ip route` displays: static and dynamic routes, the two numbers in square brackets, overlapping prefixes and the default route. You will reuse the subnet ranges from Chapter 5 to decide which routes contain a destination. By the end you can take a routing table and a destination address, name the route the router uses and explain why that route won. You configure static routes in Chapter 18 and OSPF in Chapter 21; the OSPF lines here are supplied for reading practice.
 
 ## Separate route selection from packet forwarding
 
-The **routing information base**, or **RIB**, contains selected routes. Connected interfaces, static configuration and routing protocols can contribute routes. A protocol first applies its own selection rules; when eligible sources compete for the same destination prefix and length, administrative distance helps determine the preferred source.
+A router makes two separate decisions, and most routing-table questions test whether you can keep them apart.
 
-Forwarding is a different operation. For ordinary destination-based unicast routing, the router looks up the packet's **destination IP address** and uses the longest matching installed prefix. **Cisco Express Forwarding (CEF)** is the IOS forwarding mechanism used in these examples. Its **forwarding information base (FIB)** represents the selected routes for forwarding. Its **adjacency information** supplies the local delivery details, such as the Ethernet rewrite toward a resolved next hop; this use of adjacency is separate from the routing-protocol neighbor relationship introduced in Chapter 21.
+**Decision 1: which routes go into the table.** A router hears about destinations from three kinds of source: its own connected interfaces, static routes that you configure, and routing protocols such as OSPF. If one protocol knows several paths to the same prefix, the protocol first picks its best path by **metric**. If different sources then offer a route to exactly the same prefix (the same network and the same prefix length), the router installs the one from the source it trusts most, measured by **administrative distance**. The winners form the routing table, formally the **routing information base (RIB)**. Losing candidates are not shown in it.
 
-Consider a static `10.20.0.0/16` route and an OSPF `10.20.30.0/24` route. Both can be installed because they describe different prefixes. Traffic to `10.20.30.8` uses the /24; traffic to `10.20.40.8` can use the /16. The router does not compare their administrative distances for each packet.
+**Decision 2: which installed route a packet uses.** For each packet the router reads the **destination IP address** and finds every installed route whose prefix contains it. If several match, it uses the one with the longest prefix length. This is **longest prefix match**. Administrative distance and metric play no part here; they were used up in decision 1.
+
+Here is the difference in one example. R1 has a static route to `10.20.0.0/16` and an OSPF route to `10.20.30.0/24`. These are different prefixes, so they never competed and both are installed. A packet to `10.20.30.8` is inside both; the /24 is longer, so the packet follows the OSPF route even though static routes have the better administrative distance. A packet to `10.20.40.8` is inside only the /16 and follows the static route.
+
+On a Cisco router the per-packet lookup is done by **Cisco Express Forwarding (CEF)**. CEF copies the routing table into a structure built for fast lookups, the **forwarding information base (FIB)**, and keeps an **adjacency table** holding the Layer 2 header needed to reach each next hop, such as the next router's MAC address. For the CCNA it is enough to know that the FIB is built from the RIB and that `show ip cef` displays it.
 
 :::facts
-- **Same prefix and length, different eligible sources:** compare administrative distance.
-- **Alternative paths in a protocol:** apply that protocol's route-selection rules and metrics.
-- **Destination lookup among installed routes:** choose the longest matching prefix.
+- **Same prefix and length, different sources:** the lowest administrative distance is installed.
+- **Same prefix, several paths in one protocol:** the protocol's best metric is installed.
+- **Each packet, among installed routes:** the longest matching prefix is used.
 - `[110/20]` means administrative distance **110**, metric **20**.
-- A route being installed does not prove next-hop adjacency, destination availability or a working return path.
+- An installed route does not prove that the next hop answers, that the destination is up, or that a return route exists.
 :::
 
-The destination lookup is one part of forwarding. Interface state, address resolution, access policy, TTL and other checks can still prevent delivery. Policy-based routing can also alter an ordinary destination-based decision; its configuration is outside this chapter. Unless an exercise says otherwise, assume normal destination-based routing in one routing table.
+A correct lookup is necessary but not sufficient. The outgoing interface must be up, the next hop must answer ARP, and nothing such as an access list (Chapter 34) may block the packet.
 
 ## Read the fields in a route entry
+
+Every route line answers four questions: who supplied this route, which destinations it covers, how it ranked against competitors, and where to send matching packets.
 
 ```output R1 route excerpt
 O    10.20.30.0/24 [110/20] via 10.0.12.2, 00:04:18, GigabitEthernet0/0
 ```
 
-Read this entry from left to right:
+Read the entry from left to right:
 
 | Field | Interpretation |
 |---|---|
-| `O` | OSPF supplied the installed route |
+| `O` | Route source: OSPF supplied this route |
 | `10.20.30.0/24` | Destination prefix; the first 24 bits identify the network |
-| `110` | Administrative distance of this route source |
-| `20` | OSPF metric, which is a cost rather than a hop count |
-| `10.0.12.2` | Next-hop IP address |
-| `00:04:18` | Time since the route information was last updated, as reported by this output |
+| `110` | Administrative distance of the source |
+| `20` | Metric; for OSPF this is a cost, not a hop count |
+| `10.0.12.2` | Next-hop IP address: the neighboring router to hand the packet to |
+| `00:04:18` | Time since the route was last updated |
 | `GigabitEthernet0/0` | Outgoing interface on R1 |
 
-The destination prefix is not the next-hop network. The line says that destinations in `10.20.30.0/24` are reached through `10.0.12.2`. For a remote host, the packet retains its remote destination IP during ordinary routing; the outgoing Ethernet frame addresses the next Layer 2 recipient. Do not replace the destination IP with the next-hop IP in your mental packet trace.
+Two addresses on this line are easy to confuse. `10.20.30.0/24` is where the packet is finally going; `10.0.12.2` is only the next router on the way. R1 does not rewrite the packet's destination IP address to `10.0.12.2`: the IP header carries the remote host's address from end to end. What changes at each hop is the Ethernet frame, which is addressed to the next router's MAC address.
 
-Some entries omit fields that do not apply or are displayed elsewhere. Connected and local entries commonly omit the brackets and next-hop address. An interface-only static route can be displayed as “directly connected” even though its source code remains `S`. Read the code and detailed entry rather than treating that phrase as proof of a `C` route.
+Not every line has every field. Connected and local entries show no brackets and no next hop, because the router is attached to that network itself. A static route that names only an exit interface is also displayed as `is directly connected`, yet its code is still `S` and its administrative distance is still 1. Trust the code letter, not the phrase.
 
-A heading such as `10.0.0.0/8 is variably subnetted` organizes the display. It is not itself a forwarding route. Look for actual coded route entries below it and use their individual prefix lengths.
+A line such as `10.0.0.0/8 is variably subnetted, 4 subnets, 4 masks` is a heading, not a route. It says that the indented entries below it are subnets of `10.0.0.0/8` and that they use four different masks. No /8 route exists unless a coded line shows one.
 
 ## Identify the route source
 
-| Code | Meaning and CCNA interpretation |
+The code at the start of a line names the source that won decision 1 for that prefix. The legend at the top of `show ip route` lists many codes; these are the ones to know:
+
+| Code | Meaning |
 |---|---|
-| `C` | Connected network through an operational local interface |
-| `L` | Local address belonging to this router; ordinarily a /32 for an IPv4 interface address |
-| `S` | Static route from configuration |
-| `O` | OSPF intra-area route |
-| `O IA` | OSPF inter-area route |
-| `O E1`, `O E2` | OSPF external route types |
+| `C` | Connected: the subnet of an interface that is up/up |
+| `L` | Local: an address that belongs to this router, shown as a /32 |
+| `S` | Static: a route from the configuration |
+| `O` | OSPF route inside the router's own area (intra-area) |
+| `O IA` | OSPF route learned from another area (inter-area) |
+| `O E1`, `O E2` | OSPF external routes, brought into OSPF from another source |
 | `D`, `D EX` | EIGRP internal and external routes |
 | `R` | RIP route |
 | `B` | BGP route |
-| `*` | Candidate-default marker used alongside a source code |
+| `*` | Candidate default, shown beside a source code as in `S*` |
 
-For a normal up/up interface configured as `192.0.2.1/24`, current IOS-style output commonly includes:
+For an up/up interface configured as `192.0.2.1/24`, IOS installs two routes:
 
 ```output R1 route excerpt
 C    192.0.2.0/24 is directly connected, GigabitEthernet0/1
 L    192.0.2.1/32 is directly connected, GigabitEthernet0/1
 ```
 
-The `C` entry reaches other devices on that subnet. The `L` entry identifies traffic addressed to R1 itself and is more specific. If the interface loses its operational state, these interface-derived routes ordinarily disappear. A configured address on a shut interface is not enough to establish the connected path.
+The `C` line is the subnet: it is how R1 reaches other devices on that LAN. The `L` line is a /32 for R1's own address. Because /32 is the longest possible prefix, a packet addressed to `192.0.2.1` matches the `L` line and is handed to the router itself, while a packet to `192.0.2.10` matches only the `C` line and is sent out GigabitEthernet0/1. Both lines exist only while the interface is up/up. Shut the interface down or unplug it and both disappear, even though the address is still in the running configuration.
 
-The two-line pattern has platform and address-type exceptions, including some /32 interface cases; verify the actual table. For the exam, learn the connected/local distinction without assuming every possible interface configuration always creates exactly two lines.
+One variation appears in the lab: an interface with a /32 mask, such as a loopback, normally shows a single `C` line, because its subnet and its address are the same /32.
 
-Recognize the other codes when they appear in exhibits, but keep the configuration workload aligned with the course: static routes and single-area OSPF are the required routing foundation. This chapter does not require building BGP, EIGRP, RIP or multi-area OSPF.
+Recognize `D`, `R` and `B` when they appear in exhibits. The configuration work in this course is static routing and single-area OSPF only.
 
 ## Compare sources with administrative distance
 
-**Administrative distance**, or **AD**, expresses a router's local preference between route sources. Lower values are preferred. It is not a measured link speed, a security score or a metric that routers exchange as part of an IP packet. An administrator can change it, so displayed values outrank remembered defaults when interpreting an exhibit.
-
-Start with connected **0**, static **1**, and OSPF **110**. Use this compact reference when other source codes appear:
+Suppose OSPF and RIP both offer a route to `10.50.0.0/16`. Their metrics cannot settle the choice, because OSPF counts cost and RIP counts hops. So IOS ranks the sources themselves. **Administrative distance**, or **AD**, is a number from 0 to 255 that says how much a router trusts a route source, and the lowest number wins. AD is local to the router: it is never advertised to neighbors, and an administrator can change it. In an exhibit, believe the number in the brackets over the default you memorized.
 
 | Source | Default AD |
 |---|---:|
@@ -119,46 +125,50 @@ Start with connected **0**, static **1**, and OSPF **110**. Use this compact ref
 | External BGP | 20 |
 | Internal EIGRP | 90 |
 | OSPF | 110 |
+| IS-IS | 115 |
 | RIP | 120 |
 | External EIGRP | 170 |
 | Internal BGP | 200 |
 
-An AD of **255** makes a route unusable for installation. Other platform-specific or historical values are not needed to solve the examples here.
+Learn connected **0**, static **1**, EIGRP **90**, OSPF **110** and RIP **120** first; they answer most exam questions. An AD of **255** means the source is not trusted at all, and such a route is never installed.
 
-Suppose OSPF offers `10.50.0.0/16` with cost 20, RIP offers the same /16 with two hops, and a configured static route for that /16 has AD 130. If all candidates meet installation requirements and default protocol distances apply, OSPF wins: 110 is lower than 120 and 130. Comparing OSPF's 20 directly with RIP's 2 would compare unlike units.
+Three sources offer exactly `10.50.0.0/16`: OSPF with cost 20, RIP with hop count 2, and a static route that was configured with AD 130. Compare only the distances: 110, 120 and 130. OSPF wins, and the table shows `O 10.50.0.0/16 [110/20]`. RIP's 2 is smaller than OSPF's 20, but hops and cost are different units and are never compared with each other. If OSPF loses the route, RIP takes over with `[120/2]`. If RIP loses it too, the static route is installed with `[130/0]`.
 
-A **floating static route** has a higher AD than the intended primary source for the same prefix. It can remain in running configuration while absent from the installed table. If the primary disappears, the static route can become active only if it is still eligible, including valid next-hop resolution. A configured backup is not proof of successful failover.
+That static route is a **floating static route**: a static route deliberately given a higher AD than the primary source for the same prefix, so that it stays out of the table until the primary route disappears. While the primary is present, the floating route exists only in the running configuration, and `show ip route` does not list it. When it takes over it still needs a reachable next hop, like any static route.
+
+The AD is the optional last number of the static-route command, as in `ip route 10.50.0.0 255.255.0.0 10.0.99.2 130`. Leave it out and the route gets the static default of 1, which beats every routing protocol. Chapter 18 builds and tests these routes.
 
 :::trap
-Administrative distance does not choose between an installed /16 and an installed /24 for a packet. They are different destinations in the routing database. Use the packet's address and longest prefix match.
+Administrative distance never chooses between a /16 and a /24. They are different prefixes, so both are installed, and the packet's destination chooses between them by longest prefix match. AD only compares routes to the identical prefix.
 :::
-
-Chapter 18 teaches the static-route command and failure behavior in full. In the supplied examples, an optional final number in `ip route PREFIX MASK NEXT-HOP AD` sets the administrative distance; leaving it out normally uses the static default of 1.
 
 ## Compare metrics and recognize equal-cost paths
 
-A **metric** ranks paths according to a routing protocol's rules. In the single-area OSPF cases used in this course, lower accumulated cost is preferred. RIP uses hop count; EIGRP's usual metric considers bandwidth and delay. These values are not interchangeable, and a bracketed metric is not always a count of routers.
+Administrative distance chooses between sources. Inside one routing protocol, the **metric** chooses between paths. It is the protocol's own measure of how good a path is, and lower is better. OSPF adds up a **cost** for each outgoing interface along the path, based on bandwidth. RIP counts router **hops**. EIGRP calculates a composite value from bandwidth and delay. Because each protocol measures differently, a metric only means something next to another metric from the same protocol for the same prefix.
 
-OSPF cost depends on configured/reference bandwidth and possible explicit interface costs. A displayed cost of 2 does not prove that a destination is exactly two Gigabit Ethernet hops away. Interpret the value using the supplied topology and settings; Chapter 21 shows how it is calculated.
+For example, R1's OSPF process learns `10.20.30.0/24` through one neighbor at a total cost of 20 and through another at a total cost of 30. Only the cost-20 path is installed. The other stays in OSPF's own database, ready if the first path fails.
 
-Protocol rules can also distinguish route types before comparing metrics. In particular, do not generalize “pick the lowest displayed number” into a complete BGP or OSPF external-route algorithm. Those advanced selection details are not required for the single-area exercises here.
+Read the second bracketed number with its protocol in mind. In `[110/20]` the 20 is an OSPF cost, not a count of 20 routers; Chapter 21 shows the calculation. Static routes show a metric of 0.
 
-When a protocol supplies multiple eligible equal-cost paths and the device permits them, the installed entry can contain more than one next hop:
+When a protocol finds two or more paths with the same best metric, it installs them all, and the one prefix lists several next hops:
 
 ```output R1 route excerpt
 O    10.20.30.0/24 [110/20] via 10.0.12.2, 00:01:10, GigabitEthernet0/0
                   [110/20] via 10.0.13.2, 00:01:10, GigabitEthernet0/2
 ```
 
-This is **equal-cost multipath**, or **ECMP**. Both next hops belong to the same destination prefix and have the same displayed distance and cost. Maximum path counts depend on the protocol, image and configuration; “four paths by default on every Cisco router” is not a reliable rule.
+This is **equal-cost multipath**, or **ECMP**. Both lines belong to the same prefix and show the same distance and metric. IOS routers install up to four equal-cost OSPF paths by default, and the limit is configurable.
 
-CEF commonly uses a hash to select a path for a flow. Two installed paths therefore do not guarantee that each packet alternates links, that byte counts divide 50/50, or that one transfer receives the sum of both links' bandwidth. For CCNA interpretation, identify the eligible paths and avoid promising a traffic distribution the exhibit does not establish.
+CEF shares traffic across the paths per flow by default. It hashes the source and destination addresses, so every packet of one conversation takes the same next hop and arrives in order. So a single large transfer gets the bandwidth of one link, not both, and the two links rarely carry equal byte counts.
 
 ## Apply longest prefix match
 
-**Longest prefix match** selects the most-specific installed prefix containing the destination. A larger prefix length means more fixed bits: /25 is more specific than /24, and /24 is more specific than /16. Specificity matters only after you confirm that the address is inside that prefix.
+Routes in a real table overlap. A /19 can cover a whole site, a /23 inside it one building, and a /25 inside that a single server segment. When a destination falls inside several of them, the router uses the match with the longest prefix length, because the longest prefix is the most specific statement about where that address lives. This is **longest prefix match**, and it has two steps:
 
-Work this example without comparing distances:
+1. **Match.** Decide which installed routes contain the destination address.
+2. **Choose.** Among those, take the longest prefix length: /25 beats /24, and /24 beats /16.
+
+Mistakes happen in step 1, because prefixes seldom end on an octet boundary. Use the block-size method from Chapter 5 to write each route's range first. A /19 has a block size of 32 in the third octet, a /21 has 8, a /23 has 2, and a /25 has 128 in the fourth octet.
 
 | Installed prefix | Next hop | Address range covered |
 |---|---|---|
@@ -167,34 +177,39 @@ Work this example without comparing distances:
 | `172.16.44.0/23` | `10.0.0.4` | `172.16.44.0–172.16.45.255` |
 | `172.16.44.128/25` | `10.0.0.5` | `172.16.44.128–172.16.44.255` |
 
-For `172.16.44.9`, the /19, /21 and /23 match. The /25 does not: its final-octet range starts at 128. The winning route is the /23 through `10.0.0.4`.
+Now look up four destinations:
 
-For `172.16.44.200`, all four match, so the /25 wins. For `172.16.45.200`, the /23 wins because the /25 covers only part of `172.16.44.x`. A familiar-looking third octet is not a substitute for checking the whole mask.
+- `172.16.44.9` is inside the /19, the /21 and the /23. It is not inside the /25, whose range starts at `.128`. The longest match is the /23, so the next hop is `10.0.0.4`.
+- `172.16.44.200` is inside all four. The /25 wins: `10.0.0.5`.
+- `172.16.45.200` looks similar, but the /25 covers only part of `172.16.44.x`. The /23 wins again: `10.0.0.4`.
+- `172.16.60.7` is inside only the /19: `10.0.0.2`.
 
-Use a repeatable method: write the destination, find every matching range, choose the greatest matching prefix length, then read that entry's action. The action might be forwarding to a neighbor, local delivery or discard through `Null0`. `Null0` is a virtual discard interface: choosing it deliberately drops the packet rather than transmitting through a cable. A more-specific discard route wins over a less-specific working route.
+Notice what you did not use: the route codes, the administrative distances and the metrics. If the /25 were a static route with AD 200 and the /23 an OSPF route with AD 110, the /25 would still win for `172.16.44.200`.
 
-If the chosen route cannot deliver a packet, the router does not normally retry progressively less-specific routes as a recovery strategy. For example, an installed /25 pointing to Null0 still discards its matching traffic even if a /24 and default route could lead elsewhere.
+A route's action is not always "forward to a neighbor". An `L` route means deliver the packet to the router itself. A route to `Null0` means discard it: `Null0` is a virtual interface that drops everything sent to it, and engineers point static routes at it on purpose. The router never falls back to a shorter prefix once a longer one has matched. An installed /25 to `Null0` discards its traffic even when a working /24 and a default route also contain the destination. If the /25 is later removed, the next packet is matched against the routes that remain, and the /24 wins.
 
 ## Resolve next hops and use a default route
 
-A route with a next-hop IP must resolve to a usable forwarding path. Often that next hop is directly connected. A recursive route can instead name an address reached through another route; resolution continues until an outgoing adjacency or appropriate forwarding action is determined.
+Choosing a route gives the router a next-hop IP address. Before it can send a frame, it needs two more things: the interface to send from and the next hop's MAC address.
 
-On Ethernet, reaching a neighbor requires its link-layer address. For a remote destination through a neighboring router, ARP resolves the router's IP. For a directly attached destination, ARP normally resolves the destination host itself. A route can exist while ARP remains incomplete, so next-hop resolution and successful neighbor communication are separate checks.
+Take `S 10.20.30.0/24 [1/0] via 10.0.12.2`. The line names no interface, so R1 looks up `10.0.12.2` in its own table, finds the connected route `10.0.12.0/30` on GigabitEthernet0/0, and now knows the exit interface. That second lookup is a **recursive lookup**. If no route covers the next hop, the static route cannot be installed.
 
-A **default route**, `0.0.0.0/0`, matches every IPv4 destination but has the shortest possible prefix. It is used only when there is no more-specific matching installed route. Its existence does not mean the network has Internet access; a default can point toward any intended upstream path.
+On Ethernet, R1 then uses ARP to find a MAC address. Which address it asks for depends on the route. For a remote destination, R1 resolves the next-hop router: a packet to `10.20.30.50` causes an ARP request for `10.0.12.2`, and the frame goes to that router's MAC address while the packet still carries destination `10.20.30.50`. For a destination on a connected subnet, R1 resolves the destination host itself. A route can be installed while ARP for its next hop fails, so a correct route does not prove that the neighbor answers.
+
+A **default route** is `0.0.0.0/0`. Its prefix length is zero, so there are no bits to compare and every IPv4 address is inside it. Because it is the shortest possible prefix, it loses to every other matching route and is used only when nothing else matches. A branch router with one uplink can carry a single default route instead of a route for every network beyond that uplink.
 
 ```output R1 default-route excerpt
 Gateway of last resort is 10.0.12.2 to network 0.0.0.0
 S*   0.0.0.0/0 [1/0] via 10.0.12.2
 ```
 
-Here `S` identifies a static source and `*` marks it as a candidate default. The gateway-of-last-resort line summarizes the selected fallback. If no route matches and no default exists, ordinary routed traffic is discarded. An ICMP unreachable response may be generated, subject to configuration and other limits; its absence is not proof that no discard occurred.
+`S` says the route is static, and `*` marks it as a candidate default. The `Gateway of last resort` line names the next hop of the default route in use. Without a default route the line reads `Gateway of last resort is not set`, and a packet that matches no route is dropped. The router normally sends an ICMP destination unreachable message back to the source.
 
-Default-route display behavior deserves care. Cisco documents an IOS example where a destination-specific `show ip route` lookup reports “Network not in table” while the default route exists. Do not memorize that as the behavior of every release or command form. Inspect the full `show ip route` output, the default entry itself, and the CEF lookup where supported before concluding that no forwarding match exists.
+One display quirk can mislead you. `show ip route 203.0.113.9`, for a destination that only the default route matches, answers `% Network not in table` on IOS. That command reports a specific route and does not fall back to the default, although the packet itself is forwarded by the default. Read the full `show ip route`, or use `show ip cef 203.0.113.9`, before deciding that a destination has no route.
 
 ## Verify the decision and its limits
 
-Begin with the full table to avoid hiding a relevant source or more-specific route:
+When a destination is unreachable, work in a fixed order: read the whole table, find the route the destination matches, check that route's next hop, then test the traffic in both directions. Start with the full table, so that a more-specific route cannot hide from you:
 
 ```output R1# show ip route (representative excerpt)
 Gateway of last resort is 10.0.12.2 to network 0.0.0.0
@@ -207,31 +222,37 @@ S       10.20.30.128/25 is directly connected, Null0
 S*   0.0.0.0/0 [1/0] via 10.0.12.2
 ```
 
-The `10.0.0.0/8` display group contains four route entries with four prefix lengths: /30, /32, /24 and /25. Its heading does not add a /8 route. For `10.20.30.150`, the /25 selects Null0; for `10.20.30.50`, the /24 selects `10.0.12.2`. The default remains available only for destinations without a more-specific match.
+The four indented entries are a /30, a /32, a /24 and a /25, and the heading above them adds no /8 route. Look up two destinations. `10.20.30.150` is inside the /24 and the /25; the /25 is longer, so the packet is discarded at `Null0`. `10.20.30.50` is inside only the /24 and goes to `10.0.12.2`. This is the fault from the start of the chapter: two hosts in one subnet, two different routes. The default route serves only destinations that match none of the four entries, such as `198.51.100.10`.
 
-Use focused commands after identifying the relevant destination:
+Then narrow down with focused commands:
 
 | Command | What it establishes |
 |---|---|
-| `show ip route` | Installed IPv4 routes and default summary |
-| `show ip route 10.20.30.150` | Matching route detail in supported command behavior; inspect the returned prefix |
-| `show ip route static` | Installed static routes, excluding inactive configured backups |
+| `show ip route` | All installed IPv4 routes and the gateway of last resort |
+| `show ip route 10.20.30.150` | The specific installed route that matches this address |
+| `show ip route static` | Installed static routes only; a floating static route that lost is not listed |
 | `show ip route ospf` | Installed routes supplied by OSPF |
 | `show running-config \| include ^ip route` | Configured static-route lines, whether installed or not |
-| `show ip cef 10.20.30.150` | CEF forwarding entry for this destination, where supported |
-| `show ip arp` | IPv4 neighbor address-resolution evidence |
-| `show ip interface brief` | Interface addressing and operational state |
+| `show ip cef 10.20.30.150` | The CEF forwarding entry for this destination, default route included |
+| `show ip arp` | IPv4-to-MAC resolution for neighbors |
+| `show ip interface brief` | Interface addresses and up/down state |
 
-The filter `show running-config | include ^ip route` selects configured lines beginning with `ip route`: `| include` keeps matching lines, and `^` anchors the match at the start of a line. Compare those configured statics with the installed table; a configuration line alone is not an installed route. On an image without filters, inspect the full running configuration.
+The filter in `show running-config | include ^ip route` keeps only the lines that begin with `ip route`: `| include` keeps matching lines, and `^` anchors the match to the start of the line. Comparing that list with `show ip route static` shows which configured static routes are not installed, for instance a floating static route waiting behind OSPF.
 
-A CEF entry marked **receive** identifies local delivery; **attached** identifies a directly attached prefix or adjacency context; **drop** identifies a discard action. An attached prefix does not establish that every host in it has a resolved adjacency. Platform-specific hardware forwarding internals are outside the CCNA workload.
+In `show ip cef` output, **receive** means the router delivers the packet to itself, **attached** means the prefix is directly connected, and **drop** means discard.
 
-Finish with a traffic test appropriate to the fault. A successful next-hop ping is useful but does not prove that the remote host, return route or application works. Test from the affected source where possible and inspect the other router's route back to that source. A router-originated ping can select a different source address from the user's traffic and therefore exercise a different return path.
+Finally, test the traffic, and remember that routing is one-way. R1's table only moves the packet toward the destination. The reply is a new packet whose destination is the original sender, and every router on the way back looks it up independently. A correct route on R1 with no return route on the far router still produces a failed ping. Test from the user's PC where you can: a ping typed on R1 uses the address of R1's outgoing interface as its source, so it tests a different return route from the one the user's traffic needs.
 
 ## Exam focus
 
-Given an exhibit, identify the route code, destination prefix and mask, AD, metric, next hop, outgoing interface and default marker. Explain why a route source was selected for a particular prefix, then independently apply longest prefix match to a packet destination.
+Given a `show ip route` exhibit, be able to:
 
-You should be able to solve overlapping non-octet prefixes, distinguish a connected subnet from a local interface address, recognize ECMP, and explain why a configured backup may be absent from the RIB. For troubleshooting, state what the evidence proves and which missing observation would distinguish route selection from a forwarding or return-path failure.
+- Name each field of an entry: route code, prefix and mask, administrative distance, metric, next hop and outgoing interface.
+- Recall the default ADs: connected 0, static 1, eBGP 20, EIGRP 90, OSPF 110, RIP 120, external EIGRP 170, iBGP 200, and 255 for never installed.
+- Explain which source is installed when several offer the same prefix, and why a floating static route is configured but missing from the table.
+- Apply longest prefix match to prefixes that do not end on octet boundaries, including a local /32, a `Null0` route and the default route.
+- Tell a connected subnet (`C`) from the router's own address (`L`), and recognize ECMP as one prefix with several next hops.
+- Read `S*` and the gateway of last resort line, and say what happens to a packet when no route matches.
+- State what an installed route does not prove: that the next hop resolves, or that a return route exists.
 
-The v1.1 objectives explicitly enumerate these fields and decisions; v2.0 also requires interpreting routing-table output. Static-route construction belongs in Chapter 18, OSPF operation in Chapters 21–22, and full policy configuration in later chapters. Use those later lessons to deepen the same route-reading method.
+The v1.1 objectives list these fields and decisions one by one; v2.0 also requires interpreting routing-table output.

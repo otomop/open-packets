@@ -7,7 +7,7 @@ minutes: 80
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build a new isolated Packet Tracer project. You will first observe a missing return route, then establish a working baseline, test a backup, and compare network, host and default routes. These are guided configuration and reasoning exercises, not a record of an executed simulator session. Output is representative; wording, interface displays and supported diagnostic options can vary by version. If a command is unavailable, use the stated alternative and record the limitation.
+Build a new Packet Tracer project. You will add one static route and watch a PC ping fail because the return route is missing, then fix it. Next you add a floating backup in each direction and fail the primary link. Finally you add a host route and a default route and watch longest prefix match choose between them. Output is representative; exact wording varies by Packet Tracer version.
 
 ## Topology
 
@@ -15,7 +15,7 @@ Build a new isolated Packet Tracer project. You will first observe a missing ret
 {"type":"topology","title":"Lab 18 — Two transit links between two routed LANs","caption":"R1 and R2 share two separate /30 transit links, and each PC reaches its router through one switch.","nodes":[{"id":"A","kind":"pc","label":"PC-A","sub":"192.168.10.11/24 · gw 192.168.10.1","x":1,"y":1},{"id":"SW1","kind":"switch","label":"SW1","x":1,"y":4},{"id":"R1","kind":"router","label":"R1","x":4,"y":4},{"id":"R2","kind":"router","label":"R2","x":8,"y":4},{"id":"SW2","kind":"switch","label":"SW2","x":11,"y":4},{"id":"B","kind":"pc","label":"PC-B","sub":"192.168.20.12/24 · gw 192.168.20.1","x":11,"y":1}],"links":[{"from":"A","to":"SW1","toLabel":"Fa0/1"},{"from":"SW1","to":"R1","fromLabel":"Fa0/24","toLabel":"Gi0/2 .1"},{"from":"R1","to":"R2","fromLabel":"Gi0/0 .1","toLabel":"Gi0/0 .2","label":"10.0.12.0/30"},{"from":"R1","to":"R2","fromLabel":"Gi0/1 .1","toLabel":"Gi0/1 .2","label":"10.0.13.0/30"},{"from":"R2","to":"SW2","fromLabel":"Gi0/2 .1","toLabel":"Fa0/24"},{"from":"SW2","to":"B","fromLabel":"Fa0/1"}]}
 ```
 
-Use two 2911 routers with `GigabitEthernet0/0`, `0/1` and `0/2`. Use two 2960 switches at their default VLAN 1 settings. No trunk, management address, DHCP service, DNS server or Internet connection is required. The switches make the PC-to-router cabling unambiguous.
+Use two 2911 routers with `GigabitEthernet0/0`, `0/1` and `0/2`. Use two 2960 switches at their default VLAN 1 settings; they need no configuration. Gi0/0 carries the primary transit link, Gi0/1 the backup, and Gi0/2 each router's LAN.
 
 | Connection | Cable |
 |---|---|
@@ -26,7 +26,7 @@ Use two 2911 routers with `GigabitEthernet0/0`, `0/1` and `0/2`. Use two 2960 sw
 | R2 GigabitEthernet0/2 — SW2 FastEthernet0/24 | Copper straight-through |
 | SW2 FastEthernet0/1 — PC-B FastEthernet0 | Copper straight-through |
 
-If a model uses different interface names, record the substitutions before continuing. Do not connect the two switches to one another.
+If your router model uses different interface names, write down the substitutions before you continue. Do not connect the two switches to each other.
 
 | Device/interface | IPv4 address | Mask | PC gateway |
 |---|---|---|---|
@@ -40,7 +40,7 @@ If a model uses different interface names, record the substitutions before conti
 | PC-B | `192.168.20.12` | `255.255.255.0` | `192.168.20.1` |
 | R2 Loopback0, added in Step 10 | `203.0.113.8` | `255.255.255.255` | — |
 
-A loopback is a logical router interface used here as a stable test destination. The documentation address does not represent a public Internet service.
+A loopback is a virtual interface that stays up without a cable. Here it gives R2 an address that no network route covers, so you can test the default route. `203.0.113.8` is a documentation address, not a real Internet host.
 
 ## Step 1: Cable the project and configure R1
 
@@ -64,7 +64,7 @@ R1# show ip interface brief
 ```
 
 :::expected
-After switch ports finish transitioning, Gi0/2 should be up/up. The transit ports may remain down until R2 is enabled. From PC-A's Desktop → Command Prompt, run `ping 192.168.10.1`. Repeat after address resolution if the first attempt loses a reply. Resolve any local failure before adding routes.
+Once the switch port finishes its spanning-tree transition, Gi0/2 is up/up. The transit ports stay down until R2 is enabled. From PC-A's Desktop → Command Prompt, run `ping 192.168.10.1`. The first reply may be lost while ARP resolves; ping again. Fix any local failure before adding routes.
 :::
 
 ```state
@@ -96,7 +96,7 @@ R2# ping 10.0.13.1
 ```
 
 :::expected
-Both transit pings should succeed, and PC-B should ping `192.168.20.1`. Each router has connected routes for its three /30 or /24 networks and local routes for its own addresses on images that display L entries. Neither router has a route to the other LAN. PC-A's ping to `192.168.20.12` should fail at this stage. This is a planned baseline, not a reason to change the PC mask.
+Both transit pings succeed, and PC-B can ping `192.168.20.1`. Each router's table has three connected (`C`) routes, one per interface, and a local (`L`) /32 route for each of its own addresses. Neither router has a route to the other LAN, so PC-A's ping to `192.168.20.12` fails. That is the starting point for the lab, not a fault to fix on the PC.
 :::
 
 ```state
@@ -105,7 +105,7 @@ Both transit pings should succeed, and PC-B should ping `192.168.20.1`. Each rou
 
 ## Step 3: Observe the missing return route
 
-Before configuration, write the expected source of R1’s ordinary ping and PC-A’s ping. For each, identify the reply destination R2 must look up. Add only R1's remote-LAN route.
+Add R1's route to the remote LAN and nothing else. The lab uses the fully specified form, interface plus next hop, so that each route is tied to one link; Step 7 depends on that. Before you test, write down the source address of R1's own ping and of PC-A's ping, and the destination R2 must look up to send each reply.
 
 ```ios R1
 R1# configure terminal
@@ -122,7 +122,7 @@ ping 192.168.20.12
 ```
 
 :::expected
-R1 should list the /24 static through Gi0/0 and `10.0.12.2` at distance 1. R1's ordinary ping normally succeeds because its source is `10.0.12.1`, reachable through R2's connected transit route. PC-A's ping fails because R2 has no route back to `192.168.10.11`. Confirm that absence with R2's `show ip route`. In Simulation mode, you can follow the request toward PC-B and the return failure at R2. Do not infer this diagnosis from a failed ping alone outside this controlled configuration.
+R1 lists the /24 static route through Gi0/0 and `10.0.12.2` at distance 1. R1's own ping succeeds because its source is `10.0.12.1`, which R2 reaches through its connected transit route. PC-A's ping fails because R2 has no route back to `192.168.10.11`. Confirm that with `show ip route` on R2. In Simulation mode you can watch the request reach PC-B and the reply stop at R2.
 :::
 
 ```state
@@ -139,7 +139,7 @@ R2# show ip route static
 ```
 
 :::expected
-R2 now has the return /24 at distance 1. Repeat PC-A's ping to PC-B, then ping `192.168.10.11` from PC-B. Both should succeed. Optionally run `tracert 192.168.20.12` from PC-A; response addresses may vary, so use the selected routes and completed ping as the core evidence.
+R2 now has the return /24 at distance 1. Repeat PC-A's ping to PC-B, then ping `192.168.10.11` from PC-B. Both succeed. Optionally run `tracert 192.168.20.12` from PC-A: the hops are `192.168.10.1`, then R2's primary address `10.0.12.2`, then PC-B.
 :::
 
 ```state
@@ -148,7 +148,7 @@ R2 now has the return /24 at distance 1. Repeat PC-A's ping to PC-B, then ping `
 
 ## Step 5: Add R1's floating route
 
-Predict which of the two candidates will appear in configuration and which will be selected in the installed table. Use those as separate columns in your evidence record.
+Add a second route to the same /24 through the backup link, with distance 5. Before you look, predict which of the two routes appears in the running configuration and which appears in the routing table.
 
 ```ios R1
 R1# configure terminal
@@ -159,7 +159,7 @@ R1# show ip route static
 ```
 
 :::expected
-The configuration has two routes to `192.168.20.0/24`. The installed table still selects the primary at distance 1. Distance 5 makes the other route a backup; it does not mean five hops. The named interfaces prevent the primary from being resolved through the alternate link.
+The running configuration has two routes to `192.168.20.0/24`. The routing table still shows only the primary at distance 1. Distance 5 makes the other route a backup; it does not mean five hops. Because each route names its interface, the primary cannot stay installed by resolving its next hop through the backup link.
 :::
 
 ```state
@@ -177,7 +177,7 @@ R2# show ip route static
 ```
 
 :::expected
-R2 likewise keeps the distance-1 primary selected while retaining the distance-5 backup in its configuration. Ping between PCs once more before introducing the next fault.
+R2 also keeps the distance-1 primary installed and holds the distance-5 backup in its configuration. Ping between the PCs once more before you fail the link.
 :::
 
 ```state
@@ -186,7 +186,7 @@ R2 likewise keeps the distance-1 primary selected while retaining the distance-5
 
 ## Step 7: Fail the primary and inspect both tables
 
-Predict the selected prefix, AD and next hop on **both** routers after failure, including the return direction. Shut only R1 Gi0/0. Keep it shut until you have collected the evidence.
+Predict the installed prefix, distance and next hop on **both** routers after the failure. Shut only R1 Gi0/0, and keep it shut until you have checked both tables.
 
 ```ios R1
 R1# configure terminal
@@ -197,16 +197,16 @@ R1# show ip interface brief
 R1# show ip route static
 ```
 
-Inspect `show ip interface brief` and `show ip route static` on R2 as well. The direct cable should make its primary link lose carrier. Repeat ordinary PC pings; a continuous-ping option is not required.
+Run `show ip interface brief` and `show ip route static` on R2 as well. Because the routers are cabled directly, R2's Gi0/0 goes down when R1's is shut. Then repeat the PC pings.
 
 :::expected
-After link and route updates, R1 should select the backup shown below, and R2 should select its return /24 through Gi0/1 and `10.0.13.1` at distance 5. Some probes may fail during the transition; no exact loss count or recovery time is promised.
+R1 installs the backup shown below, and R2 installs its return /24 through Gi0/1 and `10.0.13.1` at distance 5. A few pings may be lost while the routes change.
 
 ```output R1# show ip route static
 S    192.168.20.0/24 [5/0] via 10.0.13.2, GigabitEthernet0/1
 ```
 
-PC-to-PC pings should recover over the backup. If they do not, inspect both directions and the backup interface state before restoring the primary.
+PC-to-PC pings work again over the backup. If they do not, check the backup route and Gi0/1 on both routers before you restore the primary.
 :::
 
 ```state
@@ -224,7 +224,7 @@ R1# show ip route static
 ```
 
 :::expected
-Allow the physical link to recover. Both routers should again select distance-1 routes through Gi0/0, while their backup lines remain configured. Recheck endpoint pings. Save a separate working project copy now if you want a checkpoint before the next experiment.
+Wait for the link to come up. Both routers install their distance-1 routes through Gi0/0 again, and the backup lines remain in the configuration. Repeat the PC pings. Save a copy of the project now if you want a checkpoint before the next step.
 :::
 
 ```state
@@ -233,7 +233,7 @@ Allow the physical link to recover. Both routers should again select distance-1 
 
 ## Step 9: Make one host use the alternate path
 
-Before entering the supplied host route, predict R1’s choices for PC-B (.12) and R2’s LAN address (.1). Explain whether AD 200 is compared with the /24’s AD 1 during those destination lookups.
+Add a host route for PC-B through the backup link, with distance 200. Before you enter it, predict which entry R1 uses for PC-B (.12) and for R2’s LAN address (.1), and decide whether distance 200 is ever compared with the /24’s distance 1. `show ip route 192.168.20.12` prints the one entry R1 uses for that address.
 
 ```ios R1
 R1# configure terminal
@@ -244,7 +244,7 @@ R1# show ip route 192.168.20.12
 ```
 
 :::expected
-The /32 at distance 200 can coexist with the distance-1 /24. Traffic for PC-B selects /32 through Gi0/1; traffic for `192.168.20.1` selects /24 through Gi0/0. Ping both addresses from PC-A. Use Simulation mode or the installed entries to verify the destination decisions. Replies can return over the primary; an asymmetric path is not itself a failure in this unfiltered lab.
+The /32 at distance 200 is installed beside the distance-1 /24. They are different prefixes, so their distances are never compared. Traffic for PC-B uses the /32 through Gi0/1; traffic for `192.168.20.1` uses the /24 through Gi0/0. Ping both addresses from PC-A, and use Simulation mode to see the two paths. PC-B's replies return over the primary, because R2 has no host route. The path is asymmetric and the ping still works.
 :::
 
 ```state
@@ -264,7 +264,7 @@ R2# show ip route
 ```
 
 :::expected
-R2 has a connected/local entry covering `203.0.113.8/32`; exact C/L presentation for loopbacks varies. From PC-A, `ping 203.0.113.8` should fail because R1 has no matching route or default. Record R1's current table to establish that reason.
+R2 has a connected entry for `203.0.113.8/32`. From PC-A, `ping 203.0.113.8` fails because R1 has no route that matches and no default. Read R1's routing table to confirm it.
 :::
 
 ```state
@@ -273,7 +273,7 @@ R2 has a connected/local entry covering `203.0.113.8/32`; exact C/L presentation
 
 ## Step 11: Add the default and verify its limits
 
-Predict which entry will serve the loopback and whether the existing PC-B host route will still win for PC-B. Keep the loopback test’s actual PC-A source and R2 return route in your record.
+Add a default route on R1. Predict which entry will forward packets for the loopback, and whether the PC-B host route will still be used for PC-B.
 
 ```ios R1
 R1# configure terminal
@@ -283,7 +283,7 @@ R1# show ip route
 ```
 
 :::expected
-R1 lists an S* /0 route through R2. PC-A should now ping `203.0.113.8` successfully, using R2's existing return route to the PC LAN. No more specific route at R1 covers that loopback. The /32 for PC-B still takes precedence over the default. This proves a default to a known lab destination; it does not establish Internet connectivity.
+R1 lists an `S*` /0 route through R2, and the `Gateway of last resort` line names `10.0.12.2`. PC-A can now ping `203.0.113.8`: only the /0 matches on R1, and R2 replies through its existing route to PC-A's LAN. The /32 still forwards traffic for PC-B, because it is a longer match than the default.
 :::
 
 ```state
@@ -311,7 +311,9 @@ R2# copy running-config startup-config
 ```
 
 :::expected
-Accept R2's filename prompt separately. Each router retains exactly its primary and floating remote-LAN route, and all physical interfaces are enabled. Confirm PC-to-PC ping. Save the project as `18-ipv4-static-baseline.pkt`. A project save and an IOS startup-configuration save are separate actions. Submit a state table for missing return route, repaired baseline, backup configured, primary failed, primary restored, host exception and default test. For each state name the relevant configured candidate, installed prefix/AD/action, tested source/destination and observed result. Distinguish the ordinary router ping from the endpoint test. Do not infer remote outage detection from the direct-cable failure test.
+Press Enter at R2's filename prompt as well. Each router now has exactly two static routes, its primary and its floating backup to the other LAN, and every physical interface is up. Confirm the PC-to-PC ping, then save the project as `18-ipv4-static-baseline.pkt`. Saving the project file and saving each router's startup configuration are separate actions; you need both.
+
+To review, list the seven states you created: missing return route, repaired baseline, backup configured, primary failed, primary restored, host route, and default route. For each, write the installed route and its distance, the source and destination you tested, and the result.
 :::
 
 ```state
@@ -321,11 +323,11 @@ Accept R2's filename prompt separately. Each router retains exactly its primary 
 ## Troubleshooting
 
 - **Local ping fails:** compare the address table, cable endpoints, switch port state and router `no shutdown`. A remote route cannot fix a local addressing problem.
-- **A route is configured but absent:** inspect its distance, destination mask and required interface. Next-hop-only routes also need successful route resolution.
-- **A route is installed but traffic fails:** confirm the actual peer address with its interface configuration, then inspect downstream and return routes.
+- **A route is configured but absent:** check its distance, its destination mask and the state of its exit interface. A next-hop-only route also needs an installed route that covers the next hop.
+- **A route is installed but traffic fails:** compare the next hop with the neighbor's real interface address, then check the other router's route back to the source.
 - **Backup does not take over:** check that Gi0/0 really became unusable and Gi0/1 is still up. Compare both backup masks with their primary masks.
 - **Two paths have distance 1:** the backup's distance may be omitted. Read the running configuration, remove the incorrect line, and re-enter it with distance 5.
-- **A command or display differs:** use IOS `?` to check availability. Record the model/version and verify the same route decision using the full table; do not invent a matching screenshot.
+- **A command is rejected or its output looks different:** use `?` to see what your Packet Tracer version accepts, and read the full `show ip route` table instead.
 
 ## Challenge
 

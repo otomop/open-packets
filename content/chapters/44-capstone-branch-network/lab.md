@@ -559,7 +559,7 @@ R2# show ntp status
 
 Wait for observations across polls; check server service and both-direction IP reachability if unsynchronized. Do not set a local master to hide a failed server association. Switch NTP is optional: use `ntp server 10.255.20.10` only if that model/image supports it; otherwise record that limitation and leave its timestamp accuracy unverified.
 
-Generate a controlled event on R1 by creating an unused unnumbered loopback, then administratively shutting it:
+Generate a controlled event on R1 by creating a loopback interface with no IP address, then administratively shutting it:
 
 ```ios R1
 R1# configure terminal
