@@ -13,12 +13,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish:
+  build:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.publish.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v7
@@ -39,6 +36,29 @@ jobs:
         with:
           path: dist
 
+  # Publishing is its own job on purpose. GitHub's artifact list can lag a few
+  # seconds behind an upload, and deploy-pages fails with "No artifacts named
+  # github-pages" if it looks straight away (actions/deploy-pages#451). A
+  # separate job starts later, and "Re-run failed jobs" then repeats only the
+  # publish instead of uploading a second artifact.
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url || steps.publish_retry.outputs.page_url }}
+
+    steps:
       - name: Publish website
         id: publish
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+
+      - name: Wait for the artifact to be listed
+        if: steps.publish.outcome == 'failure'
+        run: sleep 30
+
+      - name: Publish website (second attempt)
+        id: publish_retry
+        if: steps.publish.outcome == 'failure'
         uses: actions/deploy-pages@v5
