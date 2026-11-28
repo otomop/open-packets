@@ -42,7 +42,7 @@ export default function Blueprint() {
       <p className="muted panel"><a href={href("practice")}>Practice</a> a domain or objective directly from the focused-session scope.</p>
       <section className="part-block">
         <div className="part-head"><h2>Reference library</h2><small>{sources.length} primary sources cited across the chapters · checked {course.sourceCheckedOn}</small></div>
-        <div className="list-rows panel-list">{sources.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer" style={{ padding: "10px 20px", display: "flex", justifyContent: "space-between", gap: 12, textDecoration: "none", fontSize: 14 }}><span>{s.title}</span><span className="dim mono small">{new URL(s.url).hostname}</span></a>)}</div>
+        <div className="list-rows panel-list">{sources.map((s) => <a key={s.url} href={s.url} target="_blank" rel="noreferrer" style={{ padding: "10px 20px", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "4px 12px", textDecoration: "none", fontSize: 14 }}><span>{s.title}</span><span className="dim mono small">{new URL(s.url).hostname}</span></a>)}</div>
       </section>
     </div>
   );

@@ -104,22 +104,30 @@ function LessonToc({ c, done }: { c: ReadingChapter; done: string[] }) {
   );
 }
 
+/** End of a section: one clear action that records it as read, and a way on to the next section. */
+function SectionFoot({ chapterId, id, title, read, next }: { chapterId: string; id: string; title: string; read: boolean; next?: { id: string; title: string } }) {
+  const toggle = () => toggleInList(chapterId, "sectionsDone", id);
+  return (
+    <div className="section-foot">
+      {read
+        ? <span className="section-read"><b>✓ Read</b><button type="button" className="link" onClick={toggle} aria-label={`Mark as unread: ${title}`}>Undo</button></span>
+        : <button type="button" className="btn sm" onClick={toggle} aria-label={`Mark as read: ${title}`}>Mark as read</button>}
+      {next && <a className="section-next" href={"#s-" + next.id} onClick={(e) => { e.preventDefault(); document.getElementById("s-" + next.id)?.scrollIntoView({ block: "start" }); }}><span>Next</span>{next.title} →</a>}
+    </div>
+  );
+}
+
 /** The lesson text. Memoised: it re-renders only when the chapter or its "I can" ticks change, not on scroll or the reading timer. */
 const LessonArticle = memo(function LessonArticle({ c, done }: { c: ReadingChapter; done: string[] }) {
   const sections = c.sections;
   const teach = sections.filter((s) => s.id !== "intro");
   return (
-    <article className="article">
+    <article className="article lesson">
       {sections.map((s, i) => (
         <section key={s.id} id={"s-" + s.id} className="section">
-          {s.id !== "intro" && <><div className="section-kicker">{String(teach.indexOf(s) + 1).padStart(2, "0")} / {String(teach.length).padStart(2, "0")}</div><h2 className="section-title">{s.title}</h2></>}
+          {s.id !== "intro" && <><div className="section-kicker"><b aria-hidden="true">{String(teach.indexOf(s) + 1).padStart(2, "0")}</b><span>{String(teach.indexOf(s) + 1).padStart(2, "0")} / {String(teach.length).padStart(2, "0")}</span></div><h2 className="section-title">{s.title}</h2></>}
           <Markdown text={s.body} />
-          {isCheckableSection(s) && (
-            <div className="section-check">
-              <span>Can you explain this section in your own words?</span>
-              <label className="check"><input type="checkbox" checked={done.includes(s.id)} onChange={() => toggleInList(c.id, "sectionsDone", s.id)} /> I can</label>
-            </div>
-          )}
+          {isCheckableSection(s) && <SectionFoot chapterId={c.id} id={s.id} title={s.title} read={done.includes(s.id)} next={teach[teach.indexOf(s) + 1]} />}
         </section>
       ))}
       <div className="callout callout-tip"><div className="callout-label">Next</div><p>Do the guided lab, then take the checkpoint without looking back at the lesson. <a href={chapterHref(c.id, "lab")}>Open the lab →</a></p></div>
