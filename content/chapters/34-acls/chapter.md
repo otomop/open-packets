@@ -35,9 +35,9 @@ sources:
   - { title: "Cisco: Catalyst 9000 Access Control Lists Configuration Guide", url: "https://www.cisco.com/c/en/us/td/docs/switches/lan/c9000/security/acls/acls-configuration-guide/access-control-lists.html" }
 ---
 
-An access control list makes a traffic policy precise. Instead of saying “protect the server,” you identify the clients, destination, protocol and permitted service. You then choose where the router should check those fields. An ACL can be syntactically correct and still enforce the wrong policy because its entries are out of order or it is attached to the wrong interface direction.
+A router forwards every packet it has a route for. That is its job, but it means that once two LANs are routed together, any client can reach any port on any server. Suppose the rule is that clients may browse the web server but must not ping it or reach anything else on it. Routing cannot express that. You need the router to look at each packet's addresses, protocol and port and decide whether to forward or drop it. An access control list (ACL) is the list of those decisions.
 
-You have already used a small source list to select NAT traffic and restrict an SNMP community. This chapter develops the complete match-and-attachment model for packet filtering. Keep Chapter 33's identity decision separate: admitting an SSH packet does not authenticate its user, and a valid account does not override a packet filter.
+You have already written small ACLs to select traffic for NAT and to restrict an SNMP community. This chapter covers ACLs as packet filters: how the router matches a packet against the list, how wildcard masks select addresses, the difference between standard and extended lists, and where and in which direction to apply one. By the end you will be able to turn a short written policy into a numbered or named ACL, apply it to the right interface, and work out which line any given packet matches.
 
 ## Start with the access policy
 
@@ -53,13 +53,13 @@ You have already used a small source list to select NAT traffic and restrict an 
 
 Consider clients `10.100.10.0/24`, a web server `10.100.20.20`, and a file server `10.100.20.30`. The policy is: allow clients to use HTTP on the web server, deny their other traffic to that server, and leave other destinations available. This needs an extended ACL because source addresses alone cannot distinguish HTTP from ping or one server from another.
 
-Write down what must remain available before configuring: application requests, their replies, DNS if names are used, and your management connection. Also identify the default policy. “Permit listed services, deny everything else” requires no final broad permit. “Block these exceptions, allow the rest” does. Neither is universally correct; the requirement decides.
+Before you configure anything, write down what must keep working: the application's requests, their replies, DNS if names are used, and your own management connection. Then decide the default. “Permit the listed services and deny everything else” needs no final permit, because an ACL denies whatever it does not match. “Block these exceptions and allow the rest” needs a final `permit ip any any`.
 
-ACLs are also used as selectors by NAT, QoS and VPN features. In those contexts an ACL match identifies traffic for another action. A `deny` in a NAT selection ACL normally excludes traffic from that translation rule; it does **not** by itself mean an interface discarded the packet. Always identify the command referencing the ACL before interpreting its effect.
+An ACL only filters when an interface refers to it. NAT, QoS and VPN features also refer to ACLs, but there a match selects traffic for that feature: a `deny` in a NAT ACL means “do not translate”, not “drop”. Read the command that references the ACL before you interpret its entries.
 
 ## First match and implicit deny
 
-For an interface filter, evaluate entries from the top of the effective list and stop at the first match. A matching permit lets the packet continue through processing; it does not supply a missing route or override a later filter. A matching deny discards it. A nonempty list also has an implicit deny at its end, even when no deny appears in the displayed configuration.
+Two rules decide every packet: the first matching entry wins, and a packet that matches nothing is dropped. The router reads the entries from the top and stops at the first match. A matching permit lets the packet continue through processing; it does not supply a missing route or override a later filter. A matching deny discards it. A nonempty list also has an implicit deny at its end, even when no deny appears in the displayed configuration.
 
 ```output Representative CLIENTS-IN rules
 10 permit tcp 10.100.10.0 0.0.0.255 host 10.100.20.20 eq 80
@@ -71,11 +71,11 @@ A TCP request from `10.100.10.11:51000` to `10.100.20.20:80` matches entry 10. A
 
 Move permit 30 to the top and the deny becomes unreachable. The router does not search for the most specific ACL entry as it searches for the longest matching route. Specific exceptions therefore normally precede broader rules. Likewise, a list containing only denies blocks all IPv4 traffic evaluated by that filter: an unmatched packet reaches the implicit deny.
 
-On the classic IOS interface behavior documented for these labs, a referenced list that is absent or empty does not provide a deny-all filter. Once entries exist, implicit deny becomes relevant. Do not use an empty list as a security policy or build a restrictive list one line at a time while it is live. Prepare the complete list before attachment. Platform-specific ACL features can have different behavior, so use the documentation for the device being configured.
+One exception catches people out. If an interface refers to an ACL that does not exist or has no entries, IOS filters nothing: the implicit deny applies only once the list has at least one entry. So a mistyped ACL name on `ip access-group` silently leaves the interface open. For the same reason, do not build a restrictive list line by line on a live interface, because after the first `permit` everything else is denied. Write the whole list first, then apply it.
 
 ## Wildcard masks
 
-An IPv4 address is 32 bits. The wildcard chooses which of those bits the ACL compares. For the pair `10.100.10.64 0.0.0.31`, the first three octets must match exactly. In the final octet, `64` is `01000000` and `31` is `00011111`. The first three bits must therefore be `010`; the remaining five may vary. That matches `.64` through `.95`.
+An ACL entry rarely names one address. It names a set of addresses with an address and a **wildcard mask**. An IPv4 address is 32 bits, and the wildcard says which of those bits the ACL compares. For the pair `10.100.10.64 0.0.0.31`, the first three octets must match exactly. In the final octet, `64` is `01000000` and `31` is `00011111`. The first three bits must therefore be `010`; the remaining five may vary. That matches `.64` through `.95`.
 
 For a subnet, subtract its mask from `255.255.255.255`, octet by octet. A /27 mask is `255.255.255.224`; its wildcard is `0.0.0.31`. Write the subnet's network address as the base for clarity. The ACL compares addresses, including the network and broadcast values; it does not automatically remove values that cannot be ordinary host assignments.
 
@@ -98,7 +98,7 @@ A wildcard need not be the inverse of a valid subnet mask. For example, `10.1.1.
 
 ## Standard ACLs
 
-A standard ACL can permit PC-A while denying other sources, but it cannot select a particular destination or service. This numbered example allows only PC-A through whichever filter references it:
+A standard ACL looks at one field only, the source address. It can permit PC-A and deny other sources, but it cannot tell one destination or service from another. A numbered standard ACL is written with the global command `access-list <1–99> permit|deny <source> [wildcard]`. This example lets only PC-A (`10.100.10.10`) through:
 
 ```ios R1
 R1# configure terminal
@@ -113,11 +113,11 @@ Here G0/1 faces the entire server LAN. PC-A can reach both servers; PC-B can rea
 
 The usual placement guideline is to put a standard ACL near the destination. Denying PC-B inbound on the client LAN would also block its traffic to other destinations. Filtering outbound toward the protected LAN confines the effect to that path. A standard list still cannot distinguish two hosts on that same destination LAN: use an extended ACL if one must remain available while the other is blocked.
 
-Named standard ACLs express the same source-only conditions under `ip access-list standard NAME`. Naming does not make an ACL extended. Standard and extended describe matching capability; numbered and named describe how you identify the list. Recognize all four combinations required by the IPv4 ACL objective.
+A named standard ACL holds the same source-only entries under `ip access-list standard NAME`. Keep the two distinctions apart: standard or extended says what the list can match, and numbered or named says how you refer to it. The exam expects all four combinations.
 
 ## Extended ACLs and return traffic
 
-Read an extended ACE in this order: action, protocol, source, optional source-port test, destination, optional destination-port test, additional options. Use `ip` for all IPv4 protocols, `tcp` or `udp` when ports matter, and `icmp` when matching messages such as `echo` or `echo-reply`.
+An extended ACL can match the protocol, the source, the destination and, for TCP and UDP, the ports, so it can express “HTTP to this server only”. Read an extended ACE in this order: action, protocol, source, optional source-port test, destination, optional destination-port test, additional options. Use `ip` for all IPv4 protocols, `tcp` or `udp` when ports matter, and `icmp` when matching messages such as `echo` or `echo-reply`.
 
 ```ios R1
 R1# configure terminal
@@ -145,7 +145,7 @@ ICMP echo and echo-reply also need separate consideration. Their meaning does no
 
 ## Names, sequence numbers and safe edits
 
-Use meaningful names and short remarks. A named extended ACL is easier to edit when you assign sequence numbers explicitly:
+A numbered ACL built with `access-list` commands can only be added to at the end. A named ACL has its own configuration mode in which every entry has a sequence number, so you can insert or delete a single line. Give the list a meaningful name and number the entries yourself:
 
 ```ios R1
 R1# configure terminal
@@ -158,7 +158,7 @@ R1(config-ext-nacl)# end
 
 On IOS supporting ACL sequence editing, `15 permit icmp host 10.100.10.10 host 10.100.20.20 echo` inserts an exception before deny 20. `no 20` in this ACL's configuration mode removes that entry. `ip access-list resequence CLIENTS-IN 100 10` in global configuration renumbers entries starting at 100 in increments of 10, preserving their relative order. It is housekeeping, not a policy change. Without explicit numbers, IOS commonly assigns increments of ten; always inspect the actual list before editing.
 
-Numbered ACLs can also be edited through named-list configuration mode on supported IOS: `ip access-list extended 101`. In contrast, the legacy global command `no access-list 101` deletes the whole ACL. Cisco also documents legacy syntax that deletes the entire numbered list even when the rest of an ACE follows that command. Use the sequence in the correct submode instead of guessing how a global `no access-list` line behaves.
+Numbered ACLs can also be edited through named-list configuration mode on supported IOS: `ip access-list extended 101`. In contrast, the global command `no access-list 101` deletes the whole ACL, and so does `no access-list 101` followed by the text of one entry. To remove one line, go into the list's configuration mode and use `no` with its sequence number.
 
 For a substantial change, build a complete replacement under a new name, review it, then change the interface reference. Keep console access while changing management rules. Do not delete the live list first and create an unfiltered interval. Simulator support for individual editing commands varies; if resequencing is unavailable, keep the existing numbers or build a replacement list offline.
 
@@ -198,10 +198,19 @@ Extended IP access list CLIENTS-IN
     30 permit ip any any (8 matches)
 ```
 
-Record counters before a test and compare afterward. These illustrative totals are not a required Packet Tracer result. A web connection sends multiple packets and may reuse cached content; hardware platforms may update counters differently. A counter increase means the entry matched observed traffic, not that the application completed. A zero counter may mean no matching traffic arrived, the list is attached elsewhere, or an earlier rule matched.
+Each entry counts the packets it has matched. Note the counters, run one test, and read them again: the entry whose count rose is the one your packet matched. One web page is many packets, so do not expect the count to rise by one. A rising permit counter shows the packet passed this ACL, not that the application worked. A zero counter may mean no matching traffic arrived, the list is attached elsewhere, or an earlier rule matched.
 
 Test from a host whose packet traverses the intended interface. Router-originated probes can have a different source address and processing path; classic IOS outbound filters commonly exclude locally generated traffic. Never use a successful router ping alone to prove a host's ACL path is permitted. For a failure, check links, addressing, routes and application service as well as the forward and return filters. An ICMP error may help localize a rejection, but a timeout does not prove a request passed: loss or filtering anywhere can produce silence.
 
 ## Exam focus
 
-Be able to translate a short policy into standard or extended IPv4 ACEs, using both names and numbers. Calculate a wildcard, trace the first match, identify implicit deny, distinguish source and destination ports, and attach the list in the correct direction. Explain why a return packet needs its own evaluation and why `established` is not stateful inspection. V1.1 requires configuring and verifying ACLs; v2.0 explicitly names IPv4 standard, extended, numbered and named lists. IPv6 ACL configuration and advanced firewall design are outside this chapter's required exercise.
+V1.1 requires configuring and verifying ACLs; v2.0 explicitly names IPv4 standard, extended, numbered and named lists. IPv6 ACLs are outside this chapter. Expect to be given an ACL and a packet and asked what happens, or a policy and asked for the entry and where to apply it. Know these:
+
+- Entries are checked top down, the first match decides, and an implicit `deny any` ends every list that has at least one entry.
+- Standard ACLs (1–99, 1300–1999) match the source only; place them close to the destination. Extended ACLs (100–199, 2000–2699) match protocol, source, destination and ports; place them close to the source.
+- Wildcard = 255.255.255.255 minus the subnet mask. `host` means wildcard 0.0.0.0; `any` means 0.0.0.0 255.255.255.255.
+- In an extended entry a port written after the source is a source port; after the destination it is a destination port. A client's request has the service port as its destination.
+- One ACL per interface, per direction. `ip access-group` applies an ACL to an interface; `access-class` applies one to the VTY lines.
+- A reply is a separate packet travelling the other way and is checked only by the ACLs in its own path. `established` matches TCP segments with ACK or RST set; it does not track sessions.
+- A router's outbound ACL does not filter packets the router itself generates.
+- Verify with `show access-lists` (entries and match counts) and `show ip interface` (which list is applied in which direction).

@@ -140,7 +140,7 @@
     "answer": "ip default-gateway 192.168.99.1",
     "accept": [],
     "teaching": {
-      "sectionId": "routed-ports-and-the-four-designs-compared",
+      "sectionId": "svis-on-a-multilayer-switch",
       "hint": "Configure the non-routing switch’s gateway, not inter-VLAN forwarding.",
       "takeaway": "This serves traffic originated by SW2. It does not make the switch route users between VLANs; a routing-enabled switch instead uses its routing table.",
       "syntax": [

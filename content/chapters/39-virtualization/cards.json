@@ -1,40 +1,48 @@
 [
   {
+    "id": "virtualization-c23",
+    "front": "What does a hypervisor do?",
+    "back": "It divides one physical server among several virtual machines, giving each a virtual CPU, memory, disk and network adapter.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "virtualization-c01",
-    "front": "What distinguishes a Type 1 hypervisor?",
-    "back": "It supplies virtualization directly over physical hardware rather than through a general-purpose host OS.",
+    "front": "What is a Type 1 hypervisor? Name two examples.",
+    "back": "A bare-metal hypervisor that runs directly on the server hardware. Examples: VMware ESXi, Microsoft Hyper-V.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "virtualization-c02",
-    "front": "What distinguishes a Type 2 hypervisor?",
-    "back": "It operates through a general-purpose host operating system.",
+    "front": "What is a Type 2 hypervisor? Name two examples.",
+    "back": "A hosted hypervisor that runs as an application on a general-purpose host OS. Examples: Oracle VirtualBox, VMware Workstation.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "virtualization-c03",
-    "front": "How do a VM and an ordinary process-isolated container differ?",
-    "back": "The VM has its own guest kernel; the container shares its host environment's kernel.",
+    "front": "What is the key difference between a VM and a container?",
+    "back": "A VM boots its own guest OS kernel. A container shares the kernel of its host.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "virtualization-c04",
-    "front": "Container image versus running container?",
-    "back": "The image packages files/dependencies; a container is an instance with processes and a writable layer.",
+    "id": "virtualization-c25",
+    "front": "What does a container engine such as Docker do?",
+    "back": "It builds container images and starts and stops containers on one host.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "virtualization-c07",
-    "front": "Why do containers often have less startup overhead than VMs?",
-    "back": "Ordinary containers start processes without booting a separate guest OS; actual timing varies.",
+    "front": "Why does a container start faster than a VM?",
+    "back": "It starts only the application's processes on the host's running kernel. A VM must boot a full guest OS.",
     "tags": [
       "compare"
     ]
@@ -42,81 +50,129 @@
   {
     "id": "virtualization-c08",
     "front": "What does a virtual switch connect?",
-    "back": "VM vNICs to other virtual ports and configured physical uplinks.",
+    "back": "The VMs' vNICs to each other and, through the host's physical NICs, to the physical switch.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "virtualization-c09",
-    "front": "When does a physical host uplink need a trunk?",
-    "back": "When its design carries multiple tagged VLANs; match allowed VLANs and untagged/native handling.",
+    "front": "When does the switch port facing a virtualized host need to be a trunk?",
+    "back": "When the host tags more than one VLAN on that uplink. The allowed list and native VLAN must match the host.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "virtualization-c10",
-    "front": "Do several stable MACs on a host port prove virtualization?",
-    "back": "No. They are consistent with a virtual switch but also with other bridged arrangements.",
+    "front": "Why does a virtualized host show several MAC addresses on one switch port?",
+    "back": "Each VM's vNIC has its own MAC address, and all of them reach the switch through the host's uplink.",
     "tags": [
       "troubleshoot"
-    ]
-  },
-  {
-    "id": "virtualization-c11",
-    "front": "What does a VRF separate?",
-    "back": "Layer 3 routing/forwarding contexts and their interface membership; not encryption keys.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "virtualization-c12",
-    "front": "VLAN versus VRF?",
-    "back": "VLAN: Layer 2 broadcast domain. VRF: Layer 3 routing context. An SVI can belong to a VRF.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "virtualization-c15",
-    "front": "What happens when an addressed IOS interface changes VRF?",
-    "back": "Its IP address is removed; configure the VRF first and then restore the intended address.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "virtualization-c16",
-    "front": "View BLUE's IPv4 routing table?",
-    "back": "show ip route vrf BLUE; plain show ip route examines the global table.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "virtualization-c20",
-    "front": "For rented IaaS VMs, who normally manages the guest operating system?",
-    "back": "The customer; the provider supplies the underlying infrastructure resources.",
-    "tags": [
-      "compare"
     ]
   },
   {
     "id": "virtualization-c21",
-    "front": "Do VMs in different VLANs communicate just because they share one host?",
-    "back": "No. They still need an appropriate Layer 3 path between their VLANs.",
+    "front": "Two VMs on one host are in different VLANs. What do they need to communicate?",
+    "back": "A router or Layer 3 switch. Sharing a host does not join their VLANs.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "virtualization-c22",
-    "front": "What failure remains shared by redundant VMs on one host?",
-    "back": "Loss of that host can affect both; independent guest instances do not remove the shared physical dependency.",
+    "front": "Two redundant VMs run on the same host. Which failure still stops both?",
+    "back": "Loss of the host itself or of its only uplink.",
     "tags": [
       "troubleshoot"
+    ]
+  },
+  {
+    "id": "virtualization-c11",
+    "front": "What does a VRF give a router?",
+    "back": "A separate routing table. Each Layer 3 interface belongs to one VRF and is looked up only in that table.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "virtualization-c12",
+    "front": "VLAN versus VRF: what does each separate?",
+    "back": "A VLAN separates Layer 2 broadcast domains on a switch. A VRF separates Layer 3 routing tables on a router.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c26",
+    "front": "Why can two VRFs on one router both use 10.10.10.0/24?",
+    "back": "Each VRF has its own routing table, so the two prefixes are never compared in the same lookup.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "virtualization-c28",
+    "front": "A packet arrives in VRF RED, and RED has no matching route. What does the router do?",
+    "back": "It drops the packet. It does not try another VRF or the global table.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "virtualization-c27",
+    "front": "What is VRF-lite?",
+    "back": "VRFs used on their own, without MPLS.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "virtualization-c15",
+    "front": "What happens to an interface's IP address when you assign the interface to a VRF?",
+    "back": "IOS removes it. Enter the VRF assignment first, then the address.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "virtualization-c16",
+    "front": "Which command shows the IPv4 routing table of VRF BLUE?",
+    "back": "show ip route vrf BLUE. Plain show ip route shows only the global table.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "virtualization-c29",
+    "front": "Which command pings 10.10.10.10 from inside VRF BLUE?",
+    "back": "ping vrf BLUE 10.10.10.10. A plain ping uses the global table.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "virtualization-c20",
+    "front": "In IaaS, who manages the guest operating system?",
+    "back": "The customer. The provider runs the servers, storage, network and hypervisor.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c30",
+    "front": "Name the three cloud service models and what the provider supplies in each.",
+    "back": "IaaS: infrastructure. PaaS: a managed platform for your application. SaaS: a finished application.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "virtualization-c31",
+    "front": "Name the four cloud deployment models.",
+    "back": "Public, private, community and hybrid. Hybrid joins two or more of the others.",
+    "tags": [
+      "concept"
     ]
   }
 ]

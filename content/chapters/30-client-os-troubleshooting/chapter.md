@@ -44,31 +44,36 @@ sources:
   - { title: "Cisco: WPA2 WLAN security settings", url: "https://www.cisco.com/c/en/us/td/docs/wireless/controller/8-5/config-guide/b_cg85/wlan_security.html" }
 ---
 
-“The network is down” can mean a disconnected adapter, an address from the wrong subnet, an unreachable DNS service or a single application failure. Start by turning that report into a testable statement: which client, which connection, which destination, which application and when?
+A user tells you “the network is down.” The switch port is up and the desk next to them works, so the network is fine. The fault is on that one client, and it is usually one of a few things: the PC has no DHCP lease, its mask or default gateway is wrong, it is asking the wrong DNS server, or its Wi-Fi profile does not match the WLAN. Each of these leaves a different pattern in the client's own settings and in what it can and cannot reach.
 
-A useful diagnosis preserves the evidence before making changes. Read the current settings, compare them with the intended network, and test one part of the path at a time. A familiar symptom should suggest the next test, not replace it.
+You already know what an address, a mask and a gateway do, how DHCP hands them out and how DNS turns names into addresses. This chapter uses that knowledge on the endpoint. By the end you will be able to read the IP settings on Windows, macOS and Linux, match a symptom to the setting that causes it, check a wireless client's SSID and security, and prove a repair by repeating the test that failed.
 
 ## Start with the active adapter and its parameters
 
-An endpoint may have Ethernet, Wi-Fi, a VPN and virtual-machine adapters simultaneously. A **virtual adapter** is a software interface: for example, a VPN client can use one to send traffic into a protected connection, while virtual-machine software can provide interfaces for a guest computer. Their detailed designs come later; here, identify which interface and route the affected application actually uses. The intended adapter's name is not necessarily `Ethernet`, `en0` or `eth0`; discover the real name before interpreting output or running a change.
+Before you read any setting, find the adapter the failing traffic uses. A laptop may have Ethernet, Wi-Fi, a VPN and virtual-machine adapters at the same time. A **virtual adapter** is a software interface: a VPN client uses one to send traffic into its tunnel, and virtual-machine software uses them to connect guest computers. Reading a correct address on the wrong adapter tells you nothing. The name is not always `Ethernet`, `en0` or `eth0`, so list the adapters first.
 
-For a conventional IPv4 LAN, examine the address, subnet mask, default gateway and DNS server. The address identifies the interface. The mask helps establish the directly connected subnet. A gateway provides a next hop for routes through a router; the default gateway is used when no more specific route matches. DNS resolves names independently of the forwarding decision.
+On that adapter, four IPv4 settings decide almost everything:
+
+- The **address** identifies the host.
+- The **subnet mask** tells the host which destinations are on its own subnet (on-link). It sends to those directly, using ARP to find the destination's MAC address.
+- The **default gateway** is the router the host sends to for every destination that is not on-link.
+- The **DNS server** turns names into addresses. It plays no part in forwarding a packet whose destination is already an IP address.
 
 :::facts
-- An on-subnet numeric-IP test can work without a default gateway or DNS.
-- A default gateway alone does not prove that every remote destination is reachable.
-- DHCP can supply correct or incorrect values; manual settings can override selected values.
-- A host can have several routes, DNS resolvers and IPv4/IPv6 addresses.
-- Read the intended adapter, route and address family for the failing destination.
+- A ping to a numeric address on the host's own subnet needs neither a default gateway nor DNS.
+- A ping to a numeric address on another subnet needs the mask and gateway to be right, but not DNS.
+- A test that uses a name needs DNS as well.
+- DHCP normally supplies all four settings; a manual setting on the client overrides the DHCP value.
+- A host can have several adapters, routes and DNS servers, and both IPv4 and IPv6. Read the ones the failing traffic uses.
 :::
 
-These four IPv4 parameters are a starting point, not the whole network. A VPN may install a more specific route. An application may use a proxy or its own encrypted DNS. A certificate or clock error may prevent HTTPS even while the network delivers packets correctly. A server certificate binds identity information to a public key and includes a validity period. HTTPS clients check the expected server identity, certificate trust and validity, so a wrong clock can break that check even when the server is reachable. Chapter 32 develops certificate authentication further.
+Other things can still go wrong with all four correct. A VPN can add a more specific route that bypasses the default gateway, and HTTPS fails on a client whose clock is wrong, because the client checks the validity dates on the server's certificate (chapter 32).
 
-Also inspect IPv6. A link-local `fe80::` address is normal on an IPv6-enabled interface; it does not by itself show that global IPv6 routing works. Identify any global/unique-local address, its prefix, the default route and the scope of a link-local next hop. Keep IPv4 and IPv6 results separate: success over one does not prove the other is healthy.
+Check IPv6 separately. Every IPv6-enabled interface has a link-local `fe80::` address, so seeing one does not mean IPv6 routing works. Look for a global or unique-local address, its prefix and an IPv6 default route. IPv4 and IPv6 have their own addresses, routes and gateways, so a test that passes over one says nothing about the other.
 
 ## Ask the same questions on three operating systems
 
-The commands differ, but the investigation is consistent:
+The three operating systems name their commands differently, but you ask each one the same five questions:
 
 | Question | Windows | macOS | Linux |
 |---|---|---|---|
@@ -78,13 +83,13 @@ The commands differ, but the investigation is consistent:
 | Cached IPv4 neighbors? | `arp -a` | `arp -a` | `ip neigh` |
 | DNS query to a specified server? | `nslookup name server` | `nslookup name server`, where installed | `nslookup name server`, where installed |
 
-Linux distributions choose different network managers; `nmcli` applies to NetworkManager and `resolvectl` to systemd-resolved. If neither manages the machine, use that distribution's documented tools. Legacy `ifconfig` may be absent on Linux, so do not begin by installing old tools simply to match a screenshot.
+Linux distributions use different network managers: `nmcli` belongs to NetworkManager and `resolvectl` to systemd-resolved. The `ip` command works on all of them. Older Linux systems, and many exam exhibits, use `ifconfig` and `netstat -rn` instead; modern distributions often do not install them.
 
-A neighbor cache shows a recorded IP-to-link-layer mapping. An entry can be stale, static or incorrect; it is not independent proof that the current path is good. Combine it with a fresh test and interface evidence.
+The neighbor cache (`arp -a`, `ip neigh`) lists the IP-to-MAC mappings the host has learned. An entry for the gateway shows that the gateway answered ARP at some point. Entries can be stale, so send a fresh ping before you rely on one.
 
 ## Read Windows configuration and routes
 
-Use `ipconfig /all` to identify the intended adapter and its configured values. Compare the MAC address with inventory if necessary, while allowing for private/randomized wireless MAC settings. A disconnected unused adapter is not automatically the cause of a fault on another connection.
+Plain `ipconfig` prints the address, mask and default gateway of each adapter. `ipconfig /all` adds the MAC address, whether DHCP is enabled, the DHCP server, the lease times and the DNS servers, so it is the command to start with. Find the adapter the user is actually connected through and ignore disconnected ones.
 
 Representative excerpt:
 
@@ -98,15 +103,17 @@ Ethernet adapter Ethernet:
    DNS Servers . . . . . . . . . . . : 10.1.10.5
 ```
 
-`DHCP Enabled: Yes` does not establish that every displayed value came from the lease: manually specified DNS can coexist with automatic addressing. A remote DHCP server address is also not an error by itself; a relay can serve the LAN.
+Two details in this output catch people out. `DHCP Enabled: Yes` covers the address; the DNS servers can still be typed in by hand on the same adapter, and a manual value wins over the one DHCP offers. And a DHCP server on another subnet (here 10.1.10.5) is normal: the router relays the client's broadcasts to it, as you configured with `ip helper-address` in the DHCP chapter.
 
-A Windows **Autoconfiguration IPv4 Address** in `169.254.0.0/16`, with DHCP enabled and no usable lease, indicates IPv4 link-local fallback, commonly called APIPA. It suggests DHCP acquisition failed, but does not identify which message or device failed. The server could be unreachable, a pool could be exhausted, or replies could fail to reach the client.
+When a Windows client is set for DHCP and gets no answer, it gives itself an address. The output then shows **Autoconfiguration IPv4 Address** with a value in `169.254.0.0/16`, mask 255.255.0.0 and no default gateway. This is IPv4 link-local addressing, which Microsoft calls **APIPA** (Automatic Private IP Addressing). The host picks from 169.254.1.0 to 169.254.254.255. Routers do not forward these addresses, so the client can reach at most other self-addressed hosts on the same link. A 169.254 address therefore tells you that DHCP failed, but not why: the server may be down, the pool may be empty, or the relay or the client's VLAN may be wrong.
 
-RFC 3927's dynamic selection range excludes the first and last /24 within that /16. The important operational point is link scope: these addresses are not a substitute for routed IPv4 service. Existing IPv6 or another adapter may still provide connectivity. A number starting `169.254` alone is weaker evidence than the autoconfiguration label plus the configuration context.
+Use `route print -4` when more than one adapter is active. Windows picks the route with the longest matching prefix. If two routes tie on prefix length, such as two default routes from Ethernet and Wi-Fi, the lower metric wins. A wired adapter does not win automatically.
 
-Read `route print -4` when multiple adapters are active. Longest matching prefix comes before metric. With two usable default routes and no more specific match, the lower effective metric is preferred. Do not assume Ethernet always wins simply because it is wired.
+Three more `ipconfig` options change state, so know exactly what each does:
 
-To request a lease update, use `ipconfig /renew "Ethernet"` with the actual adapter name. `/release` deliberately discards the lease and can interrupt the current session, so use release/renew only where that disruption is intended. The exact exchange depends on client state; do not infer a captured four-message DHCP sequence from the command alone.
+- `ipconfig /release` gives up the DHCP lease. The adapter has no address until you renew.
+- `ipconfig /renew` asks the DHCP server for a lease. Add the adapter name, as in `ipconfig /renew "Ethernet"`, to leave other adapters alone.
+- `ipconfig /flushdns` empties the DNS resolver cache (`ipconfig /displaydns` shows it). It has nothing to do with the lease. Use it after a DNS record has been corrected, so the client stops using the old answer.
 
 ## Read macOS and Linux configuration
 
@@ -114,7 +121,7 @@ On macOS, Network settings shows each network service's details. TCP/IP shows th
 
 In `ifconfig en0`, a mask such as `0xffffff00` is hexadecimal. Each `f` represents four one-bits: six of them give 24 one-bits, so the mask is `255.255.255.0` or /24. `0xffffff80` is /25 because `0x80` adds one further one-bit. Use the actual interface, which may differ from en0.
 
-`route -n get default` identifies the default IPv4 route. `scutil --dns` shows resolver configuration, including supplemental domain-specific resolvers used by some VPNs. Do not assume the first displayed server answers every query: domain and interface scope can affect selection. A configured “reachable” status is not equivalent to a completed DNS query.
+`route -n get default` shows the default IPv4 route: its gateway and its interface. `netstat -rn` prints the whole routing table. `scutil --dns` lists every DNS resolver the Mac uses. A VPN often adds a resolver for one domain only, so the first server in the list does not answer every query.
 
 On Linux, `ip -br address` provides a compact interface/address view. `ip route` shows IPv4 routes. Representative excerpt:
 
@@ -124,15 +131,15 @@ default via 10.1.20.1 dev enp0s3 proto dhcp src 10.1.20.59 metric 100
 10.1.20.0/24 dev enp0s3 proto kernel scope link src 10.1.20.59
 ```
 
-Here `via 10.1.20.1` is the next hop and `src 10.1.20.59` is the preferred source address, not another gateway. `proto dhcp` labels the route's origin; confirm the address acquisition method through the network manager or lease information rather than assuming that one route label proves every address's origin.
+Read the first line as “interface enp0s3 is up with 10.1.20.59/24.” In the second line, the address after `via` (10.1.20.1) is the default gateway. The address after `src` (10.1.20.59) is the host's own source address, not a second gateway. `proto dhcp` means DHCP installed this route. The third line is the connected subnet: no `via`, so the host delivers to 10.1.20.0/24 directly.
 
-For systemd-resolved, `resolvectl status` displays per-link DNS configuration. A `127.0.0.53` entry in `/etc/resolv.conf` can identify a local DNS stub, not the upstream server. With NetworkManager, `nmcli device show` includes addresses, gateway and DNS information.
+Linux DNS settings depend on the resolver in use. On a system running systemd-resolved, `/etc/resolv.conf` usually lists only `127.0.0.53`. That is a local stub that forwards queries; `resolvectl status` shows the real upstream servers for each link. With NetworkManager, `nmcli device show` prints the addresses, gateway and DNS servers together.
 
-Failed DHCP on Linux does not have one universal visual result. Depending on the manager and profile, an interface may have no usable IPv4 address, retain another configuration, or obtain a link-local address. NetworkManager's link-local behavior is configurable. Its `device reapply` operation reapplies supported connection changes; it is not a universal “force a fresh DHCP lease” command.
+When DHCP fails on Linux, the interface usually ends up with no IPv4 address at all rather than a 169.254 one.
 
 ## Recognize fault patterns and their limits
 
-Use a simple network to reason precisely. PC-A is intended to be `192.168.40.100/24`, gateway `192.168.40.1`. A local server is `192.168.40.20`; a remote PC is `192.168.50.10/24` behind the router.
+Each wrong setting breaks a different set of destinations, so the pattern of what works and what fails points at the setting. Use a simple network to see why. PC-A is intended to be `192.168.40.100/24`, gateway `192.168.40.1`. A local server is `192.168.40.20`; a remote PC is `192.168.50.10/24` behind the router.
 
 | Suspected fault | Useful observation | Confirmation needed |
 |---|---|---|
@@ -142,47 +149,55 @@ Use a simple network to reason precisely. PC-A is intended to be `192.168.40.100
 | Wrong DNS choice | Numeric access works; direct DNS query fails | Server selected, query response and record correctness |
 | Duplicate address | Conflict indication or inconsistent neighbor evidence | Compare leases/static assignments and packet observations |
 
-A wrong gateway of `192.168.40.254` can prevent off-link traffic if that address is unused and no other matching route exists. It need not break direct communication with `192.168.40.20`. The failure is in selecting or reaching the next hop, not in DNS merely because a website name was involved.
+Give PC-A the wrong gateway, `192.168.40.254`, an address nothing uses. A ping to the local server `192.168.40.20` still works, because PC-A sends on-link traffic directly. A ping to `192.168.50.10` fails: PC-A sends ARP requests for .254 and nobody answers, so the packet never leaves. The user will say “the website is down,” but the fault is the next hop, not DNS.
 
-A /16 mask on PC-A creates a different problem. The client now considers `192.168.50.10` on-link and tries to resolve that destination directly instead of using `192.168.40.1`. In the lab, proxy ARP is explicitly disabled, so no router answers on behalf of the remote PC. Yet a destination outside `192.168.0.0/16` would still be sent toward the configured gateway. This explains why one successful remote test cannot validate the mask for all destinations.
+Now give PC-A the right gateway but a /16 mask. PC-A believes all of `192.168.0.0/16` is on-link, so for `192.168.50.10` it does not use the gateway at all. It sends an ARP request for .50.10 on its own LAN, where that host does not exist. The ping fails even though the gateway setting is correct. A destination outside 192.168.0.0/16, such as 10.1.1.1, is still sent to the gateway and still works, so one successful remote ping does not clear the mask.
+
+One IOS default can hide this fault. With **proxy ARP**, which is on by default on router interfaces, a router answers an ARP request for an address on another subnet it can route to, giving its own MAC address. R1 would answer PC-A's request for .50.10 and the ping would work despite the wrong mask. The lab turns proxy ARP off on R1 so that you can see the failure.
 
 ```diagram
 {"type":"topology","title":"Test the local and routed paths separately","nodes":[{"id":"pc","kind":"pc","label":"PC-A","sub":"192.168.40.100/24","x":1,"y":1},{"id":"server","kind":"server","label":"Local server","sub":"192.168.40.20/24","x":1,"y":5},{"id":"sw","kind":"switch","label":"SW1","x":4,"y":3},{"id":"r","kind":"router","label":"R1","sub":".40.1 / .50.1","x":8,"y":3},{"id":"remote","kind":"pc","label":"PC-B","sub":"192.168.50.10/24","x":11,"y":3}],"links":[{"from":"pc","to":"sw"},{"from":"server","to":"sw"},{"from":"sw","to":"r"},{"from":"r","to":"remote"}],"caption":"A /16 error changes PC-A's decision about PC-B; a local server test does not exercise the gateway.","trace":{"chips":[{"node":"pc","text":"Wrong mask /16","tone":"bad"}],"flows":[{"path":["pc","sw","server"],"back":true,"label":"Ping 192.168.40.20","tags":{"pc":"Inside the /16 · sent directly"}},{"path":["pc","sw",["server","r"]],"label":"ARP for 192.168.50.10","tags":{"pc":"/16 puts .50.10 on-link · ARP","sw":"Broadcast · flooded","r":"Proxy ARP disabled · no answer"}}]}}
 ```
 
-A DNS timeout means the query did not obtain the expected timely response. It does not distinguish a wrong server address, filtering, a stopped service or a return-path failure. NXDOMAIN is different: a responding server reported that the queried name does not exist. Use an explicit query and read the response rather than calling every name failure “DNS down.”
+DNS faults come in three kinds, and `nslookup` tells them apart. A **timeout** means no server answered: the client is asking the wrong address, or the server or the path to it is down. **NXDOMAIN** means a server did answer and said the name does not exist. A **wrong answer** means the server is reachable but its record is wrong. To test one particular server, name it: `nslookup lab.example 192.168.40.20`.
 
-:::trap A ping result has a limited scope
-A reply proves an ICMP exchange worked for that test. A timeout does not prove a firewall blocked it, and it does not prove the packet left the client. A local “destination unreachable” is a useful clue, but inspect the route and neighbor state before assigning the exact cause.
+:::trap A failed ping does not name its cause
+A reply proves that ICMP echo worked between those two addresses. A timeout only says no reply came back. The request may never have left the client, a firewall may have dropped it, or the reply may have been lost on the way back. Check the client's route and ARP cache before you blame the far end.
 :::
 
 ## Verify wireless connection and security settings
 
 A **wireless LAN (WLAN)** connects clients by radio through an **access point (AP)**. Its **service set identifier (SSID)** is the network name the client selects. A saved client **profile** holds that name and its connection/security settings; it is not proof of a current connection. **Association** establishes the client's 802.11 relationship with an AP. The required security exchange must also succeed before protected user data can pass.
 
-Compare the intended SSID, security mode and required credentials with the client's profile. SSIDs are case-sensitive and have a maximum length of 32 octets; displayed characters need not always occupy one byte.
+Three things in the client's profile must match the WLAN: the SSID, the security mode and the credential. SSIDs are case-sensitive and at most 32 octets long, so `CCNA-Lab` and `CCNA-LAB` are different networks.
 
 In **Personal** security, the client and WLAN use an agreed shared secret. **Enterprise** security uses individual user/device authentication through 802.1X and **EAP (Extensible Authentication Protocol)**, a framework for authentication methods. A **cipher** is the algorithm used to protect the data; selecting the right network name alone does not select compatible authentication and encryption settings. Chapters 36–38 develop the radio, infrastructure and security configuration. This section first teaches you to read the client's settings and failure stage.
 
-WPA2-Personal commonly uses an 8–63 ASCII-character passphrase, or a directly entered 64-hexadecimal-digit PSK where supported. WPA3-Personal uses **SAE (Simultaneous Authentication of Equals)**, a password-based authentication and key-establishment method, and Enterprise security uses 802.1X/EAP methods whose credentials may involve certificates, passwords or both. Do not apply the WPA2 passphrase rule to every wireless authentication method.
+WPA2-Personal commonly uses an 8–63 ASCII-character passphrase, or a directly entered 64-hexadecimal-digit PSK where supported. WPA3-Personal uses **SAE (Simultaneous Authentication of Equals)**, a password-based authentication and key-establishment method, and Enterprise security uses 802.1X/EAP methods whose credentials may involve certificates, passwords or both.
 
-In WPA2-Personal, initial 802.11 association can occur before the four-way key handshake finishes. A wrong shared key can therefore produce an association followed by a key-exchange failure. Useful protected client data, including DHCP, requires the security process to succeed. Exact operating-system messages vary; one error phrase does not establish the cause for every client.
+A wrong passphrase fails at a specific stage. In WPA2-Personal the client first associates with the AP, and only then do the two run the **four-way handshake** that proves both hold the same key and derives the encryption keys. With the wrong passphrase the association succeeds and the handshake fails. No data passes until the handshake completes, and that includes DHCP, so the client ends up with no lease.
 
-On Windows, `netsh wlan show interfaces` reports current connection information, including SSID and authentication/cipher details where available. `netsh wlan show profiles` lists saved profiles; `netsh wlan show profile name="CCNA-LAB"` reads a chosen profile without requesting its cleartext key. There is no need to expose a password to compare the security mode.
+On Windows, `netsh wlan show interfaces` reports current connection information, including SSID and authentication/cipher details where available. `netsh wlan show profiles` lists saved profiles; `netsh wlan show profile name="CCNA-LAB"` shows a saved profile's security settings without displaying its key.
 
-On macOS, use the Wi-Fi details and Option-click the menu-bar Wi-Fi icon to open Wireless Diagnostics. It analyzes the connection without changing network settings. On Linux with NetworkManager, `nmcli device wifi list` shows nearby networks and `nmcli connection show` identifies profiles. Inspect the active profile's `802-11-wireless-security.key-mgmt` to distinguish its authentication method. Privacy permissions, driver support and OS release can limit displayed radio details; document missing fields.
+On macOS, hold Option and click the Wi-Fi icon in the menu bar to see the current SSID, security type, channel and signal, and to open Wireless Diagnostics. On Linux with NetworkManager, `nmcli device wifi list` shows nearby networks with their security, and `nmcli connection show` lists saved profiles. A profile's `802-11-wireless-security.key-mgmt` field gives its authentication method.
 
-A “connected” indication with an APIPA address calls for checking DHCP acquisition **and** the intended WLAN/VLAN/data path. It is not proof that every wireless parameter or infrastructure mapping is correct. A strong signal does not establish correct credentials, DHCP service or DNS operation. Likewise, a valid lease can be stale or obtained on the wrong network.
+A Wi-Fi icon that says “connected” next to a 169.254 address means the client associated but did not get a lease. Check the security handshake first, then whether the WLAN maps to the right VLAN, then the DHCP server or relay for that VLAN. Signal strength is a separate matter: a strong signal says nothing about the passphrase, DHCP or DNS.
 
 ## Test a path and verify the repair
 
-Record the intended adapter and compare its actual address, prefix, route and DNS values with the network plan. For wireless, establish which SSID/security method is in use. Then test a known local peer, the intended gateway, a known routed destination, a direct DNS query and the required application.
+Once you have read the settings, test outward from the client one step at a time, so that the first test that fails marks where the fault begins:
 
-A loopback ping or ping to the client's own address can test local processing, but does not exercise the cable, AP or gateway. A gateway may also be configured not to answer ICMP, so combine that result with neighbor state and another appropriate test instead of stopping every investigation at a failed ping.
+1. Ping a host on the same subnet. This checks the adapter, cable or WLAN, and the address and mask.
+2. Ping the default gateway. This checks that the client can reach its router.
+3. Ping an address on another subnet. This checks the gateway setting and the routed path.
+4. Look up a name with `nslookup`. This checks the DNS server setting and the record.
+5. Open the application itself.
 
-On Windows PowerShell, `Test-NetConnection 192.168.50.20 -Port 443` tests a TCP connection to that address and port. A successful TCP connection still does not prove TLS negotiation, certificate validation or application authorization. `-TraceRoute` is a different diagnostic mode; do not combine incompatible parameter sets as though one command universally performs every test.
+A ping to `127.0.0.1` or to the client's own address tests only the client's TCP/IP software. It does not touch the cable, the AP or the gateway. Some gateways and servers are set not to answer ping, so when a ping fails but the next step works, move on.
 
-Change one demonstrated cause at a time and repeat the previously failing test. After repairing a wrong client DNS address, verify the server selected and the expected answer, then try the application. A cached result can conceal the effect of a changed resolver, so direct queries to a specified server are valuable.
+Ping tests reachability, not the service. On Windows PowerShell, `Test-NetConnection 192.168.50.20 -Port 443` tries to open a TCP connection to that address and port, which tells you whether the server is listening and nothing in the path blocks the port. It does not check the TLS certificate or the login. `Test-NetConnection` with `-TraceRoute` instead traces the path, and cannot be combined with `-Port`.
+
+Change one setting at a time and repeat the test that failed. After you correct a DNS server address, query a name the client has not looked up before, or query the server directly, because a cached answer can make a broken resolver look healthy.
 
 If DHCP settings were wrong, repair the correct server/profile and renew through the operating system's supported method. On macOS, the selected network service's TCP/IP pane provides Renew DHCP Lease. On Linux, use its actual network manager; disconnecting and reconnecting a profile interrupts traffic and belongs in an isolated or approved maintenance context.
 
@@ -190,4 +205,11 @@ If DHCP settings were wrong, repair the correct server/profile and renew through
 
 For v1.1, read and verify client IP parameters on Windows, macOS and Linux. For v2.0, extend that work to wired/wireless reachability and wireless security settings. Be able to explain the next useful test and what its result would establish.
 
-Keep configuration evidence, packet evidence and inference separate. A correct answer identifies the supported cause or next investigation without claiming that a single ping, neighbor entry or Wi-Fi icon proves the whole network.
+Expect exhibits of client output with a question about what is wrong or which command produced it. Know these cold:
+
+- Which command shows what on each OS: `ipconfig /all`, `ifconfig`, `ip address`, `route print`, `netstat -rn`, `ip route`.
+- A Windows address in 169.254.0.0/16 means DHCP failed (APIPA).
+- Local hosts reachable but remote ones not: suspect the default gateway, then the mask.
+- Addresses reachable but names not: suspect the DNS server setting.
+- `/release` and `/renew` act on the DHCP lease; `/flushdns` acts on the DNS cache.
+- A wireless client needs the right SSID, security mode and credential; a wrong WPA2 passphrase fails at the four-way handshake.

@@ -1,56 +1,56 @@
 [
   {
-    "id": "wireless-architecture-c05",
-    "front": "What does a wireless controller coordinate across APs?",
-    "back": "Shared WLAN policy and operational client/radio state; APs still perform local radio work.",
+    "id": "wireless-architecture-c25",
+    "front": "How does an autonomous AP differ from a lightweight AP?",
+    "back": "An autonomous AP holds its own configuration and bridges clients into local VLANs. A lightweight AP gets its configuration from a WLC.",
     "tags": [
-      "concept"
+      "compare"
     ]
   },
   {
     "id": "wireless-architecture-c04",
-    "front": "Why do wireless acknowledgements stay at a lightweight AP?",
-    "back": "Their radio timing requires local handling; the AP does not wait for a controller round trip.",
+    "front": "In split-MAC, which jobs stay in the lightweight AP?",
+    "back": "Real-time 802.11 work: beacons, probe responses, acknowledgements, retransmissions, power-save buffering and frame encryption.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "wireless-architecture-c09",
-    "front": "Where can a controller function run?",
-    "back": "In an appliance, supported VM, or documented embedded deployment. EWC-on-AP is a legacy product, not a universal new-design recommendation.",
+    "id": "wireless-architecture-c05",
+    "front": "In split-MAC, which jobs move to the WLC?",
+    "back": "Authentication and security policy, association and roaming, RF management (channel and power) and WLAN-to-VLAN mapping.",
     "tags": [
-      "compare"
+      "concept"
     ]
   },
   {
     "id": "wireless-architecture-c11",
     "front": "Cloud-based controller versus cloud-managed AP?",
-    "back": "A cloud-based WLC runs controller software remotely; cloud-managed identifies the manager's location. Determine client forwarding from the configured SSID mode.",
+    "back": "A cloud-based controller is a WLC running as a VM; APs join it with CAPWAP. A cloud-managed AP has no WLC; a dashboard such as Meraki manages it.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "wireless-architecture-c12",
-    "front": "Port for a centrally switched AP with only untagged management in VLAN 10?",
-    "back": "An access port in VLAN 10 is sufficient; client traffic reaches its VLAN at the controller.",
+    "id": "wireless-architecture-c09",
+    "front": "Name the four WLC deployment models, from most APs to fewest.",
+    "back": "Unified (central appliance), cloud-based (VM), embedded (in a switch), Mobility Express (in an AP).",
     "tags": [
-      "concept"
+      "compare"
     ]
   },
   {
-    "id": "wireless-architecture-c13",
-    "front": "Port for untagged management 10 and tagged local client VLANs 20/30?",
-    "back": "Trunk with native VLAN 10 and allowed VLANs 10,20,30, matching the AP's actual tagging configuration.",
+    "id": "wireless-architecture-c26",
+    "front": "Where does client traffic enter its wired VLAN with central switching, and where with local switching?",
+    "back": "Central switching: at the WLC. Local switching: at the AP.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "wireless-architecture-c01",
-    "front": "CAPWAP control port and protection?",
-    "back": "UDP 5246. Discovery precedes DTLS; established Cisco AP control traffic uses DTLS.",
+    "front": "Which UDP port carries CAPWAP control traffic, and is it encrypted?",
+    "back": "UDP 5246. Encrypted with DTLS once the AP starts to join; discovery before that is unencrypted.",
     "tags": [
       "number",
       "concept"
@@ -58,65 +58,105 @@
   },
   {
     "id": "wireless-architecture-c02",
-    "front": "CAPWAP data port and protection?",
-    "back": "UDP 5247. Data DTLS is a separate policy; WPA2/WPA3 radio protection does not automatically encrypt this wired path.",
+    "front": "Which UDP port carries CAPWAP data traffic, and is it encrypted?",
+    "back": "UDP 5247. Unencrypted by default; DTLS data encryption is optional. WPA2/WPA3 protection ends at the AP.",
     "tags": [
       "number",
       "concept"
     ]
   },
   {
-    "id": "wireless-architecture-c07",
-    "front": "What DNS name can a Cisco AP use for controller discovery?",
-    "back": "`CISCO-CAPWAP-CONTROLLER` in the relevant DNS domain, with working DNS and IP connectivity.",
+    "id": "wireless-architecture-c27",
+    "front": "Name four ways a Cisco lightweight AP learns a controller address.",
+    "back": "Local-subnet broadcast, stored or configured addresses, DHCP option 43, and a DNS lookup of `CISCO-CAPWAP-CONTROLLER`.",
     "tags": [
       "concept"
     ]
   },
   {
+    "id": "wireless-architecture-c28",
+    "front": "Which mode is the default for a lightweight AP, and what does it do?",
+    "back": "Local. It serves clients and tunnels their data to the WLC over CAPWAP.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c18",
+    "front": "Sniffer mode versus monitor mode?",
+    "back": "Sniffer sends frames captured on one channel to an analyzer PC. Monitor is a dedicated sensor for rogues, intrusion detection and location. Neither serves clients.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c29",
+    "front": "Which AP mode dedicates the radios to spectrum analysis?",
+    "back": "SE-Connect. It feeds a PC running spectrum-analysis software to find interference and serves no clients.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c21",
+    "front": "A FlexConnect AP loses contact with its WLC. What keeps working?",
+    "back": "Locally switched WLANs keep forwarding. PSK WLANs still accept new clients; 802.1X WLANs need a reachable RADIUS server.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
     "id": "wireless-architecture-c14",
-    "front": "Which physical controller connections might a model provide?",
-    "back": "Distribution, console, service-management and redundancy connections; presence and purpose vary by model.",
+    "front": "Name the four physical port types on an AireOS WLC.",
+    "back": "Distribution system port (trunk for AP and client traffic), service port (out-of-band management), console port and redundancy port.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "wireless-architecture-c15",
-    "front": "What are AireOS dynamic and management interfaces for?",
-    "back": "Dynamic interfaces map client VLANs; management provides controller access and, on common platforms, AP-manager functions.",
+    "front": "What does an AireOS dynamic interface do?",
+    "back": "Maps a WLAN to a wired VLAN. It has an IP address, gateway and DHCP server for that VLAN.",
     "tags": [
-      "compare"
+      "concept"
     ]
   },
   {
-    "id": "wireless-architecture-c18",
-    "front": "Sniffer mode versus monitor mode?",
-    "back": "Sniffer exports heard frames on a selected channel; monitor dedicates radio resources to monitoring rather than ordinary client service.",
+    "id": "wireless-architecture-c30",
+    "front": "What is the AireOS virtual interface for?",
+    "back": "An address the WLC presents to clients for DHCP relay and web authentication. Use an unused address such as `192.0.2.1`.",
     "tags": [
-      "compare"
+      "concept"
     ]
   },
   {
-    "id": "wireless-architecture-c21",
-    "front": "What determines FlexConnect service during controller loss?",
-    "back": "Local switching, authentication/standalone support and service reachability. Existing clients and new joins can have different outcomes.",
+    "id": "wireless-architecture-c12",
+    "front": "Which switchport does a centrally switched lightweight AP need, with management untagged in VLAN 10?",
+    "back": "An access port in VLAN 10. Client traffic rides inside CAPWAP and reaches its VLAN at the WLC.",
     "tags": [
-      "troubleshoot"
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c13",
+    "front": "An AP sends management untagged in VLAN 10 and locally switches clients tagged in VLANs 20 and 30. Which switchport?",
+    "back": "A trunk with native VLAN 10 and allowed VLANs 10,20,30.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "wireless-architecture-c31",
+    "front": "Which EtherChannel mode must a switch use toward an AireOS WLC LAG?",
+    "back": "`channel-group` mode `on`. AireOS LAG runs neither LACP nor PAgP.",
+    "tags": [
+      "concept"
     ]
   },
   {
     "id": "wireless-architecture-c22",
-    "front": "A powered AP has reduced radio capability: what power evidence matters?",
-    "back": "Compare the model's requirements with negotiated PoE, power-source capability and the switch's remaining budget.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "wireless-architecture-c24",
-    "front": "Does AP registration establish wireless client service?",
-    "back": "No. Verify a fresh client's security, IP settings and intended application separately.",
+    "front": "An AP has joined its WLC but runs with reduced radio capability. What do you check?",
+    "back": "PoE. Compare the power the AP needs with the port's allocation in `show power inline` and the switch's remaining budget.",
     "tags": [
       "troubleshoot"
     ]

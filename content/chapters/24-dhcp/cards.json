@@ -1,16 +1,16 @@
 [
   {
     "id": "dhcp-c01",
-    "front": "What is the purpose of each message in initial DORA?",
-    "back": "Discover: client seeks service. Offer: server proposes configuration. Request: client selects an offer. ACK: server confirms allocation. This initial sequence does not describe every later renewal exchange.",
+    "front": "What are the four messages of the initial DHCP exchange, in order, and who sends each?",
+    "back": "Discover (client), Offer (server), Request (client), Acknowledge (server): DORA.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "dhcp-c02",
-    "front": "What IP addresses do an initial Discover and a selecting client’s Request normally use?",
-    "back": "Source 0.0.0.0 to destination 255.255.255.255. Scope this to initial acquisition before the client has a usable lease; a renewing Request can instead use the current address and unicast to the server.",
+    "front": "Which source and destination IP addresses does a DHCPDISCOVER use?",
+    "back": "Source 0.0.0.0, destination 255.255.255.255. The first DHCPREQUEST uses the same pair.",
     "tags": [
       "number",
       "compare"
@@ -18,24 +18,24 @@
   },
   {
     "id": "dhcp-c03",
-    "front": "Which UDP ports belong to DHCPv4 clients and servers?",
-    "back": "Client port 68; server port 67. Initial client messages normally travel 68→67. A server replies to a relay’s giaddr on server port 67, and the relay then delivers toward client port 68.",
+    "front": "Which UDP ports do DHCPv4 servers and clients use?",
+    "back": "Server 67, client 68.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "dhcp-c04",
-    "front": "Why is the selecting DHCPREQUEST broadcast?",
-    "back": "It identifies the chosen server and requested address while allowing other offering servers to learn that their proposals were not selected. Do not extend that broadcast rule to renewal Requests.",
+    "front": "Why is the first DHCPREQUEST a broadcast?",
+    "back": "So every server that made an offer learns which one the client chose. The others return their offered addresses to their pools.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "dhcp-c05",
-    "front": "How do default T1 and T2 differ?",
-    "back": "T1 is normally 50% of the lease: unicast renewal with the leasing server. T2 is normally 87.5%: broadcast rebinding if renewal has not succeeded; server-supplied timers can differ.",
+    "front": "When do DHCP renewal (T1) and rebinding (T2) start, and how do they differ?",
+    "back": "T1 at 50% of the lease: unicast Request to the leasing server. T2 at 87.5%: broadcast Request to any server.",
     "tags": [
       "number",
       "concept"
@@ -43,16 +43,16 @@
   },
   {
     "id": "dhcp-c07",
-    "front": "What does a Windows 169.254/16 address tell you after an attempted DHCP setup?",
-    "back": "The client is using IPv4 link-local configuration rather than the planned DHCP assignment. It does not identify a unique cause such as a bad helper or exhausted pool. Check actual settings and trace the acquisition path.",
+    "front": "What does a 169.254.x.x address on a DHCP client mean?",
+    "back": "The client got no lease and gave itself an APIPA (link-local) address. It has no gateway and is not routed.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "dhcp-c08",
-    "front": "How do you exclude 10.10.10.1 through 10.10.10.49 on IOS?",
-    "back": "In global configuration: ip dhcp excluded-address 10.10.10.1 10.10.10.49. Exclusions protect addresses from dynamic allocation; both endpoints are included.",
+    "front": "Which IOS command excludes 10.10.10.1 through 10.10.10.49 from DHCP allocation?",
+    "back": "`ip dhcp excluded-address 10.10.10.1 10.10.10.49`, in global configuration mode. Both end addresses are included.",
     "tags": [
       "command",
       "number"
@@ -60,8 +60,8 @@
   },
   {
     "id": "dhcp-c09",
-    "front": "How do default-router and dns-server pool options differ?",
-    "back": "default-router supplies the client's local gateway; dns-server supplies resolver addresses. Neither value is automatically the DHCP server's own address.",
+    "front": "What do the pool commands `default-router` and `dns-server` give the client?",
+    "back": "`default-router`: its default gateway. `dns-server`: where to send DNS queries. Neither is the DHCP server's own address.",
     "tags": [
       "command",
       "compare"
@@ -69,16 +69,16 @@
   },
   {
     "id": "dhcp-c10",
-    "front": "How do you make an IOS routed Ethernet interface a DHCPv4 client?",
-    "back": "Enter interface configuration and use ip address dhcp, then no shutdown. Verify the learned interface address, lease where supported, and actual routing table. Do not assume a default route’s presence or distance without checking it.",
+    "front": "Which command makes a router interface a DHCP client?",
+    "back": "`ip address dhcp`, in interface configuration mode.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "dhcp-c11",
-    "front": "Where is ip helper-address placed for ordinary DHCP relay?",
-    "back": "On the Layer 3 interface receiving the client subnet’s broadcasts, such as its gateway SVI or routed interface. Its value is the reachable DHCP server address. A helper only on the server-facing interface misses that initial broadcast.",
+    "front": "On which interface do you configure `ip helper-address`, and which address does it name?",
+    "back": "On the Layer 3 interface that receives the client broadcasts, which is the clients' gateway. It names the DHCP server.",
     "tags": [
       "command",
       "troubleshoot"
@@ -86,16 +86,16 @@
   },
   {
     "id": "dhcp-c12",
-    "front": "What does nonzero giaddr do in an ordinary relayed DHCP request?",
-    "back": "It identifies the relay gateway for the client subnet, allowing normal server pool selection and return delivery to the relay. The server also needs a route to that address. Specialized policies can add selection rules.",
+    "front": "What does a DHCP relay put in the giaddr field, and how does the server use it?",
+    "back": "The relay's client-facing address. The server uses it to pick the pool and sends its reply to it.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "dhcp-c15",
-    "front": "What does no service dhcp disable on the documented IOS implementation?",
-    "back": "The IOS DHCP server and relay agent. service dhcp enables them. Absence of a displayed service dhcp line does not prove disabled service because an enabled default can be omitted from running configuration.",
+    "front": "What does `no service dhcp` disable on IOS?",
+    "back": "Both the DHCP server and the DHCP relay. `service dhcp` is on by default.",
     "tags": [
       "command",
       "troubleshoot"
@@ -103,49 +103,33 @@
   },
   {
     "id": "dhcp-c16",
-    "front": "What does show ip dhcp binding establish?",
-    "back": "The server's recorded address-to-client bindings. Correlate the client identity and verify the client's actual settings; a binding alone does not prove that the client received the ACK.",
+    "front": "Which command lists the leases an IOS DHCP server has given?",
+    "back": "`show ip dhcp binding`. Each line shows the address, the client ID, the expiry time and the type.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "dhcp-c17",
-    "front": "How do you verify which interface carries a helper?",
-    "back": "Inspect the relevant interface in show running-config and show ip interface interface-name. Confirm the helper’s address, the client-facing interface, and its operational state; exact display text varies by image.",
+    "front": "Which command shows whether an interface has a helper address?",
+    "back": "`show ip interface` with the interface name. It prints a `Helper address is` line. `show running-config` shows it too.",
     "tags": [
       "command",
       "troubleshoot"
     ]
   },
   {
-    "id": "dhcp-c18",
-    "front": "What should happen before clearing a DHCP conflict entry?",
-    "back": "Identify and correct the underlying duplicate address or stale evidence. Clearing an entry does not evict the host that might already use the address. Preserve infrastructure exclusions and healthy active bindings.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "dhcp-c19",
-    "front": "Do increasing Discover counters with no successful allocation identify one exact DHCP fault?",
-    "back": "No. Check matching pools, capacity, server policy, outgoing replies, relay return routing, and delivery to the client. Counters establish stages only when correlated with the current attempt and other evidence.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
     "id": "dhcp-c20",
-    "front": "Who sends DHCPNAK and DHCPDECLINE, and why?",
-    "back": "A server sends NAK for configuration it determines is invalid. A client sends DECLINE when an offered address appears already in use.",
+    "front": "Who sends DHCPNAK and who sends DHCPDECLINE, and why?",
+    "back": "The server sends NAK to reject an address that is not valid. The client sends DECLINE when the offered address is already in use.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "dhcp-c21",
-    "front": "Are initial DHCP Offers and ACKs always broadcasts?",
-    "back": "No. Delivery depends on giaddr, ciaddr, and the BROADCAST flag. A relay receives a server reply at nonzero giaddr; an already-addressed client can receive unicast. A directly attached initial client that requests broadcast gets broadcast delivery under RFC 2131.",
+    "front": "What decides whether a DHCP server broadcasts or unicasts its Offer?",
+    "back": "The client's broadcast flag: set means broadcast, clear means unicast. When a relay is involved, the server unicasts to giaddr.",
     "tags": [
       "concept",
       "compare"
@@ -153,8 +137,8 @@
   },
   {
     "id": "dhcp-c22",
-    "front": "How do giaddr and Option 82 differ?",
-    "back": "giaddr is the relay gateway address used in ordinary subnet selection and return delivery. Option 82 is additional relay information; it is not another name for giaddr.",
+    "front": "How do giaddr and option 82 differ?",
+    "back": "giaddr is the relay's address, used to pick the pool and return the reply. Option 82 is extra relay information, added for example by DHCP snooping.",
     "tags": [
       "concept",
       "troubleshoot"
@@ -162,34 +146,83 @@
   },
   {
     "id": "dhcp-c23",
-    "front": "What must a client do when its DHCP lease expires?",
-    "back": "Stop using that leased address and restart acquisition if renewal or rebinding has not succeeded.",
+    "front": "What must a client do when its lease expires without being renewed?",
+    "back": "Stop using the address and start again with a Discover.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "dhcp-c24",
-    "front": "Does an old client's working connection prove new DHCP allocation works?",
-    "back": "No. An unexpired lease can sustain traffic while the current acquisition path is broken. Test a fresh client and correlate relay/server evidence.",
+    "front": "Why can existing clients keep working when the DHCP relay is broken?",
+    "back": "Their leases are still valid, and renewal is a routed unicast that needs no relay. Only new clients, which must broadcast, fail.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "dhcp-c25",
-    "front": "Does a DHCP exclusion assign an address to a particular device?",
-    "back": "No. It withholds the address from dynamic allocation. A static endpoint configuration or manual binding is a separate operation.",
+    "front": "What is the difference between excluding a DHCP address and reserving it?",
+    "back": "An exclusion only stops the server offering the address. It does not assign the address to any device.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "dhcp-c26",
-    "front": "Does editing a pool option instantly change existing clients?",
-    "back": "No. Refresh configuration appropriately, then verify the affected client's actual option values before retesting service.",
+    "front": "After you correct a DHCP pool option, when do existing clients get the new value?",
+    "back": "When they next renew or request a new lease. Renew the client before you retest.",
     "tags": [
       "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c27",
+    "front": "How does an IOS DHCP server detect that an address is already in use?",
+    "back": "It pings the address before offering it. If a device replies, the address is withheld and listed in `show ip dhcp conflict`.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c28",
+    "front": "What is the default lease time on an IOS DHCP server, and which command changes it?",
+    "back": "One day. `lease days hours minutes` in the pool changes it, for example `lease 0 8 0` for eight hours.",
+    "tags": [
+      "number",
+      "command"
+    ]
+  },
+  {
+    "id": "dhcp-c29",
+    "front": "What administrative distance does IOS give the default route learned through `ip address dhcp`?",
+    "back": "254, so any other default route is preferred over it.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "dhcp-c30",
+    "front": "What do pool, lease and binding mean in DHCP?",
+    "back": "Pool: the addresses and settings for one subnet. Lease: a client's time-limited right to an address. Binding: the server's record of a lease.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "dhcp-c31",
+    "front": "Which route must a DHCP server have when clients reach it through a relay?",
+    "back": "A route to the client subnet, because it sends its replies to the relay's giaddr address.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "dhcp-c32",
+    "front": "Which Windows commands give up a DHCP lease and request a new one?",
+    "back": "`ipconfig /release`, then `ipconfig /renew`. `ipconfig /all` shows the current lease.",
+    "tags": [
+      "command"
     ]
   }
 ]

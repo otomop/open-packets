@@ -1,7 +1,7 @@
 [
   {
     "id": "ospfv2-t01",
-    "title": "Database exchange stalls after an MTU change",
+    "title": "Adjacency never reaches Full after an MTU change",
     "objectives": [
       "v1:3.4.a",
       "v2:3.3.a"
@@ -9,8 +9,8 @@
     "scenario": "R1 and B2 share a direct point-to-point Ethernet link. The link supports IPv4 MTU 1500, both interfaces are up/up, and small pings work. B2 alone received an accidental ip mtu 1400 command. These excerpts are representative evidence. The compared interface on B2 is GigabitEthernet0/1.",
     "exhibits": [
       {
-        "title": "R1 OSPF neighbor",
-        "text": "2.2.2.2  EXSTART/ -  10.0.12.2  Gi0/1\nState repeatedly returns to EXSTART."
+        "title": "OSPF neighbor state on each router",
+        "text": "R1# show ip ospf neighbor\n2.2.2.2  EXCHANGE/ -  10.0.12.2  Gi0/1\nB2# show ip ospf neighbor\n1.1.1.1  EXSTART/ -   10.0.12.1  Gi0/1\nNeither side reaches Full."
       },
       {
         "title": "Interface comparison",
@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The displayed MTUs differ even though the link supports 1500 and the other intended parameters agree. OSPF database exchange checks MTU; small ping success does not prove a large packet or DBD can be accepted. Restore the intended value and verify Full and the remote LAN route.",
-    "fix": "```ios B2\nB2# configure terminal\nB2(config)# interface gigabitethernet0/1\nB2(config-if)# no ip mtu\nB2(config-if)# end\nB2# show ip interface gigabitethernet0/1\nB2# show ip ospf neighbor\nB2# show ip route ospf\n```\nThis scenario explicitly states that 1500 is supported. If the underlying service requires a smaller MTU, agree a consistent supported value instead; do not bypass the check as a routine repair."
+    "explanation": "The MTUs differ and everything else matches. DBD packets carry the MTU, so the smaller-MTU router rejects them and the adjacency stalls in ExStart or Exchange. Small pings still work.",
+    "fix": "```ios B2\nB2# configure terminal\nB2(config)# interface gigabitethernet0/1\nB2(config-if)# no ip mtu\nB2(config-if)# end\nB2# show ip interface gigabitethernet0/1\nB2# show ip ospf neighbor\nB2# show ip route ospf\n```\nThe link supports 1500, so removing the override is the repair. If a link needs a smaller MTU, set the same value on both ends instead of using ip ospf mtu-ignore."
   },
   {
     "id": "ospfv2-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The Hello and dead values differ. The process IDs may differ, the shared area already matches, and changing one mask would introduce another fault. Restore the intended timer defaults and verify rather than promising an exact time to Full.",
-    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/2\nR3(config-if)# no ip ospf hello-interval\nR3(config-if)# no ip ospf dead-interval\nR3(config-if)# end\nR3# show ip ospf interface gigabitethernet0/2\nR3# show ip ospf neighbor\n```\nConfirm the effective timer pair is 10/40 and the expected adjacency reaches Full before saving."
+    "explanation": "The Hello and dead intervals differ, so each router drops the other's Hellos. Remove R3's timer overrides to return to 10 and 40.",
+    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/2\nR3(config-if)# no ip ospf hello-interval\nR3(config-if)# no ip ospf dead-interval\nR3(config-if)# end\nR3# show ip ospf interface gigabitethernet0/2\nR3# show ip ospf neighbor\n```\nConfirm the timers are 10/40 and the neighbor reaches Full before saving."
   }
 ]

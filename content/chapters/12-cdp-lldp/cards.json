@@ -1,8 +1,8 @@
 [
   {
     "id": "cdp-lldp-c01",
-    "front": "What kind of protocol is CDP?",
-    "back": "Cisco Discovery Protocol discovers nearby participating devices at Layer 2. Its operation does not require a working IP route between them.",
+    "front": "What is CDP, and at which layer does it work?",
+    "back": "Cisco Discovery Protocol: a Cisco-proprietary Layer 2 protocol that identifies directly connected Cisco devices. It needs no IP configuration.",
     "tags": [
       "concept"
     ]
@@ -10,15 +10,40 @@
   {
     "id": "cdp-lldp-c07",
     "front": "What is LLDP?",
-    "back": "Link Layer Discovery Protocol is the vendor-neutral link-discovery standard IEEE 802.1AB.",
+    "back": "Link Layer Discovery Protocol, the vendor-neutral Layer 2 neighbor discovery standard, IEEE 802.1AB.",
     "tags": [
       "concept"
     ]
   },
   {
+    "id": "cdp-lldp-c23",
+    "front": "Default CDP advertisement interval and holdtime?",
+    "back": "60 seconds and 180 seconds. Change them with `cdp timer` and `cdp holdtime`.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "cdp-lldp-c24",
+    "front": "Default LLDP advertisement interval, holdtime and reinitialization delay?",
+    "back": "30 seconds, 120 seconds and 2 seconds.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "cdp-lldp-c25",
+    "front": "Which of CDP and LLDP is enabled by default on a Catalyst switch?",
+    "back": "CDP is on, globally and on every interface. LLDP is off until you enter `lldp run`.",
+    "tags": [
+      "concept",
+      "compare"
+    ]
+  },
+  {
     "id": "cdp-lldp-c11",
-    "front": "In show cdp neighbors, who owns Local Intrfce and Port ID?",
-    "back": "Local Intrfce belongs to the device where you ran the command. Port ID is advertised by the neighbor. Record local device/port → remote device/port.",
+    "front": "In `show cdp neighbors`, which device owns Local Intrfce and which owns Port ID?",
+    "back": "Local Intrfce is on the device where you ran the command. Port ID is the neighbor's port at the other end of that link.",
     "tags": [
       "concept",
       "troubleshoot"
@@ -26,32 +51,32 @@
   },
   {
     "id": "cdp-lldp-c09",
-    "front": "How do the switch/bridge capability codes differ between CDP and LLDP?",
-    "back": "CDP S means switch. LLDP B means bridge; LLDP S means station. Read each output’s legend rather than transferring letters between protocols.",
+    "front": "Which capability code marks a switch in CDP output, and which in LLDP output?",
+    "back": "S (switch) in CDP. B (bridge) in LLDP, where S means station.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "cdp-lldp-c12",
-    "front": "Why use show cdp neighbors detail after the brief table?",
-    "back": "It can expose advertised addresses, software/platform details, and additional TLVs that help identify the neighbor. Available fields depend on what the neighbor advertises and the image displays.",
+    "front": "Which command shows a CDP neighbor's IP address, platform and software version?",
+    "back": "`show cdp neighbors detail`.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "cdp-lldp-c17",
-    "front": "Does an advertised management address prove that you can ping or SSH to it?",
-    "back": "No. CDP/LLDP receive advertisements at Layer 2. Verify IP addressing, VLANs, routing, policy, and the intended service separately; the address may belong to another interface on the neighbor.",
+    "front": "A neighbor entry lists a management address. What does that tell you about reaching it?",
+    "back": "Nothing about reachability. The entry was learned at Layer 2; ping or SSH still needs correct addressing, VLANs and routes.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "cdp-lldp-c05",
-    "front": "How do cdp run and cdp enable differ?",
-    "back": "cdp run controls the global process; cdp enable controls the selected interface. Both must permit CDP. A globally disabled process is not overridden by interface enablement.",
+    "front": "`cdp run` versus `cdp enable`?",
+    "back": "`cdp run` is global; `cdp enable` is per interface. Both must be on. `no cdp run` stops CDP on every interface.",
     "tags": [
       "command",
       "compare"
@@ -59,33 +84,25 @@
   },
   {
     "id": "cdp-lldp-c03",
-    "front": "What global and interface controls permit LLDP on an intended link?",
-    "back": "`lldp run` enables the process; the selected interface's `lldp transmit` and `lldp receive` control its directions. Verify the actual state.",
+    "front": "Which commands control LLDP globally and per interface?",
+    "back": "`lldp run` globally. `lldp transmit` and `lldp receive` on each interface, one per direction.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "cdp-lldp-c06",
-    "front": "Which LLDP directions allow SW1 to learn SW2?",
-    "back": "SW2 transmits on its connected port and SW1 receives on its connected port, with LLDP globally running. The reverse directions let SW2 learn SW1.",
+    "front": "Which two LLDP settings must be on for SW1 to learn SW2?",
+    "back": "SW2 must transmit on its port and SW1 must receive on its port, with `lldp run` on both switches.",
     "tags": [
       "concept",
       "command"
     ]
   },
   {
-    "id": "cdp-lldp-c14",
-    "front": "What if show cdp or show lldp reports that the protocol is not enabled?",
-    "back": "Check global configuration first: cdp run or lldp run as appropriate. Then verify the intended interface settings and the peer’s corresponding protocol. Discovery protocols have independent state.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
     "id": "cdp-lldp-c21",
-    "front": "Which LLDP commands inspect neighbor details and per-interface directions?",
-    "back": "show lldp neighbors detail shows received details; show lldp interface identifies local transmit/receive state on supporting IOS images. Inspect the actual fields and use the lesson’s paper fallback if the simulator omits LLDP.",
+    "front": "Which commands list LLDP neighbors, briefly and in full?",
+    "back": "`show lldp neighbors` and `show lldp neighbors detail`. The detail view adds chassis ID, system name and management address.",
     "tags": [
       "command",
       "troubleshoot"
@@ -93,24 +110,16 @@
   },
   {
     "id": "cdp-lldp-c16",
-    "front": "What does a discovery entry’s remaining lifetime tell you?",
-    "back": "How much longer the receiver may retain that entry without refresh. It is not link uptime or a guarantee that the neighbor is still connected. LLDP field labels/brief-display behavior vary; use detail output and the applicable command reference.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "cdp-lldp-c18",
-    "front": "Does an empty discovery table uniquely prove a broken cable?",
-    "back": "No. Inspect link state, common protocol support, global enablement, the relevant transmit/receive controls, and record freshness.",
+    "front": "What does the Holdtme value in a CDP neighbor row count down?",
+    "back": "Seconds until the entry is deleted unless a new advertisement arrives. Each advertisement resets it to the sender's holdtime.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "cdp-lldp-c08",
-    "front": "What practical information can CDP version 2 add?",
-    "back": "The referenced IOS guide documents version 2 as enabled and includes information such as native VLAN and duplex. A mismatch warning is evidence to investigate, not an instruction to change either side without checking the design.",
+    "front": "Which two link mismatches can CDP version 2 report?",
+    "back": "Native VLAN mismatch and duplex mismatch. CDP reports them; it does not fix them.",
     "tags": [
       "troubleshoot",
       "concept"
@@ -118,26 +127,18 @@
   },
   {
     "id": "cdp-lldp-c22",
-    "front": "What voice-network information can LLDP-MED advertise to a compatible phone?",
-    "back": "Network policy such as the voice VLAN and traffic priority. This does not replace DHCP or prove call-server registration.",
+    "front": "What does LLDP-MED tell an IP phone?",
+    "back": "Network policy such as its voice VLAN and QoS marking, plus power and location details. It does not assign an IP address.",
     "tags": [
       "voice"
     ]
   },
   {
     "id": "cdp-lldp-c19",
-    "front": "How should discovery be controlled at a network boundary?",
-    "back": "Follow the approved policy per port. Disable CDP and LLDP directions where discovery is prohibited; preserve verified dependencies such as approved phone network policy on trusted links. Disabling one protocol does not disable the other.",
+    "front": "Which commands stop all neighbor discovery on one port that faces an ISP?",
+    "back": "`no cdp enable`, `no lldp transmit` and `no lldp receive` on that interface. Other ports keep discovery.",
     "tags": [
       "concept"
-    ]
-  },
-  {
-    "id": "cdp-lldp-c20",
-    "front": "Why might a CDP table omit a hub between its two speakers?",
-    "back": "A hub repeats signals and does not advertise a CDP identity. The speakers can be discovered across it. Document the inspected physical path separately; do not generalize this to every unmanaged bridge or to LLDP forwarding.",
-    "tags": [
-      "troubleshoot"
     ]
   }
 ]

@@ -7,11 +7,11 @@ minutes: 85
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Use the supplied IPv6 setup to isolate what differs from OSPFv2: explicit router identity, interface activation, scoped link-local neighbors, and global prefix participation. Write the predictions before commands and retain actual evidence before any repair.
+You will build the lesson's IPv6-only network and run single-area OSPFv3 on it. Along the way you set router IDs by hand, enable OSPFv3 interface by interface, read the DR and BDR roles, and match each route's link-local next hop and cost to your own calculation. Then you break and repair one adjacency and one LAN advertisement, the two faults the lesson told you to expect. Write each prediction before you run the command that tests it.
 
-Build a separate IPv6-only file from blank devices. This lab uses the classic IPv6-specific IOS syntax; the final step translates the core into address-family syntax without changing the working lab.
+The lab uses the classic `ipv6 router ospf` syntax throughout. Step 9 translates the result into address-family syntax on paper.
 
-Use a new Packet Tracer file with **three 2911 routers**, **one 2960 switch**, and **two PCs**. The 2911 provides Gi0/0, Gi0/1, and Gi0/2. Use straight-through copper for router–switch links, and crossover or the auto-connect tool for router–router and direct PC–router links. On CML/other images, map the interfaces explicitly before typing. All output in this guide is representative, not a recorded run; simulator commands and timing can differ.
+Start a new Packet Tracer file with **three 2911 routers**, **one 2960 switch**, and **two PCs**. The 2911 provides Gi0/0, Gi0/1, and Gi0/2. Use straight-through copper for router–switch links, and crossover or the auto-connect tool for router–router and direct PC–router links. On CML or other images, map the interfaces before typing. The outputs quoted here are representative; values such as the Interface ID and the timing differ between platforms.
 
 ## Topology
 
@@ -31,7 +31,7 @@ Use a new Packet Tracer file with **three 2911 routers**, **one 2960 switch**, a
 | PC-A FastEthernet0 | 2001:db8:10::10/64 | Gateway fe80::10:1 |
 | PC-B FastEthernet0 | 2001:db8:30::10/64 | Gateway fe80::30:1 |
 
-The PCs may generate their own unique link-local addresses. No DNS or IPv4 address is required. SW1 is an ordinary Layer 2 switch in VLAN 1, with no management address. Shared costs are 10, direct costs 25, and client-LAN costs 1.
+The PCs generate their own link-local addresses. No DNS or IPv4 address is needed. SW1 is an ordinary Layer 2 switch in VLAN 1, with no management address. You will set the OSPF costs by hand: 10 on the shared segment, 25 on the direct link and 1 on each client LAN.
 
 ### Prediction and observation sheet
 
@@ -43,11 +43,13 @@ The PCs may generate their own unique link-local addresses. No DNS or IPv4 addre
 | LAN activation removed | Neighbor state versus route to that LAN | Remote route table and local/remote PC tests |
 | LAN restored | Required activation, passive behavior | Returned /64 and successful endpoint tests |
 
-Do not treat the router ID, neighbor Interface ID and link-local next hop as interchangeable. Record each in its own field. If Packet Tracer does not support the classic OSPFv3 commands, use a supported IOS/CML image or complete the predictions from these explicitly authored configurations; label a worksheet result as such.
+Record the router ID, the neighbor's Interface ID and the link-local next hop in separate fields: they are three different things. If your Packet Tracer version rejects one of the commands, note which one, and complete that checkpoint on paper from the configurations given here.
 
 ## Step 1: Cable and configure IPv6 addressing
 
-Set the PCs under Desktop > IP Configuration: IPv6 static, /64, and the listed link-local gateway. Leave IPv4 unused. Decline the router setup dialog. Shared links remain administratively down until OSPF is ready.
+Set each PC under Desktop > IP Configuration: static IPv6 address, /64, and the link-local gateway from the table. Leave IPv4 empty. Decline the setup dialog on each router.
+
+Every router gets `ipv6 unicast-routing` first, because IOS will not accept OSPFv3 commands without it. Each interface gets a global address and a short manual link-local address, so that the next hops you read later are easy to recognize. The shared Gi0/0 interfaces stay shut down for now. That lets you bring the routers onto the shared segment one at a time in Step 2 and see the DR election happen in a known order.
 
 ```ios SW1
 Switch> enable
@@ -133,7 +135,11 @@ Each PC can ping its own global gateway address. R1 can ping 2001:db8:13::3 and 
 
 ## Step 2: Enable the processes and establish known roles
 
-Configure R1 first and wait until Gi0/0 becomes DR before configuring R2. Wait for R2 to become Full with R1 and BDR, then configure R3. The distinct process numbers demonstrate local significance. If a classic command is unavailable on your image, use a supported IOS image; do not silently substitute OSPFv2.
+Each router gets a process, a manual router ID, `passive-interface default` with exceptions for its transit links, and one `ipv6 ospf PROCESS area 0` line on every interface, including the client LANs. When you create the process, IOS warns that it could not pick a router ID. That is expected on a router with no IPv4 address, and the `router-id` line answers it.
+
+The process numbers are 10, 20 and 30 to show that the process ID is local. The priorities on the shared segment are 100, 50 and 0, so R1 should become DR, R2 the BDR and R3 a DROTHER. The direct link is set to point-to-point on both ends, so it elects nothing.
+
+Order matters, because the election is not preemptive. Configure R1 first and wait until `show ipv6 ospf interface gigabitethernet0/0` reports State DR. This takes about 40 seconds, the time a lone router waits before electing itself. Then configure R2, wait until it is Full with R1 and shows as BDR, and configure R3 last.
 
 ```ios R1
 R1# configure terminal
@@ -211,42 +217,40 @@ R3# show ipv6 ospf neighbor
 
 
 :::expected
-All routers have explicit, unique RIDs without needing IPv4 interface addresses. Shared roles are R1 DR, R2 BDR, R3 DROTHER. The classic IPv6-unicast instance is 0 on each shared interface. R1/R3 Gi0/1 interfaces are point-to-point.
+Each router has its own router ID and no IPv4 address. On the shared segment R1 is DR, R2 is BDR and R3 is DROTHER. `show ipv6 ospf interface` reports Instance ID 0 on each shared interface and network type POINT_TO_POINT on R1 and R3 Gi0/1.
 :::
 
 ```state
 {"status":"R1 DR · R2 BDR · R3 DROTHER","tone":"ok","focus":["R1","R2","R3"],"wake":["SW"],"flows":[{"event":["R1"],"wait":1.2,"tags":{"R1":"DR on Gi0/0 · priority 100"}},{"event":["R2"],"tags":{"R2":"Full with R1 · BDR · priority 50"}},{"event":["R3"],"tags":{"R3":"DROTHER · priority 0"}}],"roles":[{"node":"R1","peer":"SW","text":"DR","from":0},{"node":"R2","peer":"SW","text":"BDR","from":1},{"node":"R3","peer":"SW","text":"DROTHER","from":2}],"chips":[{"node":"R1","text":"ospf 10 · RID 1.1.1.1"},{"node":"R2","text":"ospf 20 · RID 2.2.2.2"},{"node":"R3","text":"ospf 30 · RID 3.3.3.3"}],"rows":[["Shared roles","R1 DR · R2 BDR · R3 DROTHER","ok"],["Router IDs","Explicit · no IPv4 address needed"],["Shared instance","0 on each Gi0/0"],["R1/R3 Gi0/1","Point-to-point"]]}
 ```
 
-## Step 3: Read neighbors and next-hop identities
+## Step 3: Read the neighbor tables
 
-Inspect R1 and R3. Record the local interface, neighbor RID, neighbor interface ID, link-local next hop, network type, and timers.
+Predict R1's neighbor table before you look: how many rows, which router IDs, and which state and role on each row. Then inspect R1 and R3. For each neighbor record the router ID, the state, the neighbor's Interface ID and your local interface. On R1 Gi0/1, confirm the network type and the 10/40 timers.
 
 ```ios R1
 R1# show ipv6 ospf neighbor
 R1# show ipv6 ospf interface gigabitethernet0/1
-R1# show ipv6 route ospf
 ```
 
 ```ios R3
 R3# show ipv6 ospf neighbor
-R3# show ipv6 route ospf
 ```
 
 
 :::expected
-R1 sees RID 3.3.3.3 twice: FULL/DROTHER on shared Gi0/0 and FULL/ - on direct Gi0/1. Interface ID is the neighbor interface identifier; it is neither an IPv4 next hop nor necessarily the local process ID. Interface ID values can vary by image.
+R1 has three rows: 2.2.2.2 FULL/BDR on Gi0/0, and 3.3.3.3 twice, FULL/DROTHER on shared Gi0/0 and FULL/ - on direct Gi0/1. R3 sees 1.1.1.1 as FULL/DR on Gi0/0 and FULL/ - on Gi0/1, and 2.2.2.2 as FULL/BDR. The Interface ID is a number the neighbor gave its own interface. It is not an address or a process ID, and its value varies by platform.
 :::
 
 ```state
 {"status":"3.3.3.3 seen twice on R1","focus":["R1","R3"],"roles":[{"node":"R1","peer":"SW","text":"DR"},{"node":"R2","peer":"SW","text":"BDR"},{"node":"R3","peer":"SW","text":"DROTHER"}],"chips":[{"node":"R1","text":"3.3.3.3 FULL/DROTHER · Gi0/0"},{"node":"R1","text":"3.3.3.3 FULL/ - · Gi0/1"}],"rows":[["Shared Gi0/0","3.3.3.3 FULL/DROTHER"],["Direct Gi0/1","3.3.3.3 FULL/ -"],["Interface ID","The neighbor's interface identifier"],["RID, interface ID, next hop","Separate fields"]]}
 ```
 
-## Step 4: Prove the advertised /64 routes
+## Step 4: Predict and prove the /64 routes
 
-Calculate the shared and direct path totals first. Predict the global destination prefix separately from the scoped link-local next hop; compare only after recording your calculation.
+Before you look at a route table, calculate R1's cost to `2001:db8:30::/64` over the shared segment and over the direct link. Write down the next hop and exit interface you expect for the cheaper path. Do the same for R3's route to `2001:db8:10::/64`.
 
-Use the client PCs so the test requires return routes to the actual client prefixes. On PC-A run:
+Then test from the PCs, because a PC-to-PC ping needs the routes in both directions. On PC-A run:
 ```text
 ping 2001:db8:30::10
 ```
@@ -266,7 +270,7 @@ R3# show ipv6 route ospf
 
 
 :::solution
-After Neighbor Discovery and convergence, both pings work. R1 learns 2001:DB8:30::/64 [110/11] via FE80::3, Gi0/0. R3 learns 2001:DB8:10::/64 [110/11] via FE80::1, Gi0/0. The IP destination remains global while the next-hop address is link-local.
+The shared path costs 10 + 1 = 11 and the direct path costs 25 + 1 = 26, in both directions. R1 learns 2001:DB8:30::/64 [110/11] via FE80::3, Gi0/0. R3 learns 2001:DB8:10::/64 [110/11] via FE80::1, Gi0/0. Both pings work; the first may lose a packet while Neighbor Discovery resolves the gateways. The packets keep their global destinations while each router forwards to a link-local next hop.
 :::
 
 ```state
@@ -275,9 +279,9 @@ After Neighbor Discovery and convergence, both pings work. R1 learns 2001:DB8:30
 
 ## Step 5: Break only the direct adjacency
 
-Predict the direct neighbor state and the client ping result separately. A working client test is not a substitute for checking both adjacencies.
+Hello and dead intervals must match between neighbors. Change them on one end of the direct link and predict two things separately: what happens to the direct neighbor, and whether PC-A can still ping PC-B.
 
-Set R1 direct-link timers to 5/20 while R3 remains at 10/40. Wait until the direct neighbor no longer remains Full and compare effective timer output.
+`ipv6 ospf hello-interval` and `ipv6 ospf dead-interval` are the OSPFv3 forms of the timer commands from Chapter 21. Set R1 Gi0/1 to 5/20 while R3 stays at 10/40. Wait up to 40 seconds for the neighbor to disappear from both tables, then compare the timers on both ends.
 
 ```ios R1
 R1# configure terminal
@@ -295,7 +299,7 @@ R3# show ipv6 ospf interface gigabitethernet0/1
 
 
 :::expected
-The direct relationship fails because both timer values disagree. The shared adjacency and cost-11 route remain healthy, so PC traffic can still work. This is an adjacency fault hidden by another usable path.
+The direct neighbor drops because the timers disagree: R1 reports 5/20 and R3 reports 10/40. The shared adjacency and the cost-11 route are untouched, so the PCs still reach each other. A ping alone would not have found this fault.
 :::
 
 ```state
@@ -304,7 +308,7 @@ The direct relationship fails because both timer values disagree. The shared adj
 
 ## Step 6: Restore the direct timers
 
-Remove the deliberate overrides from R1 only.
+Remove the two overrides from R1. R3 was never changed, so it needs nothing.
 
 ```ios R1
 R1# configure terminal
@@ -318,7 +322,7 @@ R1# show ipv6 ospf neighbor
 
 
 :::expected
-R1 reports 10/40 again and the direct neighbor reaches FULL/ -. A process clear, RID change, or new IPv4 address is unnecessary.
+R1 reports 10/40 again and the direct neighbor returns to FULL/ -. You did not need to clear the process or touch the router ID.
 :::
 
 ```state
@@ -327,9 +331,9 @@ R1 reports 10/40 again and the direct neighbor reaches FULL/ -. A process clear,
 
 ## Step 7: Remove a LAN advertisement while keeping neighbors
 
-Before removing activation, predict the local PC-to-gateway test, the transit neighbor state and R1's remote route. Preserve the failure evidence before Step 8 restores participation.
+This is the lesson's "Full neighbors, missing prefix" case. On R3, take Gi0/2 out of OSPFv3 without shutting it down or changing its address. First predict three results: PC-B's ping to its own gateway, R3's neighbor states, and R1's route to `2001:db8:30::/64`.
 
-On R3, disable OSPF activation on Gi0/2 without shutting the interface or changing its address. Inspect R1 after convergence and test PC-A to PC-B.
+Then make the change, inspect R1 and ping PC-B from PC-A. Record what you see before Step 8 repairs it.
 
 ```ios R3
 R3# configure terminal
@@ -346,7 +350,7 @@ R1# show ipv6 route ospf
 
 
 :::expected
-R3 remains Full with its routers, and PC-B can still ping its local gateway. R1 loses the OSPF route to 2001:db8:30::/64 and PC-A cannot reach PC-B. A Full adjacency proves synchronization, not that every desired LAN participates.
+R3 stays Full with R1 and R2, and PC-B still pings its gateway. R1 loses the OSPF route to 2001:db8:30::/64, so PC-A cannot reach PC-B. A Full adjacency shows that the databases match. It does not show that every LAN interface is in OSPF.
 :::
 
 ```state
@@ -355,7 +359,7 @@ R3 remains Full with its routers, and PC-B can still ping its local gateway. R1 
 
 ## Step 8: Restore LAN participation
 
-Re-enable the intended LAN in area 0. Its process-level passive setting remains correct.
+Put Gi0/2 back into area 0. You do not need to change the passive setting: `passive-interface default` still covers Gi0/2, which is what a client LAN should have.
 
 ```ios R3
 R3# configure terminal
@@ -371,7 +375,7 @@ R1# show ipv6 route ospf
 
 
 :::expected
-R1 relearns the /64 at cost 11 and PC-A/PC-B pings recover. Gi0/2 remains passive: it advertises the LAN through other interfaces while forming no PC-facing adjacency.
+R1 relearns the /64 at cost 11 and the PC-A to PC-B pings recover. Gi0/2 is still passive: R3 advertises the LAN to its neighbors and sends no Hellos toward the PC.
 :::
 
 ```state
@@ -380,7 +384,7 @@ R1 relearns the /64 at cost 11 and PC-A/PC-B pings recover. Gi0/2 remains passiv
 
 ## Step 9: Translate the core syntax on paper and save
 
-In notes, translate R1 process 10 and its three area-0 activations into address-family syntax. Do not paste a migration into this working file. Compare with the answer below, then save each router and switch.
+The lesson showed the address-family syntax that current IOS XE uses. In your notes, rewrite R1's process 10, its passive settings and its three area-0 interface commands in that syntax. Do not type it into this working file. Compare with the answer below, then save each router and the switch.
 
 ```ios R1
 R1# copy running-config startup-config
@@ -398,10 +402,10 @@ R3# copy running-config startup-config
 SW1# copy running-config startup-config
 ```
 
-Accept the default filename and save the Packet Tracer file. If you later use a clean CML IOS XE image for the alternative syntax, verify feature support and map the interfaces first.
+Accept the default filename and save the Packet Tracer file.
 
 :::solution
-The process begins with global `router ospfv3 10`, `router-id 1.1.1.1`, then `address-family ipv6 unicast`. Put passive-interface default and the Gi0/0/Gi0/1 exceptions in that family. Each interface activation is `ospfv3 10 ipv6 area 0`. The configured IPv6 addresses and need for IPv6 forwarding do not disappear. Use show ospfv3 neighbor/interface to verify that syntax family.
+The process is `router ospfv3 10` with `router-id 1.1.1.1`, then `address-family ipv6 unicast`. Inside the address family go `passive-interface default` and the `no passive-interface` exceptions for Gi0/0 and Gi0/1. Each of the three interfaces gets `ospfv3 10 ipv6 area 0`. The IPv6 addresses and `ipv6 unicast-routing` stay as they are. You would verify with `show ospfv3 neighbor` and `show ospfv3 interface`.
 :::
 
 ```state
@@ -410,12 +414,14 @@ The process begins with global `router ospfv3 10`, `router-id 1.1.1.1`, then `ad
 
 ## Troubleshooting
 
-- No process RID: configure it explicitly; IPv6-only addressing does not supply a dotted-decimal RID automatically on classic IOS.
-- No neighbor: compare interface activation, area, instance, timers, passive exceptions, link-local addresses, and link status.
-- Repeated ExStart/Exchange: compare MTUs and exchange evidence. Bypassing the MTU check is not the first repair.
-- Neighbor Full but missing /64: check the remote physical LAN's state and OSPF activation.
-- A link-local next hop looks repeated: include the exit interface when interpreting it. Link-local scope is per link.
-- Client failure with routes present: check /64 and gateway on both PCs, then route back to the source.
+- OSPFv3 commands rejected: `ipv6 unicast-routing` is missing.
+- "Could not pick a router-id": configure `router-id` under the process. An IPv6-only router has no IPv4 address to borrow.
+- No neighbor: on both ends, check that the interface is up, has its `ipv6 ospf PROCESS area 0` line and its `no passive-interface` exception, and compare area, timers and instance ID.
+- Wrong DR or BDR: the election is not preemptive. Shut the three Gi0/0 interfaces and bring them up in the order R1, R2, R3, waiting for each role.
+- Neighbor stuck in ExStart or Exchange: compare the MTU on both ends.
+- Neighbors Full but a /64 is missing: check that the remote LAN interface is up and has its `ipv6 ospf` line.
+- The same link-local next hop appears on two routes: read it with its exit interface. A link-local address belongs to one link.
+- Routes present but the PCs cannot ping: check the /64 address and gateway on both PCs, then the route back to the source LAN.
 
 ## Challenge
 

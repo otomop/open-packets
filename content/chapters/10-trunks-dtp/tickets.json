@@ -31,8 +31,8 @@
     "answer": [
       1
     ],
-    "explanation": "SW1 remains an operational trunk with native VLAN 99. Its allowed list contains only 30, even though the original VLANs still exist. That selective filter explains why the new pair works and the old same-VLAN pairs fail.",
-    "fix": "Use SW1's console to restore the required VLANs while retaining 30.\n\n```ios SW1\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# switchport trunk allowed vlan add 10,20,99\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nThe allowed list should become 10,20,30,99. Verify local activity and forwarding, then repeat each same-VLAN pair's test in both directions. Do not assume the list alone proves host connectivity. Save after verification and correct the change instructions to distinguish replacement from add."
+    "explanation": "SW1 is still a trunk with native VLAN 99, but its allowed list holds only VLAN 30. Someone replaced the list instead of adding to it, so the older VLANs are filtered out.",
+    "fix": "Restore the required VLANs on SW1 and keep VLAN 30.\n\n```ios SW1\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# switchport trunk allowed vlan add 10,20,99\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nThe allowed list becomes 10,20,30,99. Retest each same-VLAN pair in both directions, then save. Update the change instructions to say add, not replace."
   },
   {
     "id": "trunks-dtp-t02",
@@ -66,7 +66,7 @@
     "answer": [
       2
     ],
-    "explanation": "The native settings differ explicitly. Under default treatment, an ordinary untagged frame sent from SW1 as VLAN 99 is not classified as VLAN 99 by SW2. Native mismatches may also trigger spanning-tree protection; neither a working tagged VLAN nor the absence of a particular warning makes this configuration correct.",
-    "fix": "Restore the documented native VLAN on the replacement switch through its console.\n\n```ios SW2\nSW2# configure terminal\nSW2(config)# interface gigabitethernet0/1\nSW2(config-if)# switchport trunk native vlan 99\nSW2(config-if)# end\nSW2# show interfaces trunk\n```\n\nCompare both native and allowed settings, allow any protective state to recover, and repeat the VLAN 99 and VLAN 10 tests. If a state remains nonforwarding, inspect its evidence rather than disabling spanning tree. Update the replacement template and save the verified configuration."
+    "explanation": "The native VLANs differ: SW1 uses 99 and the replacement SW2 uses 1. SW2 puts untagged VLAN 99 frames from SW1 into VLAN 1, and the mismatch can trigger STP protection.",
+    "fix": "Set the documented native VLAN on the replacement switch.\n\n```ios SW2\nSW2# configure terminal\nSW2(config)# interface gigabitethernet0/1\nSW2(config-if)# switchport trunk native vlan 99\nSW2(config-if)# end\nSW2# show interfaces trunk\n```\n\nCompare native and allowed settings on both ends and wait for any STP state to recover. Retest VLAN 99 and VLAN 10. If a port stays blocked, read its state; do not disable STP. Update the replacement template and save."
   }
 ]

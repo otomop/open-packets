@@ -8,7 +8,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "R1 uses ordinary local enable authentication. An enable secret and a different enable password both exist at privilege 15. Which credential permits the transition from `>` to `#`?",
+    "prompt": "R1 uses local enable authentication. Both an enable secret and a different enable password exist at privilege 15. Which credential moves you from `>` to `#`?",
     "options": [
       "The password configured as the enable password",
       "Either configured credential, tried in sequence",
@@ -18,11 +18,11 @@
     "answer": [
       2
     ],
-    "explanation": "For the same privilege level, the enable secret takes precedence over the enable password. This question assumes local enable authentication, with no AAA method list changing that behavior.",
+    "explanation": "For the same privilege level, the enable secret takes precedence over the enable password.",
     "whyWrong": {
-      "0": "The enable secret takes precedence for the same level.",
-      "1": "This local configuration does not fall back to the enable password.",
-      "3": "Line authentication and the enable transition are separate."
+      "0": "The enable password is ignored when an enable secret exists.",
+      "1": "There is no fallback to the enable password.",
+      "3": "Console line authentication is separate from the enable transition."
     }
   },
   {
@@ -44,11 +44,11 @@
     "answer": [
       0
     ],
-    "explanation": "The command obscures applicable cleartext password fields in the configuration. Type 7 is reversible, and removing the command does not automatically reveal plaintext for fields already converted.",
+    "explanation": "`service password-encryption` obscures cleartext password fields with reversible type 7. It does not encrypt sessions or upgrade the enable secret.",
     "whyWrong": {
-      "1": "That command does not select the scrypt algorithm for those fields.",
-      "2": "Stored configuration formatting does not protect a Telnet session.",
-      "3": "It does not upgrade the algorithm used by an enable secret."
+      "1": "It does not select type 9 (scrypt) for those fields.",
+      "2": "It protects stored text, not a Telnet session.",
+      "3": "It does not change the hash on the enable secret."
     }
   },
   {
@@ -70,11 +70,11 @@
     "answer": [
       1
     ],
-    "explanation": "Type 5 identifies the legacy MD5-based verifier format. A one-way hash is still vulnerable to password guessing; do not describe it as impossible to crack or as a universal current default.",
+    "explanation": "The number in `enable secret 5` is the verifier type; type 5 is the legacy MD5-based hash. A hash can still be guessed, so it is not uncrackable.",
     "whyWrong": {
-      "0": "The type marker is not the requested privilege level.",
-      "2": "Authentication retry settings are separate configuration.",
-      "3": "The marker does not encode the original password length."
+      "0": "The type does not set a privilege level.",
+      "2": "Login retry limits are separate configuration.",
+      "3": "The type does not encode password length."
     }
   },
   {
@@ -85,7 +85,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A powered, normally running router has no usable IP interface. Which access method can still be used by an authorized technician with working credentials and the correct cable?",
+    "prompt": "A powered router has no usable IP interface. Which access method still works for an authorized technician with the correct cable?",
     "options": [
       "An SSH session to its previous interface address",
       "An HTTPS session to its previous interface address",
@@ -95,11 +95,11 @@
     "answer": [
       3
     ],
-    "explanation": "A direct serial console does not require a configured IP interface. Authentication and the console’s own operational state still matter, so this is not a claim that physical access bypasses credentials.",
+    "explanation": "A serial console connection needs no IP interface. It still requires valid credentials if the console is configured to ask for them.",
     "whyWrong": {
-      "0": "SSH requires an IP path to a currently reachable server address.",
-      "1": "Web management also requires IP reachability.",
-      "2": "The gateway is not a substitute for a reachable router management address."
+      "0": "SSH needs a reachable IP address on the router.",
+      "1": "HTTPS management also needs IP reachability.",
+      "2": "A gateway address is not a management address on the router."
     }
   },
   {
@@ -122,11 +122,11 @@
       1,
       4
     ],
-    "explanation": "The conventional workflow uses a configured hostname and domain name for the device key identity. Other key-management forms exist, so this is a scoped workflow rather than a claim about every possible RSA command.",
+    "explanation": "The conventional workflow generates the RSA key from a configured hostname and domain name. This is the chapter’s workflow, not every possible key method.",
     "whyWrong": {
-      "0": "The identity settings do not require a live DNS query.",
-      "2": "A Telnet session is not a key-generation prerequisite.",
-      "3": "An IP address is needed for network reachability, but it is not one of the local identity settings used to generate this key pair."
+      "0": "The key identity does not need a DNS lookup.",
+      "2": "A Telnet session is not needed to generate the key.",
+      "3": "An IP address gives reachability but is not part of the key identity."
     }
   },
   {
@@ -148,11 +148,11 @@
     "answer": [
       0
     ],
-    "explanation": "The direction of the copy matters: active configuration is the source, startup configuration the destination. The device’s persistent storage implementation may vary, but the active-versus-saved distinction remains.",
+    "explanation": "The source comes first and the destination second, so `copy running-config startup-config` saves the active configuration for the next boot.",
     "whyWrong": {
-      "1": "That loads saved settings into the active configuration rather than saving active changes.",
-      "2": "That displays the saved configuration without updating it.",
-      "3": "That enters configuration mode without saving changes."
+      "1": "This copies saved settings into the active configuration.",
+      "2": "This displays the saved configuration without changing it.",
+      "3": "This enters configuration mode and saves nothing."
     }
   },
   {
@@ -164,7 +164,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "With ordinary IOS privilege assignments, which two actions belong to privileged EXEC or require entering it first? Choose two.",
+    "prompt": "With ordinary IOS privilege levels, which two actions require privileged EXEC? Choose two.",
     "options": [
       "Send a basic ping permitted in user EXEC",
       "Read the device hostname from its prompt",
@@ -176,11 +176,11 @@
       2,
       4
     ],
-    "explanation": "Privileged EXEC provides access to configuration inspection and the entry point for configuration mode. Custom privilege or AAA policies can alter command access; this question uses the ordinary lab assignments.",
+    "explanation": "Showing the full running configuration and entering global configuration mode need privileged EXEC.",
     "whyWrong": {
-      "0": "A basic ping is normally available before privileged EXEC.",
-      "1": "The prompt is visible without privileged access.",
-      "3": "Logging in is separate from privileged EXEC."
+      "0": "A basic ping works in user EXEC.",
+      "1": "The hostname shows in any prompt.",
+      "3": "Entering a username is part of login, not privileged EXEC."
     }
   },
   {
@@ -202,11 +202,11 @@
     "answer": [
       3
     ],
-    "explanation": "Local user privilege and line authentication work together. A user configured with privilege 15 begins at privileged EXEC when authenticated by this local method.",
+    "explanation": "A local user starts at privilege 1 unless configured otherwise. A privilege-15 user on a line with `login local` starts at privileged EXEC.",
     "whyWrong": {
       "0": "The default local-user privilege is 1.",
-      "1": "The existence of an enable secret does not by itself make line login start at privilege 15.",
-      "2": "The secret controls password storage, not the initial privilege level."
+      "1": "A shared line password with an enable secret starts at privilege 1.",
+      "2": "`secret` sets password storage, not privilege."
     }
   },
   {
@@ -217,7 +217,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A client cannot obtain ping replies from R1, but a new SSH login to R1 succeeds. What does this evidence establish?",
+    "prompt": "A client gets no ping replies from R1, but a new SSH login to R1 succeeds. What does this show?",
     "options": [
       "SSH access works even though this ICMP test did not receive replies",
       "The successful SSH login proves ICMP is enabled on every interface",
@@ -227,11 +227,11 @@
     "answer": [
       0
     ],
-    "explanation": "A service test answers a different question from a ping. Record the failed ICMP result separately; do not treat it as proof that all IP communication is broken.",
+    "explanation": "SSH and ICMP are separate protocols, so SSH can work while ping gets no replies. Record each result separately.",
     "whyWrong": {
-      "1": "SSH and ICMP are separate protocols and can be treated differently.",
-      "2": "The ping result does not identify the subnet of an authenticated SSH session.",
-      "3": "A successful session provides no basis for replacing the server keys."
+      "1": "A working SSH login says nothing about ICMP on other interfaces.",
+      "2": "A failed ping does not identify the SSH session’s subnet.",
+      "3": "A successful login gives no reason to regenerate host keys."
     }
   },
   {
@@ -256,11 +256,11 @@
     "answer": [
       2
     ],
-    "explanation": "On an image reporting this compatibility mode, version 1.99 indicates support for SSHv1 and SSHv2. Explicitly select version 2; do not assume every current image starts in this legacy mode.",
+    "explanation": "Version 1.99 means the server accepts SSHv1 and SSHv2. `ip ssh version 2` restricts it to SSHv2.",
     "whyWrong": {
-      "0": "That permits Telnet rather than selecting the SSH version.",
-      "1": "That affects applicable stored passwords, not the SSH version.",
-      "3": "That selects local authentication, not an SSH protocol version."
+      "0": "`transport input telnet` permits Telnet and does not set the SSH version.",
+      "1": "`service password-encryption` affects stored passwords.",
+      "3": "`login local` selects local authentication."
     }
   },
   {
@@ -283,11 +283,11 @@
       0,
       3
     ],
-    "explanation": "Console access does not depend on the device’s IP forwarding path. Central AAA can support authentication and authorization while the administrator still uses SSH for the terminal session.",
+    "explanation": "A serial console works without an IP interface. TACACS+ and RADIUS provide AAA decisions while the administrator still connects with SSH.",
     "whyWrong": {
-      "1": "Whether management is in-band or out-of-band depends on the network design.",
-      "2": "HTTPS adds TLS; ordinary HTTP does not provide that protection.",
-      "4": "Local access and recovery capabilities vary by product."
+      "1": "Whether management is in-band or out-of-band is a design choice, not a property of SSH.",
+      "2": "HTTPS adds TLS; plain HTTP does not protect credentials.",
+      "4": "Cloud management does not require disabling local access."
     }
   },
   {
@@ -312,11 +312,11 @@
     "answer": [
       2
     ],
-    "explanation": "The terminal-session table identifies active lines and users; remote sessions can include a client address under Location. The asterisk marks the session issuing the command.",
+    "explanation": "`show users` lists active lines and users, with the client address under Location for remote sessions. The asterisk marks your own session.",
     "whyWrong": {
-      "0": "That reports SSH server settings rather than this terminal-line table.",
-      "1": "That reports the current session’s privilege level.",
-      "3": "That reports interface addresses and state, not the users of terminal lines."
+      "0": "`show ip ssh` shows SSH server settings.",
+      "1": "`show privilege` shows your current privilege level.",
+      "3": "`show ip interface brief` shows interface addresses and state."
     }
   },
   {
@@ -343,11 +343,11 @@
     "answer": [
       0
     ],
-    "explanation": "The global configuration prompt requires selecting the VTY lines before applying a line-specific timeout. Then enter exec-timeout 5 0 under the resulting config-line prompt.",
+    "explanation": "At the global configuration prompt, enter `line vty 0 4` first. Then `exec-timeout 5 0` applies under the config-line prompt.",
     "whyWrong": {
-      "1": "The timeout belongs under line configuration, not directly at the shown global prompt.",
-      "2": "An Ethernet interface is not the terminal-line context for an EXEC idle timeout.",
-      "3": "Enable enters privileged EXEC from user EXEC; this session is already configuring the device."
+      "1": "`exec-timeout` belongs under line configuration, not at the global prompt.",
+      "2": "An interface is not the context for an idle timeout.",
+      "3": "`enable` enters privileged EXEC; you are already configuring."
     }
   },
   {
@@ -370,11 +370,11 @@
     "answer": [
       1
     ],
-    "explanation": "A legitimate replacement can change the host key, but the warning does not verify that explanation. Confirm the intended device and approved new identity before accepting it.",
+    "explanation": "A host-key change can be legitimate, but the warning does not prove it. Confirm the device and its new key through the trusted management process before accepting.",
     "whyWrong": {
-      "0": "IP reachability does not authenticate the device presenting the key.",
-      "2": "Deleting the record removes the comparison without resolving the identity question.",
-      "3": "Switching to unprotected transport does not verify the server identity."
+      "0": "IP reachability does not authenticate the server.",
+      "2": "Deleting the stored key removes the check without answering the identity question.",
+      "3": "Falling back to Telnet verifies nothing and removes encryption."
     }
   },
   {
@@ -399,11 +399,11 @@
     "answer": [
       1
     ],
-    "explanation": "The VTY range currently accepts Telnet only. Selecting SSH corrects the transport policy; verify a new session after the change and inspect any additional VTY ranges.",
+    "explanation": "The VTY range accepts Telnet only. `transport input ssh` makes it accept SSH only; then test a new session.",
     "whyWrong": {
-      "0": "Changing the authentication method does not make this range accept SSH transport.",
-      "2": "An additional user does not change the accepted transport.",
-      "3": "Saving preserves the existing policy; it does not correct it."
+      "0": "Authentication method does not change which transport the range accepts.",
+      "2": "Another user does not change the accepted transport.",
+      "3": "Saving keeps the faulty policy."
     }
   },
   {
@@ -429,11 +429,11 @@
     "answer": [
       1
     ],
-    "explanation": "VTY 5–15 still permits Telnet with shared-line authentication. Apply the intended local-user and SSH policy to every available range; do not assume the policy on VTY 0–4 covers the rest.",
+    "explanation": "VTY 5–15 still allows Telnet with shared-line authentication, while 0–4 uses local users and SSH. Each range has its own policy, so apply it to every range.",
     "whyWrong": {
-      "0": "One server key configuration can serve multiple VTY lines.",
-      "2": "The database is not limited by line number; each line selects its authentication policy.",
-      "3": "Each configured range retains its own transport settings."
+      "0": "One host key serves all VTY lines.",
+      "2": "The local database is not limited to certain lines; each line picks its authentication.",
+      "3": "A range does not inherit another range’s transport policy."
     }
   },
   {
@@ -458,11 +458,11 @@
     "answer": [
       3
     ],
-    "explanation": "The working IP path and configured local user do not supply a host key. In the stated conventional workflow, configure the local domain before generating the supported RSA key, require SSHv2, and then verify the server and a fresh login. DNS resolution is not required merely to use the configured domain as identity data.",
+    "explanation": "The IP path and local user do not provide a host key. Set the domain name, generate the RSA key, and require SSHv2, then verify a fresh login. DNS is not needed for the domain name.",
     "whyWrong": {
-      "0": "A DNS server and default route do not create the missing identity configuration or host key.",
-      "1": "Another user duplicates authentication data; VTY transport selection does not generate an RSA key.",
-      "2": "Changing authentication and allowing Telnet does not resolve the missing host key or meet SSH-only access."
+      "0": "A DNS server and route do not create a host key.",
+      "1": "A new user and a save do not generate a key.",
+      "2": "A shared line password and Telnet do not give SSH-only access."
     }
   },
   {
@@ -488,11 +488,11 @@
     "answer": [
       3
     ],
-    "explanation": "The VTY lines request local-user authentication, but the local database has no accounts. Create the intended account through the working console, then verify a new remote session.",
+    "explanation": "The VTY lines use local-user authentication, but the local database has no accounts. Create the account at the console, then test a new session.",
     "whyWrong": {
-      "0": "A shared line password is not the fallback for the local-user method.",
-      "1": "The session already reaches authentication; the evidence identifies the local database.",
-      "2": "The enable transition does not supply a missing login identity."
+      "0": "A shared line password is not used with `login local`.",
+      "1": "The session already reaches authentication, so addressing is not the problem.",
+      "2": "The enable secret does not stand in for a login username."
     }
   },
   {
@@ -519,11 +519,11 @@
     "answer": [
       2
     ],
-    "explanation": "The desired active policy has been verified but is not reflected in startup-config. Save running to startup and inspect the result; agreement achieved by restoring the old Telnet policy would violate the requirement.",
+    "explanation": "The verified SSH-only policy exists only in running-config. Save running to startup and check the saved VTY lines.",
     "whyWrong": {
-      "0": "A differing saved transport is a persistence issue, not evidence of a missing or invalid host key.",
-      "1": "The intended local account belongs in both active and saved configurations.",
-      "3": "Merging the old saved VTY commands can restore the unwanted transport instead of preserving the verified policy."
+      "0": "Differing transports are a persistence problem, not a key problem.",
+      "1": "The local account belongs in both configurations.",
+      "3": "Merging startup into running can restore the old Telnet policy."
     }
   },
   {
@@ -550,11 +550,112 @@
     "answer": [
       3
     ],
-    "explanation": "The requirement distinguishes initial privilege by local user and separately restricts the incoming transport. Correct auditor’s explicit privilege and the VTY transport, then test new auditor/admin sessions and Telnet refusal before saving.",
+    "explanation": "The policy sets initial privilege per local user and restricts the incoming transport. Set auditor to privilege 1 and limit the VTY range to SSH; keep admin as is.",
     "whyWrong": {
-      "0": "Admin must still begin at privilege 15, and Telnet must be excluded.",
-      "1": "Deleting the required named account and using a shared line password violates the policy.",
-      "2": "The console timeout does not correct either demonstrated policy mismatch."
+      "0": "Admin must start at privilege 15, and Telnet must go.",
+      "1": "Deleting a required account and using a shared password breaks the policy.",
+      "2": "A console timeout fixes neither mismatch."
+    }
+  },
+  {
+    "id": "ios-essentials-q22",
+    "type": "single",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which TCP ports do SSH and Telnet use?",
+    "options": [
+      "SSH 22, Telnet 23",
+      "SSH 23, Telnet 22",
+      "SSH 22, Telnet 25",
+      "SSH 443, Telnet 23"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "SSH uses TCP 22 and Telnet uses TCP 23.",
+    "whyWrong": {
+      "1": "This swaps the two ports.",
+      "2": "TCP 25 is SMTP.",
+      "3": "TCP 443 is HTTPS."
+    }
+  },
+  {
+    "id": "ios-essentials-q23",
+    "type": "single",
+    "objectives": [
+      "v1:4.8"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command reports the SSH server configuration, such as the enabled version?",
+    "options": [
+      "show ip ssh",
+      "show ssh",
+      "show users",
+      "show privilege"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "`show ip ssh` reports the SSH server configuration. `show ssh` reports SSH sessions.",
+    "whyWrong": {
+      "1": "`show ssh` lists SSH sessions, not server settings.",
+      "2": "`show users` lists active terminal lines and users.",
+      "3": "`show privilege` shows your current privilege level."
+    }
+  },
+  {
+    "id": "ios-essentials-q24",
+    "type": "single",
+    "objectives": [
+      "v1:2.8"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What are the default console line settings on classic IOS?",
+    "options": [
+      "9600 baud, 8 data bits, no parity, 1 stop bit",
+      "115200 baud, 7 data bits, even parity, 1 stop bit",
+      "9600 baud, 8 data bits, odd parity, 2 stop bits",
+      "19200 baud, 8 data bits, no parity, 1 stop bit"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The console defaults to 9600 baud, 8-N-1, with no console password.",
+    "whyWrong": {
+      "1": "115200 baud and even parity are not the defaults.",
+      "2": "The default is no parity and 1 stop bit.",
+      "3": "The default speed is 9600, not 19200."
+    }
+  },
+  {
+    "id": "ios-essentials-q25",
+    "type": "single",
+    "objectives": [
+      "v1:5.3",
+      "v2:4.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default `exec-timeout` on an IOS line?",
+    "options": [
+      "10 minutes",
+      "5 minutes",
+      "30 minutes",
+      "No timeout"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The default `exec-timeout` is 10 minutes of idle time.",
+    "whyWrong": {
+      "1": "5 minutes is the value the lab sets, not the default.",
+      "2": "30 minutes is not the IOS default.",
+      "3": "A default idle timeout exists, so it is not disabled."
     }
   }
 ]

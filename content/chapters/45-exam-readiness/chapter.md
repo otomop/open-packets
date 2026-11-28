@@ -19,6 +19,7 @@ sectionIds:
   Review rules with their conditions: the-numbers-to-memorise
   Plan the final revision period: the-final-two-weeks
   Exam day and next steps: exam-day-and-after
+  Numbers to know: numbers-to-know
 sources:
   - { title: "Cisco: CCNA 200-301 exam", url: "https://www.cisco.com/site/us/en/learn/training-certifications/exams/ccna.html" }
   - { title: "Cisco: CCNA v1.1 exam topics", url: "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301-CCNA-v1.1.pdf" }
@@ -29,7 +30,9 @@ sources:
   - { title: "Cisco: Recertification policy", url: "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/recertification/index.html" }
   - { title: "Pearson VUE: Cisco OnVUE requirements", url: "https://www.pearsonvue.com/us/en/cisco/onvue.html" }
 ---
-Finishing a course gives you a set of resources and completed exercises. Readiness requires another check: can you apply the ideas when the addresses, outputs and requirements change? This chapter turns that question into a practical revision plan. Its checkpoint is a mixed sample of networking skills, not a full mock exam or a prediction of your result.
+You have finished the lessons and the capstone. The exam will not ask whether you finished. It will show you a routing table, a topology or a broken configuration you have never seen, and it will expect a decision against the clock. Being ready means you can apply what you know when the addresses, outputs and requirements change.
+
+This chapter turns the whole course into a revision plan. You will confirm the practical details of your appointment, pick the blueprint that applies on your exam date, practise a method for working through questions and lab items, rate yourself by domain from evidence instead of feeling, and lay out the final two weeks. The checkpoint questions sample every part of the course. They are practice, not a mock exam or a prediction of your score.
 
 ## Confirm the appointment requirements
 
@@ -169,9 +172,173 @@ Review your appointment instructions before leaving or beginning check-in. For o
 
 Cisco provides an exam score report with performance information. Use the official record rather than trying to reverse-engineer a passing score from domain percentages. If unsuccessful, identify the weakest objectives and repeat relevant work with new evidence. Cisco's current policy requires five calendar days of waiting, counted from the day after a failed associate attempt; a passed exam with the same number has a 180-day minimum retake interval.
 
-CCNA is normally valid for three years. After earning it, track its expiration. The current associate recertification route requires 30 eligible Continuing Education credits; qualifying activities and exams are listed in the [current recertification policy](https://www.cisco.com/site/us/en/learn/training-certifications/certifications/recertification/index.html). Complete requirements before expiry and check the recorded new date. Do not assume any higher-level exam automatically qualifies.
+CCNA is valid for three years. To recertify, do one of two things before it expires: pass the current CCNA exam or any higher-level Cisco certification exam, or earn 30 Continuing Education credits from approved training. Cisco does not grant extensions. The exams and activities that count are listed in the [current recertification policy](https://www.cisco.com/site/us/en/learn/training-certifications/certifications/recertification/index.html); check it before you book, then confirm the new expiry date in your Cisco account afterwards.
 
 Continue practising useful small changes: a new VLAN, a verified route, a narrowly scoped ACL or an inventory command. Keep your own configurations and explanations, while respecting Cisco's confidentiality rules for actual exam material. The course's questions are original teaching exercises, not recalled examination items.
+
+## Numbers to know
+
+Each value states its condition; the chapter column leads back to the lesson that teaches it.
+
+**Ports and protocol numbers**
+
+| Service | Transport and number | Ch |
+|---|---|---|
+| FTP control / active data | TCP 21 / TCP 20 | 06, 29 |
+| SSH, SCP, SFTP / Telnet | TCP 22 / TCP 23 | 06, 08, 29 |
+| SMTP | TCP 25 | 06 |
+| TACACS+ | TCP 49 | 06, 33 |
+| DNS | UDP and TCP 53 | 06, 25 |
+| DHCPv4 server / client | UDP 67 / UDP 68 | 06, 24 |
+| TFTP | UDP 69 | 06, 29 |
+| HTTP / HTTPS | TCP 80 / TCP 443 | 06 |
+| NTP | UDP 123 | 06, 27 |
+| SNMP agent / notifications | UDP 161 / UDP 162 | 06, 27 |
+| Syslog | UDP 514 | 06, 27 |
+| RADIUS auth / accounting (legacy) | UDP 1812 / 1813 (1645 / 1646) | 33 |
+| HSRP | UDP 1985 | 23 |
+| OSPFv2 / OSPFv3 | IP protocol 89 / Next Header 89 | 21, 22 |
+| VRRP | IP protocol 112 | 23 |
+| ESP / AH / GRE | IP protocol 50 / 51 / 47 | 35 |
+| Port ranges | well-known 0–1023, registered 1024–49151, dynamic 49152–65535 | 06 |
+
+**IPv4 ranges**
+
+| Range | Meaning | Ch |
+|---|---|---|
+| 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 | RFC 1918 private | 05, 26 |
+| 127.0.0.0/8 | Loopback | 05 |
+| 169.254.0.0/16 | Link-local; no DHCP lease (APIPA) | 05, 24, 30 |
+| 100.64.0.0/10 | Shared space for provider NAT | 05 |
+| 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24 | Documentation | 05 |
+| 224.0.0.0/4 | Multicast | 05 |
+| /31, /32 | Point-to-point pair; one host | 04 |
+
+**IPv6**
+
+| Prefix or address | Meaning | Ch |
+|---|---|---|
+| 2000::/3 | Global unicast | 19 |
+| 2001:db8::/32 | Documentation | 19 |
+| fc00::/7 (in use: fd00::/8) | Unique local | 19 |
+| fe80::/10 | Link-local | 19 |
+| ff00::/8 | Multicast | 19 |
+| ::1/128, ::/128 | Loopback, unspecified | 19 |
+| ::/0, /128, /64 | Default route, host route, SLAAC LAN | 19, 20 |
+| ff02::1, ff02::2 | All nodes, all routers | 19 |
+| ff02::1:ff00:0/104 | Solicited-node, plus the last 24 bits | 19 |
+| ff02::5, ff02::6 | OSPFv3 routers, DR/BDR | 22 |
+| RS 133, RA 134, NS 135, NA 136 | ICMPv6 types | 19 |
+
+**Administrative distance (Ch 17, 18, 24)**
+
+| Connected | Static | eBGP | EIGRP | OSPF | RIP | External EIGRP | iBGP | DHCP default | Never installed |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 1 | 20 | 90 | 110 | 120 | 170 | 200 | 254 | 255 |
+
+**Spanning tree (Ch 14, 15)**
+
+| Item | Value |
+|---|---|
+| Priority | Default 32768, range 0–61440 in steps of 4096, plus VLAN ID |
+| Short cost | 10 Mbps 100, 100 Mbps 19, 1 Gbps 4, 10 Gbps 2 |
+| Long cost | 2,000,000 / 200,000 / 20,000 / 2,000 |
+| Timers | Hello 2, max age 20, forward delay 15 seconds |
+| RSTP states | Discarding, learning, forwarding |
+| Roles | Root, designated (forwarding); alternate, backup (discarding) |
+| Errdisable recovery | Interval 300 seconds (30–86400); every cause off by default |
+
+**VLANs, trunks and EtherChannel**
+
+| Item | Value | Ch |
+|---|---|---|
+| Normal / extended range | 1–1005 / 1006–4094; 0 and 4095 reserved | 09, 10 |
+| Default VLANs | 1 and 1002–1005, cannot be deleted | 09 |
+| 802.1Q | 4-byte tag, 12-bit VID, native VLAN 1 untagged | 10 |
+| DTP default (2960) | dynamic auto | 10 |
+| LACP / PAgP | active–passive / desirable–auto; `on` is static | 13 |
+| Bundle | At most 8 active members | 13 |
+| CDP / LLDP | On, 60/180 s / off, 30/120 s | 12 |
+
+**OSPF (Ch 21, 22)**
+
+| Item | Value |
+|---|---|
+| Hello / dead | 10 / 40 seconds on broadcast and point-to-point |
+| Multicast | 224.0.0.5 all routers, 224.0.0.6 DR/BDR |
+| Interface priority | 1; 0 never DR/BDR; highest wins |
+| Reference bandwidth | 100 Mbps; cost = reference ÷ interface bandwidth, minimum 1 |
+| Router ID | `router-id`, then highest loopback, then highest other interface |
+
+**First-hop redundancy (Ch 23)**
+
+| | HSRP | VRRP |
+|---|---|---|
+| Priority | 100 | 100 (owner 255) |
+| Timers | Hello 3 s, hold 10 s | Advertisement 1 s |
+| Preemption | Off | On |
+| Multicast | 224.0.0.2 (v1), 224.0.0.102 (v2) | 224.0.0.18 |
+| Virtual MAC | 0000.0c07.acXX (v1), 0000.0c9f.fXXX (v2) | 0000.5e00.01XX |
+| Groups | 0–255 (v1), 0–4095 (v2) | |
+| Tracking decrement | 10 by default | |
+
+**Services**
+
+| Item | Value | Ch |
+|---|---|---|
+| DHCP renew / rebind | T1 50%, T2 87.5% of lease; IOS lease 1 day | 24 |
+| NAT terms | Inside local, inside global (translated host), outside local, outside global | 26 |
+| NTP stratum | `ntp master` default 8; client = server + 1; 16 unsynchronized | 27 |
+| SNMP | v1/v2c communities; v3 noAuthNoPriv, authNoPriv, authPriv | 27 |
+
+**Syslog severity (Ch 27, 31)**
+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|
+| emergencies | alerts | critical | errors | warnings | notifications | informational | debugging |
+
+**Security**
+
+| Item | Value | Ch |
+|---|---|---|
+| Port security | Off; when on: maximum 1, violation shutdown, aging 0, sticky off | 16 |
+| DAI untrusted rate | 15 ARP packets/s; DHCP snooping unlimited until set | 16 |
+| Snooping and DAI trust | All ports untrusted by default | 16 |
+| Standard / extended ACL numbers | 1–99, 1300–1999 / 100–199, 2000–2699 | 34 |
+| IKE / NAT-T | UDP 500 / UDP 4500 | 35 |
+
+**Wireless (Ch 36, 37, 38)**
+
+| Item | Value |
+|---|---|
+| 2.4 GHz only | 802.11b, 802.11g |
+| 5 GHz only | 802.11a, 802.11ac (Wi-Fi 5) |
+| Both | 802.11n (Wi-Fi 4), 802.11ax (Wi-Fi 6; 6 GHz as 6E) |
+| Non-overlapping 2.4 GHz | Channels 1, 6, 11 |
+| CAPWAP | UDP 5246 control (DTLS), UDP 5247 data |
+| Ciphers | WEP RC4, WPA TKIP, WPA2 AES-CCMP, WPA3 SAE with PMF |
+| PSK length | ASCII 8–63 characters, or 64 hex digits |
+
+**PoE and cabling (Ch 02, 03, 09)**
+
+| Item | Value |
+|---|---|
+| 802.3af / 802.3at | 15.4 W / 30 W at the port (12.95 W / 25.5 W at the device) |
+| 802.3bt Type 3 / Type 4 | 60 W / 90 W at the port |
+| Twisted pair | 100 m; 10GBASE-T needs Cat6A (Cat6 about 55 m) |
+| Pairs | 100BASE-TX 2, 1000BASE-T 4 |
+| Fiber | 1000BASE-SX MMF up to 550 m; LX/LH and 10GBASE-LR SMF 10 km |
+
+**Management and automation (Ch 08, 29, 40, 41)**
+
+| Item | Value |
+|---|---|
+| SSH / Telnet | TCP 22 / TCP 23 |
+| NETCONF | XML over SSH, TCP 830 |
+| RESTCONF | HTTPS (TCP 443), JSON or XML |
+| VXLAN | UDP 4789, 24-bit VNI, 50 bytes overhead |
+| HTTP status | 2xx success, 4xx client error, 5xx server error |
+| Specific codes | 202 accepted, 401 authentication, 403 authorization, 404 not found |
 
 ## Exam focus
 

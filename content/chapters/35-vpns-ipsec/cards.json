@@ -1,8 +1,8 @@
 [
   {
     "id": "vpns-ipsec-c01",
-    "front": "Is native ESP identified by a transport port or an IP protocol number?",
-    "back": "IP protocol 50. It does not have TCP or UDP ports unless an outer transport such as UDP NAT-T encapsulates it.",
+    "front": "Which IP protocol number identifies ESP?",
+    "back": "IP protocol 50. It is a protocol number in the IP header, not a TCP or UDP port.",
     "tags": [
       "number",
       "concept"
@@ -10,25 +10,33 @@
   },
   {
     "id": "vpns-ipsec-c02",
-    "front": "What identifies AH, and what does it not provide?",
-    "back": "AH is IP protocol 51. It provides integrity/authentication and anti-replay support, but no confidentiality. Tunnel mode does not add encryption to AH.",
+    "front": "Which IP protocol number identifies AH, and which service does AH lack?",
+    "back": "IP protocol 51. AH provides integrity, origin authentication and anti-replay, but no encryption.",
     "tags": [
       "number",
       "compare"
     ]
   },
   {
+    "id": "vpns-ipsec-c27",
+    "front": "Which four services does ESP provide?",
+    "back": "Confidentiality (encryption), integrity, data-origin authentication and anti-replay.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "vpns-ipsec-c03",
-    "front": "Which port commonly carries the initial IKE exchange?",
-    "back": "UDP 500. IKE negotiates and authenticates; it is separate from ESP user-data protection.",
+    "front": "Which port does IKE use to start negotiation?",
+    "back": "UDP 500.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "vpns-ipsec-c04",
-    "front": "What is the purpose of standard UDP NAT-T?",
-    "back": "Encapsulate ESP in UDP, normally using port 4500, so NAT/PAT can handle a UDP flow. The protected ESP content remains inside the wrapper.",
+    "front": "What does NAT traversal (NAT-T) do, and on which port?",
+    "back": "It wraps ESP in UDP port 4500 so a NAT/PAT device can translate the flow.",
     "tags": [
       "concept",
       "number"
@@ -36,106 +44,138 @@
   },
   {
     "id": "vpns-ipsec-c23",
-    "front": "Does permit udp any any eq 50 permit native ESP?",
-    "back": "No. Native ESP is IP protocol 50, not UDP port 50. Standard UDP-encapsulated ESP uses UDP 4500 in the NAT-T arrangement described here.",
+    "front": "Why does `permit udp any any eq 50` fail to pass ESP?",
+    "back": "ESP is IP protocol 50, not UDP port 50. The ACL needs `permit esp`, or UDP 4500 when NAT-T is in use.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
+    "id": "vpns-ipsec-c30",
+    "front": "Why does AH fail through NAT?",
+    "back": "AH's integrity check covers the IP addresses in the outer header, so the address NAT rewrites makes the check fail.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "vpns-ipsec-c06",
     "front": "How do confidentiality and integrity differ?",
-    "back": "Confidentiality protects against unauthorized reading; integrity detects unauthorized modification. Neither guarantees packet delivery.",
+    "back": "Confidentiality stops outsiders reading the data (encryption, such as AES). Integrity detects any change to it (a keyed hash, such as SHA-256 HMAC).",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c25",
+    "front": "How does IPsec anti-replay work?",
+    "back": "Every protected packet carries a sequence number. The receiver drops duplicates and packets older than its receive window.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "vpns-ipsec-c07",
-    "front": "How do ESP tunnel and transport mode differ when encryption is enabled?",
-    "back": "Tunnel mode adds an outer IP header and protects the entire original packet. Transport mode retains the original routing header and protects the carried upper-layer content.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "vpns-ipsec-c11",
-    "front": "What does IKEv2 establish for IPsec traffic?",
-    "back": "An authenticated negotiation relationship and CHILD_SAs providing directional data SAs. IKE status and protected application success are separate checks.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "vpns-ipsec-c22",
-    "front": "What does Diffie-Hellman provide, and what is still needed?",
-    "back": "It helps peers derive shared secret material without sending the secret directly. Authentication is still required to establish the peer identity. DH alone does not authenticate a person or encrypt application data.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "vpns-ipsec-c15",
-    "front": "How do pre-shared keys and certificates differ for peer authentication?",
-    "back": "A PSK is a configured shared secret. A certificate links an identity and public key through a trust system. Certificate use still requires identity, trust, time-validity and revocation-policy checks; IKE still derives session keying material.",
+    "front": "How do ESP tunnel mode and transport mode differ?",
+    "back": "Tunnel mode encrypts the whole original packet and adds a new outer IP header. Transport mode keeps the original IP header and protects only its payload.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "vpns-ipsec-c16",
-    "front": "Where do site-to-site and remote-access IPsec terminate?",
-    "back": "Site-to-site normally terminates at two gateways acting for their networks. Remote access terminates at a user device and a VPN gateway.",
+    "front": "Where do site-to-site and remote-access IPsec VPNs terminate?",
+    "back": "Site-to-site: at the two gateways (routers or firewalls). Remote access: at the user's device and the VPN gateway.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "vpns-ipsec-c24",
-    "front": "What does split tunneling change about VPN protection?",
-    "back": "Only selected traffic follows the VPN. Other traffic uses the local connection and is outside that VPN’s protection, though it may use separate HTTPS or other application security. DNS path policy must also be checked.",
+    "id": "vpns-ipsec-c26",
+    "front": "In a site-to-site VPN, where does traffic travel unencrypted?",
+    "back": "On each LAN: before the sending gateway encrypts it and after the receiving gateway decrypts it.",
     "tags": [
       "concept"
     ]
   },
   {
+    "id": "vpns-ipsec-c24",
+    "front": "How do full tunneling and split tunneling differ?",
+    "back": "Full: all of the client's traffic goes through the VPN gateway. Split: only selected destinations do; the rest uses the local connection, outside the VPN.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c11",
+    "front": "What does IKEv2 build for an IPsec VPN?",
+    "back": "An authenticated IKE SA that protects negotiation, then CHILD_SAs: the IPsec SAs that protect user data.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c28",
+    "front": "What do IKEv1 phase 1 and phase 2 each build?",
+    "back": "Phase 1: the ISAKMP (IKE) SA that protects negotiation. Phase 2 (quick mode): the IPsec SAs that protect user data.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c29",
+    "front": "Why does two-way traffic need two IPsec SAs?",
+    "back": "An IPsec SA works in one direction only. The SPI in each ESP packet tells the receiver which SA to use.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c22",
+    "front": "What does Diffie-Hellman do in IKE?",
+    "back": "It lets two peers derive the same secret key over an untrusted network without sending it. It does not authenticate the peer.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c15",
+    "front": "How do a pre-shared key and a certificate differ for peer authentication?",
+    "back": "A PSK is the same secret configured on both peers. A certificate binds a public key to an identity and is signed by a CA both peers trust.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c31",
+    "front": "In a crypto ACL, what do `permit` and no match mean?",
+    "back": "`permit` means encrypt this traffic. Traffic that does not match is not dropped; it is forwarded unencrypted if a route exists.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "vpns-ipsec-c21",
+    "front": "What does GRE add to a packet, and what does it not provide?",
+    "back": "A new IP header (IP protocol 47) that can carry multicast and routing protocols. It does not encrypt; IPsec must protect it.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
     "id": "vpns-ipsec-c19",
-    "front": "Does a READY IKEv2 relationship establish application success?",
-    "back": "No. Check the relevant IPsec data SAs, fresh packet delivery and the actual service separately; negotiation is only one stage.",
+    "front": "`show crypto ikev2 sa` shows READY. What has that proved?",
+    "back": "IKE negotiation and authentication completed. It does not prove user data is flowing; check the `show crypto ipsec sa` counters.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "vpns-ipsec-c20",
-    "front": "Encapsulation rises during a test but decapsulation does not. What is established?",
-    "back": "The observed SA protected more outbound packets but recorded no additional successful inbound decapsulation. Check both peers and the forward/return paths; the pattern alone does not prove a specific key, route or selector fault.",
+    "front": "In `show crypto ipsec sa`, encaps rises during a test but decaps stays flat. What does that tell you?",
+    "back": "This router is encrypting and sending, but nothing protected is coming back. Check the WAN path, the far peer and the return route.",
     "tags": [
       "troubleshoot"
-    ]
-  },
-  {
-    "id": "vpns-ipsec-c21",
-    "front": "Does a plain GRE tunnel protect its contents from reading?",
-    "back": "No. GRE supplies encapsulation, including support for carrying multicast between routers, but not encryption. IPsec can protect GRE; a tunnel interface being up does not prove that protection.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "vpns-ipsec-c25",
-    "front": "What does IPsec anti-replay processing help reject?",
-    "back": "Duplicate protected packets and packets outside the acceptable receive sequence window. It is not a guarantee of availability.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "vpns-ipsec-c26",
-    "front": "Where does gateway-to-gateway IPsec protection end?",
-    "back": "At the receiving VPN gateway. Traffic beyond that endpoint needs any separately required link or application protection.",
-    "tags": [
-      "concept"
     ]
   }
 ]

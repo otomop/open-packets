@@ -5,7 +5,7 @@ title: Ethernet switching
 subtitle: How source addresses build the MAC table and destination addresses determine forwarding.
 part: foundations
 domain: switching
-minutes: { lesson: 60, lab: 65 }
+minutes: { lesson: 60, lab: 40 }
 summary: Follow frames through a switched LAN, distinguish learning from forwarding, read the MAC address table, and investigate flooding, aging, and an incorrect static entry.
 objectives:
   v1: ["1.13", "1.13.a", "1.13.b", "1.13.c", "1.13.d"]
@@ -24,27 +24,29 @@ sources:
   - { title: "IETF RFC 826: Ethernet Address Resolution Protocol", url: "https://www.rfc-editor.org/rfc/rfc826.html" }
 ---
 
-When two computers communicate through a switch, the switch must decide which port should transmit each frame. It does not need a manually configured location for every computer. Instead, it builds a table by observing the source addresses of arriving frames. This chapter follows that process carefully, because the same reasoning explains normal forwarding, temporary flooding, and several common connectivity faults.
+You plug a new PC into any free port on a switch and it works. Nobody told the switch which computer is on which port, yet a frame for that PC comes out of the right port and no other. When it does not, and a host is unreachable or traffic shows up on ports where it should not, you need to know how the switch decides. It builds a table by watching the source addresses of arriving frames, and it reads that table to forward each frame by its destination address.
+
+Earlier chapters used a switch as a box that joins hosts on one subnet, and Chapter 01 showed a host using ARP to find a neighbor's MAC address. This chapter opens the box. By the end you will be able to follow any frame through a switch and say what the switch learns and where the frame goes, read `show mac address-table`, explain flooding and aging, and count collision and broadcast domains.
 
 ## Why a switch and not a hub
 
-A **hub** repeats received signals to its other ports. Devices connected through the hub share one Ethernet medium and its available capacity. With half-duplex Ethernet, simultaneous transmissions can collide, and CSMA/CD manages contention and retransmission on that shared medium. Hubs are useful as a comparison, but modern wired access networks use switches.
+A **hub** repeats every received signal out of all its other ports. Every device on it shares one Ethernet medium: only one can send at a time, simultaneous transmissions collide, and CSMA/CD makes the senders back off and retransmit. Everyone also receives everyone else's traffic.
 
-A **switch** receives Ethernet frames and makes forwarding decisions. Each switched link can operate independently, and a correctly operating full-duplex point-to-point link has no collisions. A known unicast frame can go only toward its destination instead of being repeated to every attached computer. Total throughput still depends on link speeds, destination-port capacity, and the switch's hardware; full duplex does not remove every bottleneck.
+A **switch** reads each Ethernet frame and decides where to send it. A frame for a known destination goes out of one port only, each port is a separate link, and a full-duplex link between two devices has no collisions. That is why switches replaced hubs.
 
 :::facts
 - A MAC address is **48 bits**, written as **12 hexadecimal digits**. The Ethernet broadcast destination is `ffff.ffff.ffff`.
 - For normal dynamic learning, record the **source MAC**, **ingress port**, and **VLAN**. For forwarding, look up the **destination MAC in that VLAN**.
 - Flood ordinary broadcast and unknown-unicast traffic to eligible forwarding ports in the same VLAN, excluding the ingress port.
 - A MAC table maps **MAC + VLAN → port**. An IPv4 ARP table maps an on-link **IP address → MAC address**. They are separate tables.
-- The documented default dynamic MAC aging time on the Catalyst 2960 IOS 15.0(2)SE used as the CLI reference is **300 seconds**. Verify the timer on the actual platform.
+- A dynamic entry ages out after **300 seconds** (5 minutes) without a frame from that source. This is the Catalyst default.
 :::
 
-The **MAC address table**, also called the forwarding or CAM table, is the starting point for this chapter. Basic Layer 2 forwarding uses that table rather than selecting an IP route. This does not mean a switch is incapable of inspecting IP information: switches may support ACLs, QoS, or Layer 3 routing. Here, we isolate ordinary bridging within a VLAN so that the learning process is clear.
+The switch keeps what it has learned in the **MAC address table**, also called the forwarding table or CAM table. A Layer 2 switch forwards within a VLAN from this table alone; it does not look at IP addresses or routes to do so.
 
 ## Anatomy of an Ethernet frame
 
-An **Ethernet frame** carries a destination address, a source address, information identifying the payload, the payload itself, and an error-detection trailer. In ordinary Ethernet II, the **EtherType** identifies the payload protocol. The prefix `0x` marks a hexadecimal number: `0x0800` identifies IPv4, `0x0806` identifies ARP, and `0x86DD` identifies IPv6. The receiving protocol stack uses that distinction; the basic MAC lookup still concerns the destination MAC and VLAN.
+Everything a switch decides, it decides from the first few fields of the frame. An **Ethernet frame** carries a destination address, a source address, information identifying the payload, the payload itself, and an error-detection trailer. In ordinary Ethernet II, the **EtherType** identifies the payload protocol. The prefix `0x` marks a hexadecimal number: `0x0800` identifies IPv4, `0x0806` identifies ARP, and `0x86DD` identifies IPv6. The receiving protocol stack uses that distinction; the basic MAC lookup still concerns the destination MAC and VLAN.
 
 | Field in an untagged Ethernet II frame | Size (bytes) | Purpose |
 |---|---|---|
@@ -65,23 +67,23 @@ An **Ethernet frame** carries a destination address, a source address, informati
   ], "caption": "The 64-byte minimum includes destination MAC through FCS; preamble, start delimiter, and interframe gap are excluded." }
 ```
 
-For the basic untagged frame with a 1500-byte maximum payload, the frame length is **64–1518 bytes**, measured from destination MAC through FCS. The physical transmission also uses a preamble and start frame delimiter, which are outside that count; an interframe gap is not payload or a frame field. A typical capture may omit the FCS, so its reported length need not equal the complete on-wire frame length. Always establish what a measurement includes before diagnosing a size error.
+For the basic untagged frame with a 1500-byte maximum payload, the frame length is **64–1518 bytes**, measured from destination MAC through FCS. Before each frame the sender transmits a 7-byte preamble and a 1-byte start frame delimiter so the receiver can synchronize. These 8 bytes are not counted in the frame length.
 
 An ARP message provides a simple calculation. A 28-byte ARP message needs padding to reach the 46-byte minimum data area in this untagged frame. Add 14 bytes of header and 4 bytes of FCS: `14 + 46 + 4 = 64`. The **MTU** refers to the maximum Layer 3 packet size carried without fragmentation on that link, not the total frame including Ethernet header and trailer.
 
 The **frame check sequence**, or FCS, contains a cyclic redundancy check calculated by the sender. A receiver can use it to detect corruption; it does not repair damaged bits. A store-and-forward switch checks the complete frame and discards one that fails that check. Recovery, if any, comes from another mechanism such as TCP or application retry, not from the FCS itself.
 
 :::note Frame size depends on the framing and platform
-An 802.1Q VLAN tag adds four bytes of tagging information, allowing a 1522-byte tagged frame with the same 1500-byte payload. Platforms may also support larger frames. A giant/error counter must be interpreted against the interface's supported size and configuration; “anything over 1518 is always bad” is incorrect. Small-frame and CRC counters also need context rather than an automatic diagnosis of collisions.
+An 802.1Q VLAN tag adds four bytes, so a tagged frame with a 1500-byte payload is 1522 bytes and is valid. Some interfaces are also configured for larger "jumbo" frames. A frame shorter than 64 bytes is a **runt**, and a frame longer than the interface allows is a **giant**; `show interfaces` counts both as errors.
 :::
 
 ## MAC addresses: OUI, unicast, multicast, broadcast
 
-A MAC address such as `0050.56be.1a2b` can also be written as `00:50:56:be:1a:2b` or `00-50-56-BE-1A-2B`. The punctuation and capitalization change the presentation, not the value. Record the complete address when matching a host to a table entry. Similar-looking suffixes are not enough to identify the correct computer.
+A MAC address such as `0050.56be.1a2b` can also be written as `00:50:56:be:1a:2b` or `00-50-56-BE-1A-2B`. The punctuation and capitalization change the presentation, not the value. IOS uses the dotted form, Windows the hyphenated form. Match all twelve digits when you look for a host in a table.
 
 A **unicast** address identifies an individual interface; a **multicast** address identifies a group. The all-ones **broadcast** address, `ffff.ffff.ffff`, addresses the broadcast domain. In the first octet, the least-significant bit is the individual/group bit: a set bit indicates a group address. Thus `01` as the first octet indicates a group, while `00` indicates an individual address. Valid ordinary Ethernet source addresses are individual addresses, so switches do not dynamically learn a broadcast destination as a host source.
 
-An **organizationally unique identifier**, or OUI, is a registered organizational prefix. The familiar manufacturer allocation uses a 24-bit OUI followed by an organization-assigned portion, but the IEEE also supplies other allocation sizes. **Locally administered** addresses can be assigned by software, including virtual systems and address-randomization features. An OUI lookup can be a useful clue; it is not proof of the physical manufacturer, device type, ownership, or trustworthiness.
+The first 24 bits of a manufacturer's address are its **organizationally unique identifier**, or OUI, which the IEEE assigns to the manufacturer; the manufacturer assigns the last 24 bits. **Locally administered** addresses are set by software instead, as virtual machines and phones with address randomization do. An OUI lookup is therefore a useful clue to the vendor, not proof.
 
 Each hexadecimal digit represents four bits, so the first octet `01` is `00000001` in binary. Its rightmost bit is set, identifying a group address. This uses the same bit positions you worked with in IPv4 addressing; the notation has changed from decimal to hexadecimal.
 
@@ -92,11 +94,11 @@ Each hexadecimal digit represents four bits, so the first octet `01` is `0000000
 | IPv4 multicast | `0100.5e01.0203` | Multicast forwarding state can restrict delivery |
 | Link-local bridge group | `0180.c200.0000` | Reserved control traffic has special bridge handling |
 
-For ordinary user multicast with snooping and multicast restrictions disabled, the switch floods to the other eligible forwarding ports in the VLAN, excluding ingress. **IGMP**, the Internet Group Management Protocol, communicates IPv4 multicast group membership. **IGMP snooping** lets a switch observe that membership information and use it to restrict delivery. Reserved link-local group addresses, including the standard spanning-tree bridge group, receive special handling. Read the stated assumptions before applying an ordinary flooding rule; this chapter does not require configuring multicast protocols.
+For ordinary user multicast with snooping and multicast restrictions disabled, the switch floods to the other eligible forwarding ports in the VLAN, excluding ingress. **IGMP**, the Internet Group Management Protocol, communicates IPv4 multicast group membership. **IGMP snooping** lets a switch observe that membership information and use it to restrict delivery. Reserved control addresses such as the spanning-tree group are processed by the switch itself and are not flooded like user traffic.
 
 ## Learn, forward, filter, flood
 
-A switch makes two separate decisions when a valid frame is eligible for ordinary bridging. First, it learns or refreshes the **source** address on the ingress port in the frame's VLAN. Second, it looks up the **destination** in that VLAN. The fact that a sender is new does not require flooding if the destination is already known.
+A switch does two separate things with every frame it receives, and keeping them apart is the whole skill. First, it learns or refreshes the **source** address on the ingress port in the frame's VLAN. Second, it looks up the **destination** in that VLAN and forwards, filters or floods. The source never decides where the frame goes: a frame from a new sender to a known destination is forwarded, not flooded.
 
 | Operation | Condition | Result |
 |---|---|---|
@@ -115,7 +117,7 @@ Imagine PC-A on `Fa0/1`, PC-B on `Fa0/2`, and PC-C on `Fa0/3`, all in VLAN 1. Al
 | A's ICMP echo request to B | Refresh A | B known | `Fa0/2` |
 | B's ICMP echo reply to A | Refresh B | A known | `Fa0/1` |
 
-PC-C receives the broadcast but does not answer an ordinary ARP request for PC-B's address. Merely receiving a frame does not put C into the switch's dynamic table: the switch needs to see a frame with C as its source. The ARP reply is already known unicast because the preceding request taught the switch where A is. There is no requirement to flood the first reply simply because B is a newly observed sender.
+PC-C receives the broadcast but does not answer an ordinary ARP request for PC-B's address. Merely receiving a frame does not put C into the switch's dynamic table: the switch needs to see a frame with C as its source. The ARP reply is forwarded out of one port because the request has just taught the switch where A is.
 
 Now clear the switch's dynamic entries while A retains B's mapping in its ARP cache. A can immediately construct a unicast Ethernet frame addressed to B, without sending ARP again. The switch has no destination entry for B, so it floods that **unknown unicast** to B's and C's eligible ports. B's reply teaches B's location again, after which the next request can use known-unicast forwarding.
 
@@ -127,11 +129,11 @@ A single switch port can lead to many hosts. If B and C sit behind a second swit
 
 ## Aging, static entries and the table commands
 
-**Dynamic** entries are learned from traffic and can age out after inactivity. Seeing frames from a source refreshes its learned location. Traffic merely addressed to a host does not demonstrate where that host is currently attached. This explains how a quiet destination can disappear from the dynamic table even while another device keeps sending traffic toward it.
+A table that only grew would fill with hosts that have left, so learned entries expire. A **dynamic** entry is learned from traffic and is removed when the switch has seen no frame from that source for the aging time, **300 seconds** by default. Each frame from the source resets its timer. Frames sent to a host do not, which is how a quiet host can drop out of the table while others keep sending to it; the next frame for it is then flooded until it speaks again.
 
-The Catalyst 2960 IOS reference for this chapter documents a **300-second** default aging timer. Other platforms and configurations can differ. Aging is not the only way an entry can change: a new source frame on a different port can update a dynamic location, and interface events, topology changes, or an administrator can remove entries. Do not wait for the timer to expire before expecting a legitimate host move to be learned.
+Aging is not the only way an entry changes. A frame from the same source on a different port moves the entry at once, and a port going down removes the entries learned on it. A host that moves to another port is therefore relearned as soon as it sends a frame.
 
-Use privileged EXEC mode to examine the table before changing it. The first command displays all entries; the filtered commands answer narrower questions. Keyword support differs among simulators and IOS releases, so use the full table if a display filter is unavailable. These commands inspect existing state; they do not send traffic from the host you are looking for.
+Examine the table from privileged EXEC mode. The first command displays all entries; the filtered commands answer narrower questions. Packet Tracer supports fewer filters than real IOS, so read the full table if one is missing.
 
 ```ios SW1
 SW1# show mac address-table
@@ -142,7 +144,7 @@ SW1# show mac address-table vlan 10
 SW1# show mac address-table aging-time
 ```
 
-A **static entry** explicitly associates an address and VLAN with an interface. It does not age like an ordinary dynamic entry and survives a dynamic-table clear. A wrongly placed static entry can therefore keep sending destination traffic toward the wrong port. Static entry configuration is a useful controlled lab demonstration; ordinary access-switch hosts normally rely on dynamic learning.
+A **static entry** explicitly associates an address and VLAN with an interface. It does not age like an ordinary dynamic entry and survives a dynamic-table clear. A static entry on the wrong port therefore keeps sending that host's traffic the wrong way until someone removes it. Ordinary hosts rely on dynamic learning; static entries are rare.
 
 ```ios SW1
 SW1# configure terminal
@@ -156,25 +158,23 @@ The snippet demonstrates syntax, not a complete VLAN 10 topology. In the lab you
 
 ## Switching methods and domains
 
-**Store-and-forward** switching receives the complete frame before forwarding it and can check the FCS first. **Cut-through** forwarding can begin after sufficient header information arrives, before the whole frame and FCS have arrived. It therefore cannot wait for the complete frame's FCS result before that initial forwarding. Specific switches may use different behavior depending on their architecture, ports, or operating conditions; do not infer a universal forwarding method from the Catalyst or Nexus family name alone.
+A switch can start sending a frame at two different moments. **Store-and-forward** switching receives the complete frame, checks the FCS, and only then forwards it, so a corrupted frame goes no further. **Cut-through** switching starts forwarding as soon as it has read the destination address, which is faster but passes on a damaged frame because the FCS has not arrived yet. An older compromise, **fragment-free**, waits for the first 64 bytes so that collision fragments are not forwarded. The Catalyst access switches in this course use store-and-forward.
 
-The practical distinction is error checking before initial transmission versus starting earlier. Both approaches still need destination forwarding information. Neither means every received frame is copied to every port. Exact hardware latency, historical fragment-free switching, and internal ASIC behavior are outside this chapter's CCNA foundation.
+Two counting questions follow from all this. A **collision domain** is a set of devices whose half-duplex transmissions can collide. Each switch port is its own collision domain; a hub and everything attached to it form one. Exam questions count one collision domain per switch port, even though a full-duplex link never has a collision.
 
-A **collision domain** describes a shared area in which half-duplex transmissions can contend. Each switch port separates that area from the other ports; a hub and the devices attached through it share one. On a full-duplex link, collisions do not occur even though introductory diagrams still count the link as a separate collision domain. Do not confuse this diagram convention with a prediction that the link will suffer collisions.
-
-A **broadcast domain** is the Layer 2 scope of ordinary broadcast delivery. One VLAN can span several switches without creating a new broadcast domain at each switch. Different VLANs are separate broadcast domains, and routing is needed for IP communication between them. In a simple diagram with one router interface in each of two separate LANs, count two broadcast domains; more elaborate routed subinterfaces and bridging require examining the actual configuration.
+A **broadcast domain** is the set of devices that receive one another's broadcasts. A switch does not divide it: all ports in one VLAN, across however many switches, form a single broadcast domain. Each VLAN is a separate broadcast domain, and so is each router interface. A router with two LAN interfaces separates two broadcast domains.
 
 ## Why VLANs and spanning tree exist
 
-A **VLAN** keeps a group of switch ports in its own logical Layer 2 domain. A broadcast received in VLAN 10 is not simply copied into VLAN 20. VLAN membership is therefore part of every forwarding example, even before you learn to configure trunks. The same numerical MAC value can have separate forwarding entries in different VLANs.
+Flooding is what makes a switch work, and it is also its weakness: every broadcast reaches every port, and a loop keeps flooded frames alive. Two features contain it. A **VLAN** keeps a group of switch ports in its own logical Layer 2 domain, so a broadcast received in VLAN 10 is never flooded into VLAN 20. That is why the VLAN is part of every table entry and every lookup in this chapter. The same numerical MAC value can have separate forwarding entries in different VLANs.
 
 Redundant Layer 2 paths create another problem. An ordinary Ethernet frame has no hop-count field equivalent to IP TTL to stop its circulation through a bridging loop. Flooded traffic can travel around the loop repeatedly, consume capacity, and make source locations appear to move between ports. **Spanning Tree Protocol** establishes a loop-free forwarding topology while retaining redundant physical links for recovery.
 
-This is why a connected port is not automatically an eligible flood destination. A port that is not forwarding for the VLAN must be excluded. The later spanning-tree chapter teaches roles, states, and convergence; do not deliberately build an unprotected loop to test this foundation. Frequent MAC moves warrant investigation, but can also involve duplicate addressing or other topology behavior rather than proving one particular cause.
+Spanning tree does this by blocking some ports, which is why a port that is up is not always a flood destination: a blocked port is excluded. Chapter 14 teaches the roles, states and convergence. For now, remember the symptom of a loop: the same MAC address keeps moving between ports in the table.
 
 ## Reading the output
 
-Read the VLAN column first, then the MAC, entry type, and port. The following output is representative: the values illustrate a topology, and actual host MACs, reserved entries, totals, and formatting vary. PC-A is directly attached to `Fa0/1`; B and C are reached through the second switch on `Fa0/24`. Multiple distinct MACs on that uplink are expected.
+Read the VLAN column first, then the MAC, entry type, and port. The output below is representative. PC-A is directly attached to `Fa0/1`; B and C are reached through the second switch on `Fa0/24`. Multiple distinct MACs on that uplink are expected.
 
 ```output Representative SW1# show mac address-table
           Mac Address Table
@@ -187,7 +187,7 @@ Vlan    Mac Address       Type        Ports
   10    0050.56be.1a2b    STATIC      Fa0/5   ← configured entry in a different VLAN
 ```
 
-To investigate a missing host, first verify its link and VLAN, then generate traffic from that host and inspect the table again. If the address appears on an uplink, continue to the next switch; do not assume it is directly connected. If replies head toward an unexpected port, check whether the entry is static, whether the host moved, and whether the same source is appearing elsewhere. One table snapshot provides a location observation, not a complete diagnosis.
+To find a host, start at any switch and follow its MAC address. If the entry points to an uplink, log in to the switch at the other end and look again, until the entry points to an access port. If the host is missing from the table, check its link and VLAN, make it send traffic, and look again. If the entry points to a port you did not expect, check whether it is static and whether the host has moved.
 
 Keep **ARP** and switching evidence separate. A host uses ARP to find the MAC for an on-link IPv4 next hop; the switch uses its MAC table to select an egress port. Clearing the host's ARP cache does not directly clear the switch's MAC entries, and clearing the switch table does not clear the host's ARP cache. A switch may also have an ARP table for its own IP functions, which remains distinct from its bridging table.
 

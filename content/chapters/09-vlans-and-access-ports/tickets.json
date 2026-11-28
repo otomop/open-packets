@@ -27,8 +27,8 @@
     "answer": [
       3
     ],
-    "explanation": "The port references voice VLAN 30, but the VLAN is inactive and missing from the relevant database entries. Restore it, then verify port state and the phone’s separate provisioning and IP services. Data connectivity in VLAN 10 does not establish that voice works.",
-    "fix": "```ios SW1\nSW1# configure terminal\nSW1(config)# vlan 30\nSW1(config-vlan)# name VOICE\nSW1(config-vlan)# end\nSW1# show vlan brief\nSW1# show interfaces fastethernet0/7 switchport\n```\nConfirm that voice VLAN 30 is active. Then check the phone’s actual VLAN settings and required IP/call services; the VLAN correction alone does not prove registration."
+    "explanation": "The port references voice VLAN 30, but that VLAN is missing and inactive. Restore it in the VLAN database; working data in VLAN 10 does not prove voice works.",
+    "fix": "```ios SW1\nSW1# configure terminal\nSW1(config)# vlan 30\nSW1(config-vlan)# name VOICE\nSW1(config-vlan)# end\nSW1# show vlan brief\nSW1# show interfaces fastethernet0/7 switchport\n```\nConfirm voice VLAN 30 is active. Then check the phone’s VLAN settings and IP and call services; the VLAN fix alone does not prove registration."
   },
   {
     "id": "vlans-and-access-ports-t02",
@@ -58,7 +58,7 @@
     "answer": [
       0
     ],
-    "explanation": "The host addresses place the peers in the same IPv4 subnet, but the actual Layer 2 assignments separate them. The MAC-table entry confirms where fresh source traffic is learned. Restore the documented VLAN assignment and verify the local path. The entry was learned from fresh traffic on the new port, so clearing a supposedly stale record would not change its actual VLAN assignment.",
-    "fix": "```ios SW1\nSW1# configure terminal\nSW1(config)# interface fastethernet0/18\nSW1(config-if)# description User workstation\nSW1(config-if)# switchport mode access\nSW1(config-if)# switchport access vlan 10\nSW1(config-if)# end\nSW1# show interfaces fastethernet0/18 switchport\n```\nGenerate fresh traffic, verify the MAC entry in VLAN 10, and retest the peer. Save the corrected configuration after verification."
+    "explanation": "The peers share an IPv4 subnet, but the port sits in VLAN 20 instead of VLAN 10, which separates them at Layer 2. The MAC entry was learned from fresh traffic on the new port, so clearing it would not help.",
+    "fix": "```ios SW1\nSW1# configure terminal\nSW1(config)# interface fastethernet0/18\nSW1(config-if)# description User workstation\nSW1(config-if)# switchport mode access\nSW1(config-if)# switchport access vlan 10\nSW1(config-if)# end\nSW1# show interfaces fastethernet0/18 switchport\n```\nGenerate traffic, confirm the MAC entry appears in VLAN 10, and retest the peer. Save after verification."
   }
 ]

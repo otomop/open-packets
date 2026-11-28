@@ -29,6 +29,10 @@ sources:
   - { title: "Cisco IOS XE 17: VRRPv3 Protocol Support", url: "https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/ntw-servs/b-network-services/m_fhrp-vrrpv3-xe.html" }
   - { title: "RFC 9568: Current VRRPv3 standard for IPv4 and IPv6", url: "https://www.rfc-editor.org/rfc/rfc9568" }
 ---
+A PC has exactly one default gateway. If that address belongs to a single router and the router fails, every host on the LAN is cut off, even when a second router with working uplinks sits on the same switch. The routing chapters taught routers to find another path after a failure. That does not help a host: it runs no routing protocol and sends every off-subnet packet to the one gateway address it was given.
+
+A **first hop redundancy protocol (FHRP)** closes that gap. Two routers share one virtual gateway address, and when the forwarding router fails, the other takes the address over within seconds. By the end of this chapter you will be able to explain how HSRP and VRRP choose the forwarding router, read `show standby` and `show vrrp` output, and predict what a failure, a recovery or a lost uplink does to the roles.
+
 ## Why hosts need a redundant gateway
 
 :::facts
@@ -39,9 +43,9 @@ sources:
 - VRRP's normal defaults are priority **100**, advertisements **1 second**, and **preemption enabled** for non-owner routers.
 :::
 
-A PC sends off-subnet traffic to its default gateway. If that address belongs only to R1, adding R2 to the same LAN does not automatically teach the PC to use R2 when R1 fails. Routing protocols can repair paths between routers, but they do not necessarily change a host's configured gateway.
+Picture VLAN 10 with two routers: R1 at `192.168.10.2` and R2 at `192.168.10.3`. Suppose PC-A's gateway is `192.168.10.2` and R1 fails. PC-A keeps sending ARP requests for `.2` and nobody answers. R2 is healthy, but PC-A has no reason to use it.
 
-An FHRP provides a shared **virtual router**. In the example below, R1's real LAN address is `192.168.10.2` and R2's is `192.168.10.3`. Both participate in a group using virtual IP `192.168.10.1`. PC-A uses `192.168.10.1` as its gateway. The router currently responsible for that virtual identity forwards the PC's off-subnet packets.
+An FHRP gives the hosts a gateway address that no single router owns. R1 and R2 join a group that shares a **virtual IP**, here `192.168.10.1`, and a matching **virtual MAC**. PC-A uses `192.168.10.1` as its gateway. One router at a time answers ARP for that address and forwards the frames sent to the virtual MAC. If it fails, the other takes over the same IP and MAC, and PC-A notices only a few lost packets.
 
 ```diagram
 { "type": "topology", "title": "Fig 23.1 — One host gateway, two forwarding candidates", "caption": "The PC uses the virtual address .1; each router keeps its own .2 or .3 address and needs a working upstream path.", "nodes": [
@@ -61,17 +65,21 @@ An FHRP provides a shared **virtual router**. In the example below, R1's real LA
 ] } }
 ```
 
-The virtual IP is a next-hop address, not a replacement destination for each packet. For a ping to `203.0.113.10`, the IP destination stays `203.0.113.10` while the first Ethernet frame is addressed to the virtual MAC. The active router then makes an ordinary routing decision.
+The virtual IP is only a next hop. When PC-A pings `203.0.113.10`, the packet's destination IP stays `203.0.113.10`. Only the first Ethernet frame is addressed to the virtual MAC, and the router that receives it routes the packet like any other.
 
-Both candidate gateways need valid routes and a usable return path. FHRP does not synchronize every routing table or preserve arbitrary NAT/firewall session state. The shared access switch in this teaching topology is also still a single point of failure. Test the specific failure you intend to protect against.
+An FHRP protects only the host's first hop. It does not copy routes between routers: R1 and R2 each need their own route to the destination, and the far end needs a route back through whichever router is forwarding. SW1 is still a single point of failure in this small topology.
 
-The track distinction sets the depth: v1.1 asks you to describe FHRP purpose, functions, and concepts; v2.0 asks you to interpret HSRP/VRRP operational status. The configuration below is guided practice that produces meaningful output. It is not a claim that either blueprint requires every optional FHRP configuration feature.
+CCNA v1.1 asks you to describe the purpose, functions and concepts of FHRPs. CCNA v2.0 asks you to interpret the operational status of HSRP and VRRP. The configuration is here because building a group is the quickest way to understand its output; you do not need to memorise every optional command.
 
 ## HSRP groups and role selection
 
-**Hot Standby Router Protocol (HSRP)** is Cisco's FHRP. A group has one Active router forwarding for the virtual identity and one Standby prepared to take over. Additional group members can listen. The Standby still routes packets addressed to its own real interface; it is not a powered-off router.
+**Hot Standby Router Protocol (HSRP)** is Cisco's own FHRP. Routers that share a virtual gateway are configured with the same **group** number on their LAN interfaces. In each group one router is **Active**: it answers ARP for the virtual IP and forwards the hosts' traffic. One router is **Standby**: it listens for the Active router's Hello messages and takes over if they stop. Any further routers in the group wait and listen. The Standby is still a working router; it just does not answer for the virtual address.
 
-During initial role selection, the higher HSRP priority is preferred. IOS priorities range from 0 to 255, with default 100. If candidates have equal priority during an election, the higher primary interface IPv4 address breaks the tie. Existing active status changes the reasoning: a newly available higher-priority router needs **preemption** to take over from a healthy active router. An equal-priority router does not preempt the active router merely because its IP address is higher.
+HSRP chooses the Active router by **priority**, a number from 0 to 255 with a default of 100. The highest priority wins. If priorities tie, the highest interface IP address wins. With R1 at priority 110 and R2 at the default 100, R1 becomes Active. With both at 100, R2 wins because `192.168.10.3` is higher than `192.168.10.2`.
+
+That election runs only when the group has no Active router. A router that is already Active stays Active until it fails, even if a router with a higher priority joins later. To let the higher-priority router take the role from a healthy Active router you must enable **preemption**, which is off by default. Preemption needs a strictly higher priority: an equal-priority router with a higher IP address does not preempt.
+
+HSRP has two versions. Version 1 is the default. The two do not interoperate, so every router in a group must run the same one.
 
 | IPv4 HSRP property | Version 1 | Version 2 |
 |---|---|---|
@@ -81,29 +89,40 @@ During initial role selection, the higher HSRP priority is preferred. IOS priori
 | Default virtual MAC form | `0000.0c07.acXX` | `0000.0c9f.fXXX` |
 | Version selection on IOS interface | `standby version 1` | `standby version 2` |
 
-The suffix is the group number in hexadecimal. Group 10 in HSRPv1 uses `0000.0c07.ac0a`; group 1 in HSRPv2 uses `0000.0c9f.f001`. The MAC format tells you the configured IPv4 version and group, not which physical router currently forwards.
+The X digits are the group number in hexadecimal. Group 10 in HSRPv1 uses `0000.0c07.ac0a`, because decimal 10 is hex 0a; group 20 would end in `14`. Group 1 in HSRPv2 uses `0000.0c9f.f001`. A virtual MAC in `show standby` or in a switch's MAC address table therefore tells you the HSRP version and the group. It does not tell you which router is Active.
 
-Match the version, group, virtual IP, and relevant authentication settings on participating routers. The group number need not equal the VLAN number, but consistent naming reduces mistakes. Ordinary HSRP examples use an unused virtual IP in the LAN subnet, distinct from both routers' real addresses. Changing the HSRP version affects the interface's groups and their virtual identities, so do it deliberately on both peers.
+Routers in a group must agree on the version, the group number and the virtual IP. The virtual IP must be an unused address in the LAN subnet, different from every router's real address. The group number does not have to equal the VLAN number, although matching them makes output easier to read.
 
-Different groups can prefer different routers. For VLAN 10, give R1 priority 110 and R2 90; for VLAN 20, reverse those values and enable preemption. Each VLAN still has one Active router for its own group, but the two routers share gateway duties across the two VLANs. A priority configured in one group does not control the other group.
+Because every VLAN has its own group, two routers can share the work. Give R1 priority 110 and R2 90 for VLAN 10, reverse the values for VLAN 20, and enable preemption. R1 is then Active for VLAN 10 and R2 for VLAN 20. Each group still has exactly one Active router.
 
 ## HSRP states and failure detection
 
-Read HSRP states as conditions, not a sequence every router must traverse. **Initial** means HSRP is not operating on the interface. **Learn** waits to learn the virtual address. **Listen** knows the virtual address but is not the Active or Standby. **Speak** participates in the election. **Standby** is ready to replace the Active. **Active** forwards for the virtual identity.
+`show standby` reports one of six states, listed here from start-up to forwarding:
 
-Speak, Standby, and Active routers send Hello messages. Listen-state routers do not. The other message types are **Coup**, used in preemption, and **Resign**, used when an active router relinquishes its role. You mainly need to distinguish settled Active/Standby operation from initialization, isolation, or repeated state changes.
+| State | What the router is doing |
+|---|---|
+| **Initial** | HSRP is not running yet, for example because the interface has just come up or is down |
+| **Learn** | It does not know the virtual IP and is waiting to hear it from the Active router |
+| **Listen** | It knows the virtual IP but is neither Active nor Standby |
+| **Speak** | It sends Hellos and takes part in the election |
+| **Standby** | It is next in line and monitors the Active router |
+| **Active** | It forwards traffic sent to the virtual MAC |
 
-A silent failure is detected when the standby's active-router hold timer expires. With default timers, that timer is 10 seconds from the last accepted active Hello. Failure may occur partway through the interval, so failover is not guaranteed to take exactly 10 seconds after the event, nor is the protocol simply counting three missed messages. An explicit resignation or a detected local link event can produce different timing. Record elapsed observations in your lab instead of treating the default as a stopwatch promise.
+A healthy two-router group settles with one router Active and the other Standby. A router stuck in Initial usually has an interface down, and two routers that are both Active cannot hear each other.
 
-A **gratuitous ARP** is an unsolicited announcement of an IPv4-to-MAC mapping. After takeover, frames sourced from the virtual MAC, including these announcements, help the switch learn the new port for that MAC. In normal steady-state failover the host can retain the same virtual-IP-to-virtual-MAC mapping. Host ARP entries may still refresh or expire as part of ordinary operation; the important point is that changing the configured gateway is unnecessary.
+Routers in Speak, Standby and Active send **Hello** messages, every 3 seconds by default. Two other messages exist. **Coup** is sent by a router that is preempting. **Resign** is sent by an Active router that is giving up the role, either because it is being preempted or because its interface is being shut down.
+
+The Standby router restarts a **hold timer**, 10 seconds by default, every time it hears a Hello from the Active router. If the Active router dies silently, the timer runs out and the Standby becomes Active. For example, R2 hears a Hello at second 0 and R1 loses power at second 2: R2 takes over at second 10, eight seconds after the failure. With default timers a silent failure therefore costs about 7 to 10 seconds. A Resign is faster, because the Standby does not wait for the timer.
+
+When R2 takes over, it sends a **gratuitous ARP**: an unsolicited ARP reply, sourced from the virtual MAC, announcing that `192.168.10.1` is at that MAC. Hosts already hold exactly that mapping. The frame matters to the switch: SW1 sees the virtual MAC arrive on R2's port and updates its MAC address table, so frames for the gateway now go to R2.
 
 :::trap The gateway can be stable while the switch table changes
-The virtual IP and virtual MAC remain associated with the group. The switch must now forward traffic for that MAC toward the new active router. Do not confuse the switch's MAC-to-port table with the host's IP-to-MAC ARP cache.
+After a failover the virtual IP and virtual MAC are the same as before. What changes is the switch port that leads to that MAC. Do not confuse the switch's MAC-to-port table with the host's IP-to-MAC ARP cache.
 :::
 
 ## Priority, preemption, and tracking
 
-Use a separate real address on each router and the same virtual IP. This pattern supplements the complete lab:
+Each router keeps its own real address, and both name the same virtual IP:
 
 ```ios R1
 R1# configure terminal
@@ -116,11 +135,11 @@ R1(config-if)# no shutdown
 R1(config-if)# end
 ```
 
-R2 uses real address `192.168.10.3`, the same group/VIP, priority 100, and preempt. R1 is preferred. When R1 disappears, R2 can take over even without preemption: failure takeover and preemption of a healthy active router are different events.
+R2 uses real address `192.168.10.3`, the same group and virtual IP, the default priority of 100, and `standby 1 preempt`. R1's 110 makes it the Active router.
 
-**Tracking** links gateway preference to another condition, such as an uplink's line protocol. Without tracking, R1 can lose its uplink yet keep sending healthy Hellos on the LAN. R2 sees no failed gateway even though R1 cannot reach the remote network.
+Failure takeover and preemption are different events. If R1 fails, R2 becomes Active with or without preempt, because the group has no Active router. Preempt matters when R1 comes back: with `standby 1 preempt`, R1 sends a Coup and takes the role back. Without it, R2 stays Active and R1 waits in Standby despite its higher priority.
 
-An IOS object-tracking example is:
+Now consider a failure that HSRP cannot see. R1's uplink Gi0/1 goes down, but its LAN interface is fine, so R1 keeps sending Hellos and stays Active. PC-A's packets still arrive at R1, and R1 has nowhere to send them. **Tracking** ties R1's priority to the state of the uplink: while the tracked interface is down, R1 subtracts a **decrement** from its priority. The default decrement is 10.
 
 ```ios R1
 R1# configure terminal
@@ -131,31 +150,46 @@ R1(config-if)# standby 1 track 1 decrement 20
 R1(config-if)# end
 ```
 
-When the tracked object fails, R1's effective priority becomes **110 − 20 = 90**. R2's 100 is higher, so R2 can preempt. R2 needs preemption enabled for this healthy-LAN takeover. If the decrement were 5, R1 would remain at 105 and still outrank R2. If it were 10, the tie would not provide the intended strict priority advantage. Choose a decrement that makes the intended preference unambiguous.
+When Gi0/1 goes down, R1's priority becomes **110 − 20 = 90**. R2's 100 is now higher, and because R2 has preempt it takes over. Two things have to be true for this to work:
 
-The legacy `standby 1 track gigabitethernet0/1 20` syntax is an alternative on images that support interface tracking directly. The lab names both forms and gives a paper fallback for simulator omissions. Tracking local line protocol detects that local condition; it does not prove every upstream destination is reachable.
+- The decrement must take R1 below R2. The default 10 would leave R1 at 100, and a tie does not trigger preemption.
+- R2 must have preempt, because it is taking the role from a router that is still alive on the LAN.
 
-A preempt delay such as `standby 1 preempt delay minimum 60` can allow routing to recover before taking the active role. Timer changes such as `standby 1 timers 1 3` are optional practice; shorter timers trade faster detection for greater sensitivity to congestion or CPU delay. Our lab keeps ordinary 3/10 timers.
+When the uplink returns, R1 goes back to 110 and, with its own preempt, becomes Active again.
+
+The older one-line form `standby 1 track gigabitethernet0/1 20` tracks the interface directly without a track object. Either way, tracking watches only that local interface. If a link further upstream fails while Gi0/1 stays up, R1's priority does not change.
+
+Two optional commands appear in real configurations. `standby 1 preempt delay minimum 60` makes a recovering router wait 60 seconds before it preempts, so its routing table can fill first. `standby 1 timers 1 3` shortens Hello and hold to 1 and 3 seconds for faster failover.
 
 ## VRRP for IPv4 and IPv6
 
-**Virtual Router Redundancy Protocol (VRRP)** is standards based. VRRPv2 supports IPv4. VRRPv3 supports IPv4 and IPv6; RFC 9568 is the current v3 specification and replaces RFC 5798. Many Cisco releases still display **Master** for the forwarding role, while RFC 9568 calls it **Active**. Treat these as equivalent role names in their respective documentation.
+**Virtual Router Redundancy Protocol (VRRP)** does the same job as HSRP but is an open standard, so routers from different vendors can share a gateway. A group still shares a virtual IP and a virtual MAC, one router forwards, and the others wait. The names and the defaults differ.
 
-VRRP uses IP protocol/IPv6 Next Header **112**, not UDP. For IPv4, advertisements use `224.0.0.18` and the virtual MAC form is `0000.5e00.01XX`. For IPv6 they use `ff02::12` and `0000.5e00.02XX`. XX is the virtual router identifier (VRID), 1–255, in hexadecimal. IPv4 and IPv6 instances are separate; an IPv4 Master result does not establish which router forwards for an IPv6 instance.
+| | HSRP | VRRP |
+|---|---|---|
+| Origin | Cisco proprietary | Open standard |
+| Roles | Active, Standby | Master, Backup |
+| Preemption | Off by default | On by default |
+| Default timers | Hello 3 s, hold 10 s | Advertisement 1 s |
+| IPv4 messages | UDP 1985 to `224.0.0.2` (v1) or `224.0.0.102` (v2) | IP protocol 112 to `224.0.0.18` |
+| IPv4 virtual MAC | `0000.0c07.acXX` (v1), `0000.0c9f.fXXX` (v2) | `0000.5e00.01XX` |
+| Virtual IP equal to a router's real address | Not allowed | Allowed |
 
-The normal configurable non-owner priority is 1–254, default 100; higher is preferred. Priority **255** belongs to the **address owner**, whose real address is the virtual address. Priority **0** is used in a protocol advertisement to relinquish the role, not as an ordinary candidate preference. VRRP permits this owner case, unlike the ordinary separate-virtual-address HSRP design used here.
+VRRPv2 supports IPv4 only. VRRPv3 supports IPv4 and IPv6; RFC 9568 is the current v3 specification and replaces RFC 5798. It renames the Master role **Active**, but most Cisco output still says **Master**.
 
-Preemption is normally enabled for VRRP. A returning higher-priority non-owner router can reclaim the forwarding role unless preemption has been disabled. The address owner has special priority/ownership behavior and takes precedence; identify the owner flag before treating all peers as ordinary priority-100 candidates.
+VRRP messages are called advertisements, and only the Master sends them. They travel directly in IP as protocol number **112**, not in UDP. For IPv6 the destination is `ff02::12` and the virtual MAC is `0000.5e00.02XX`. XX is the group number in hexadecimal, which VRRP calls the virtual router identifier (VRID, 1–255): IPv4 group 10 uses `0000.5e00.010a`. An IPv4 group and an IPv6 group are separate instances even when they share a number, so R1 can be Master for one and Backup for the other. In an IPv6 group the virtual address is link-local, and hosts find its MAC with Neighbor Discovery, not ARP.
 
-With 1-second advertisements and a non-owner priority of 100, the backup's down interval is approximately **3.6 seconds**. It includes three advertisement intervals plus a priority-dependent skew. Exact arithmetic is useful when an output supplies it, but subsecond tuning and state-machine timer formulas are not this chapter's focus.
+Priority works as in HSRP: higher wins, the default is 100, and you can configure 1–254. Two values are special. Priority **255** belongs to the **address owner**, the router whose real interface address is the virtual IP. VRRP allows that design and HSRP does not. The owner always becomes Master while it is up. Priority **0** is sent by a Master that is giving up the role, so that a Backup takes over at once. Because preemption is on by default, a returning higher-priority router takes the Master role back with no extra configuration, the opposite of HSRP.
 
-For IPv6, the virtual gateway identity includes a virtual link-local address; hosts use IPv6 Neighbor Discovery, not ARP. A VRRPv3 status view must therefore be read with its address family and virtual address. There is no need to memorize GLBP's separate load-sharing machinery for the published HSRP/VRRP status objective.
+A Backup declares the Master dead after the **master down interval**: three advertisement intervals plus a skew time of (256 − priority) / 256 seconds. With 1-second advertisements and priority 100 that is 3 + 156/256, about **3.6 seconds**. The skew is shorter for a higher priority, so the best Backup times out first.
 
-For optional configuration recognition, classic IOS uses an interface command such as `vrrp 1 ip 192.168.10.1` to create an IPv4 group. Supported IOS XE VRRPv3 implementations instead use an address-family configuration form such as `vrrp 1 address-family ipv4` beneath the interface, with the virtual address configured in that group. These are platform-dependent ways to create the status being interpreted, not interchangeable commands for every simulator image.
+You only need to recognise VRRP configuration. Classic IOS creates an IPv4 group with the interface command `vrrp 1 ip 192.168.10.1`. IOS XE with VRRPv3 uses `vrrp 1 address-family ipv4` under the interface and sets the virtual address inside that group.
+
+One more FHRP exists. **Gateway Load Balancing Protocol (GLBP)** is Cisco proprietary and lets several routers forward for one group at the same time, by answering different hosts' ARP requests with different virtual MACs. The exam objectives name HSRP and VRRP, so it is enough to recognise GLBP as the Cisco FHRP that load-balances inside a group.
 
 ## Reading the output
 
-The following excerpts are authored representative output. Column spacing and terminology vary by IOS release.
+Three outputs carry almost everything you are asked to interpret. These excerpts were written for this lesson; spacing and wording vary by IOS release.
 
 ```output R2# show standby brief — representative
                      P indicates configured to preempt.
@@ -163,7 +197,7 @@ Interface   Grp  Pri P State   Active          Standby         Virtual IP
 Gi0/0       1    100 P Standby 192.168.10.2    local           192.168.10.1  ← R2 is standby; .1 is the host gateway
 ```
 
-Read the local role, then the Active and Standby addresses. `local` refers to the device issuing the command. The `P` flag indicates preemption configuration, not that a preemption just occurred. An `unknown` peer field means no peer in that role is currently known; it can be normal for a single configured router, but it is unexpected in the intended two-router group.
+Read it left to right. `P` means preempt is configured, not that a preemption has happened. State is this router's own role. The Active and Standby columns give each role's real address, or `local` for the router you are on. So R2 is Standby, R1 at `192.168.10.2` is Active, and hosts should use `192.168.10.1`. `unknown` in either column means this router hears no peer in that role, which is a fault in a group of two.
 
 ```output R1# show standby — representative after tracked uplink failure
 GigabitEthernet0/0 - Group 1
@@ -177,7 +211,7 @@ GigabitEthernet0/0 - Group 1
     Track object 1 state Down decrement 20
 ```
 
-The configured value remains 110 while the effective value is 90. Restore the tracked condition rather than repeatedly raising priority to conceal it.
+`Priority 90 (configured 110)` shows tracking at work: the configuration says 110 and the election is using 90. The line beneath names the cause. The repair is to restore the uplink, not to raise the priority.
 
 ```output R2# show vrrp — representative IPv4 excerpt
 GigabitEthernet0/0 - Group 1
@@ -191,16 +225,31 @@ GigabitEthernet0/0 - Group 1
   Master Down interval is 3.609 sec  ← backup's failure-detection interval
 ```
 
-For classic VRRP, `show vrrp brief` adds compact Own/Pre flags on supporting releases. IOS XE VRRPv3 may group output by address family; inspect `show vrrp` or `show vrrp detail` as supported. A line such as `Group 1 - Address-Family IPv6` must be interpreted with its virtual link-local address and IPv6 virtual MAC.
+R2 is Backup at priority 100, and the Master is `192.168.10.2` at priority 110. The virtual MAC ends in `01`, so this is IPv4 group 1. `show vrrp brief` condenses the same facts into one line per group. IOS XE VRRPv3 groups its output by address family: a heading such as `Group 1 - Address-Family IPv6` goes with a link-local virtual address and a `0000.5e00.02XX` MAC.
 
 ## Interpreting status and troubleshooting
 
-Compare both peers. If each claims Active with no Standby, first check whether they can exchange the correct control packets on the same VLAN and agree on version/group. Raising priority does not repair an isolated control plane. A version mismatch can produce different virtual MACs for the same intended IPv4 gateway, but two Active routers using the same version/group need not use different virtual MACs.
+Always compare both routers. Each common symptom points to a short list of causes.
 
-If the preferred router remains Standby after recovery, inspect preemption and effective priority. If the uplink fails without a role change, inspect tracking and the peer's preemption. If the roles look correct but a host fails, inspect its configured gateway, the active router's destination route, and the remote return route.
+| Symptom | Likely cause | What to check |
+|---|---|---|
+| Both routers Active, each with Standby `unknown` | The routers do not hear each other's Hellos | Same VLAN, same HSRP version, same group number |
+| Higher-priority router stays Standby after it recovers | Preempt is not configured on it | The `P` flag or the `Preemption` line |
+| Uplink failed but the roles did not change | No tracking, a decrement that is too small, or no preempt on the peer | The priority and track lines, and the peer's `P` flag |
+| Roles are correct but a host cannot reach a remote network | The host's gateway is not the virtual IP, or a route is missing | The host's gateway, the Active router's route, and the return route |
 
-Finally test a real off-subnet destination. Pinging only the VIP proves that the virtual gateway responds, not that it can route to the application. Keep a record of baseline roles, current/configured priorities, virtual IP/MAC, routing evidence, and the exact fault. Restore one failure before introducing another.
+Raising a priority cannot fix two Active routers, because they are not hearing each other at all. A version mismatch is easy to spot: one router shows a `0000.0c07.acXX` virtual MAC and the other `0000.0c9f.fXXX` for the same virtual IP. If the MACs match, look for whatever stops the Hellos, such as a port in the wrong VLAN.
+
+Finish every check with a ping from the host to a real remote destination. A reply from the virtual IP proves only that some router answers for it on the LAN.
 
 ## Exam focus
 
-For v1.1, explain why the virtual gateway protects the first hop and why hosts must use it. For v2.0, interpret HSRP/VRRP local and peer roles, virtual addresses, priority, preemption, ownership, timers, and tracking evidence. Distinguish failure takeover from preemption and protocol health from end-to-end reachability. Use the lab configurations to understand these observations without treating every optional command as a separate exam requirement.
+For v1.1, be ready to explain why a host needs a virtual gateway and how an FHRP provides one. For v2.0, be ready to read HSRP and VRRP status output and say which router forwards, why, and what will happen next. Know these points without looking them up:
+
+- Hosts use the virtual IP as their gateway. Its virtual MAC moves between routers.
+- HSRP: Cisco proprietary, Active and Standby, priority 100, highest priority then highest IP wins, preemption off, Hello 3 seconds and hold 10.
+- HSRPv1 and HSRPv2 differ in group range, multicast address and virtual MAC, and do not interoperate.
+- VRRP: open standard, Master and Backup, priority 100 (owner 255), preemption on, advertisements every second as IP protocol 112.
+- A failed router is replaced without preemption. Taking the role from a healthy router requires it.
+- Tracking lowers a priority, by 10 unless you set a decrement. Roles change only if the peer is then higher and can preempt.
+- An Active or Master state describes the first hop only.

@@ -31,78 +31,93 @@ sources:
   - { title: "NIST SP 800-145: cloud computing", url: "https://csrc.nist.gov/pubs/sp/800/145/final" }
 ---
 
-A server can contain several independent operating systems, while a router can maintain several independent routing contexts. Both are forms of virtualization, but they separate different resources. Start by identifying the boundary: hardware, operating-system processes, Ethernet segments or routing tables. That distinction explains what can share an address, what can communicate locally, and which failure can affect several workloads.
+A new server is racked with one cable to SW1. A week later it runs a dozen "machines" in two VLANs, and the port that was set up for a single PC no longer fits. Elsewhere, one router must carry two customers who both number their LAN `10.10.10.0/24`. Both problems are solved by **virtualization**: making one physical device behave as several logical ones.
+
+You already have the networking: 802.1Q trunks from [chapter 10](#/chapter/trunks-dtp), PortFast from [chapter 15](#/chapter/stp-protection) and route lookup from [chapter 17](#/chapter/routing-table). This chapter shows what sits behind the server-facing port and inside that router. By the end you will be able to tell a Type 1 hypervisor from a Type 2 and a virtual machine from a container, configure and check the switch port for a virtualized host, name the cloud service and deployment models, and explain why two VRFs can hold the same prefix.
 
 ## What virtualization separates
 
 :::facts
-- A **virtual machine (VM)** has virtual hardware and its own guest operating-system kernel.
-- Ordinary process-isolated **containers** share the kernel of their host environment. That environment can itself be a VM.
+- A **hypervisor** shares one physical server among several **virtual machines (VMs)**. Type 1 runs directly on the hardware; Type 2 runs as an application on a host operating system.
+- A **VM** has virtual hardware and its own guest operating-system kernel.
+- A **container** packages an application with its dependencies and shares the kernel of its host. That host can itself be a VM.
 - A **virtual switch** connects virtual network interfaces; its physical uplink may carry one untagged VLAN or several tagged VLANs.
-- **Virtual routing and forwarding (VRF)** separates Layer 3 routing/forwarding contexts. It does not encrypt traffic.
+- **Virtual routing and forwarding (VRF)** gives one router several separate routing tables. It does not encrypt traffic.
 - v1.1 asks you to explain server virtualization, containers and VRFs. v2.0 describes hypervisors, VMs and containers, and separately includes configuring physical switch connectivity to virtualized hosts.
 :::
 
-**Virtualization** presents a logical resource using underlying physical resources. It can improve utilization and make provisioning easier, but it does not create extra CPU capacity, memory or link bandwidth. If several VMs all need a busy disk at once, they still compete for its service. Resource limits, reservations, storage design and capacity planning remain necessary.
+Every kind of virtualization in this chapter answers one question: what does each tenant get a private copy of, and what do all tenants still share? That boundary tells you what can reuse an address, what can talk without leaving the box, and what fails together.
 
-An operating system's **kernel** is its core software for managing resources such as processor time, memory and device access. Applications request those services from the kernel. The key comparison in this chapter is whether an environment has its own guest kernel or shares the kernel of its host environment.
+Before virtualization, the usual practice was one application per physical server, and most servers sat nearly idle. Running several VMs on one host uses the hardware properly and turns "install a server" into "copy a file". It does not create CPU, memory or bandwidth: VMs that all need a busy disk compete for it.
 
-You have already met a controller VM in [chapter 37](#/chapter/wireless-architecture) and switch trunks to virtualized hosts in [chapter 10](#/chapter/trunks-dtp). Here you explain what runs behind those connections. Keep using the same VLAN tagging and route-lookup rules; virtual hardware does not replace them.
-
-Consider two application VMs on one server. Their operating systems can reboot independently, yet both depend on the server's power and hardware. Placing a second application instance on that same host protects against some guest failures but not against losing the host. Even separate hosts may share storage, a switch or power. Trace those dependencies before calling a design redundant.
+One term decides most of the comparisons that follow. An operating system's **kernel** is its core: it schedules the processor, manages memory and controls devices for the applications above it. A VM boots its own kernel. A container uses the kernel of its host.
 
 | Resource being separated | Mechanism | What remains shared |
 |---|---|---|
 | Hardware presented to operating systems | Hypervisor and VMs | Physical host resources |
-| Process execution environments | Process-isolated containers | Host-environment kernel |
+| Application environments | Containers | The host's kernel |
 | Ethernet forwarding domains | Virtual switches and VLANs | Physical NICs and uplinks |
-| Layer 3 route lookup | VRFs | Router hardware and software platform |
+| Layer 3 route lookup | VRFs | Router hardware and software |
 
-A guest VM might connect to VLAN 10, whose gateway belongs to VRF BLUE. The VM boundary separates operating-system environments; the VLAN separates broadcasts; the VRF determines which routing table processes traffic. None of those facts alone establishes the complete access policy.
+The boundaries stack. A guest VM might connect to VLAN 10, whose gateway is in VRF BLUE. The VM boundary separates its operating system from its neighbours', the VLAN separates its broadcasts, and the VRF decides which routing table handles its packets.
+
+Sharing is also the risk. Two application VMs on one server reboot independently, yet both stop when that server loses power. Separate hosts may still share storage, a switch or a power feed, so trace what is shared before you call a design redundant.
 
 ## Hypervisors and virtual machines
 
-A **hypervisor**, also called a virtual machine monitor, creates the virtual CPU, memory, disk and network devices used by a guest. The guest boots an operating system and runs applications within that environment. Virtualization-aware drivers may improve I/O performance, so it is inaccurate to assume the guest can never know that it is virtual.
+A **hypervisor**, also called a virtual machine monitor, is the software that divides one physical server, the **host**, among several VMs. Each VM is a **guest**: the hypervisor gives it a virtual CPU, memory, disk and network adapter, and schedules all the guests onto the real hardware. The guest boots an ordinary operating system as if it owned a whole computer. The Catalyst 9800-CL controller from [chapter 37](#/chapter/wireless-architecture) is a VM of this kind.
 
-A **Type 1** hypervisor provides virtualization directly over hardware. VMware ESXi and Microsoft Hyper-V are familiar examples. A **Type 2** hypervisor operates through a general-purpose host OS; Oracle VirtualBox and VMware Workstation are familiar examples. Classify the architecture, not its administration screen. Hyper-V's Windows management environment occupies a privileged root partition above a Type 1 hypervisor.
+Hypervisors come in two types. Tell them apart by what sits directly on the hardware.
+
+| | Type 1 (bare-metal or native) | Type 2 (hosted) |
+|---|---|---|
+| Runs on | The server hardware directly | A general-purpose host OS, as an application |
+| Typical use | Data-center and production servers | A desktop or laptop, for labs and testing |
+| Examples | VMware ESXi, Microsoft Hyper-V | Oracle VirtualBox, VMware Workstation |
+
+A Type 2 hypervisor depends on its host OS: if that OS crashes, every guest goes with it. A Type 1 hypervisor removes that layer, which is why production servers use it. Classify by architecture, not by the management screen: Hyper-V is managed from Windows, but that Windows runs in a privileged partition on top of the hypervisor, so Hyper-V is Type 1.
 
 ```diagram
-{"type":"layers","title":"Fig 39.1 — Locate the kernel boundary","columns":[{"title":"Virtual machine","rows":["Application","Guest OS and kernel","Virtual hardware","Hypervisor","Physical hardware"]},{"title":"Hosted virtualization","rows":["Application","Guest OS and kernel","Hosted hypervisor","Host OS","Physical hardware"]},{"title":"Process-isolated container","rows":["Application and dependencies","Container process environment","Shared host kernel","Host resources","Physical hardware or VM"]}],"caption":"A VM boots its own guest kernel; ordinary containers use their host environment's kernel."}
+{"type":"layers","title":"Fig 39.1 — Locate the kernel boundary","columns":[{"title":"VM on a Type 1 hypervisor","rows":["Application","Guest OS and kernel","Virtual hardware","Hypervisor","Physical hardware"]},{"title":"VM on a Type 2 hypervisor","rows":["Application","Guest OS and kernel","Hosted hypervisor","Host OS","Physical hardware"]},{"title":"Container","rows":["Application and dependencies","Container","Container engine","Host OS and shared kernel","Physical hardware or a VM"]}],"caption":"A VM boots its own guest kernel; containers share the kernel of the host they run on."}
 ```
 
-Suppose an application requires a Windows kernel and another requires Linux. Separate VMs on a compatible hypervisor can provide both operating systems. Two ordinary Linux containers cannot provide a Windows kernel merely by installing Windows application files. The required kernel interface is part of compatibility.
+Suppose one application needs a Windows kernel and another needs Linux. Two VMs on one hypervisor can run both, because each boots its own operating system. Two containers on one Linux host cannot: both use the host's Linux kernel.
 
-**vCPU**, virtual memory and **vNIC** describe resources assigned to a VM. A vCPU is a scheduling abstraction, not necessarily a permanently dedicated processor core. Allocating eight vCPUs does not prove that eight physical cores are reserved. Thinly provisioned storage still needs capacity when applications write data.
+A VM's resources are virtual versions of familiar parts: **vCPUs**, virtual memory, virtual disks and a **vNIC** (virtual network interface card) with its own MAC address. A vCPU is a share of processor time, not a reserved core, so busy VMs compete for the host's real cores.
 
-A VM image or template can make deployment repeatable. A snapshot records a point in the VM's state under the platform's rules; it is not automatically an independent backup. Live migration can move supported running workloads between hosts, but compatible CPU, storage, networking and licensing requirements must be satisfied. These are operational examples, not fixed CCNA timing or sizing values to memorize.
+Because a VM is stored as files, it can be copied from a template or captured in a **snapshot**, a saved state to roll back to. A snapshot lives on the VM's own storage, so it is not a backup. **Live migration** moves a running VM to another host. The VM keeps its IP and MAC addresses, so the destination host's uplink must carry the same VLAN.
 
 ## Containers share the kernel
 
-A **container image** packages application files and dependencies. A running container is an instance of that image with a process environment and a writable layer. In typical Linux process isolation, namespaces separate views such as processes and network interfaces, while resource controls can limit consumption. The application still makes system calls to the host environment's kernel.
+A VM virtualizes hardware, so every VM carries a complete guest OS that has to boot, be patched and hold memory. A **container** virtualizes the operating system instead. It packages one application with the libraries it needs and runs as isolated processes on the host's kernel. With no guest OS to boot, a container usually starts in seconds and takes far less memory and disk than a VM running the same application.
 
-| Question | VM | Ordinary process-isolated container |
+- A **container image** is the read-only package of application files and dependencies.
+- A **container** is a running instance of an image. Many containers can start from one image.
+- A **container engine**, such as Docker, builds images and starts and stops containers on one host. An **orchestrator**, such as Kubernetes, runs containers across a cluster of hosts.
+
+The kernel does the isolating: it gives each container its own view of processes, files and network interfaces, and can cap its CPU and memory.
+
+| Question | VM | Container |
 |---|---|---|
-| Who supplies the application kernel? | Its own guest OS | The host environment |
-| What starts? | A guest OS and its services | Container processes |
-| Can different guest kernels coexist? | Yes, within hypervisor support | Not within one shared kernel |
-| Typical overhead | Includes guest OS resources | Avoids a separate guest OS boot |
-| Persistent application data | Virtual disks or external storage | Volumes or other persistent storage |
+| Who supplies the kernel? | Its own guest OS | The host |
+| What starts? | A guest OS and its services | The application's processes |
+| Can different operating-system kernels share one host? | Yes | No |
+| Typical size and start time | Larger and slower: a full OS boots | Smaller and faster: no OS boot |
+| Isolation | Stronger: separate kernels | Weaker: one kernel fault affects every container |
 
-Containers commonly start with less overhead than full VMs, but there is no universal image size, startup time or number per host. A large container can consume more resources than a small VM. The security boundary also depends on privilege, mounts, kernel patches and runtime configuration; do not turn a general comparison into a guarantee that a VM is secure or a container is unsafe.
+The two are often combined. Cloud providers run customers' containers inside VMs, and Docker Desktop on Windows or macOS runs Linux containers inside a small Linux VM. The containers still share the kernel of the VM they run in.
 
-Containers can run inside VMs. Linux containers on a Windows or macOS desktop often use a Linux VM supplied by the desktop runtime. Windows also offers Hyper-V-isolated containers with a dedicated kernel environment. These implementations qualify the basic shared-kernel model.
-
-Docker provides tools for building and running containers; Kubernetes coordinates workloads across a cluster. Container networking depends on the selected driver. A bridge network with source NAT may make outbound traffic appear to come from the host; other drivers expose distinct container addresses or MACs. A physical switch's MAC table therefore does not reliably tell you how many containers exist.
+Container networking affects what your switch sees. On Docker's default bridge network, the host translates containers' outbound traffic to its own address with the source NAT from [chapter 26](#/chapter/nat-pat), so the physical switch learns only the host's MAC address. Other network drivers give each container its own MAC address. Count containers on the host, not in the MAC table.
 
 ## Virtual switches and physical uplinks
 
-A **vNIC** is the VM's Ethernet attachment. A **virtual switch** forwards frames between virtual ports and, when configured, physical uplinks. VMs in the same VLAN on the same virtual switch can communicate internally. VMs in different VLANs need a Layer 3 path, even when their files reside on the same physical host.
+The VMs on a host need a switch, and the hypervisor provides one in software. Each VM's **vNIC** plugs into a port on a **virtual switch**, and the host's physical NICs are that switch's uplinks to yours. The rules you know still apply: VMs in the same VLAN on the same virtual switch reach each other without the frame leaving the server, and VMs in different VLANs need a router even though they share a host.
 
-Work through a tagged uplink. VM-A sends an untagged frame through a virtual port assigned to VLAN 10. The virtual switch associates the frame with VLAN 10 and sends it over an uplink configured to tag that VLAN. The physical switch receives an 802.1Q-tagged frame, learns VM-A's source MAC in VLAN 10 and forwards according to the destination MAC in that VLAN. The reverse direction delivers the frame to the correct virtual port.
+Work through a tagged uplink. VM-A sends an untagged frame into a virtual port assigned to VLAN 10. The virtual switch sends it out of the uplink with an 802.1Q tag for VLAN 10. SW1 learns VM-A's source MAC in VLAN 10 on that port and forwards by destination MAC within VLAN 10. The reply returns tagged, and the virtual switch strips the tag before delivering it. The VM never sees a tag, exactly like a PC on an access port.
 
-The physical port must match the host's tagging design. One untagged VLAN can use an access port. Several tagged VLANs require a trunk with an appropriate allowed list. Do not configure a VLAN as native and untagged on one end while the other expects its traffic tagged.
+So the physical port must match the host's tagging. A host that sends one untagged VLAN needs an access port. A host that tags several VLANs needs a trunk that allows every one of them. The native VLAN must agree too: if SW1 sends a VLAN untagged as native while the host expects it tagged, that VLAN fails while the others work.
 
-This example assumes a fresh Catalyst 2960-compatible switch, a verified host uplink that tags VLANs 10 and 20, and unused untagged traffic assigned to native VLAN 999:
+This example configures a Catalyst 2960 port for a host that tags VLANs 10 and 20. Untagged frames go to the unused native VLAN 999:
 
 ```ios SW1
 SW1# configure terminal
@@ -121,41 +136,55 @@ SW1(config-if)# end
 SW1# show interfaces trunk
 ```
 
-For a verified host-only edge connection, the appropriate platform's PortFast trunk setting can reduce startup delay. Do not assume every server uplink is loop-free: a guest bridge, nested virtual switch or additional physical connection can alter the topology. Review the host's forwarding behavior before using edge-port features.
+Typical virtual switches do not run spanning tree and do not forward frames between their own uplinks, so a host trunk is normally an edge port. `spanning-tree portfast trunk` from [chapter 15](#/chapter/stp-protection) spares it the 30-second listening and learning delay each time the link comes up. Use it only when nothing on the host bridges two uplinks together.
 
-NIC teaming also needs agreement. Independent failover uplinks and a negotiated LACP bundle are different designs. Configure a port-channel only when the hypervisor's exact switch type and teaming mode support it, with matching physical-switch settings. Chapter 13 covers LACP mechanics.
+Hosts usually have two or more uplinks, called **NIC teaming**, in one of two designs. With independent uplinks the virtual switch pins each VM to one NIC and moves it if that NIC fails; SW1's ports stay separate trunks. With an LACP bundle, SW1 needs a matching port-channel from [chapter 13](#/chapter/etherchannel). A port-channel facing a host that is not bundling, or the reverse, drops traffic or makes MAC addresses flap between ports.
 
-:::trap Several MAC addresses are evidence, not a diagnosis
-Multiple stable MACs behind one server-facing port are consistent with a virtual switch. They do not prove virtualization or rule out an unauthorized bridge. A one-address port-security policy can conflict with legitimate VM traffic; inspect the actual policy and violation mode before predicting shutdown.
+:::trap Several MAC addresses on one port
+A virtualized host shows one MAC address per vNIC behind a single switch port. That is normal, and it breaks port security's default limit of one address from [chapter 16](#/chapter/layer2-security): the second VM triggers a violation and the default action shuts the port down. An unauthorized switch produces the same MAC-table evidence, so check what the port should connect before you raise the limit.
 :::
 
 ## Cloud service and deployment models
 
-Virtualization is a technology; **cloud computing** is a service model with on-demand access, pooling, elasticity and measured use. A collection of VMs administered manually is not automatically a cloud. Cloud services can also provide containers, managed platforms and physical servers.
+Virtualization makes cloud practical, but the words are not synonyms. **Cloud computing** is a way of consuming computing as a service. NIST defines it by five characteristics: on-demand self-service, broad network access, resource pooling, rapid elasticity and measured service. A rack of VMs that an administrator builds by hand on request is virtualized, but it is not a cloud. **On-premises** equipment is owned and run by the organization at its own site.
 
-| Service model | Customer's usual responsibility | Provider supplies |
+The **service model** says how much the provider runs for you:
+
+| Service model | The provider runs | You manage |
 |---|---|---|
-| IaaS | Guest OS, applications and their configuration | Infrastructure resources |
-| PaaS | Application and data, within platform controls | Managed application platform |
-| SaaS | Users, data use and permitted settings | A finished application |
+| IaaS (infrastructure as a service) | Servers, storage, network and hypervisor | Guest OS, applications and data |
+| PaaS (platform as a service) | Everything up to the OS and runtime | Your application and data |
+| SaaS (software as a service) | The whole application, such as hosted email | Your users, settings and data |
 
-A private cloud is dedicated to one organization and may be hosted off premises. A public cloud offers services for general use. A community cloud serves organizations with shared concerns. A hybrid cloud connects distinct cloud environments so they can work together; merely owning a server and separately buying email does not demonstrate an integrated hybrid design.
+The **deployment model** says who uses the cloud:
 
-Renting VMs and patching their guest OS yourself is IaaS. Extending an application from a private environment into a connected public cloud can form a hybrid deployment. These labels answer different questions: service responsibility versus deployment arrangement.
+- **Public cloud**: open to any customer, on shared resources.
+- **Private cloud**: used by one organization, on its premises or hosted by a provider.
+- **Community cloud**: shared by organizations with a common concern, such as the same regulations.
+- **Hybrid cloud**: two or more of these joined so that workloads and data can move between them.
 
-Campus-to-cloud access may use internet connectivity with an IPsec VPN or a private provider connection. A private path does not inherently encrypt traffic or guarantee a latency value; the service design and agreement matter. Cloud subnets and route tables resemble familiar networking constructs, but do not assume a cloud subnet behaves exactly like an Ethernet VLAN or supports every on-premises broadcast feature.
+The two labels answer different questions. Renting VMs and patching their guest OS yourself is IaaS. Extending an application from your private cloud into connected public-cloud capacity is hybrid. Owning a server and separately buying hosted email is not hybrid, because nothing connects the two.
+
+Reaching a cloud workload usually means an IPsec VPN across the internet, as in [chapter 35](#/chapter/vpns-ipsec), or a private WAN connection from a provider. The VPN is encrypted but shares the internet's unpredictable path. The private connection stays off the internet and behaves more predictably, but is not encrypted unless you add encryption.
 
 ## VRFs: one router, several routing tables
 
-A **VRF** gives a device a separate routing and forwarding context. A routed interface belongs to one such context; subinterfaces can belong to different VRFs. Traffic arriving on a BLUE interface is looked up in BLUE's table. It does not search RED and then the global table when BLUE lacks a route.
+A VLAN makes one switch behave as several. A **VRF** (virtual routing and forwarding instance) does the same for a router: it gives one router several separate routing tables. Each Layer 3 interface, whether a physical port, a subinterface or an SVI, belongs to one VRF. A packet arriving on it is looked up only in that VRF's table, and if nothing matches it is dropped. The router does not try another VRF or the global table.
 
-The **global routing table** is the device's ordinary context for interfaces not assigned to a separate VRF. It is different from a **default route**, the `0.0.0.0/0` entry learned in [chapter 17](#/chapter/routing-table). Each routing context can have its own default route, or none.
+The **global routing table** is the ordinary table for every interface you have not placed in a VRF; it is what `show ip route` displays. It is not the same as a **default route**, the `0.0.0.0/0` entry from [chapter 17](#/chapter/routing-table). Each VRF can hold its own default route, or none.
 
-Suppose BLUE and RED both use `10.10.10.0/24`. Separate VRFs make those identical prefixes distinguishable. BLUE's `10.10.10.1` gateway and RED's `10.10.10.1` gateway serve different interfaces and hosts. Isolation requires the corresponding Layer 2 domains to remain separate as well.
+Now the opening problem. Customers BLUE and RED both use `10.10.10.0/24` with a gateway at `10.10.10.1`:
 
-**VRF-lite** uses VRFs without requiring MPLS transport. Deliberate route exchange, often called route leaking, can connect selected contexts, but that is beyond this chapter's configuration scope. A VRF is not a VPN encryption mechanism, an ACL or a guest OS.
+| R1 interface | VRF | Address | Listed by |
+|---|---|---|---|
+| Gi0/1 | BLUE | 10.10.10.1/24 | `show ip route vrf BLUE` |
+| Gi0/2 | RED | 10.10.10.1/24 | `show ip route vrf RED` |
 
-This is optional practice for supported IOS/IOS XE images, not a claim of Packet Tracer support:
+In one table IOS would reject the second address because it overlaps the first. In separate VRFs both are accepted, because the two prefixes never meet in one lookup. A packet that enters R1 on a BLUE interface for `10.10.10.20` goes to BLUE's host; RED's host with the same address is never a candidate. Keep Layer 2 separate too: BLUE and RED hosts in one VLAN would share a broadcast domain whatever the routing tables say.
+
+Service providers combine VRFs with MPLS to carry many customers over a shared backbone. VRFs used on their own, without MPLS, are called **VRF-lite**. Traffic crosses between VRFs only if you deliberately exchange routes between them (route leaking, outside this chapter). A VRF separates routes and nothing else: it does not encrypt like IPsec or filter like an ACL.
+
+The exam asks you to explain VRFs, not to configure them, but the configuration makes the idea concrete. It needs a full IOS or IOS XE image; do not count on Packet Tracer for it:
 
 ```ios R1
 R1# configure terminal
@@ -170,13 +199,23 @@ R1(config-if)# end
 R1# show ip route vrf BLUE
 ```
 
-Assign the VRF before the address: moving an addressed IOS interface into a VRF removes its IP address, which must be configured again. Legacy IPv4 syntax uses `ip vrf BLUE` and `ip vrf forwarding BLUE`; use the documented form for the selected image rather than mixing syntax by assumption. A route distinguisher and MPLS design are unnecessary for this isolated exercise.
+`vrf definition BLUE` creates the VRF, `address-family ipv4` enables IPv4 in it, and `vrf forwarding BLUE` places the interface in it. Assign the VRF before the address: putting an interface into a VRF removes any IP address already on it. Older IPv4-only syntax uses `ip vrf BLUE` globally and `ip vrf forwarding BLUE` on the interface.
 
 ## Verify and troubleshoot
 
-For VM connectivity, verify the guest's address and gateway, virtual-port VLAN, uplink association, physical trunk allowed list and the gateway's return path. A working host-management address does not prove that all guest VLANs work. Management may use a different VLAN or NIC.
+Virtualized-host problems are usually trunk problems, and VRF problems usually come from looking in the wrong table.
 
-Representative output for a host sending traffic in two VLANs:
+For a VM, follow the frame: the guest's address and gateway, the VLAN on its virtual port, the tagging on the host uplink, the allowed list and native VLAN on SW1's trunk, and finally the gateway. A common symptom is that the host answers but one VM does not. Host management often uses a different VLAN or NIC, so it proves nothing about the guest VLANs. Start on SW1:
+
+```output SW1# show interfaces trunk
+Port        Mode         Encapsulation  Status        Native vlan
+Gi0/1       on           802.1q         trunking      999
+
+Port        Vlans allowed on trunk
+Gi0/1       10,999    ← VLAN 20 is missing, so its guests are cut off
+```
+
+Repair a missing VLAN with `switchport trunk allowed vlan add 20`; without `add`, the command replaces the whole list. Then confirm that SW1 is learning the guests:
 
 ```output SW1# show mac address-table interface gigabitethernet0/1
 Vlan    Mac Address       Type        Ports
@@ -185,16 +224,17 @@ Vlan    Mac Address       Type        Ports
   20    0200.0000.0020    DYNAMIC     Gi0/1  ← a separate VLAN's source
 ```
 
-These entries establish where the switch recently learned those sources. They do not prove an application responds, an IP address is correct or a VM has the required route.
+Each entry shows that SW1 recently received a frame from that source in that VLAN. It says nothing about the VM's IP address, gateway or application.
 
-For VRFs, first identify membership with `show vrf` or the supported `show ip vrf interfaces` form. Then read `show ip route vrf BLUE`. A global `show ip route` or ordinary router ping examines a different context. Use `ping vrf BLUE 10.10.10.10` when the destination belongs to BLUE.
+For a VRF, `show vrf` lists each VRF and its interfaces, `show ip route vrf BLUE` shows BLUE's table, and `ping vrf BLUE 10.10.10.10` tests from inside it. Plain `show ip route` and plain `ping` use the global table. The classic mistake is to run them, see no route, and conclude that a route is missing when it sits in a VRF.
 
-If BLUE has a connected WAN subnet but a default route was configured without `vrf BLUE`, correct the route's context. For example, `ip route vrf BLUE 0.0.0.0 0.0.0.0 198.51.100.1` belongs to BLUE; the next hop must be resolvable in the intended context. Check the remote return route too. Fixing one local table does not prove the entire application path.
+Static routes have the same trap. `ip route 0.0.0.0 0.0.0.0 198.51.100.1` puts a default route in the global table, where BLUE's traffic never looks. BLUE needs `ip route vrf BLUE 0.0.0.0 0.0.0.0 198.51.100.1`, with a next hop reachable in BLUE.
 
 ## Exam focus
 
-- Explain which resources a hypervisor, VM and container provide and share.
-- Trace guest traffic through virtual ports, VLANs, a physical uplink and the appropriate gateway.
-- Configure the physical host port to match its access/trunk and teaming requirements.
-- Explain overlapping prefixes in separate VRFs and why a lookup must use the correct context.
-- Distinguish virtualization from cloud service/deployment models. Treat optional VRF CLI as reinforcement for the v1.1 explanation objective.
+- Type 1 hypervisors run directly on hardware (ESXi, Hyper-V). Type 2 hypervisors run on a host OS (VirtualBox, VMware Workstation).
+- A VM boots its own guest kernel. A container shares its host's kernel, so it is smaller and starts faster but cannot bring a different kernel.
+- A host that tags several VLANs needs a trunk whose allowed list and native VLAN match it; a host with one untagged VLAN needs an access port.
+- A VRF is a separate routing table on one router. Overlapping prefixes can exist in different VRFs, a lookup never falls back to another table, and a VRF does not encrypt. VRF-lite is VRFs without MPLS.
+- Check a VRF with `show ip route vrf BLUE` and `ping vrf BLUE`. v1.1 asks you to explain VRFs, so treat the commands as reinforcement.
+- IaaS, PaaS and SaaS describe who manages what. Public, private, community and hybrid describe who uses the cloud.

@@ -1,32 +1,40 @@
 [
   {
     "id": "etherchannel-c01",
-    "front": "What does an EtherChannel combine?",
-    "back": "Compatible physical Ethernet links into one logical port-channel interface.",
+    "front": "What does an EtherChannel do?",
+    "back": "Bundles parallel Ethernet links into one logical port-channel interface, which STP treats as a single link.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "etherchannel-c29",
+    "front": "Which standard defines LACP, and who owns PAgP?",
+    "back": "LACP is IEEE 802.3ad, now maintained as 802.1AX. PAgP is Cisco-proprietary.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "etherchannel-c02",
-    "front": "Which LACP mode pairs can initiate a bundle?",
-    "back": "Active/active and active/passive. Passive/passive has no initiator. Modes describe negotiation, not primary/standby data forwarding.",
+    "front": "Which LACP mode pairs form a bundle?",
+    "back": "active/active and active/passive. passive/passive fails because neither end starts negotiation.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "etherchannel-c03",
-    "front": "What are PAgP’s two dynamic modes?",
-    "back": "Desirable initiates; auto responds. Desirable/desirable or desirable/auto can form compatible PAgP bundles. Auto/auto does not initiate. PAgP is separate from LACP.",
+    "front": "Which PAgP mode pairs form a bundle?",
+    "back": "desirable/desirable and desirable/auto. auto/auto fails because neither end starts negotiation.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "etherchannel-c04",
-    "front": "What does channel-group 1 mode on mean?",
-    "back": "Static aggregation without LACP or PAgP negotiation. Both ends need compatible static configuration. It is not a way to answer an LACP active peer.",
+    "front": "What does `channel-group 1 mode on` do?",
+    "back": "Bundles the port statically, with no LACP or PAgP. It works only if the other end is also `on`.",
     "tags": [
       "command",
       "concept"
@@ -34,50 +42,41 @@
   },
   {
     "id": "etherchannel-c07",
-    "front": "Why must Layer 2 bundle members share compatible VLAN treatment?",
-    "back": "Traffic can leave through any selected member. Access/trunk mode and the relevant access, native and allowed VLAN settings must be consistent with the logical bundle.",
+    "front": "What must match on every member of a Layer 2 EtherChannel?",
+    "back": "Speed, duplex, access or trunk mode, and VLAN settings: the access VLAN, or the native VLAN and allowed list.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "etherchannel-c22",
-    "front": "What must be checked before using LACP toward a server or appliance?",
-    "back": "Its actual teaming/bonding or virtual-switch implementation must support and use LACP. Verify VLAN treatment and a supported logical partner design. Two NICs or a generic teaming option does not establish LACP compatibility.",
+    "id": "etherchannel-c30",
+    "front": "How many links can one EtherChannel use on a Catalyst switch?",
+    "back": "8 active. LACP accepts 16 ports in a group: 8 active and 8 in hot standby.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "etherchannel-c08",
+    "front": "How do the channel-group numbers on the two switches relate?",
+    "back": "They are independent. The number is local, so Po1 on SW1 can bundle with Po5 on SW2.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "etherchannel-c21",
-    "front": "Where do you apply and verify shared trunk settings after forming a Layer 2 port channel?",
-    "back": "Configure the intended trunk policy on the logical port-channel interface and verify the resulting settings on every member and the far end. Do not leave one physical member with a different allowed or native VLAN setting.",
+    "front": "After a Layer 2 port channel forms, where do you change its trunk settings?",
+    "back": "On `interface port-channel <number>`. IOS applies the change to every member.",
     "tags": [
       "command",
       "troubleshoot"
     ]
   },
   {
-    "id": "etherchannel-c11",
-    "front": "Can one stable hash-selected flow use four 1-Gbps members as a 4-Gbps link?",
-    "back": "No. That flow selects one member, so its member-link ceiling is 1 Gbps before overhead. Several suitably distributed flows can use up to 4 Gbps aggregate capacity per direction.",
-    "tags": [
-      "concept",
-      "number"
-    ]
-  },
-  {
-    "id": "etherchannel-c10",
-    "front": "Which command displays the EtherChannel member-selection method on a supporting Catalyst image?",
-    "back": "`show etherchannel load-balance`. Inspect the actual supported method instead of assuming a universal default.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
     "id": "etherchannel-c09",
-    "front": "Where is the peer-link IP address configured in a routed EtherChannel?",
-    "back": "On the logical port-channel interface with no switchport. Members are also routed and do not have individual IP addresses. Create the routed logical interface before adding members in the documented 3560 workflow.",
+    "front": "Where does the IP address go on a Layer 3 EtherChannel?",
+    "back": "On the port-channel interface, after `no switchport`. The members are also `no switchport` and have no IP addresses.",
     "tags": [
       "command",
       "concept"
@@ -85,56 +84,89 @@
   },
   {
     "id": "etherchannel-c12",
-    "front": "What do S, R, and U mean in show etherchannel summary?",
-    "back": "S = Layer 2; R = Layer 3; U = in use. Read the legend supplied by the device and inspect the individual member flags as well.",
+    "front": "What do S, R and U mean beside Po1 in `show etherchannel summary`?",
+    "back": "S = Layer 2, R = Layer 3, U = in use. Po1(SU) is a working Layer 2 port channel.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "etherchannel-c13",
-    "front": "What does member flag P mean in show etherchannel summary?",
-    "back": "The member is bundled in the port channel. P does not mean LACP passive; inspect each intended member, not just the logical interface's U flag.",
+    "front": "What does (P) beside a member port mean in `show etherchannel summary`?",
+    "back": "The port is bundled in the port channel. It does not mean LACP passive.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "etherchannel-c31",
+    "front": "What do the member flags s, I and D mean in `show etherchannel summary`?",
+    "back": "s = suspended, I = stand-alone (not bundled), D = down.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "etherchannel-c14",
-    "front": "Which command shows the LACP partner learned on member links?",
-    "back": "`show lacp neighbor` on supporting IOS images. Compare system and port identities; use documented alternatives if the simulator omits the command.",
+    "front": "Which command shows the LACP partner on each member link?",
+    "back": "`show lacp neighbor`. Every member should list the same partner system ID.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "etherchannel-c11",
+    "front": "Four 1-Gbps links are bundled. What is the top speed of a single flow?",
+    "back": "1 Gbps. A flow hashes to one member; 4 Gbps is the total across many flows.",
+    "tags": [
+      "concept",
+      "number"
+    ]
+  },
+  {
+    "id": "etherchannel-c10",
+    "front": "Which commands show and change the EtherChannel load-balancing method?",
+    "back": "`show etherchannel load-balance` shows it. Global `port-channel load-balance <method>` changes it. The 2960 default is src-mac.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "etherchannel-c23",
-    "front": "Why can many sessions still concentrate on one member with source-MAC hashing?",
-    "back": "At this hop they may all use the same source MAC, such as a router interface. Repeated selected inputs can give the same member even when IP destinations differ. The chosen hash fields, not session count alone, control distribution.",
+    "front": "Why can src-mac load balancing put most traffic on one member?",
+    "back": "Frames routed by one upstream device all carry that device's source MAC, so they hash to the same member.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
+    "id": "etherchannel-c26",
+    "front": "Two switches use different load-balance methods on the same EtherChannel. What happens?",
+    "back": "The bundle works normally. Each switch chooses the outbound member only for the frames it sends.",
+    "tags": [
+      "verification"
+    ]
+  },
+  {
     "id": "etherchannel-c24",
-    "front": "Can one ordinary LACP bundle connect a host to two unrelated independent switches?",
-    "back": "Not as one assumed partner. A multi-device design needs explicitly supported technology that presents the required logical aggregation system. Do not configure arbitrary independent switches as if they were one partner.",
+    "front": "Where must the far ends of all links in one port channel terminate?",
+    "back": "On the same switch, or on switches that act as one logical device such as a stack. Two independent switches cannot share a bundle.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "etherchannel-c08",
-    "front": "Must the channel-group number match between endpoints?",
-    "back": "No. It identifies the local port channel. SW1 group 1 and SW2 group 5 can form a valid aggregate if their actual partner and member configuration are compatible.",
+    "id": "etherchannel-c22",
+    "front": "A server has two NICs cabled to one switch. When do the switch ports need an LACP port channel?",
+    "back": "Only when the server's NIC team is set to LACP. A switch-independent team uses ordinary separate ports.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "etherchannel-c25",
-    "front": "What happens when one of two 100-Mbps members fails?",
-    "back": "With a surviving member and no policy requiring more links, the bundle can remain in use with 100 Mbps aggregate capacity per direction instead of 200. Observe actual interruption; do not promise a fixed number of lost packets.",
+    "front": "One of two members in a port channel fails. What happens?",
+    "back": "The port channel stays up on the remaining member with half the capacity.",
     "tags": [
       "troubleshoot",
       "number"
@@ -142,42 +174,18 @@
   },
   {
     "id": "etherchannel-c17",
-    "front": "Po1 is in use but a member is suspended after a VLAN-list change. What next?",
-    "back": "Compare the logical interface and every local member, correct the intended trunk settings consistently, then verify the far end and the required VLAN traffic. Formation alone does not guarantee VLAN service.",
+    "front": "Po1 is SU, but one member shows (s) after a VLAN change. What is the likely cause?",
+    "back": "That member's trunk settings no longer match the bundle. Set the allowed list on the port-channel interface so all members agree.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "etherchannel-c20",
-    "front": "Po1 is SU with both members P, but VLAN 10 traffic fails. What should you check?",
-    "back": "Verify VLAN 10 exists, endpoint access VLANs and addresses are correct, and both port channels allow and forward the intended VLAN with consistent native VLAN settings. Formation does not prove the VLAN service.",
+    "front": "Po1 is SU with both members (P), but VLAN 10 fails across it. What do you check?",
+    "back": "That VLAN 10 exists on both switches and is allowed on both port-channel trunks. A formed bundle says nothing about VLANs.",
     "tags": [
       "troubleshoot"
-    ]
-  },
-  {
-    "id": "etherchannel-c26",
-    "front": "Must both ends use the same EtherChannel hash method?",
-    "back": "No. Each endpoint selects its own outbound member; compatible LACP formation does not require identical hash inputs.",
-    "tags": [
-      "verification"
-    ]
-  },
-  {
-    "id": "etherchannel-c27",
-    "front": "Does Po1(RU) prove that the peer's IP address and mask are correct?",
-    "back": "No. Formation and logical-interface state need separate IP addressing, connected-route and peer-reachability checks.",
-    "tags": [
-      "verification"
-    ]
-  },
-  {
-    "id": "etherchannel-c28",
-    "front": "What partner relationship should all members of this ordinary two-switch LACP bundle identify?",
-    "back": "The same intended remote system, through its different member ports.",
-    "tags": [
-      "verification"
     ]
   }
 ]

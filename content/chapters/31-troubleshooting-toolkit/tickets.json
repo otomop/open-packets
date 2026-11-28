@@ -31,8 +31,8 @@
     "answer": [
       2
     ],
-    "explanation": "R2's current shutdown configuration and administrative state identify the disabling of the transit. Enabling only R1 or changing masks cannot override R2's shutdown; the evidence does not yet justify replacing the cable. Restore the approved far-end state, then verify both ends, routes and the original client service.",
-    "fix": "```ios\nR2# configure terminal\nR2(config)# interface gigabitethernet0/1\nR2(config-if)# no shutdown\nR2(config-if)# end\nR2# show ip interface brief\n```\n\nCheck R1’s state and routes separately, test from the affected PC, and save after verification."
+    "explanation": "R2's interface is shut down, which takes the transit link down at both ends. Enabling R1 or changing masks cannot override R2's shutdown, and the evidence does not point to the cable.",
+    "fix": "```ios\nR2# configure terminal\nR2(config)# interface gigabitethernet0/1\nR2(config-if)# no shutdown\nR2(config-if)# end\nR2# show ip interface brief\n```\n\nCheck R1's state and routes, test from the affected PC, and save once it works."
   },
   {
     "id": "troubleshooting-toolkit-t02",
@@ -61,8 +61,8 @@
     "answer": [
       1
     ],
-    "explanation": "R2 can return toward the transit-source .99.1 over a connected route, but no listed prefix matches .10.1 or .10.50. Unlike the source-test result alone, the complete route evidence establishes this missing return route.",
-    "fix": "```ios\nR2# configure terminal\nR2(config)# ip route 10.0.10.0 255.255.255.0 10.0.99.1\nR2(config)# end\nR2# show ip route 10.0.10.50\n```\n\nOn R1 separately:\n```ios\nR1# ping 10.0.20.10 source 10.0.10.1\n```\nThen verify PC-A by address, name, and actual service before saving."
+    "explanation": "R2 can reach the transit source .99.1 over a connected route, but it has no route to .10.1 or .10.50. R2 therefore has no return route to the client subnet.",
+    "fix": "```ios\nR2# configure terminal\nR2(config)# ip route 10.0.10.0 255.255.255.0 10.0.99.1\nR2(config)# end\nR2# show ip route 10.0.10.50\n```\n\nOn R1 separately:\n```ios\nR1# ping 10.0.20.10 source 10.0.10.1\n```\nThen test PC-A by address, by name and with the real service before saving."
   },
   {
     "id": "troubleshooting-toolkit-t03",
@@ -96,7 +96,7 @@
     "answer": [
       0
     ],
-    "explanation": "The displayed settings directly establish a duplex mismatch. Correct the one deviating endpoint in this explicitly fixed-speed design, then compare fresh increments under a controlled transfer. This does not establish that every other aspect of the link is fault-free.",
-    "fix": "```ios\nSW1# configure terminal\nSW1(config)# interface fastethernet0/24\nSW1(config-if)# speed 100\nSW1(config-if)# duplex full\nSW1(config-if)# end\nSW1# show interfaces fastethernet0/24\n```\nPreserve previous counters, verify both endpoints, repeat a bounded transfer, and compare new errors before saving."
+    "explanation": "SW1 shows half duplex while R1 shows full, which is a duplex mismatch. Set SW1 to the fixed 100/full that the design requires, then compare fresh counter increments.",
+    "fix": "```ios\nSW1# configure terminal\nSW1(config)# interface fastethernet0/24\nSW1(config-if)# speed 100\nSW1(config-if)# duplex full\nSW1(config-if)# end\nSW1# show interfaces fastethernet0/24\n```\nKeep the old counters, verify both ends, repeat a transfer and compare new errors before saving."
   }
 ]

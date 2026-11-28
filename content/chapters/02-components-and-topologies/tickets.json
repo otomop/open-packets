@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The verified cable record gives A3 only one uplink, and it leads through A2. Local traffic on A3 can continue, but traffic toward the server network loses its path while A2 is off. This is a specific single-path dependency; it does not establish that every access-switch chain is forbidden or that an unused port is administratively shut down.",
-    "fix": "Record A3's dependency in the diagram and restore A2 to recover the existing path. Verify local and server tests again. For a planned improvement, connect A3 to the intended distribution/core layer using a reviewed design that supplies appropriate independent paths and forwarding configuration. Do not create extra Layer 2 links casually: later switching chapters explain loop prevention. After an approved redesign, update the port records and test each intended failure separately; two cables alone do not prove resilience."
+    "explanation": "A3 has one uplink, and it leads through A2. Local traffic on A3 continues, but traffic to the server network has no path while A2 is off.",
+    "fix": "Record A3’s single-path dependency and restore A2 to bring the existing path back. Retest local and server traffic. For a resilient design, connect A3 to the distribution/core layer with an independent path, but do not add Layer 2 links casually: loops need the spanning tree covered in Chapter 14. Test each failure separately after an approved redesign."
   },
   {
     "id": "components-and-topologies-t02",
@@ -57,7 +57,7 @@
     "answer": [
       2
     ],
-    "explanation": "The selected configuration explicitly disables power delivery. The supplied port compatibility and remaining budget meet the stated requirements, so those do not explain the failure here. A phone need not obtain an IP address before standards-based PoE can power it.",
-    "fix": "Record the disabled PoE setting and identify the two intended interfaces. On supported hardware, an authorized technician restores automatic power detection with power inline auto on each selected port, then inspects show power inline. Chapter 09 develops that configuration; this ticket assesses the device role and the evidence, not new syntax.\n\nVerify detection and an appropriate allocation for each phone, allow it to boot, and check its operation. The known-good test does not certify the original cable paths; inspect them separately if power still fails. This is supplied hardware evidence, not an executed Packet Tracer PoE test."
+    "explanation": "The port configuration disables PoE power delivery. Port compatibility and the remaining budget meet the requirements, and standards-based PoE does not wait for an IP address.",
+    "fix": "Record the disabled PoE setting for the two interfaces. On supported hardware, restore automatic detection with `power inline auto` on each port, then check `show power inline` for detection and allocation. Let each phone boot and test it. If power still fails, inspect the cable paths separately."
   }
 ]

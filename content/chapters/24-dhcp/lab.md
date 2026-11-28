@@ -6,7 +6,9 @@ minutes: 85
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build a remote DHCP service, obtain leases on a PC and an IOS router, and test a misplaced helper separately from an exhausted pool. Start with new devices and use console CLI tabs throughout. Answer `no` if the initial configuration dialog appears. These configurations were reviewed against Cisco documentation; they have not been executed in Packet Tracer during this audit. Output formatting, supported show commands, and retry timing can differ. For an unavailable show command, combine supported client/interface fields, server configuration and bindings. For unavailable packet details, draw the four message stages from the topology and label them predicted. If the model rejects DHCP server, relay or client configuration itself, complete that portion as a configuration-and-packet worksheet or use a licensed supporting lab image. Do not report an allocation you did not observe.
+You will build the lesson's design: clients on one subnet, a DHCP server on another, and a relay between them. A PC and a router each obtain a lease. Then you will cause the two faults that the exam asks about most, a helper address on the wrong interface and an exhausted pool, and see that they look the same from the client and different from the server.
+
+Start with new devices and use each device's CLI tab. Answer `no` if the initial configuration dialog appears. Packet Tracer does not support every IOS DHCP command. Where a step uses one it may reject, the step says so and tells you what to check instead.
 
 ## Topology
 
@@ -25,7 +27,7 @@ Build a remote DHCP service, obtain leases on a PC and an IOS router, and test a
 | R2 Gi0/0 | SW2 Gi0/2 | DHCP server |
 | DNS1 FastEthernet0 | SW2 Fa0/1 | Actual DNS service address advertised to clients |
 
-All listed cables are copper straight-through because each connects an end device/router to a switch. These are access links, not trunks. Leave PC-B and PC-C uncabled initially. Do not enable DHCP on R3 before step 5.
+Every cable is copper straight-through, because each joins a PC, server or router to a switch. All switch ports are access ports. Leave PC-B and PC-C uncabled for now, and do not configure R3 until Step 5.
 
 | Interface/device | Address and mask | Gateway/DNS |
 |---|---|---|
@@ -35,11 +37,11 @@ All listed cables are copper straight-through because each connects an end devic
 | DNS1 FastEthernet0 | 10.10.20.53 / 255.255.255.0 | Gateway 10.10.20.1; DNS 10.10.20.53 |
 | DHCP clients | Initially only 10.10.10.50–10.10.10.52 available | Gateway 10.10.10.1; DNS 10.10.20.53 |
 
-The three-address initial range is deliberate, so a fourth new client exposes exhaustion without generating hundreds of clients. The precise address assigned to each client is not predetermined.
+The pool starts with only three addresses so that a fourth client exhausts it in Step 8. Which of the three addresses each client receives does not matter.
 
 ## Step 1: Build the two subnets
 
-Cable the initially listed devices and explicitly prepare the access VLANs.
+Cable the devices, then put each switch port in its access VLAN. `service dhcp` on R1 is already the default; entering it makes the starting state explicit. If Packet Tracer rejects it, carry on.
 
 ```ios SW1
 Switch> enable
@@ -104,10 +106,10 @@ R2(config-if)# no shutdown
 R2(config-if)# end
 ```
 
-On DNS1, use Desktop → IP Configuration to enter the address, mask, gateway, and DNS value in the table. Under Services → DNS, turn the service On and add an A record named `portal.dhcp.example` with address `10.10.20.53`. Under Services → HTTP, turn HTTP On. As in Chapter 6, an A record maps a name to an IPv4 address. The client asks its configured DNS server for that mapping, then opens a separate HTTP connection to the returned address. Here one device provides both services. This single record supplies a controlled service test; chapter 25 teaches DNS diagnosis in depth.
+On DNS1, use Desktop → IP Configuration to enter the address, mask, gateway, and DNS value in the table. Under Services → DNS, turn the service On and add an A record named `portal.dhcp.example` with address `10.10.20.53`. Under Services → HTTP, turn HTTP On. As in Chapter 6, an A record maps a name to an IPv4 address. The client asks its DNS server for the address, then opens an HTTP connection to it. Here one device provides both services, which gives you a way to test the DNS setting that DHCP hands out. Chapter 25 covers DNS itself.
 
 :::expected
-R1's two interfaces and R2 Gi0/0 become operational. SW1's connected client ports belong to VLAN 10; SW2's service ports belong to VLAN 20. DNS1 has the stated static configuration. No helper is configured yet, and no client lease is expected.
+R1's two interfaces and R2 Gi0/0 are up/up. SW1's ports are in VLAN 10 and SW2's in VLAN 20. DNS1 has its static settings. There is no helper address yet, so no client can get a lease.
 :::
 
 ```state
@@ -116,7 +118,7 @@ R1's two interfaces and R2 Gi0/0 become operational. SW1's connected client port
 
 ## Step 2: Configure the server, small pool, and return route
 
-Before entering commands, calculate the remaining candidates after both inclusive exclusions. Write which relay address the server must reach when answering a remote client. Compare those predictions with the pool and routing checks below.
+R2 is the server, but it is not attached to the client subnet. Before entering the commands, work out two things: how many addresses the two exclusions leave in `10.10.10.0/24`, and which address R2 must be able to reach to answer a relayed client. If Packet Tracer rejects `lease 0 8 0`, skip that line; the pool then uses its default lease and nothing else in the lab changes.
 
 ```ios R2
 R2# configure terminal
@@ -146,7 +148,7 @@ R1# ping 10.10.20.53
 ```
 
 :::expected
-Both subnets and the return path are correct. A /24 has 254 ordinary host addresses. The exclusions cover 49 plus 202 addresses, leaving three candidates: .50, .51, .52. Bindings should be empty on these fresh devices. Pool counters and their headings vary; derive eligibility from the actual network and exclusions rather than demanding one exact display.
+A /24 has 254 host addresses. The exclusions remove 49 and 202 of them, which leaves three: .50, .51 and .52. R2 must reach `10.10.10.1`, R1's client-facing address, because that is where it sends its replies; the static route provides this and the ping to `10.10.10.1` succeeds. `show ip dhcp binding` is empty, and `show ip dhcp pool` shows pool USERS with no leased addresses.
 :::
 
 ```state
@@ -155,9 +157,9 @@ Both subnets and the return path are correct. A /24 has 254 ordinary host addres
 
 ## Step 3: Observe acquisition before the relay exists
 
-Predict whether R1 forwards the initial broadcast without a helper. Record R2's current bindings and supported message counters before the attempt, then compare afterward; counters need not start at zero.
+R1 has no helper address yet. Predict what happens to PC-A's Discover when it reaches R1.
 
-On PC-A, open Desktop → IP Configuration and select DHCP. In Simulation mode, filter for DHCP (some versions group this under DHCP/BOOTP), advance the events, and inspect the client's initial request. Use Realtime afterward. Do not configure a static client address to conceal the missing service.
+On PC-A, open Desktop → IP Configuration and select DHCP. To watch the Discover, switch to Simulation mode, filter for DHCP, and step through the events; then return to Realtime. Run the commands below on R1 and R2. `show ip dhcp server statistics` is missing from some Packet Tracer versions; skip it if it is rejected.
 
 ```ios R1
 R1# show ip interface gigabitethernet0/0
@@ -170,7 +172,7 @@ R2# show ip dhcp server statistics
 ```
 
 :::expected
-PC-A cannot complete remote allocation because its local broadcast has no relay on R1 Gi0/0. The server receives no corresponding relayed attempt. The PC may report DHCP failure or assign a link-local address; record what this image actually does. The expected fact is no valid pool lease, not a particular message or timeout length.
+PC-A gets no lease. Its Discover is a broadcast, and R1 does not forward broadcasts, so the message never leaves the client subnet. R1's `show ip interface gigabitethernet0/0` reports `Helper address is not set`, and R2 still has no bindings. After a short wait PC-A reports that DHCP failed and shows a `169.254.x.x` address.
 :::
 
 ```state
@@ -187,7 +189,7 @@ R1(config-if)# end
 R1# show ip interface gigabitethernet0/0
 ```
 
-Retry DHCP on PC-A. If necessary, select Static and then DHCP in its IP Configuration to start another acquisition attempt. Inspect its address, mask, gateway, and DNS fields. In its Command Prompt, ping `10.10.10.1` and `10.10.20.53`. Open Web Browser and test `http://10.10.20.53`, then `http://portal.dhcp.example`. This supplied one-record service checks whether the received gateway and resolver settings support the intended application; chapter 25 teaches record diagnosis.
+Retry DHCP on PC-A: select Static, then DHCP again, to start a new request. Read its address, mask, gateway and DNS fields. In its Command Prompt, ping `10.10.10.1` and `10.10.20.53`. Then open Web Browser and load `http://10.10.20.53`, which tests the gateway setting, and `http://portal.dhcp.example`, which also tests the DNS setting.
 
 ```ios R2
 R2# show ip dhcp binding
@@ -196,7 +198,7 @@ R2# show ip dhcp server statistics
 ```
 
 :::expected
-PC-A receives one address in .50–.52, mask /24, gateway 10.10.10.1, and DNS 10.10.20.53. The server binding matches its actual client identity. In a supported packet-detail view, the relayed request carries giaddr 10.10.10.1; reply delivery on the client link may be broadcast or unicast according to the flag/state. A packet on the server subnet is not expected to look identical to the client's original broadcast. If the simulator omits a field, use the lesson's protocol explanation as a paper observation, not a captured result.
+R1 now reports `Helper address is 10.10.20.2`. PC-A receives an address from .50 to .52 with mask 255.255.255.0, gateway 10.10.10.1 and DNS server 10.10.20.53. Both pings succeed and both pages load. R2 has one binding, and its client ID ends in PC-A's MAC address. If you step through the exchange in Simulation mode, the Discover that R1 sends to R2 is a unicast with giaddr 10.10.10.1.
 :::
 
 ```state
@@ -205,7 +207,7 @@ PC-A receives one address in .50–.52, mask /24, gateway 10.10.10.1, and DNS 10
 
 ## Step 5: Obtain the second lease on an IOS client
 
-R3 Gi0/0 is already cabled to SW1 Fa0/2. Configure it now. First calculate T1 and T2 for the explicit eight-hour lease if the server supplies no alternate timers; you do not need to wait for those events.
+R3 Gi0/0 is already cabled to SW1 Fa0/2. Make it a DHCP client. First calculate when T1 and T2 fall in an eight-hour lease; you do not need to wait for them.
 
 ```ios R3
 Router> enable
@@ -227,11 +229,11 @@ R2# show ip dhcp pool
 ```
 
 :::expected
-R3 receives a second distinct address in the range and reaches R1's local gateway. The Method field commonly identifies DHCP. If the image implements `show dhcp lease`, inspect the actual state and timers; if it does not, use the interface, server binding, and traffic evidence. Inspect any default route instead of assuming it exists with a fixed distance on every image. Save a working Packet Tracer checkpoint.
+R3 Gi0/0 receives a second address from the range, shown with `DHCP` in the Method column, and the ping to R1 succeeds. `show ip route` lists a default route through 10.10.10.1 with distance 254, written `[254/0]`. If Packet Tracer rejects `show dhcp lease`, use the interface address and R2's binding instead. R2 now has two bindings. Save the project.
 :::
 
 :::solution Timer check
-Eight hours × 0.5 gives T1 at four hours; eight hours × 0.875 gives T2 at seven hours. T1 attempts unicast renewal; T2 broadens to broadcast rebinding if needed. Expiry is the later stop condition. Observed timers can reflect supplied options or implementation behavior.
+Eight hours × 0.5 puts T1 at four hours, and eight hours × 0.875 puts T2 at seven hours. At T1 the client renews by unicast to its own server. At T2 it rebinds by broadcast to any server. At eight hours the lease expires.
 :::
 
 ```state
@@ -240,7 +242,7 @@ Eight hours × 0.5 gives T1 at four hours; eight hours × 0.875 gives T2 at seve
 
 ## Step 6: Move the helper to the wrong interface and observe a fresh client
 
-Use Save As to create an experiment copy. Verify PC-A's controlled page and unexpired lease first. Predict separately what happens to its ordinary traffic and to fresh PC-B's acquisition. Move the helper from the client interface to the server-facing interface on R1. Keep existing clients' leases; they are useful evidence that old connectivity can conceal a new-allocation failure.
+Use Save As to work in a copy. A common mistake is to put the helper address on the interface that faces the server. Make that mistake on purpose: move the helper from Gi0/0 to Gi0/1. Before you do, predict two things separately: what happens to PC-A, which already has a lease, and what happens to PC-B, which does not.
 
 ```ios R1
 R1# configure terminal
@@ -254,10 +256,10 @@ R1# show ip interface gigabitethernet0/0
 R1# show ip interface gigabitethernet0/1
 ```
 
-Connect fresh PC-B to SW1 Fa0/3 with a straight-through cable, select DHCP, and let it attempt acquisition. Repeat PC-A's gateway ping and controlled HTTP-by-address test while its lease remains valid. Leave the fault installed until you record both old-client and fresh-client results, R1's helper placement and R2's binding count.
+Connect PC-B to SW1 Fa0/3 with a straight-through cable and select DHCP. On PC-A, repeat the gateway ping and load `http://10.10.20.53`. Leave the fault in place until you have recorded both PCs' results, which interface holds the helper, and how many bindings R2 has.
 
 :::expected
-PC-B gets no valid pool lease even though one candidate remains. Its broadcasts arrive on Gi0/0, which no longer has the helper. Previously configured PC-A and R3 may still use their unexpired addresses; this does not prove the relay works. Record the incorrect helper placement and the fresh-client failure before recovery.
+PC-B gets no lease, although R2 still has one free address. Its broadcasts arrive on Gi0/0, which no longer has a helper address. PC-A and R3 keep working on the leases they already hold. That is why a working old client tells you nothing about the relay: only a new client has to broadcast.
 :::
 
 ```state
@@ -277,7 +279,7 @@ R1(config-if)# end
 R1# show ip interface gigabitethernet0/0
 ```
 
-Retry PC-B's DHCP acquisition and test its gateway and DNS1 address. Then inspect R2:
+Retry DHCP on PC-B, then ping its gateway and `10.10.20.53`. Then inspect R2:
 
 ```ios R2
 R2# show ip dhcp binding
@@ -285,7 +287,7 @@ R2# show ip dhcp pool
 ```
 
 :::expected
-There are now three distinct active allocations in the only three eligible addresses. Do not continue to the exhaustion test until PC-A, R3, and PC-B all have valid leases and the server records them. If a prior lease expired during a long interruption, reacquire and verify this baseline first.
+R2 has three bindings, one each for PC-A, R3 and PC-B, and they use all three available addresses. Do not continue until all three clients hold a lease.
 :::
 
 ```state
@@ -294,7 +296,7 @@ There are now three distinct active allocations in the only three eligible addre
 
 ## Step 8: Observe genuine pool exhaustion
 
-First calculate the free count from the exclusions and three active bindings, and record R2's available counters. Connect fresh PC-C to SW1 Fa0/4 using straight-through copper and select DHCP. Do not clear any existing client's binding or change exclusions yet.
+The relay now works, but the pool has three addresses and three clients. Predict what a fourth client will see. Connect PC-C to SW1 Fa0/4 with a straight-through cable and select DHCP. Do not clear any bindings or change the exclusions yet.
 
 ```ios R2
 R2# show ip dhcp pool
@@ -304,7 +306,7 @@ R2# show ip dhcp server statistics
 ```
 
 :::expected
-The fourth client cannot obtain a new address because the three eligible candidates are already allocated. The working relay alone cannot solve that capacity problem. Existing leases need not lose immediate connectivity. Confirm the three bindings and the exclusion arithmetic; do not diagnose exhaustion solely from a link-local client address or a Discover counter.
+PC-C gets no lease and falls back to a `169.254.x.x` address, exactly as PC-B did in Step 6. The cause is different: the Discover reaches R2 this time, but all three addresses are leased. The evidence is on the server, where `show ip dhcp binding` lists three leases and the exclusions leave only three addresses. `show ip dhcp conflict` is empty, so no address is being withheld. The other three clients keep working.
 :::
 
 ```state
@@ -313,7 +315,7 @@ The fourth client cannot obtain a new address because the three eligible candida
 
 ## Step 9: Expand the lab range and recover PC-C
 
-Before reading the command, choose the single exclusion that can be removed while preserving .1–.49 for infrastructure. Predict the expanded range and count. This recovery removes only the temporary upper exclusion.
+The fix is more addresses, not a cleared binding table. Decide which of the two exclusions you can remove while keeping .1–.49 for fixed devices, and how many addresses the pool will then have.
 
 ```ios R2
 R2# configure terminal
@@ -323,10 +325,10 @@ R2# show ip dhcp pool
 R2# show running-config
 ```
 
-Retry DHCP on PC-C and verify its parameters and pings to 10.10.10.1 and 10.10.20.53. Recheck server bindings.
+Retry DHCP on PC-C, check its settings, and ping 10.10.10.1 and 10.10.20.53. Then look at R2's bindings again.
 
 :::expected
-The potential dynamic range is now .50–.254, or 205 addresses before existing bindings/conflicts. PC-C receives a distinct available address. The existing clients keep their current valid addresses. No broad binding clear or address duplication was needed to demonstrate recovery.
+The pool now covers .50–.254, which is 205 addresses. PC-C receives one that no other client holds, and R2 lists four bindings. The first three clients keep their addresses.
 :::
 
 ```state
@@ -337,12 +339,10 @@ The potential dynamic range is now .50–.254, or 205 addresses before existing 
 
 On R1, R2, R3, SW1, and SW2, individually enter `copy running-config startup-config` from privileged EXEC. Complete each `Destination filename [startup-config]?` prompt with Enter before moving to the next device. Save the Packet Tracer project as `24-dhcp-complete.pkt`.
 
-Record each client's actual leased address, R1's client-facing helper, R2's network/exclusions/options, and R2's return route. Record any unavailable simulator commands separately from successful observations.
-
-Your evidence must show: (1) client settings correlated with a server binding, (2) wrong-helper failure while capacity remains, (3) correct-helper failure while capacity is exhausted, and (4) fresh allocation plus the controlled HTTP service after recovery. Identify the exact client and current request for each. Configuration alone does not establish these outcomes.
+In your notes, record each client's leased address, the interface that holds R1's helper address, R2's pool and exclusions, and R2's return route. You should be able to point to four results: a client's settings matching a server binding, a failed request with the helper on the wrong interface while addresses were free, a failed request with the helper correct and the pool full, and a successful lease and web page after the fix.
 
 :::expected
-The final state has the helper only on R1 Gi0/0, the wider intended dynamic range, four valid client allocations, and reachable DNS1. The project contains the server GUI configuration as well as the device configurations. Your record can explain why the two fault tests failed for different reasons.
+The helper address is on R1 Gi0/0 only, the pool covers .50–.254, four clients hold leases and DNS1 is reachable. You can explain why Steps 6 and 8 looked the same on the client and had different causes.
 :::
 
 ```state
@@ -351,12 +351,11 @@ The final state has the helper only on R1 Gi0/0, the wider intended dynamic rang
 
 ## Troubleshooting
 
-- No local link: inspect cable, port, power, and administrative state before DHCP settings.
-- Wrong or absent lease: check access VLAN, fresh versus renewing state, client-facing helper, and service dhcp.
-- Server sees the attempt but offers nothing: inspect pool selection, exclusions, bindings, conflicts, and security policy.
-- Server offers but client does not complete: verify the route to giaddr, reply delivery, snooping trust, and client state; counters alone do not select one cause.
-- Correct address but wrong gateway/DNS: inspect the corresponding pool option and the client's actual refreshed settings.
-- A snooping-enabled topology differs from this lab: inspect Option 82/giaddr and the deliberate trust policy taught in chapter 16. This fresh topology adds neither snooping nor Option 82 policy.
+- **A port or interface is down:** check the cable, the port and `no shutdown` before any DHCP setting.
+- **A client gets no lease:** check its access VLAN, then the helper address on R1 Gi0/0, then that neither router has `no service dhcp`.
+- **The request reaches R2 but no offer comes back:** check that the pool's `network` matches the client subnet, then the exclusions, the bindings and `show ip dhcp conflict`.
+- **R2 offers but the client never completes:** check R2's route to `10.10.10.0/24`. R2 replies to giaddr, `10.10.10.1`.
+- **The address is right but the gateway or DNS server is wrong:** correct `default-router` or `dns-server` in the pool, then renew the client.
 
 ## Challenge
 
@@ -364,10 +363,10 @@ Use Save As for a separate challenge copy. Add a Catalyst 2960-24TT named SW3 an
 
 Design and implement the remaining configuration. The new gateway is 10.10.30.1/24; only .50–.59 may be allocated in this subnet. Use an eight-hour lease and the existing DNS1 service at 10.10.20.53. Preserve USERS and the original clients.
 
-Before requesting PC-D's first lease, write its eligible range, expected giaddr and the server's required return route. Then prove the client's settings, matching binding and controlled page by address and name. Recheck an original client's page. If a needed feature is absent, submit both the per-device configuration and predicted evidence labeled unexecuted.
+Before PC-D requests a lease, write down its available range, the giaddr you expect in its relayed request, and the route R2 will need. Afterwards, confirm PC-D's settings and its binding on R2, and load the web page by address and by name. Check that an original client can still load the page.
 
 :::solution
-The new subnet needs its access VLAN, client-facing helper, matching pool and server return route. These commands preserve USERS.
+The new subnet needs four things: its access VLAN, a helper address on its gateway interface, a matching pool, and a route from the server back to it. None of these commands changes USERS.
 
 ```ios SW3
 Switch> enable
@@ -418,5 +417,5 @@ R2# show ip route 10.10.30.1
 
 On PC-D choose Desktop → IP Configuration → DHCP. Exclusions remove 49 + 195 = 244 of 254 host addresses, leaving ten candidates .50–.59. The client should receive /24, gateway 10.10.30.1 and DNS 10.10.20.53. The relayed request's expected giaddr is 10.10.30.1.
 
-Correlate PC-D's identity with its binding, ping 10.10.30.1 and 10.10.20.53, then browse to `http://portal.dhcp.example`. Original PC-A should still use its 10.10.10.x lease and load that page. Save the challenge copy after verification; the original completed project remains your recovery point.
+Find PC-D's binding on R2, ping 10.10.30.1 and 10.10.20.53 from PC-D, then browse to `http://portal.dhcp.example`. PC-A still uses its 10.10.10.x lease and loads the same page. Save the challenge copy.
 :::

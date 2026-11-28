@@ -2,175 +2,191 @@
   {
     "id": "ios-essentials-c01",
     "front": "What does the prompt R1(config-line)# identify?",
-    "back": "Line configuration mode, used for settings on the selected console or VTY lines. It is different from global configuration and privileged EXEC.",
+    "back": "Line configuration mode, reached with `line console 0` or `line vty 0 4`.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ios-essentials-c02",
-    "front": "How do `exit` and `end` differ in configuration mode?",
-    "back": "`exit` leaves the current configuration level; `end` returns to privileged EXEC.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
     "id": "ios-essentials-c03",
     "front": "Running configuration versus startup configuration?",
-    "back": "Running is the active configuration; startup is the saved configuration read during normal boot. Traditional IOS exposes startup configuration through NVRAM; storage details vary.",
+    "back": "Running-config is the active configuration, held in RAM. Startup-config is the saved copy in NVRAM, loaded at boot.",
     "tags": [
       "compare"
     ]
   },
   {
     "id": "ios-essentials-c04",
-    "front": "How do you save active changes for the next normal boot?",
-    "back": "`copy running-config startup-config`; `write memory` is a familiar alternative on supporting IOS devices.",
+    "front": "Which command saves the active configuration for the next boot?",
+    "back": "`copy running-config startup-config`.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "ios-essentials-c05",
-    "front": "How should you determine which VTY lines to protect?",
-    "back": "Inspect `show line`, VTY sections in the configuration, and contextual help. Apply the intended policy to every available range; do not assume a fixed count by device family.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "ios-essentials-c06",
-    "front": "What does `exec-timeout 5 0` configure?",
-    "back": "A five-minute idle EXEC timeout on the selected line. `exec-timeout 0 0` disables the idle timeout; choose settings deliberately.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "ios-essentials-c07",
-    "front": "`login` with a line password versus `login local`?",
-    "back": "The former uses a shared line password; `login local` checks the local username database. Create the account before making the line depend on it.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "ios-essentials-c08",
-    "front": "Enable secret and enable password at the same level: which is used?",
-    "back": "In the basic local enable configuration, the enable secret takes precedence. It is separate from the password used to log in to the line.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ios-essentials-c10",
-    "front": "Does `service password-encryption` secure Telnet?",
-    "back": "No. On traditional IOS it obscures applicable stored password fields with type 7. It does not encrypt the terminal session or upgrade an enable secret.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ios-essentials-c11",
-    "front": "Why does an SSH server need a host key?",
-    "back": "It supplies the server’s cryptographic identity for the protected session. A local username supplies authentication data; it does not create that host key.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ios-essentials-c14",
-    "front": "Which conventional TCP ports distinguish SSH and Telnet?",
-    "back": "SSH uses TCP 22; Telnet uses TCP 23. A port number is separate from the account and privilege used after connecting.",
+    "id": "ios-essentials-c31",
+    "front": "What are the default console port settings?",
+    "back": "9600 baud, 8 data bits, no parity, 1 stop bit, and no password.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ios-essentials-c15",
-    "front": "Does a direct serial console require a working IP interface?",
-    "back": "No. It is a separate local management path, but the correct cable/settings and configured authentication are still required.",
+    "front": "Which management path still works when a device has no usable IP address?",
+    "back": "The console port. It is out-of-band and needs no IP configuration.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ios-essentials-c17",
-    "front": "How do show ssh and show ip ssh differ?",
-    "back": "show ssh reports SSH-session information; show ip ssh reports server configuration/state. Supported fields vary by image.",
+    "id": "ios-essentials-c33",
+    "front": "In-band versus out-of-band management?",
+    "back": "In-band uses the network that carries user traffic. Out-of-band uses a separate path, such as the console or a dedicated management network.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "ios-essentials-c18",
-    "front": "Default local-user privilege and the effect of `privilege 15`?",
-    "back": "Default is 1. With basic local authentication, privilege 15 starts at privileged EXEC. `show privilege` verifies the current level.",
+    "id": "ios-essentials-c14",
+    "front": "Which ports do SSH and Telnet use?",
+    "back": "SSH: TCP 22. Telnet: TCP 23.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "ios-essentials-c20",
-    "front": "Which VTY command accepts SSH and excludes Telnet?",
-    "back": "`transport input ssh`. Apply and verify it on all intended VTY ranges.",
+    "id": "ios-essentials-c07",
+    "front": "`login` versus `login local` on a line?",
+    "back": "`login` asks for the line's shared `password`. `login local` asks for a username and password from the local user database.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ios-essentials-c08",
+    "front": "An enable secret and an enable password are both set. Which one works?",
+    "back": "The enable secret. The enable password is ignored while a secret exists.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ios-essentials-c18",
+    "front": "What is a local user's default privilege, and what does `privilege 15` change?",
+    "back": "The default is 1, user EXEC. With `privilege 15` the user logs in directly to privileged EXEC.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ios-essentials-c32",
+    "front": "What are password types 0, 5 and 7 in an IOS configuration?",
+    "back": "0: cleartext. 5: MD5 hash, produced by `secret`. 7: weak reversible encoding, produced by `service password-encryption`.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ios-essentials-c10",
+    "front": "What does `service password-encryption` do?",
+    "back": "It stores the configuration's cleartext passwords as type 7, which is easily reversed. It does not encrypt Telnet or any other session.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ios-essentials-c06",
+    "front": "What does `exec-timeout 5 0` configure?",
+    "back": "Idle sessions on that line end after 5 minutes 0 seconds. The default is 10 minutes; `0 0` disables the timeout.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "ios-essentials-c22",
-    "front": "What should an unexpected SSH host-key change prompt you to do?",
-    "back": "Verify the server identity through a trusted record or management process before accepting the change. A key warning is not fixed by blindly trusting a new key.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "ios-essentials-c23",
-    "front": "Does an enabled SSH server prove a user can log in?",
-    "back": "No. The IP path, compatible client/server algorithms, accepting VTY policy and valid authentication must also work. Test a new session.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
     "id": "ios-essentials-c24",
-    "front": "What does an IOS banner provide?",
-    "back": "An access notice or message. It does not authenticate the user; the chosen delimiter ends the text, and display timing can differ by protocol.",
+    "front": "What does `banner motd #text#` do?",
+    "back": "It shows the text to anyone who connects. The character after `motd` is a delimiter that starts and ends the text.",
     "tags": [
-      "concept"
+      "command"
     ]
   },
   {
     "id": "ios-essentials-c25",
-    "front": "Does the local domain used to generate an RSA key need a working DNS lookup?",
-    "back": "No. In the conventional workflow it supplies configured device identity data. This does not configure the client’s DNS or prove SSH reachability.",
+    "front": "Which two settings must exist before you generate RSA keys for SSH?",
+    "back": "A non-default hostname and `ip domain-name`. IOS names the key pair from them; no DNS server is needed.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ios-essentials-c26",
-    "front": "What should you inspect after saving a verified access policy?",
-    "back": "Inspect startup-config for the intended user and line settings, including every VTY range. A save should preserve the repaired policy, not the deliberate fault.",
+    "id": "ios-essentials-c29",
+    "front": "Which command generates the SSH host key?",
+    "back": "`crypto key generate rsa`, here with a 2048-bit modulus. SSHv2 needs at least 768 bits.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ios-essentials-c11",
+    "front": "Why does an SSH server need an RSA key pair?",
+    "back": "It is the server's host key. It identifies the server to clients and is needed before the SSH server will start.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ios-essentials-c30",
+    "front": "What does `SSH Enabled - version 1.99` mean, and how do you change it?",
+    "back": "The server accepts both SSHv1 and SSHv2. `ip ssh version 2` restricts it to version 2.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "ios-essentials-c27",
-    "front": "Does an existing SSH session verify a changed admission policy?",
-    "back": "No. Test a new session after the change and inspect every intended VTY range; an old session alone does not show that a new login is permitted.",
+    "id": "ios-essentials-c20",
+    "front": "Which VTY command accepts SSH and shuts out Telnet?",
+    "back": "`transport input ssh`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ios-essentials-c05",
+    "front": "Which VTY lines must you configure to make a device SSH-only?",
+    "back": "Every line it has. Ranges such as 0–4 and 5–15 hold separate settings; check with `line vty ?`.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "ios-essentials-c28",
-    "front": "How do you verify the next console login while preserving recovery access?",
-    "back": "Keep a separately proven management session available, log out at the console prompt, then start a new console login. Reopening the terminal window alone may retain the old session.",
+    "id": "ios-essentials-c17",
+    "front": "How do `show ip ssh` and `show ssh` differ?",
+    "back": "`show ip ssh` shows whether the SSH server is enabled and its version. `show ssh` lists the SSH sessions connected now.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ios-essentials-c34",
+    "front": "Which command lists who is logged in and on which line?",
+    "back": "`show users`. The Location column shows a remote user's IP address.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ios-essentials-c23",
+    "front": "`show ip ssh` reports SSH enabled, but new SSH sessions are refused. What do you check next?",
+    "back": "`transport input` on every VTY range. A line set to `telnet` or `none` refuses SSH even though the server runs.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ios-essentials-c22",
+    "front": "An SSH client warns that a known device's host key has changed. What do you do?",
+    "back": "Find out why before accepting it, for example a replaced device or regenerated keys. Otherwise you may be talking to the wrong server.",
     "tags": [
       "troubleshoot"
     ]

@@ -32,9 +32,11 @@ sources:
   - { title: "Cisco: Protecting device secrets", url: "https://www.cisco.com/c/en/us/about/trust-center/resilient-infrastructure/protecting-secrets.html" }
 ---
 
-## Separate identity, permission, and records
+In chapter 8 you gave one router a local username and told its VTY lines to use it. Now picture forty routers and switches, each with its own copy of every administrator's account. When someone joins, leaves or changes a password, you edit forty devices. Everyone has the same full access, and nothing records who changed what. Local accounts do not scale.
 
-Chapter 8 configured a local account and selected it on VTY lines; Chapter 32 explained why identity and least privilege matter. Chapter 29 also supplied local AAA for SCP. Here you will make those relationships explicit and add a central service, while keeping the console recovery path separate from remote administration.
+The answer is to keep the accounts on a central server and have every device ask that server when someone logs in. This chapter explains the three jobs such a server does (authentication, authorization and accounting), compares the two protocols a device can use to reach it (TACACS+ and RADIUS), and shows the IOS configuration. By the end you will be able to configure a router as a TACACS+ or RADIUS client, predict when it falls back to its local accounts, and keep a console path that still works when the server is down.
+
+## Separate identity, permission, and records
 
 :::facts
 - **Authentication** verifies an identity claim; **authorization** determines allowed access or actions; **accounting** records selected activity.
@@ -45,15 +47,17 @@ Chapter 8 configured a local account and selected it on VTY lines; Chapter 32 ex
 - Establish local recovery, bind the intended lists, and test new sessions before saving a management-access change.
 :::
 
-Morgan's SSH credentials are accepted by a router, but `configure terminal` is denied by central policy. Authentication succeeded; authorization denied the requested action. An accounting record describing that attempt serves a third purpose. These operations are related, but they are not interchangeable. Logging an action does not authorize it, and successful authentication does not promise privilege 15.
+AAA is three separate questions. **Authentication** asks who you are, and checks it with a username and password. **Authorization** asks what you are allowed to do: whether you get a shell, at which privilege level, and which commands you may run. **Accounting** records what you did: when you logged in and out and, if configured, each command.
+
+A single login shows all three. Morgan's SSH username and password are accepted by a router, but `configure terminal` is refused by central policy. Authentication succeeded and authorization denied the command. The server's log entry for the attempt is accounting. Passing one stage says nothing about the next: a correct password does not promise privilege 15.
 
 The v1.1 objective compares these concepts. The v2.0 objective additionally requires configuring devices with local usernames and as TACACS+/RADIUS management clients. That requires understanding the complete dependency chain: management transport, server reachability, client identity and shared key, server definition/group, login list, and line binding. Detailed enterprise policy design and a full identity-server deployment are beyond this chapter's scope.
 
 ## Local accounts versus a central server
 
-A local `username` entry can contain both a secret and a privilege level. It is therefore inaccurate to say that local accounts can express no authorization information. Local accounts are useful on a small lab and for controlled recovery. At scale, however, distributing account changes across many devices is difficult, and shared accounts reduce individual accountability.
+A local `username` entry holds a secret and a privilege level, so a device can authenticate and authorize by itself. That is enough for a small lab, and every device should keep one local account for recovery. Beyond that, each account change must be repeated on every device, and shared accounts hide who did what.
 
-A **central AAA server** provides a place to maintain identities and policies and receive supported records. Cisco ISE is one example with RADIUS and TACACS+ capabilities; features and licensing depend on the deployed product. The device still needs explicit configuration to request and record the intended operations. Installing a server does not automatically record every command or close every unused local account.
+A **central AAA server** holds the accounts and policies in one place and collects the accounting records. Cisco ISE (Identity Services Engine) is Cisco's AAA server and speaks both RADIUS and TACACS+. The server does nothing until each device is configured to use it.
 
 The network device is often called the **NAS**, network access server, in AAA terminology. The NAS sends the AAA request using its own IP source. That address can differ from the administrator's address in the SSH connection. A server's client definition must recognize the NAS source and use the matching shared key. This key protects the client/server relationship; it is different from the user's login password.
 
@@ -65,27 +69,28 @@ Plan for outages as well as normal service. A local recovery account needs a pro
 
 ## TACACS+ versus RADIUS
 
+A device can talk to the AAA server with either of two protocols. The exam expects you to know each row of this comparison.
+
 | Property | Classic TACACS+ | Conventional RADIUS/UDP |
 |---|---|---|
+| Origin | Developed by Cisco; now described in RFC 8907 | Open IETF standard (RFC 2865) |
 | Transport | TCP 49 | UDP 1812 and 1813; legacy pairs exist |
 | AAA organization | Separate exchanges | Access-Accept can carry authorization attributes; accounting is separate |
 | Common role | Device administration | Network access; can also authenticate device management |
 | Command control on referenced IOS | Supports per-command authorization/accounting | Does not supply TACACS+-style per-command authorization |
 | Protection scope | Body obfuscation; header remains visible | User-Password hiding in the ordinary password case; much other data is visible |
 
-**TACACS+** supports an authentication dialogue, followed by separate requests for authorization or accounting where configured. That separation permits a device to ask whether a particular administrator may issue a command. TCP provides reliable byte-stream delivery, but a working TCP connection is not proof that the shared key, account, or policy is correct.
+**TACACS+ keeps the three A's separate.** After the authentication dialogue, the device sends a separate authorization request whenever it needs a decision, and separate accounting records. Because authorization is its own exchange, the device can ask the server about each command an administrator types. That is why TACACS+ is the usual choice for administering network devices.
 
-Older comparisons call TACACS+ body protection “encryption.” RFC 8907 deliberately calls the classic MD5-based mechanism **obfuscation**, because it does not meet modern cryptographic protection expectations. The header is not hidden, and the protocol must be deployed on a protected management path. This distinction improves the familiar exam comparison without suggesting that TACACS+ is a replacement for SSH or a secure transport design. RFC 8907 is a published protocol specification on the Informational track, not a reason to label all TACACS+ protection modern encryption.
+**RADIUS combines authentication and authorization.** The device sends an **Access-Request** and the server answers with **Access-Accept**, **Access-Reject** or **Access-Challenge** (a request for more information). The authorization, such as a VLAN or a privilege level, rides inside the Access-Accept as attributes, so there is no later per-command check. Accounting is separate and uses its own port. RADIUS is the usual choice for network access: 802.1X on switch ports and wireless LANs, and VPN logins.
 
-RADIUS sends **Access-Request**, followed by **Access-Accept**, **Access-Reject**, or **Access-Challenge**. An Accept can carry attributes such as session restrictions; a Challenge continues the authentication exchange. RADIUS accounting uses Accounting-Request and Accounting-Response. Network access examples include 802.1X and VPN services, but the v2.0 task here is configuring a management client.
+**They protect different amounts of the packet.** The traditional comparison, and the one the exam uses, is that TACACS+ encrypts the entire body of each packet, leaving only the header readable, while RADIUS encrypts only the password and sends the username and other attributes in clear text. Neither is strong by modern standards: RFC 8907 calls the TACACS+ mechanism *obfuscation* because it is built on MD5. Run both over a protected management network.
 
-For the classic User-Password case, RADIUS hides that attribute using the shared secret; it does not encrypt the whole packet. Avoid “every other attribute is always clear” as a universal rule: other authentication methods, protected attributes, and secure-transport extensions exist. The practical comparison concerns the conventional versions used in this lab, not every later RADIUS deployment.
-
-Explicitly match the server's listening ports. The legacy IOS `radius-server host` form has documented historical defaults that can differ from a current service. A lab or appliance might use 1645/1646; another uses 1812/1813. Inspect and configure the values rather than using a delay as proof of a wrong port. A timeout is also compatible with routing, filtering, client-definition, or key problems.
+**The ports must match the server.** RADIUS was first deployed on UDP 1645 and 1646 and later assigned 1812 and 1813. The legacy IOS `radius-server host` command still defaults to 1645/1646, while most current servers listen on 1812/1813, so state the ports explicitly. A mismatch looks exactly like an unreachable server: the request times out.
 
 ## Enable AAA with a tested recovery path
 
-`aaa new-model` enables the IOS AAA framework and changes the authentication behavior available to lines. Cisco documents local authentication for non-console access with just this command on the referenced IOS behavior, but relying on implicit defaults is a poor rollout plan. Define exactly what the console and VTY lines should use. Do not assume console authentication and console authorization are the same setting.
+`aaa new-model` switches a device from the simple line commands (`login`, `login local`) to the AAA framework, where **method lists** decide how each line authenticates. It takes effect at once. With no lists defined, the VTY lines fall back to the local username database, so a device with no local user can lock you out the moment you enter the command. Decide what the console and the VTY lines should use, and configure both explicitly.
 
 Before enabling AAA, create a local administrative recovery account and enable secret, configure and test SSH, preserve a known working configuration, and keep a privileged console session open. The complete lab supplies these steps. Once AAA is enabled, make an explicit local default and a separate console list:
 
@@ -104,15 +109,13 @@ R1(config-line)# transport input ssh
 R1(config-line)# end
 ```
 
-A **named method list** applies where it is explicitly bound. `default` is used where the corresponding default applies and no overriding named list is selected. Inspect every existing VTY range; many devices show additional lines beyond 0–4. Apply the same intended binding and SSH transport to those lines too.
+A method list is an ordered list of places to check a login. The list named `default` applies to every line that has no other list bound to it. A **named** list, such as `CONSOLE` or `VTY-AUTH` here, applies only to the lines where `login authentication <name>` selects it. Many devices have VTY lines beyond 0–4; bind the list on those as well.
 
-Test a fresh local SSH login. To verify console reauthentication, keep the tested privileged SSH session open while closing and reopening the console session. This gives you a way to correct a mistyped console credential or binding. Merely leaving a preexisting console session open does not prove the next console login will work.
-
-Do not use a scheduled reload as a universal recovery guarantee. It can interrupt a network and restores only the actual saved state after a successful reboot. In this isolated exercise, a separately saved baseline and tested local console are the deliberate recovery mechanisms.
+Then test with new sessions. Open a fresh SSH login, and keep it open while you log out of the console and back in. A session that was already open before the change proves nothing, because it authenticated under the old rules. If the console login fails, the open SSH session lets you fix it.
 
 ## Servers and server groups
 
-A **server definition** specifies the address, shared key, and applicable protocol options. A **server group** identifies which definitions a method can use. On supporting IOS/IOS XE, the named TACACS+ form is:
+Pointing the device at the server takes two objects. A **server definition** gives the server's address, the shared key and, for RADIUS, the ports. A **server group** collects one or more definitions under a name that a method list can refer to. On current IOS and IOS XE, the TACACS+ form is:
 
 ```ios
 R1# configure terminal
@@ -144,7 +147,7 @@ These blocks illustrate two alternatives; they do not make a line use either ser
 
 With multiple interfaces, a supported `ip tacacs source-interface` or `ip radius source-interface` can make the client source predictable. That interface must exist, have the intended address, and be reachable from the service. The flat lab naturally uses R1's sole active LAN interface. In a routed deployment, explicitly check the source, routing instance, return route, firewall policy, and server client entry.
 
-Group behavior can include server availability state, timers, retries, and selection policy. If one server cannot complete the exchange, another eligible group member may be tried. An authoritative rejection is not a request to search for a server with a more permissive policy. Do not promise a fixed five-second login delay for all configurations.
+A group can hold several servers. If the first does not answer, the device tries the next one. If a server answers with a rejection, that answer is final and no other server is asked.
 
 ## Build and apply method lists
 
@@ -156,7 +159,7 @@ R1(config)# aaa authentication login VTY-AUTH group MGMT-TAC local
 R1(config)# end
 ```
 
-The **method order** expresses a policy. `group MGMT-TAC local` asks the group first and allows the local method when the group returns ERROR. A bad password or disabled account that produces FAIL ends authentication. ERROR means the method could not complete the decision; unreachable servers and exhausted timeouts are common examples, but a reachable service can also report an error. Thus ERROR is not simply another word for “the server is offline.”
+The order of methods is the policy, and the rule for moving from one method to the next is the most tested point in this chapter. `group MGMT-TAC local` asks the TACACS+ group first. The device moves on to `local` **only if the group gives no answer at all**, which IOS calls ERROR: the servers are unreachable, time out, or cannot process the request. If a server answers and rejects the login (FAIL), because the password is wrong or the user is unknown to it, authentication stops there and `local` is never consulted.
 
 | Current method result | Next action in this login list |
 |---|---|
@@ -186,7 +189,7 @@ Current attempt: central authentication rejected  ← a completed denial, not a 
 Local method selected: no  ← expected after FAIL
 ```
 
-A supported `show aaa servers`, `show tacacs`, or `show radius statistics` can reveal requests, responses, failures, and timeouts. Simulator output may be less detailed. `test aaa group` can issue an actual authentication test on supporting software; its syntax and supported protocols vary. Cisco demonstrates a named TACACS+ group with the `legacy` form on CML IOL, while some IOS command references explicitly limit the command to RADIUS. Do not assume the CML example works on a Packet Tracer 2911. It also places a test password in command input, so use only a dedicated lab account and avoid exposing real secrets in notes. A successful direct test does not prove that VTY lines select that group.
+`show aaa servers`, `show tacacs` and `show radius statistics` count requests, responses, failures and timeouts; Packet Tracer shows less detail than real IOS. If a counter does not move when you log in, the line is not using that server. On real IOS, `test aaa group <group> <user> <password> legacy` sends a test authentication without opening a session, though not every platform supports it for TACACS+. It puts the password on the command line, so use a lab account, and remember that it tests the server, not the line binding.
 
 If login succeeds but the shell is denied, inspect EXEC authorization separately. If local VTY login works immediately and no server requests occur, a local-only list or wrong binding is a strong candidate; cached availability policy can also affect delay, so verify the configuration. If the server reports a rejection, correct the account/policy rather than changing routing without evidence.
 
@@ -194,8 +197,9 @@ A focused authentication debug can help on supporting images, but stop it with `
 
 ## Exam focus
 
-- Compare the three AAA functions and the roles of client, server, user secret, and shared key.
-- Know conventional protocol ports and qualified protection differences.
-- Build server definitions/groups, method lists, and VTY bindings; local accounts also need deliberate privileges.
-- Distinguish FAIL from ERROR and authentication from EXEC authorization.
-- Test TACACS+ and RADIUS management access, console recovery, and the actual selected method.
+- Authentication: who you are. Authorization: what you may do. Accounting: what you did.
+- TACACS+: Cisco-developed, TCP 49, separates authentication, authorization and accounting, encrypts the whole packet body, supports per-command authorization, used for device administration.
+- RADIUS: open standard, UDP 1812 (authentication and authorization together) and 1813 (accounting), legacy 1645/1646, encrypts only the password, used for network access such as 802.1X.
+- The router or switch is the AAA client (NAS). Its shared key with the server is not a user password.
+- `aaa new-model` enables AAA. A method list is built with `aaa authentication login` and bound to a line with `login authentication`.
+- In `group tacacs+ local`, the local database is used only when no server answers. A rejection from the server is final.

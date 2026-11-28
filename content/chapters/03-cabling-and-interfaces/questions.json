@@ -18,11 +18,11 @@
     "answer": [
       2
     ],
-    "explanation": "Single-mode fiber has a smaller core and is commonly used by longer-distance optical systems. Reach depends on the compatible module-and-fiber design, not the core description alone.",
+    "explanation": "Single-mode fiber has the smaller core and is the usual choice for long links. Actual reach depends on the module and fiber pairing.",
     "whyWrong": {
-      "0": "A larger core does not mean longer reach; multimode light paths can limit supported distance.",
-      "1": "Matching connectors do not establish fiber and optical-standard compatibility.",
-      "3": "Use cable markings and verified specifications; color alone is insufficient."
+      "0": "A larger core does not extend reach; multimode light paths limit distance.",
+      "1": "A matching connector does not make the fiber type and optics compatible.",
+      "3": "Jacket color does not establish a fiber’s speed or reach; use the verified specification."
     }
   },
   {
@@ -34,7 +34,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "An office plans 90 m of installed cable plus 10 m of patch leads for supported 10GBASE-T switch ports. Which category supports that full 100 m channel?",
+    "prompt": "An office plans 90 m of installed cable plus 10 m of patch leads for 10GBASE-T switch ports. Which category supports the full 100 m channel?",
     "options": [
       "Cat6A",
       "Cat6 for an unspecified installation",
@@ -44,11 +44,11 @@
     "answer": [
       0
     ],
-    "explanation": "Cat6A supports a 100 m 10GBASE-T channel on suitable interfaces. The permanent link and patch leads together consume the channel distance, and actual module reach must still be checked.",
+    "explanation": "Cat6A supports 10GBASE-T over a full 100 m channel. The permanent link and patch leads together count toward the 100 m.",
     "whyWrong": {
-      "1": "Cat6 does not guarantee the same full 100 m 10GBASE-T channel requirement.",
-      "2": "A category sufficient for 100BASE-TX is not the specified full-distance 10GBASE-T choice.",
-      "3": "Cat5e is a normal 1 Gbps choice but does not meet this full-distance 10 Gbps requirement."
+      "1": "Cat6 carries 10GBASE-T only to about 55 m.",
+      "2": "Cat5 rated for 100BASE-TX is not a 10GBASE-T cable.",
+      "3": "Cat5e is the normal 1 Gbps choice and does not carry 10GBASE-T."
     }
   },
   {
@@ -70,11 +70,11 @@
     "answer": [
       2
     ],
-    "explanation": "A conventional 10/100 crossover swaps the pair using pins 1–2 with the pair using pins 3–6. This connects the intended transmit and receive arrangements where crossover wiring is required.",
+    "explanation": "A conventional 10/100 crossover swaps pins 1 and 2 with pins 3 and 6, so each end’s transmit pair meets the other end’s receive pair.",
     "whyWrong": {
-      "0": "Reversing all pins describes a rollover arrangement used by some serial console cables.",
-      "1": "Exchanging conductors within each pair is not the required transmit/receive pair crossover.",
-      "3": "Keeping each pin number unchanged describes a straight-through cable."
+      "0": "Reversing all eight pins describes a rollover cable.",
+      "1": "Swapping conductors within a pair is not a transmit/receive crossover.",
+      "3": "The same pin at both ends describes a straight-through cable."
     }
   },
   {
@@ -96,11 +96,11 @@
     "answer": [
       3
     ],
-    "explanation": "The switch's `show interfaces status` command provides the compact port overview. Use the detailed interface command for the named port's counters or physical and line-protocol state.",
+    "explanation": "`show interfaces status` gives one line per port with status, VLAN, duplex, speed and media type. Use `show interfaces <port>` for one port’s counters and state.",
     "whyWrong": {
-      "0": "The routing table does not provide the requested switch-port status columns.",
-      "1": "The running configuration shows configured commands rather than this operational table.",
-      "2": "PoE status describes electrical power allocation rather than the requested Ethernet state."
+      "0": "The routing table has no switch-port status columns.",
+      "1": "The running configuration shows configured commands, not operational state.",
+      "2": "`show power inline` shows PoE allocation, not Ethernet port state."
     }
   },
   {
@@ -122,11 +122,11 @@
     "answer": [
       3
     ],
-    "explanation": "A late collision occurs later than the allowed collision-detection window. Investigate duplex agreement and physical or hardware conditions; it does not independently prove one specific defect.",
+    "explanation": "A late collision is a collision detected after the allowed collision window. Check duplex agreement and the physical path.",
     "whyWrong": {
-      "0": "Egress queuing and collision timing describe different mechanisms.",
-      "1": "An FCS failure is received-frame corruption, not the definition of a late collision.",
-      "2": "Autonegotiation capabilities do not define this collision counter."
+      "0": "Output queuing is a different mechanism from collision timing.",
+      "1": "A failed FCS check is received-frame corruption, counted as a CRC error.",
+      "2": "Autonegotiation capabilities do not define the late-collision counter."
     }
   },
   {
@@ -150,11 +150,11 @@
       1,
       3
     ],
-    "explanation": "Two switch MDI-X ports need a crossover, as do a PC and router whose ports both use MDI. PC, server and router connections to a switch use unlike arrangements and therefore straight-through wiring in this stated case.",
+    "explanation": "Like devices (switch to switch, PC to router) use the same MDI arrangement and need a crossover. Unlike devices (PC, server or router to switch) use straight-through.",
     "whyWrong": {
-      "0": "A PC-to-switch connection pairs MDI with MDI-X, so straight-through is appropriate.",
-      "2": "A router-to-switch connection pairs MDI with MDI-X.",
-      "4": "A server-to-switch connection uses straight-through under the stated assumptions."
+      "0": "A PC pairs MDI with the switch’s MDI-X, so straight-through is correct.",
+      "2": "A router Ethernet port pairs MDI with the switch’s MDI-X.",
+      "4": "A server pairs MDI with the switch’s MDI-X, so straight-through is correct."
     }
   },
   {
@@ -249,11 +249,11 @@
     "answer": [
       3
     ],
-    "explanation": "Each of the switch's three connected ports separates an Ethernet segment, giving three collision domains. The two PCs behind HUB1 share one of those segments, and all devices remain in one VLAN and therefore one broadcast domain.",
+    "explanation": "Each connected switch port is its own collision domain, so there are three. The two PCs on HUB1 share one of them, and all ports are in one VLAN, so there is one broadcast domain.",
     "whyWrong": {
-      "0": "The switch separates the segments; one VLAN does not create three broadcast domains.",
-      "1": "The two PCs attached to the hub share one collision domain rather than having one each.",
-      "2": "Switch ports do not create separate broadcast domains when they share the same VLAN."
+      "0": "One VLAN is one broadcast domain, whatever the number of segments.",
+      "1": "The two PCs on the hub share one collision domain, which gives three, not four.",
+      "2": "Ports in the same VLAN do not make separate broadcast domains."
     }
   },
   {
@@ -275,11 +275,11 @@
     "answer": [
       0
     ],
-    "explanation": "The 350 m path exceeds the supplied OM3 reach but is within the 400 m OM4 specification. Module compatibility and the actual fiber path still need verification.",
+    "explanation": "350 m exceeds the 300 m OM3 reach but is within the 400 m OM4 reach. OM4 multimode meets the distance.",
     "whyWrong": {
-      "1": "Matching modules do not extend OM3 beyond the stated 300 m reach.",
-      "2": "SR is specified here for multimode fiber; a different fiber type is not automatically supported.",
-      "3": "SR is optical, and this distance exceeds the normal copper channel limit."
+      "1": "Matching SR modules do not extend OM3 beyond 300 m.",
+      "2": "SR is specified here for multimode fiber, not single-mode.",
+      "3": "SR is optical, and 350 m exceeds the 100 m copper channel limit."
     }
   },
   {
@@ -301,11 +301,11 @@
     "answer": [
       0
     ],
-    "explanation": "A duplex optical link requires each transmitter to connect to the other end's receiver. The documented arrangement is a polarity fault; correct the physical path, then verify light levels and link state.",
+    "explanation": "On a duplex optical link each transmitter must connect to the far end’s receiver. Tx-to-Tx is a polarity fault, so swap the strands.",
     "whyWrong": {
-      "1": "The modules are stated to be compatible; substituting a different standard does not correct the strand mapping.",
-      "2": "Cleaning is useful maintenance but does not correct a documented Tx-to-Tx connection.",
-      "3": "A local loopback does not establish communication between the two switches."
+      "1": "The modules are already compatible, so changing the standard does not fix the strand mapping.",
+      "2": "Cleaning does not correct a Tx-to-Tx connection.",
+      "3": "A local loopback gives no communication between the two switches."
     }
   },
   {
@@ -322,7 +322,7 @@
       "title": "Supplied optical measurements — teaching example",
       "text": "Receive power: -16.0 dBm\nAcceptable range for this exercise: -12.0 to -1.0 dBm\nLink state: down"
     },
-    "prompt": "The optical receiver's supplied acceptable range is −12 through −1 dBm. What conclusion is supported by a receive reading of −16 dBm?",
+    "prompt": "The optical receiver’s acceptable range is −12 through −1 dBm. What does a receive reading of −16 dBm show?",
     "options": [
       "The signal exceeds the receiver's upper power limit.",
       "The receive power is below the supplied lower limit.",
@@ -332,11 +332,11 @@
     "answer": [
       1
     ],
-    "explanation": "−16 dBm is less received power than the −12 dBm lower limit. Investigate the optical path and far-end transmitter; the receive value alone does not isolate the cause.",
+    "explanation": "−16 dBm is below the −12 dBm lower limit, so the receiver gets too little light. The reading alone does not say whether the cause is the fiber, connectors or the far transmitter.",
     "whyWrong": {
-      "0": "A value above −1 dBm would exceed the supplied upper limit.",
-      "2": "Polarity, distance, connectors, incompatible modules or a transmitter fault can contribute.",
-      "3": "A receive reading at one end does not establish the health of both transmitters."
+      "0": "A reading above −1 dBm would exceed the upper limit.",
+      "2": "Polarity, distance, connectors, mismatched modules or a weak transmitter can all cause low power.",
+      "3": "One receive reading does not show that both transmitters are healthy."
     }
   },
   {
@@ -362,11 +362,11 @@
     "answer": [
       3
     ],
-    "explanation": "SW1’s configuration and administrative state identify the local shutdown. SW2 loses its link when its peer is disabled, even though SW2 remains administratively enabled. Restore the intended SW1 setting and retest before claiming an additional failure.",
+    "explanation": "SW1 is administratively shut down, which explains the local down state. SW2 loses link because its peer is disabled, although SW2 itself is enabled.",
     "whyWrong": {
-      "0": "Only SW1 has the shutdown setting in the supplied configuration.",
-      "1": "A down far end is consistent with SW1’s shutdown; it does not prove a separate cable defect.",
-      "2": "The intended working design enables both ports; disabling the other end would not restore communication."
+      "0": "Only SW1 has the shutdown command.",
+      "1": "A down far end is what SW1’s shutdown produces; it does not show a cable defect.",
+      "2": "The design enables both ports, and shutting down SW2 would not restore the link."
     }
   },
   {
@@ -392,11 +392,11 @@
     "answer": [
       1
     ],
-    "explanation": "The appliance is full duplex while the switch displays half duplex, so their operational settings disagree. In this 10/100 case, an automatic end can detect the forced end's speed without learning its duplex.",
+    "explanation": "The appliance is full duplex while the switch shows a-half, so the operational duplex settings disagree. On 10/100, an auto end detects a forced end’s speed but not its duplex, so it falls back to half.",
     "whyWrong": {
-      "0": "The switch explicitly reports half duplex; its duplex is not unknown in this output.",
-      "2": "The a-half value says half duplex was selected automatically; it does not mean full duplex.",
-      "3": "A link can remain connected despite a duplex mismatch."
+      "0": "The switch explicitly reports half duplex.",
+      "2": "The a- prefix means the setting was negotiated automatically, and here the result is half duplex.",
+      "3": "A link can show connected even with a duplex mismatch."
     }
   },
   {
@@ -420,11 +420,11 @@
       0,
       1
     ],
-    "explanation": "The half-duplex end applies collision handling while the full-duplex peer does not. Collisions and late collisions can result; compare the two duplex settings because counters alone do not exclude cable or hardware faults.",
+    "explanation": "The half-duplex end uses collision detection while the full-duplex peer transmits freely. Collisions and late collisions therefore increase under simultaneous traffic.",
     "whyWrong": {
-      "2": "A CRC counter records received-frame corruption; it does not locate a particular cable segment.",
-      "3": "Output drops commonly relate to egress queuing, not a remote collision count.",
-      "4": "Repair stops a cause; historical totals do not automatically decrease."
+      "2": "CRC errors count corrupted received frames and do not locate a cable segment.",
+      "3": "Output drops relate to egress queuing, not collisions at the far end.",
+      "4": "Fixing the duplex stops new collisions, but existing counter totals do not fall."
     }
   },
   {
@@ -446,11 +446,11 @@
     "answer": [
       1
     ],
-    "explanation": "Returning both supported ends to automatic settings lets them agree on compatible speed and duplex. Verify the result and traffic afterward; matching manual settings at both ends are another deliberate option where required.",
+    "explanation": "Setting both ends to auto lets them negotiate matching speed and duplex. Setting both manually to matching values also works.",
     "whyWrong": {
-      "0": "The confirmed interface-setting disagreement still requires correction.",
-      "2": "Restoring only one attribute can leave inconsistent duplex behavior; use a coordinated configuration.",
-      "3": "Clearing counters does not correct the opposing operational duplex settings."
+      "0": "The duplex disagreement is on the link and needs correcting.",
+      "2": "Fixing only the speed leaves the duplex forced, so the mismatch can remain.",
+      "3": "Clearing counters does not change the settings."
     }
   },
   {
@@ -476,11 +476,11 @@
     "answer": [
       2
     ],
-    "explanation": "The port is operational again, but the intended outcome is communication with a working printer. Retest reachability and the actual service from the affected client, then preserve the verified configuration.",
+    "explanation": "Link up/up shows the port works, but the goal is a working printer. Retest reachability and a real print request, then save the verified configuration.",
     "whyWrong": {
-      "0": "Link state is necessary evidence but does not test a printer’s application.",
-      "1": "Command acceptance and saving do not establish that the service is available.",
-      "3": "Resetting counters neither tests nor repairs application service."
+      "0": "Link state is necessary evidence but does not test the printing service.",
+      "1": "An accepted command and a save do not show the service is available.",
+      "3": "Clearing counters neither tests nor repairs the service."
     }
   },
   {
@@ -506,11 +506,115 @@
     "answer": [
       2
     ],
-    "explanation": "Rising CRC errors establish that received frames are failing their error check. With the documented speed and duplex agreement, investigate the physical path and endpoint hardware while collecting far-end evidence; the counter does not identify one unique failed component.",
+    "explanation": "Rising CRC errors mean received frames are failing the error check even though speed and duplex match. Test the cable path and compare the far end’s error counters.",
     "whyWrong": {
-      "0": "Clearing a total removes evidence without correcting whatever caused the errors.",
-      "1": "A cable fault is possible, but the displayed counter does not prove that one component is the cause.",
-      "3": "Full-duplex agreement does not make received-frame corruption acceptable."
+      "0": "Clearing a counter removes evidence and repairs nothing.",
+      "1": "A cable fault is likely, but the counter alone does not prove which component is bad.",
+      "3": "Matching duplex does not make corrupted frames acceptable."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q18",
+    "type": "single",
+    "objectives": [
+      "v1:1.3",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How many wire pairs does 1000BASE-T use?",
+    "options": [
+      "One pair",
+      "Two pairs",
+      "Three pairs",
+      "Four pairs"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "1000BASE-T uses all four pairs. 100BASE-TX uses only two.",
+    "whyWrong": {
+      "0": "No twisted-pair Ethernet standard in this chapter uses a single pair.",
+      "1": "Two pairs is 100BASE-TX.",
+      "2": "No standard here uses three pairs."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q19",
+    "type": "single",
+    "objectives": [
+      "v1:1.3",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Roughly how far does Cat6 carry 10GBASE-T?",
+    "options": [
+      "About 55 m",
+      "About 100 m",
+      "About 150 m",
+      "About 300 m"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Cat6 carries 10GBASE-T only to about 55 m. Cat6A is needed for a full 100 m channel.",
+    "whyWrong": {
+      "1": "100 m is the 10GBASE-T channel length on Cat6A.",
+      "2": "150 m exceeds the twisted-pair channel limit.",
+      "3": "300 m is an OM3 fiber reach, not copper."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q20",
+    "type": "single",
+    "objectives": [
+      "v1:1.4",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the normal collision behavior on a full-duplex Ethernet link?",
+    "options": [
+      "No collisions occur",
+      "Collisions occur only on 1 Gbps links",
+      "Collisions occur whenever both ends send",
+      "Collisions occur once per frame"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "On a full-duplex link, normal operation has no collisions, because each direction has its own path.",
+    "whyWrong": {
+      "1": "Link speed does not cause collisions on a full-duplex link.",
+      "2": "Full duplex lets both ends send at once without colliding.",
+      "3": "Collisions are not part of normal frame transmission."
+    }
+  },
+  {
+    "id": "cabling-and-interfaces-q21",
+    "type": "single",
+    "objectives": [
+      "v1:1.3",
+      "v2:1.1"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the normal minimum copper category for new 1 Gbps cabling?",
+    "options": [
+      "Cat5",
+      "Cat5e",
+      "Cat3",
+      "Cat6A"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cat5e is the normal minimum choice for new 1 Gbps cabling.",
+    "whyWrong": {
+      "0": "Cat5 is rated for 100BASE-TX.",
+      "2": "Cat3 is far below what Gigabit Ethernet needs.",
+      "3": "Cat6A works but is not the minimum; it is needed for full-distance 10GBASE-T."
     }
   }
 ]

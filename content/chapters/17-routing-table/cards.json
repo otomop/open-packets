@@ -1,104 +1,72 @@
 [
   {
     "id": "routing-table-c01",
-    "front": "What is the order of the two values in [110/20]?",
-    "back": "Administrative distance first, metric second. In an OSPF entry, 20 is a cost rather than necessarily a hop count.",
+    "front": "In `[110/20]`, which number is which?",
+    "back": "110 is the administrative distance; 20 is the metric (here an OSPF cost).",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c02",
-    "front": "What are the default ADs for connected and static routes?",
-    "back": "Connected 0; ordinary static 1. A configured static distance can override its default.",
+    "front": "What are the default administrative distances of connected and static routes?",
+    "back": "Connected 0; static 1.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c03",
-    "front": "What are the common internal and external EIGRP ADs?",
-    "back": "Internal EIGRP 90; external EIGRP 170. Recognize them in route exhibits; EIGRP configuration is outside this chapter.",
+    "front": "What are the default ADs of internal and external EIGRP?",
+    "back": "Internal EIGRP 90; external EIGRP 170.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c04",
-    "front": "What are the OSPF and RIP AD defaults?",
-    "back": "OSPF 110; RIP 120. If both offer the same eligible prefix, OSPF is preferred by distance, not by comparing cost to hops.",
+    "front": "What are the default ADs of OSPF and RIP?",
+    "back": "OSPF 110; RIP 120.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c28",
+    "front": "What are the default ADs of external and internal BGP?",
+    "back": "External BGP 20; internal BGP 200.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c06",
-    "front": "What does administrative distance 255 mean?",
-    "back": "The route is not usable for installation. Do not treat it as a usable last-resort backup distance.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c07",
-    "front": "What does L identify in an IPv4 routing table?",
-    "back": "A local router address, commonly a /32 for an ordinary IPv4 interface. It distinguishes delivery to the router from forwarding to another host on the connected subnet.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c10",
-    "front": "How is an installed route chosen for a packet destination?",
-    "back": "Find every prefix containing the address, then select the longest matching prefix. Read its action: next hop, local delivery or discard.",
+    "front": "What does an administrative distance of 255 mean?",
+    "back": "The source is not trusted at all; the route is never installed.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c11",
-    "front": "When does administrative distance compare route sources?",
-    "back": "When eligible sources offer the same destination prefix and length. It does not override longest prefix match between different installed prefixes.",
+    "front": "When does a router compare administrative distance?",
+    "back": "Only when different sources offer the same prefix and prefix length. The lowest AD is installed.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c12",
-    "front": "What selects paths within a routing protocol?",
-    "back": "That protocol's route-selection rules, including its metric. In a simple single-area OSPF comparison, lower cost is preferred; do not generalize this into every protocol's complete algorithm.",
+    "front": "What chooses between two paths to the same prefix inside one routing protocol?",
+    "back": "The protocol's metric; the lowest wins. OSPF uses cost, RIP uses hop count.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c13",
-    "front": "Why not compare an OSPF cost of 20 directly with RIP’s two hops?",
-    "back": "They measure paths in different units. For the same eligible prefix, compare source preference using administrative distance; use each protocol’s rules within that protocol.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c14",
-    "front": "What happens with no matching route and no default?",
-    "back": "Ordinary routed unicast is discarded. ICMP feedback may be generated subject to configuration and limits; silence does not prove the packet was not dropped.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c15",
-    "front": "What does the asterisk mean alongside a route code?",
-    "back": "It marks a candidate default. In S*, S is still the static source; inspect the actual prefix and gateway-of-last-resort information.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c16",
-    "front": "Does 'S ... is directly connected, Null0' mean a connected route?",
-    "back": "No. S identifies a static source and Null0 a discard action. Read detailed output or configuration for the distance; omitted brackets alone do not establish it.",
+    "front": "Why is an OSPF cost of 20 never compared with RIP's 2 hops?",
+    "back": "They are different units. Between protocols the router compares AD: OSPF 110 beats RIP 120.",
     "tags": [
       "concept"
     ]
@@ -106,71 +74,135 @@
   {
     "id": "routing-table-c17",
     "front": "What is a floating static route?",
-    "back": "A static candidate with a higher AD than the intended primary source for the same prefix. It can be configured but inactive, and needs valid resolution before it can take over.",
+    "back": "A static route given a higher AD than the primary route to the same prefix, so it is installed only when the primary disappears.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "routing-table-c20",
-    "front": "How should CEF receive, attached and drop be interpreted?",
-    "back": "Receive: local delivery. Attached: directly attached prefix/adjacency context. Drop: discard. An attached prefix does not prove that every host has a resolved adjacency.",
+    "id": "routing-table-c29",
+    "front": "Which route codes mark OSPF, EIGRP, RIP and BGP routes?",
+    "back": "O is OSPF, D is EIGRP, R is RIP, B is BGP.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "routing-table-c21",
-    "front": "Do two ECMP paths guarantee twice the throughput for one transfer?",
-    "back": "No. Flow hashing can select one path for a flow. Equal-cost paths do not guarantee per-packet alternation or equal byte counts, and maximum path counts vary by platform and configuration.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c22",
-    "front": "Does an installed route prove end-to-end delivery?",
-    "back": "No. Verify the selected action, neighbor resolution, downstream path and return path.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c23",
-    "front": "Which address is looked up for the returning reply?",
-    "back": "The reply’s destination, normally the original requester’s address. It receives an independent lookup.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "routing-table-c24",
-    "front": "A selected Null0 route fails delivery. Is a less-specific route retried?",
-    "back": "No. Discard is the selected action; ordinary forwarding does not retry the default.",
+    "id": "routing-table-c07",
+    "front": "What does an `L` route identify?",
+    "back": "The router's own interface address, as a /32. Packets that match it are delivered to the router, not forwarded.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c25",
-    "front": "What happens to C/L entries for an ordinary interface that is administratively shut?",
-    "back": "They are withdrawn as usable interface-derived routes, even though the address remains configured.",
+    "front": "What happens to an interface's `C` and `L` routes when the interface is shut down?",
+    "back": "Both are removed from the routing table, although the IP address stays in the configuration.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "routing-table-c26",
-    "front": "A more-specific route is withdrawn. What decides the next packet?",
-    "back": "The longest match in the remaining installed table. A usable less-specific prefix can now win.",
+    "id": "routing-table-c16",
+    "front": "A route reads `S 10.20.30.128/25 is directly connected, Null0`. What are its source, AD and action?",
+    "back": "Static, AD 1, and matching packets are discarded. Only code C means connected.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c34",
+    "front": "What is the line `10.0.0.0/8 is variably subnetted, 4 subnets, 4 masks`?",
+    "back": "A heading for the subnets listed below it. It is not a route; no /8 is installed.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c10",
+    "front": "How does a router choose among installed routes for a packet?",
+    "back": "It finds every route whose prefix contains the destination address, then uses the one with the longest prefix length.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c24",
+    "front": "A packet's longest match points to Null0, and a default route also exists. What happens to the packet?",
+    "back": "It is discarded. The router never falls back to a shorter prefix once a longer one has matched.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c30",
+    "front": "What is the IPv4 default route, and when is it used?",
+    "back": "0.0.0.0/0. It matches every destination but is used only when no longer prefix matches.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c15",
+    "front": "What does the `*` in `S*` mean?",
+    "back": "Candidate default: this static route is a default route that can become the gateway of last resort.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c31",
+    "front": "What does `Gateway of last resort is 10.0.12.2 to network 0.0.0.0` tell you?",
+    "back": "A default route is installed, and its next hop is 10.0.12.2.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c14",
+    "front": "What happens to a packet when no route matches and there is no default route?",
+    "back": "The router drops it and normally sends an ICMP destination unreachable message to the source.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c32",
+    "front": "What do two `via` lines under one prefix with the same `[110/20]` show?",
+    "back": "Equal-cost multipath (ECMP): both next hops are installed, and CEF shares traffic between them per flow.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c33",
+    "front": "What is a recursive lookup?",
+    "back": "A second routing-table lookup, on a route's next-hop address, to find the exit interface.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "routing-table-c27",
-    "front": "For a remote IPv4 destination over Ethernet, whose MAC is normally resolved?",
-    "back": "The adjacent next-hop router’s MAC. The IP destination remains the remote endpoint.",
+    "front": "For a remote destination over Ethernet, whose MAC address does the router resolve with ARP?",
+    "back": "The next-hop router's. The packet's destination IP address stays the remote host's.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c23",
+    "front": "Which address do routers look up to forward the reply to a ping?",
+    "back": "The reply's destination, which is the original sender. Every router on the return path needs a route to it.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "routing-table-c22",
+    "front": "The correct route is installed but the ping still fails. Which two things do you check next?",
+    "back": "Whether the next hop resolves with ARP, and whether the far router has a route back to the source.",
     "tags": [
       "concept"
     ]

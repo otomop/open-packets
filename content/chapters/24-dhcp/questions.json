@@ -9,7 +9,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "In the initial Discover–Offer–Request–ACK exchange, which two messages are sent by the client? Select two.",
+    "prompt": "In the initial Discover, Offer, Request, ACK exchange, which TWO messages does the client send?",
     "options": [
       "DHCPDISCOVER",
       "DHCPOFFER",
@@ -20,10 +20,10 @@
       0,
       2
     ],
-    "explanation": "The client discovers available service and then requests the selected offer. The server offers configuration and acknowledges the accepted allocation.",
+    "explanation": "The client sends Discover and Request. The server sends Offer and ACK.",
     "whyWrong": {
-      "1": "An Offer is a server response proposing configuration.",
-      "3": "An ACK is a server response confirming configuration."
+      "1": "An Offer comes from the server.",
+      "3": "An ACK comes from the server."
     }
   },
   {
@@ -36,7 +36,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A client receives a DHCPOFFER during initial allocation. What has that message established?",
+    "prompt": "A client receives a DHCPOFFER. What does that establish?",
     "options": [
       "The client may use the address until the advertised lease expires.",
       "A server has proposed configuration for the client.",
@@ -46,11 +46,11 @@
     "answer": [
       1
     ],
-    "explanation": "An Offer proposes configuration. The client still selects a server, requests the offer, and processes the acknowledgment before normal use; an Offer alone does not complete allocation.",
+    "explanation": "An Offer is only a proposal. The client must still send a Request and receive an ACK before using the address.",
     "whyWrong": {
-      "0": "The proposed lease is not yet an acknowledged allocation.",
-      "2": "Receipt of an Offer does not establish the client's later checks.",
-      "3": "Other servers learn selection through the client's Request; receipt alone does not withdraw their proposals."
+      "0": "The lease is not granted until the ACK.",
+      "2": "An Offer does not complete any client checks.",
+      "3": "Other servers learn of the choice from the client's Request."
     }
   },
   {
@@ -63,7 +63,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A DHCPv4 client has no usable address and starts its initial allocation on Ethernet. Which IPv4 source and destination normally carry its DHCPDISCOVER?",
+    "prompt": "A client with no address starts DHCPv4. What are the source and destination of its Discover?",
     "options": [
       "0.0.0.0 to 255.255.255.255",
       "0.0.0.0 to the known default gateway",
@@ -73,11 +73,11 @@
     "answer": [
       0
     ],
-    "explanation": "The initial client cannot use an assigned source address or assume that it knows a DHCP server. It sends an IPv4 broadcast from 0.0.0.0, normally UDP source 68 to destination 67.",
+    "explanation": "The client has no address and does not know a server, so it broadcasts from 0.0.0.0 to 255.255.255.255 using UDP 68 to 67.",
     "whyWrong": {
-      "1": "The initial client has no configured gateway and discovers service by broadcast.",
-      "2": "The proposed address is not yet an acknowledged lease.",
-      "3": "A client starting without a usable address cannot use a current leased source."
+      "1": "The client has no gateway yet.",
+      "2": "The offered address is not leased yet.",
+      "3": "A client starting from scratch has no current lease address."
     }
   },
   {
@@ -90,7 +90,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A leased IPv4 address reaches its expiry time without a successful renewal or rebinding. What must the client do?",
+    "prompt": "A lease expires without a successful renewal or rebinding. What must the client do?",
     "options": [
       "Keep using it while the default gateway responds.",
       "Stop using that lease and restart address acquisition.",
@@ -100,11 +100,11 @@
     "answer": [
       1
     ],
-    "explanation": "Lease expiry ends the client's permission to use that address. A working data path or silence from other clients does not extend the lease.",
+    "explanation": "When the lease expires, the client must stop using the address and start over with a Discover.",
     "whyWrong": {
-      "0": "Gateway reachability is not lease authorization.",
-      "2": "The client cannot grant itself a server lease extension.",
-      "3": "Duplicate detection does not replace the lease lifetime."
+      "0": "A working gateway does not extend a lease.",
+      "2": "Only a server can extend a lease.",
+      "3": "Duplicate reports do not extend a lease."
     }
   },
   {
@@ -121,7 +121,7 @@
       "title": "Representative client settings",
       "text": "Autoconfiguration IPv4 Address : 169.254.87.14\nSubnet Mask                  : 255.255.0.0\nDefault Gateway              :"
     },
-    "prompt": "A Windows client was set to obtain IPv4 settings automatically. What conclusion is supported by this output?",
+    "prompt": "A Windows client is set to obtain IPv4 settings automatically. What does this output show?",
     "options": [
       "A normal routed DHCP lease is present, but its gateway is optional.",
       "The relay failed; no server or client checks are necessary.",
@@ -131,11 +131,11 @@
     "answer": [
       2
     ],
-    "explanation": "The 169.254/16 address is link-local, and no gateway is shown. This is evidence that the intended DHCP configuration was not obtained or retained. It does not identify where the exchange failed; check link/VLAN, client settings, relay, server, and return delivery.",
+    "explanation": "A 169.254.0.0/16 address with no gateway is IPv4 link-local, which means the client got no DHCP lease.",
     "whyWrong": {
-      "0": "This link-local address and absent gateway do not demonstrate the planned routed DHCP lease.",
-      "1": "The display does not locate the failure at the relay.",
-      "3": "Exhaustion requires pool and allocation evidence, which is not supplied."
+      "0": "A link-local address is not a routed DHCP lease.",
+      "1": "The output does not show where the exchange failed.",
+      "3": "Nothing here shows the pool is exhausted."
     }
   },
   {
@@ -148,7 +148,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which explicit global configuration disables the documented IOS DHCP server and relay service?",
+    "prompt": "Which global command disables both the DHCP server and the DHCP relay on an IOS router?",
     "options": [
       "no ip dhcp pool USERS",
       "no ip domain-lookup",
@@ -158,11 +158,11 @@
     "answer": [
       3
     ],
-    "explanation": "The global no service dhcp command disables the documented IOS server and relay functions. service dhcp enables them; do not diagnose disabled DHCP merely because a default command is absent from an abbreviated configuration.",
+    "explanation": "no service dhcp turns off both the IOS DHCP server and the relay. The service is on by default.",
     "whyWrong": {
-      "0": "Removing one server pool does not disable the global relay service.",
-      "1": "This disables the router's DNS client lookup function.",
-      "2": "Removing an exclusion changes availability, not global service enablement."
+      "0": "Removing a pool leaves the relay service on.",
+      "1": "This disables DNS name lookup.",
+      "2": "This removes an exclusion only."
     }
   },
   {
@@ -175,7 +175,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 receives client broadcasts on Gi0/0. Its DHCP server is reachable at 10.10.20.2 through Gi0/1. Where should the ordinary relay helper be configured?",
+    "prompt": "R1 receives client broadcasts on Gi0/0. The DHCP server is at 10.10.20.2 through Gi0/1. Where does ip helper-address go?",
     "options": [
       "Under the DHCP pool on the remote server",
       "On the server-facing Gi0/1 interface only",
@@ -185,11 +185,11 @@
     "answer": [
       3
     ],
-    "explanation": "The helper belongs on the Layer 3 interface that receives the client subnet broadcast. R1 then sends a relayed request toward the configured server using normal IP forwarding.",
+    "explanation": "Configure the helper on the interface that receives the client broadcasts, and point it at the server.",
     "whyWrong": {
-      "0": "Pool settings select the configuration to offer; they do not receive and relay R1’s local broadcast.",
-      "1": "The initial client broadcast arrives on Gi0/0, not Gi0/1.",
-      "2": "Configure the required client subnet interface deliberately; unused or server-facing helpers do not replace it."
+      "0": "The pool does not receive or relay broadcasts.",
+      "1": "Client broadcasts arrive on Gi0/0.",
+      "2": "Only the client-facing interface needs it."
     }
   },
   {
@@ -206,7 +206,7 @@
       "title": "Representative R1 configuration",
       "text": "interface GigabitEthernet0/0\n ip address 10.10.10.1 255.255.255.0\n!\ninterface GigabitEthernet0/1\n ip address 10.10.20.1 255.255.255.0\n ip helper-address 10.10.20.2"
     },
-    "prompt": "A fresh client on 10.10.10.0/24 cannot obtain a lease. R2 has an available matching pool; both R1 interfaces are up and routing between them works. Which correction addresses the shown relay mistake?",
+    "prompt": "A client on 10.10.10.0/24 cannot get a lease, and R1 has a helper on Gi0/1. What is the fix?",
     "options": [
       "Move the helper from Gi0/1 to Gi0/0.",
       "Set the client gateway option to 10.10.20.2.",
@@ -216,11 +216,11 @@
     "answer": [
       0
     ],
-    "explanation": "The helper is on the server-facing interface. The fresh client’s broadcast reaches Gi0/0, where no helper is configured. Place it there and test a new request.",
+    "explanation": "The helper is on the server-facing interface. Client broadcasts arrive on Gi0/0, so the helper belongs there.",
     "whyWrong": {
-      "1": "The server is not the clients' reachable local default gateway.",
-      "2": "The helper target must be the server, and the receiving client interface is still missing its helper.",
-      "3": "That would select the server subnet rather than the clients' subnet."
+      "1": "The gateway option is not the problem.",
+      "2": "The helper must point at the server.",
+      "3": "The pool must match the client subnet."
     }
   },
   {
@@ -233,7 +233,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An ordinary relayed request arrives at an IOS server with giaddr 10.10.30.1. The server has matching /24 pools for 10.10.20.0 and 10.10.30.0 and no special class/link-selection policy. Which pool should supply the client?",
+    "prompt": "A relayed request arrives with giaddr 10.10.30.1. The server has pools for 10.10.20.0/24 and 10.10.30.0/24. Which pool serves the client?",
     "options": [
       "Either pool, chosen only by its free-address count.",
       "The 10.10.20.0/24 pool, matching the server interface.",
@@ -243,11 +243,11 @@
     "answer": [
       2
     ],
-    "explanation": "The relay gateway field identifies the subnet on whose behalf the relay is requesting service. In this ordinary case, 10.10.30.1 matches the 10.10.30.0/24 pool.",
+    "explanation": "The server uses giaddr to select the pool, so 10.10.30.1 selects the 10.10.30.0/24 pool.",
     "whyWrong": {
-      "0": "Capacity matters after selecting a suitable subnet; it does not make an unrelated subnet valid.",
-      "1": "The receiving server subnet does not identify this remote client's subnet.",
-      "3": "An ordinary relay supplies a nonzero gateway address."
+      "0": "The pool is chosen by giaddr, not free addresses.",
+      "1": "The server's own subnet is not the client's subnet.",
+      "3": "A relay sets giaddr to a nonzero value."
     }
   },
   {
@@ -260,7 +260,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A client has a 12-hour lease. The server supplies no alternate renewal or rebinding timers. What does the standard default T1 behavior call for?",
+    "prompt": "A client has a 12-hour lease with default timers. What happens at T1?",
     "options": [
       "Broadcast a Discover immediately after three hours.",
       "Stop using the address after six hours even if renewal succeeds.",
@@ -270,11 +270,11 @@
     "answer": [
       3
     ],
-    "explanation": "Default T1 is half the lease: 12 × 0.5 = 6 hours. A renewing client still has a valid address and attempts a DHCPREQUEST to its leasing server. Failure at T1 does not immediately invalidate the lease.",
+    "explanation": "T1 is 50% of the lease, so at 6 hours the client unicasts a renewal Request to the leasing server.",
     "whyWrong": {
-      "0": "T1 is not one quarter of the lease, and renewal is not a new initial Discover.",
-      "1": "The address remains leased while the client seeks renewal before expiry.",
-      "2": "Waiting until expiry would omit the renewal and rebinding opportunities."
+      "0": "T1 is half the lease, not a quarter.",
+      "1": "The client may keep the address while renewing.",
+      "2": "The client renews well before expiry."
     }
   },
   {
@@ -291,7 +291,7 @@
       "title": "Representative pool evidence",
       "text": "Pool USERS: network 10.10.10.0/24\nExcluded: 10.10.10.1–10.10.10.49\nExcluded: 10.10.10.53–10.10.10.254\nActive bindings: 10.10.10.50, 10.10.10.51, 10.10.10.52\nConflict entries: none"
     },
-    "prompt": "The server has no conflicts or reservations beyond those shown. A fourth fresh client’s Discover reaches it. Why can the server not supply another address from this pool?",
+    "prompt": "A fourth client's Discover reaches the server, but no address is offered. Why?",
     "options": [
       "One candidate remains because the upper exclusion ends before .254.",
       "No candidate remains because all three permitted host addresses are leased.",
@@ -301,11 +301,11 @@
     "answer": [
       1
     ],
-    "explanation": "A /24 has 254 ordinary host addresses. Excluding 10.10.10.1–49 and 53–254 excludes 49 + 202 = 251. The remaining .50, .51, and .52 are already leased, leaving none for a fourth client.",
+    "explanation": "The exclusions leave .50, .51 and .52, which are all leased, so no address is free.",
     "whyWrong": {
-      "0": "The exclusion includes .254, and .255 is the subnet broadcast.",
-      "2": "Both ends of each configured exclusion are included.",
-      "3": "Active bindings occupy the three unexcluded addresses."
+      "0": ".254 is excluded and .255 is the broadcast address.",
+      "2": "Exclusion endpoints are included in the excluded range.",
+      "3": "Active bindings use up the addresses."
     }
   },
   {
@@ -318,7 +318,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An IOS DHCP server records 10.10.10.60 as a Ping-detected conflict. What should you do before clearing the conflict entry?",
+    "prompt": "A server shows 10.10.10.60 as a ping-detected conflict. What do you do before clearing it?",
     "options": [
       "Clear .60 immediately because conflict entries cannot represent live hosts.",
       "Clear every binding so the server can allocate a new address set.",
@@ -328,11 +328,11 @@
     "answer": [
       2
     ],
-    "explanation": "A conflict entry means the server is withholding an address because it detected evidence of a collision. Identify the responding device or stale condition, correct the address plan, and clear only an appropriately resolved entry. The display alone does not identify the owner.",
+    "explanation": "A conflict means another device answered for that address. Find the device and fix the duplicate before clearing the entry.",
     "whyWrong": {
-      "0": "The conflict may represent a device still using .60.",
-      "1": "Clearing healthy bindings risks reallocation while existing clients continue using them.",
-      "3": "Changing a DHCP lease does not release an independently configured static address."
+      "0": "A live host can cause a conflict.",
+      "1": "Clearing bindings can lead to duplicates.",
+      "3": "A lease change does not release a static address."
     }
   },
   {
@@ -349,7 +349,7 @@
       "title": "Representative request and configuration",
       "text": "Relayed DHCPDISCOVER: giaddr = 10.10.30.1\nConfigured dynamic pool networks:\n USERS  10.10.10.0 255.255.255.0\n SERVER 10.10.20.0 255.255.255.0"
     },
-    "prompt": "The relay and server paths work. No special subnet-selection policy is configured. Why does the request fail to find a suitable dynamic pool?",
+    "prompt": "The relay and server paths work, but the request finds no pool. Why?",
     "options": [
       "The server has no pool matching client subnet 10.10.30.0/24.",
       "The server must use the pool with the greatest free capacity.",
@@ -359,11 +359,11 @@
     "answer": [
       0
     ],
-    "explanation": "The ordinary pool selection uses the nonzero giaddr to identify the client subnet. A request relayed for 10.10.30.1 needs a matching 10.10.30.0/24 pool; the two shown networks do not match.",
+    "explanation": "The server uses giaddr to find the client subnet, and it has no pool for 10.10.30.0/24.",
     "whyWrong": {
-      "1": "Free capacity in an unrelated subnet does not supply valid client configuration.",
-      "2": "Changing giaddr to the server-facing subnet would misidentify where the client lives.",
-      "3": "The nonzero giaddr identifies the client subnet in this ordinary relayed case."
+      "1": "Free addresses in another pool do not help.",
+      "2": "giaddr must be the client-side address.",
+      "3": "A nonzero giaddr selects the client subnet, not the server subnet."
     }
   },
   {
@@ -376,7 +376,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A client moves to another subnet and requests reuse of its previous address. A DHCP server determines from authoritative subnet information that the requested address is invalid on the new subnet. Which response tells the client to abandon that configuration?",
+    "prompt": "A client moves to a new subnet and asks to reuse its old address. The server knows it is invalid there. Which message tells the client to give it up?",
     "options": [
       "DHCPRELEASE",
       "DHCPDECLINE",
@@ -386,11 +386,11 @@
     "answer": [
       2
     ],
-    "explanation": "A server uses DHCPNAK to reject a configuration it determines is invalid. The client must stop using the rejected address and restart appropriate acquisition. This does not mean every server must NAK every request it cannot satisfy; a server without the necessary knowledge can remain silent.",
+    "explanation": "A server sends DHCPNAK to reject an invalid request, and the client must restart.",
     "whyWrong": {
-      "0": "RELEASE is a client message relinquishing a lease.",
-      "1": "DECLINE is sent by a client reporting that the offered address appears to be in use.",
-      "3": "INFORM is a client request for additional configuration when it already has an address."
+      "0": "DHCPRELEASE is sent by the client.",
+      "1": "DHCPDECLINE is sent by the client.",
+      "3": "DHCPINFORM is a client request for options."
     }
   },
   {
@@ -403,7 +403,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A client receives the intended address, mask, and gateway, and reaches a lab web server by its IPv4 address. Its current DNS setting is 10.10.20.99; the design specifies 10.10.20.53. Which repair directly addresses the demonstrated DHCP option mistake?",
+    "prompt": "A client has the right address, mask and gateway but DNS 10.10.20.99 instead of 10.10.20.53. What fixes this?",
     "options": [
       "Correct the pool DNS option, then refresh the client's settings.",
       "Correct only the router's ip name-server setting.",
@@ -413,11 +413,11 @@
     "answer": [
       0
     ],
-    "explanation": "DHCP option 6 supplies resolver addresses. Correct dns-server to 10.10.20.53, then renew or reacquire settings as appropriate and verify the actual client configuration. An edited pool does not instantly rewrite an existing client’s settings.",
+    "explanation": "The DNS server comes from the pool's dns-server option. Correct it, then renew the client.",
     "whyWrong": {
-      "1": "The router's own resolver setting does not repair the DNS option supplied to PCs.",
-      "2": "Clearing answers does not correct the client's configured resolver address.",
-      "3": "An unchanged pool can supply the same wrong setting again."
+      "1": "The router's resolver setting is not what clients receive.",
+      "2": "Clearing the cache does not change the resolver address.",
+      "3": "The pool would give the same wrong value."
     }
   },
   {
@@ -430,7 +430,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A server answers an initial client directly on the same subnet: giaddr and ciaddr are zero, and the client sets the BROADCAST flag. How should the server deliver its Offer or ACK under the RFC 2131 rule for this case?",
+    "prompt": "A server answers a client on its own subnet with giaddr and ciaddr zero and the BROADCAST flag set. How does it send the Offer or ACK?",
     "options": [
       "Unicast to the offered client IPv4 address.",
       "Broadcast the Offer or ACK.",
@@ -440,11 +440,11 @@
     "answer": [
       1
     ],
-    "explanation": "With no relay gateway or current client address and the broadcast flag set, the server broadcasts the Offer/ACK. Other cases can use unicast to a current address, to the relay, or to the offered address/client hardware address. “Offer and ACK are always broadcast” is therefore inaccurate.",
+    "explanation": "With giaddr and ciaddr zero and the broadcast flag set, the server broadcasts the reply.",
     "whyWrong": {
-      "0": "The set broadcast flag selects broadcast delivery in the stated zero-giaddr/ciaddr case.",
-      "2": "giaddr is zero; this directly attached case has no relay destination.",
-      "3": "ciaddr is zero; there is no current client address for this delivery branch."
+      "0": "The broadcast flag selects broadcast delivery.",
+      "2": "giaddr is zero, so there is no relay.",
+      "3": "ciaddr is zero, so there is no current address."
     }
   },
   {
@@ -456,7 +456,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "The only intended dynamic candidates are 10.8.0.10–10.8.0.29 in 10.8.0.0/27. Which pair of inclusive exclusions produces that range?",
+    "prompt": "The dynamic range is 10.8.0.10 to 10.8.0.29 in 10.8.0.0/27. Which exclusions produce it?",
     "options": [
       ".1–.9 and .29–.30",
       ".1–.10 and .29–.30",
@@ -466,11 +466,11 @@
     "answer": [
       3
     ],
-    "explanation": "The /27 has ordinary host addresses .1 through .30. Excluding .1–.9 and .30 leaves exactly .10–.29, twenty candidates; network .0 and broadcast .31 are not host candidates.",
+    "explanation": "The hosts are .1 to .30. Excluding .1 to .9 and .30 leaves .10 to .29.",
     "whyWrong": {
-      "0": "This excludes .29, reducing the intended range to .10–.28.",
-      "1": "This also excludes both desired endpoints .10 and .29.",
-      "2": "This leaves .9 available and excludes .29, so it does not match the requested range."
+      "0": "This excludes .29.",
+      "1": "This excludes .10 and .29.",
+      "2": "This leaves .9 available and excludes .29."
     }
   },
   {
@@ -483,7 +483,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A client has passed T2 without receiving renewal replies, but its lease has not expired. Which DHCP behavior matches this rebinding stage?",
+    "prompt": "A client is past T2 with no renewal reply and its lease has not expired. What does it do?",
     "options": [
       "Broadcast Request while retaining the still-valid leased address.",
       "Send Request only to the original server and ignore other servers.",
@@ -493,11 +493,11 @@
     "answer": [
       0
     ],
-    "explanation": "At rebinding the client broadcasts DHCPREQUEST so a suitable server may respond. The client can continue using its unexpired lease; expiry is the later stop condition.",
+    "explanation": "At rebinding (T2), the client broadcasts a Request to any server and keeps using the address until the lease expires.",
     "whyWrong": {
-      "1": "Restricting requests to the original server describes renewal before rebinding.",
-      "2": "This describes abandoning configuration, not the stated unexpired rebinding stage.",
-      "3": "Release relinquishes an address rather than requesting an extension."
+      "1": "That describes renewal at T1.",
+      "2": "The client does not give up the lease before expiry.",
+      "3": "Release gives up an address and does not ask for an extension."
     }
   },
   {
@@ -509,7 +509,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An IOS server excludes 10.8.0.20 from a dynamic pool. A printer is intended to always use .20. What does the exclusion accomplish by itself?",
+    "prompt": "A server excludes 10.8.0.20, and a printer should always use .20. What does the exclusion do alone?",
     "options": [
       "It reserves .20 for whichever printer requests first.",
       "It creates a manual binding for the printer's client identifier.",
@@ -519,11 +519,11 @@
     "answer": [
       3
     ],
-    "explanation": "An exclusion withholds the address from dynamic allocation. Assigning the printer a static address or a supported manual binding is a separate configuration decision.",
+    "explanation": "An exclusion stops the dynamic pool from offering the address. It does not assign it to anyone.",
     "whyWrong": {
-      "0": "An exclusion does not identify a particular client.",
-      "1": "No client identifier or manual binding is configured by an exclusion.",
-      "2": "The server command does not configure the printer interface."
+      "0": "It does not reserve the address for a client.",
+      "1": "A manual binding is a separate configuration.",
+      "2": "The server does not configure the printer."
     }
   },
   {
@@ -536,7 +536,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A server table lists an active binding for the test client's identifier. Which additional check best establishes that the client actually received and is using the intended configuration?",
+    "prompt": "The server shows an active binding for a test client. What further check shows the client uses the intended configuration?",
     "options": [
       "Inspect only the total server allocation counter.",
       "Treat the binding alone as proof that the client received the ACK.",
@@ -546,11 +546,11 @@
     "answer": [
       2
     ],
-    "explanation": "Server state and client state are separate evidence. Inspect the affected client's settings, correlate its identity with the binding, and test the service those settings should support.",
+    "explanation": "A server binding does not prove the client received it. Check the client's address and options, then test the service.",
     "whyWrong": {
-      "0": "An aggregate counter is not the affected client's configuration.",
-      "1": "The table does not by itself establish successful delivery and client use.",
-      "3": "A configured duration does not demonstrate delivery of this allocation."
+      "0": "A counter does not show one client's settings.",
+      "1": "A binding alone does not show the ACK arrived.",
+      "3": "The lease length says nothing about delivery."
     }
   },
   {
@@ -563,7 +563,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A new client receives 10.50.0.60/24, gateway 10.50.0.99 and the intended DNS resolver. The approved gateway is 10.50.0.1; .99 is unused. Local-subnet tests work but routed services fail. What is the narrow repair?",
+    "prompt": "A client gets 10.50.0.60/24 with gateway 10.50.0.99, but the approved gateway is .1. Local tests work and routed ones fail. What is the fix?",
     "options": [
       "Change the DHCP pool network to the DNS resolver's subnet.",
       "Correct default-router to .1, refresh the client, and retest routed service.",
@@ -573,11 +573,11 @@
     "answer": [
       1
     ],
-    "explanation": "The client has the correct subnet but an unusable default gateway. Correct the gateway option and verify the refreshed client settings before repeating an off-subnet service test.",
+    "explanation": "The client has the wrong default gateway. Correct default-router to .1 and renew the client.",
     "whyWrong": {
-      "0": "The client belongs to 10.50.0.0/24; moving its pool would create a new fault.",
-      "2": "The router address should remain protected from dynamic allocation.",
-      "3": "The resolver setting is already correct; a DNS-only edit does not repair the gateway."
+      "0": "The client is already on the correct subnet.",
+      "2": "The router address should stay excluded.",
+      "3": "The DNS setting is already correct."
     }
   },
   {
@@ -590,7 +590,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A packet capture shows the server receiving a Discover and sending an Offer to relay giaddr 10.10.10.1. The client capture contains repeated Discovers and no received Offer. Which two faults are consistent with that evidence? Select two.",
+    "prompt": "The server receives a Discover and sends an Offer to the relay. The client never receives an Offer. Which TWO faults fit?",
     "options": [
       "The path from server to relay drops the reply.",
       "The server has no matching pool and therefore never sent an Offer.",
@@ -601,10 +601,10 @@
       0,
       2
     ],
-    "explanation": "The server demonstrably sent a reply, but the client did not observe it. Investigate the return path to the relay and delivery from the relay to the client. These captures narrow the failure stage without proving which of those paths failed.",
+    "explanation": "The server sent the Offer, so the loss is on the path to the relay or from the relay to the client.",
     "whyWrong": {
-      "1": "The captured outgoing Offer contradicts the claim that none was sent.",
-      "3": "The supplied client capture has no received Offer and no accepted allocation."
+      "1": "The Offer was sent, so a pool matched.",
+      "3": "The client never received an Offer."
     }
   },
   {
@@ -621,7 +621,7 @@
       "title": "Representative teaching evidence",
       "text": "R1: Gi0/0 10.30.0.1/24, helper 10.20.0.2; Gi0/1 10.20.0.1/24\nR2: 10.20.0.2/24; service dhcp enabled; pool 10.30.0.0/24 has free addresses\nR2 routes: connected 10.20.0.0/24; no default or other route\nCurrent request at R2: giaddr 10.30.0.1; Offer prepared for relay\nR1 ping 10.20.0.2: success"
     },
-    "prompt": "Which missing dependency explains the fresh client's failure after the server prepares an Offer?",
+    "prompt": "The server prepares an Offer, but the fresh client still gets none. What is missing?",
     "options": [
       "The relay needs another helper on its server-facing interface.",
       "The server needs a route toward the nonzero giaddr.",
@@ -631,11 +631,11 @@
     "answer": [
       1
     ],
-    "explanation": "The server prepares its relayed reply toward giaddr 10.30.0.1, but its supplied routing table has no route there. Add the client-subnet return route through R1; a successful ping between service-side addresses never tested that destination.",
+    "explanation": "The server replies toward giaddr 10.30.0.1 and has no route to it. Add a route back to the client subnet through R1.",
     "whyWrong": {
-      "0": "The client-side helper already delivered the Discover; adding a server-side helper does not create the server's return route.",
-      "2": "Initial DHCP is specifically designed for a client without a usable address.",
-      "3": "The pool already matches the remote client subnet identified by giaddr."
+      "0": "The Discover already arrived through the relay.",
+      "2": "A client with no address is the normal DHCP case.",
+      "3": "The pool already matches the client subnet."
     }
   },
   {
@@ -652,7 +652,7 @@
       "title": "Representative teaching evidence",
       "text": "R1 guest Gi0/2: 10.40.0.1/24, helper 10.20.0.2\nR1 users Gi0/0: 10.30.0.1/24, helper 10.20.0.2\nR2 service-side address 10.20.0.2/24; peer R1 10.20.0.1\nR2 only pool: USERS 10.30.0.0/24, free candidates available\nR2 only remote route: 10.30.0.0/24 via 10.20.0.1\nGuest Discover reaches R2 with giaddr 10.40.0.1"
     },
-    "prompt": "The new guest VLAN must receive leases while the existing users continue working. Which two changes address the missing dependencies? Select two.",
+    "prompt": "A new guest VLAN needs leases without breaking existing users. Which TWO changes are needed?",
     "options": [
       "Add a 10.40.0.0/24 pool with guest gateway 10.40.0.1.",
       "Move the existing USERS pool from 10.30.0.0/24 to 10.40.0.0/24.",
@@ -664,11 +664,11 @@
       0,
       2
     ],
-    "explanation": "The new subnet requires its own matching pool and a server route back toward its relay address. Preserve USERS and the verified helper rather than moving existing service or changing unrelated exclusions.",
+    "explanation": "The new subnet needs its own pool and a server route back to its relay. Leave USERS and the working helper alone.",
     "whyWrong": {
-      "1": "Moving USERS would remove allocation service from the existing subnet.",
-      "3": "The helper must target the DHCP server, not the relay itself.",
-      "4": "Capacity in the old subnet cannot serve the guest subnet."
+      "1": "Moving USERS would break the existing subnet.",
+      "3": "The helper must point at the server.",
+      "4": "Exclusions in USERS do not serve the guest subnet."
     }
   },
   {
@@ -685,7 +685,7 @@
       "title": "Representative teaching evidence",
       "text": "Five clients retain unexpired leases and reach the remote application.\nAfter a relay change, one newly connected PC has no valid lease.\nNo current server or packet evidence has yet been collected."
     },
-    "prompt": "Which next test best separates a current DHCP allocation failure from continued use of earlier configuration?",
+    "prompt": "Which test best separates a current DHCP failure from a client still using an old lease?",
     "options": [
       "Clear every lease and infer success if existing clients reconnect.",
       "Ping the default gateway only from a client with an unexpired lease.",
@@ -695,11 +695,118 @@
     "answer": [
       2
     ],
-    "explanation": "An unexpired lease can keep ordinary traffic working after the acquisition path fails. A controlled fresh-client test, correlated at relay and server, tests that path without unnecessarily disrupting healthy clients.",
+    "explanation": "A client with an unexpired lease can keep working even when allocation fails. Test with a fresh client and check the relay and server.",
     "whyWrong": {
-      "0": "Broad clearing disrupts healthy leases and removes useful before-state evidence.",
-      "1": "This repeats the already-known data-path test without testing a new allocation.",
-      "3": "Changing all timers is disruptive and provides less specific evidence than a controlled fresh request."
+      "0": "Clearing leases disrupts healthy clients.",
+      "1": "A ping from a leased client tests no new allocation.",
+      "3": "Changing timers is disruptive and less direct."
+    }
+  },
+  {
+    "id": "dhcp-q31",
+    "type": "single",
+    "objectives": [
+      "v1:4.3",
+      "v1:4.6",
+      "v2:1.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which UDP port does a DHCPv4 server listen on?",
+    "options": [
+      "53",
+      "67",
+      "68",
+      "123"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DHCPv4 servers listen on UDP 67 and clients use UDP 68.",
+    "whyWrong": {
+      "0": "53 is DNS.",
+      "2": "68 is the client port.",
+      "3": "123 is NTP."
+    }
+  },
+  {
+    "id": "dhcp-q32",
+    "type": "single",
+    "objectives": [
+      "v1:4.3",
+      "v1:4.6",
+      "v2:1.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "At what fraction of the lease does a DHCP client rebind (T2) by default?",
+    "options": [
+      "50%",
+      "75%",
+      "87.5%",
+      "100%"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The default T2 is 87.5% of the lease. T1 (renewal) is 50%.",
+    "whyWrong": {
+      "0": "50% is T1, the renewal time.",
+      "1": "75% is not a default timer.",
+      "3": "100% is lease expiry."
+    }
+  },
+  {
+    "id": "dhcp-q33",
+    "type": "single",
+    "objectives": [
+      "v1:4.3",
+      "v2:1.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default lease time on an IOS DHCP pool?",
+    "options": [
+      "1 hour",
+      "8 hours",
+      "1 day",
+      "7 days"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The default IOS lease is one day.",
+    "whyWrong": {
+      "0": "1 hour is not the default.",
+      "1": "8 hours is not the default.",
+      "3": "7 days is not the default."
+    }
+  },
+  {
+    "id": "dhcp-q34",
+    "type": "single",
+    "objectives": [
+      "v1:4.3",
+      "v1:4.6",
+      "v2:1.7"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What administrative distance does the default route learned by ip address dhcp have?",
+    "options": [
+      "1",
+      "110",
+      "254",
+      "255"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A default route learned through ip address dhcp has administrative distance 254.",
+    "whyWrong": {
+      "0": "1 is a static route.",
+      "1": "110 is OSPF.",
+      "3": "255 means the route is unusable."
     }
   }
 ]

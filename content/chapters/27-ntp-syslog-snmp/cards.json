@@ -1,16 +1,16 @@
 [
   {
     "id": "ntp-syslog-snmp-c01",
-    "front": "NTP transport protocol and port?",
-    "back": "UDP destination 123 for NTP service. Cisco associations commonly use 123 at both ends; other clients can randomize their source port.",
+    "front": "Which transport protocol and port does NTP use?",
+    "back": "UDP port 123.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ntp-syslog-snmp-c02",
-    "front": "NTP stratum 0 versus stratum 1?",
-    "back": "In a hierarchy diagram, stratum 0 denotes the reference clock and stratum 1 its directly referenced network server. A packet’s stratum-0 value is not an ordinary preferred server.",
+    "front": "What is the difference between NTP stratum 0 and stratum 1?",
+    "back": "Stratum 0 is the reference clock itself, such as an atomic clock, and is not on the network. Stratum 1 is a server attached directly to it.",
     "tags": [
       "number",
       "concept"
@@ -19,15 +19,15 @@
   {
     "id": "ntp-syslog-snmp-c03",
     "front": "What does NTP stratum 16 mean?",
-    "back": "Unsynchronized state; it is not a usable synchronized source for an ordinary client. Network synchronization strata are 1–15.",
+    "back": "Unsynchronized. Usable strata are 1 to 15, and a client will not synchronize to a stratum 16 source.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ntp-syslog-snmp-c04",
-    "front": "A client syncs to a stratum N server. Its stratum?",
-    "back": "A successfully synchronized downstream device adds one to its selected source’s stratum, within the usable hierarchy. This is not an IP hop count.",
+    "front": "A client synchronizes to a stratum 4 server. What stratum does the client report?",
+    "back": "5: the server's stratum plus one. Stratum counts NTP associations, not router hops.",
     "tags": [
       "number",
       "concept"
@@ -35,16 +35,25 @@
   },
   {
     "id": "ntp-syslog-snmp-c06",
-    "front": "Command to make a router an NTP client of 10.0.12.1?",
-    "back": "`ntp server 10.0.12.1` in global configuration. Confirm actual selection with show ntp status and associations.",
+    "front": "Which command makes a router an NTP client of 10.60.0.1?",
+    "back": "`ntp server 10.60.0.1` in global configuration. Once synchronized, the router also serves time to its own clients.",
     "tags": [
       "command"
     ]
   },
   {
+    "id": "ntp-syslog-snmp-c29",
+    "front": "What does `ntp master` do, and what is its default stratum?",
+    "back": "It makes the router serve its own clock as an NTP source. The default stratum is 8.",
+    "tags": [
+      "command",
+      "number"
+    ]
+  },
+  {
     "id": "ntp-syslog-snmp-c07",
-    "front": "Meaning of reach 377 in `show ntp associations`?",
-    "back": "Octal 377 is eight retained successful poll results. Zero can mean an initial association or no successful results left in that window, not never in the device’s lifetime.",
+    "front": "What does reach 377 mean in `show ntp associations`?",
+    "back": "The last eight polls were all answered: octal 377 is binary 11111111. Reach 0 means none of the last eight was answered.",
     "tags": [
       "number",
       "troubleshoot"
@@ -52,148 +61,163 @@
   },
   {
     "id": "ntp-syslog-snmp-c08",
-    "front": "`*` and `~` in front of a line in `show ntp associations`?",
-    "back": "In the shown IOS legend, * identifies the selected peer and ~ a configured association. Other symbols vary; read the actual legend and confirm show ntp status.",
+    "front": "What do `*` and `~` mean at the start of a line in `show ntp associations`?",
+    "back": "`*` marks the server the router is synchronized to. `~` marks a statically configured server.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "ntp-syslog-snmp-c11",
-    "front": "The 8 syslog severities, 0 to 7?",
-    "back": "0 emergencies; 1 alerts; 2 critical; 3 errors; 4 warnings; 5 notifications; 6 informational; 7 debugging. Lower is more severe.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "ntp-syslog-snmp-c12",
-    "front": "`logging trap warnings` sends which levels?",
-    "back": "Levels 0–4 are eligible under the basic threshold. Other filters, transport and collector processing still affect reception.",
-    "tags": [
-      "number",
-      "concept"
-    ]
-  },
-  {
-    "id": "ntp-syslog-snmp-c13",
-    "front": "How do you verify logging defaults and active destination thresholds?",
-    "back": "Read show logging and the actual platform documentation. Console, monitor, memory buffer and remote collector have independent controls; there is no universal buffer setting.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "ntp-syslog-snmp-c14",
-    "front": "Syslog server transport and port?",
-    "back": "Conventional syslog uses UDP destination 514 without transport acknowledgment. Other transports require compatible endpoints and explicit configuration.",
+    "front": "Name the eight syslog severity levels from 0 to 7.",
+    "back": "0 emergencies, 1 alerts, 2 critical, 3 errors, 4 warnings, 5 notifications, 6 informational, 7 debugging. Lower is more severe.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ntp-syslog-snmp-c15",
-    "front": "What are SYS, 5 and CONFIG_I in an IOS syslog message?",
-    "back": "SYS is the IOS component, 5 is the severity, and CONFIG_I is the event mnemonic. Read the description for what was actually reported.",
+    "front": "In `%SYS-5-CONFIG_I`, what are SYS, 5 and CONFIG_I?",
+    "back": "SYS is the facility (the IOS component), 5 is the severity and CONFIG_I is the mnemonic for the event.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ntp-syslog-snmp-c16",
-    "front": "Command to see syslog messages in your SSH/Telnet session?",
-    "back": "`terminal monitor` subscribes this remote session to eligible live messages. The global monitor threshold and event generation must also permit them.",
+    "id": "ntp-syslog-snmp-c24",
+    "front": "What does an asterisk before an IOS log timestamp mean?",
+    "back": "The router's clock is not authoritative: it has not been set or synchronized, so the time is unreliable.",
     "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "ntp-syslog-snmp-c17",
-    "front": "Does an interface-transition log identify the cause or responsible person?",
-    "back": "No. Read its state and description, then obtain corroborating evidence. A nearby login or configuration summary does not identify the exact command.",
-    "tags": [
-      "compare",
       "troubleshoot"
     ]
   },
   {
-    "id": "ntp-syslog-snmp-c19",
-    "front": "SNMP ports?",
-    "back": "Common UDP destinations: 161 for agent requests, 162 for notification receivers. Responses return to the request source endpoint.",
+    "id": "ntp-syslog-snmp-c34",
+    "front": "Which syslog facility do Cisco devices use by default when sending to a server?",
+    "back": "local7 (facility 23). It is separate from the facility name, such as SYS or LINK, in the message text.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "ntp-syslog-snmp-c20",
-    "front": "SNMP Trap versus Inform?",
-    "back": "Trap has no SNMP acknowledgment. Inform expects a Response and can retry according to configured limits; neither guarantees a human acted on the event.",
+    "id": "ntp-syslog-snmp-c13",
+    "front": "What are the four IOS logging destinations?",
+    "back": "Console, monitor (remote terminal sessions), the memory buffer and a syslog server. Each has its own severity threshold, shown by `show logging`.",
     "tags": [
-      "compare"
+      "number"
     ]
   },
   {
-    "id": "ntp-syslog-snmp-c21",
-    "front": "SNMPv1 / v2c / v3 security?",
-    "back": "v1/v2c use unencrypted communities. v2c adds operations such as GetBulk and Counter64. Common v3 user-based security supports selectable authentication and privacy levels.",
+    "id": "ntp-syslog-snmp-c12",
+    "front": "Which severity levels does `logging trap warnings` send to the syslog server?",
+    "back": "Levels 0 to 4: warnings and everything more severe.",
     "tags": [
-      "compare"
+      "number",
+      "concept"
     ]
   },
   {
-    "id": "ntp-syslog-snmp-c22",
-    "front": "The three SNMPv3 security levels?",
-    "back": "noAuthNoPriv: neither cryptographic authentication nor encryption. authNoPriv: authentication. authPriv: authentication and encryption. v3 alone does not imply privacy.",
+    "id": "ntp-syslog-snmp-c31",
+    "front": "Which two commands send messages of level informational and above to a syslog server at 10.60.0.50?",
+    "back": "`logging host 10.60.0.50` and `logging trap informational`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c14",
+    "front": "Which transport protocol and port does syslog use by default?",
+    "back": "UDP port 514, with no acknowledgment.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c16",
+    "front": "Which command shows log messages in your current SSH or Telnet session?",
+    "back": "`terminal monitor`, typed in that session. Console sessions show messages without it.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c28",
+    "front": "A message is in the router's buffer but never reached the syslog server. What do you check on the router first?",
+    "back": "The `logging trap` level in `show logging`. A message less severe than that threshold is never sent.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c35",
+    "front": "In SNMP, what are the manager and the agent?",
+    "back": "The manager (NMS) is the monitoring station that sends requests. The agent is software on the managed device that answers them and sends notifications.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ntp-syslog-snmp-c23",
-    "front": "MIB versus OID?",
-    "back": "A MIB defines managed objects and types; an OID identifies an object or instance. The agent supplies its value; correlate table indexes with actual interface names.",
+    "front": "How does a MIB differ from an OID?",
+    "back": "The MIB is the catalogue of variables an agent exposes. An OID is the dotted-number name of one variable in it.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "ntp-syslog-snmp-c24",
-    "front": "What does an asterisk before an IOS log timestamp warn about?",
-    "back": "The clock is not considered authoritative. Check its source and synchronization before correlating events; the marker does not mean it has never used NTP.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "ntp-syslog-snmp-c25",
-    "front": "Why combine SNMP polling with event notifications?",
-    "back": "Polling samples values or state; notifications can report a transition between samples. Neither alone guarantees a complete history.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
-    "id": "ntp-syslog-snmp-c26",
-    "front": "What must hold before subtracting two interface counters?",
-    "back": "They must represent the same continuous counter instance over a known interval. Check for resets, wraps and changed interface indexes.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "ntp-syslog-snmp-c27",
-    "front": "How do you convert an octet-counter delta to average bit rate?",
-    "back": "Multiply the octet increase by 8 and divide by elapsed seconds. The result is an interval average, not a peak rate.",
+    "id": "ntp-syslog-snmp-c19",
+    "front": "Which UDP ports does SNMP use?",
+    "back": "161 for requests to the agent; 162 for traps and informs sent to the manager.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "ntp-syslog-snmp-c28",
-    "front": "Does a syslog forwarding threshold prove the collector stored an event?",
-    "back": "No. It determines eligibility at the sender. Verify a fresh record at the receiver and its filtering and retention stages.",
+    "id": "ntp-syslog-snmp-c33",
+    "front": "Which SNMP operations read values, and which one changes a value?",
+    "back": "Get, GetNext and GetBulk read. Set changes a value and needs read-write access.",
     "tags": [
-      "troubleshoot"
+      "concept"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c20",
+    "front": "How does an SNMP Trap differ from an Inform?",
+    "back": "A Trap is sent once with no acknowledgment. An Inform is acknowledged by the manager and resent if no Response arrives.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c25",
+    "front": "Why use SNMP notifications as well as polling?",
+    "back": "Polling sees only the state at each sample. A trap or inform reports an event that happens between polls.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c21",
+    "front": "How do SNMPv1, v2c and v3 differ in security?",
+    "back": "v1 and v2c use a clear-text community string. v2c adds GetBulk and Inform. v3 uses users with optional authentication and encryption.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c22",
+    "front": "What are the three SNMPv3 security levels?",
+    "back": "noAuthNoPriv (neither), authNoPriv (authentication only) and authPriv (authentication and encryption).",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ntp-syslog-snmp-c27",
+    "front": "How do you turn an increase in an octet counter into an average bit rate?",
+    "back": "Multiply the increase by 8 and divide by the seconds between the two samples.",
+    "tags": [
+      "number"
     ]
   }
 ]

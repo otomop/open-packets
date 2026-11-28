@@ -6,9 +6,9 @@ minutes: 65
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build a new project with the complete configuration below; no saved file from another chapter is required. You will protect a host port, reject a superior downstream root, and interpret missing-BPDU protection. The base topology is deliberately a line, so the controlled loop-guard demonstration has no redundant physical path that could form a data loop if the feature is unavailable.
+You will trigger each protection from the lesson and then recover from it: BPDU guard on a host port, root guard against a downstream switch that claims root, and loop guard on an uplink that stops hearing BPDUs. Build a new project from the configuration below; no saved file from another chapter is needed. The three switches form a line with no redundant link, so nothing you do here can create a real loop.
 
-These instructions and expected results are authored from Cisco's documented behavior, not a claim of manual Packet Tracer execution. Run the PortFast/BPDU-guard/root-guard exercises where the simulator supports them. Run the BPDU-suppression fault only on an isolated CML/hardware setup after confirming loop guard is operational; Packet Tracer learners use the included prediction and representative evidence. Command acceptance alone does not establish complete simulation support.
+Steps 1–6 (PortFast, BPDU guard, root guard) are written for Packet Tracer. Steps 7–9 (loop guard and the BPDU-filter fault) and Step 10 (errdisable recovery) need CML or real switches if Packet Tracer rejects the commands, and each has a paper path. The expected results follow Cisco's documented behaviour; they were not captured from Packet Tracer.
 
 ## Topology
 
@@ -166,7 +166,7 @@ SW2# show spanning-tree interface fastethernet0/5 detail
 ```
 
 :::expected
-PC-A can reach PC-B and SW3's SVI. SW1 Fa0/5 becomes forwarding as an edge after the controlled bounce; BPDU guard is configured and no violation exists with PC-A attached. SW2's global defaults apply to Fa0/5 but not its trunk Fa0/24. If an optional detailed show command is unsupported, use `show spanning-tree vlan 10`, `show running-config`, and interface status. Record the actual port behavior instead of assuming an exact delay.
+PC-A can reach PC-B and SW3's SVI. SW1 Fa0/5 becomes forwarding as an edge after the controlled bounce; BPDU guard is configured and no violation exists with PC-A attached. SW2's global defaults apply to Fa0/5 but not its trunk Fa0/24. If your simulator rejects the `detail` form, use `show spanning-tree vlan 10` and `show running-config` instead.
 :::
 
 ```state
@@ -175,7 +175,7 @@ PC-A can reach PC-B and SW3's SVI. SW1 Fa0/5 becomes forwarding as an edge after
 
 ## Step 3: Trigger BPDU guard with the third switch
 
-Before changing cables, predict whether the trigger depends on SW3 advertising a better root. Record the expected interface state, affected traffic and evidence that distinguishes this from an alternate port.
+SW3 has priority 28672 and SW2 has 24576, so SW3 cannot win the root election. Before changing cables, predict whether BPDU guard will still fire when SW3 is plugged into the host port, and what state SW1 Fa0/5 will show.
 
 Disconnect SW3 Gi0/1 from SW1 Gi0/1 first. Verify that SW3 now has no interswitch cable. Disconnect PC-A from SW1 Fa0/5. Prepare SW3 Fa0/1 as an access port in VLAN 10, then connect it to SW1 Fa0/5 using a crossover cable. This temporary connection has no alternate physical return path.
 
@@ -188,20 +188,22 @@ SW3(config-if)# no shutdown
 SW3(config-if)# end
 ```
 
+`show logging` displays the log messages the switch has stored; a later chapter covers logging in full. Here you only need the lines that name Fa0/5.
+
 ```ios SW1
 SW1# show interfaces status
 SW1# show logging
 ```
 
 :::expected
-SW3 sends BPDUs; the configured interface BPDU guard causes SW1 Fa0/5 to become err-disabled. SW3 does not need priority zero: any received BPDU is sufficient. Look for the actual `bpduguard` cause in the log. The following shortened lines are representative, not a recorded simulator transcript:
+SW3 sends BPDUs, and BPDU guard puts SW1 Fa0/5 into err-disabled. SW3 did not need a better priority: any received BPDU is enough. The log names the cause:
 
 ```output Representative SW1 evidence
 %SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port FastEthernet0/5 with BPDU Guard enabled. Disabling port.
 %PM-4-ERR_DISABLE: bpduguard error detected on Fa0/5, putting Fa0/5 in err-disable state
 ```
 
-If the port stays up, check which physical port received the cable, the SW3 port state, and the presence of BPDU guard. If the simulator does not implement the feature, record that limitation and interpret the evidence above; do not count the exercise as an observed trigger.
+If the port stays up, check that the cable is in SW1 Fa0/5, that SW3 Fa0/1 is up, and that `spanning-tree bpduguard enable` is in SW1's running configuration.
 :::
 
 ```state
@@ -230,7 +232,7 @@ SW1# show spanning-tree vlan 10
 ```
 
 :::expected
-Fa0/5 returns to connected/forwarding with PC-A attached. Repeat PC-A's pings to 10.0.10.12 and 10.0.10.3. SW2 is still root and SW3's root cost is 23. A repeating violation means a BPDU source is still reaching the protected port; a timer or repeated reset would not correct that source.
+Fa0/5 returns to connected/forwarding with PC-A attached. Repeat PC-A's pings to 10.0.10.12 and 10.0.10.3. SW2 is still root and SW3's root cost is 23. If the port err-disables again, a switch is still attached to it.
 :::
 
 ```state
@@ -239,9 +241,9 @@ Fa0/5 returns to connected/forwarding with PC-A attached. Repeat PC-A's pings to
 
 ## Step 5: Guard the downstream boundary and introduce a superior root
 
-Before applying the change, predict which of PC-A→PC-B and PC-A→SW3 should fail, which physical link can remain up, and whether manual errdisable recovery will be appropriate.
+Before applying the change, predict which of PC-A→PC-B and PC-A→SW3 will fail, whether the SW1–SW3 link will stay up, and whether you will need `shutdown` and `no shutdown` to recover.
 
-SW1 Gi0/1 is a designated boundary toward SW3, so install root guard there. Then change SW3's VLAN 10 priority to zero. Keep all permanent cables exactly as in the topology.
+SW1 Gi0/1 is a designated port facing SW3, which must never become root, so root guard belongs there. Then change SW3's VLAN 10 priority to zero. Keep all permanent cables exactly as in the topology.
 
 ```ios SW1
 SW1# configure terminal
@@ -263,7 +265,7 @@ SW1# show spanning-tree vlan 10
 ```
 
 :::expected
-SW1 Gi0/1 becomes root-inconsistent for VLAN 10, often displayed with `*ROOT_Inc`; it does not become BPDU-guard err-disabled. SW1 still identifies SW2 as root. PC-A can reach PC-B but cannot reach SW3's 10.0.10.3 address across the blocked VLAN. SW3 may identify itself as root in its isolated portion. The objective is to hold the upstream boundary, not change SW3's configuration automatically.
+SW1 Gi0/1 becomes root-inconsistent for VLAN 10, often displayed with `*ROOT_Inc`; it does not become BPDU-guard err-disabled. SW1 still identifies SW2 as root. PC-A can reach PC-B but cannot reach SW3's 10.0.10.3 address across the blocked VLAN. SW3 lists itself as root, but only of its own isolated segment: root guard holds the boundary and leaves SW3's configuration alone.
 :::
 
 ```state
@@ -287,7 +289,7 @@ SW1# show spanning-tree vlan 10
 ```
 
 :::expected
-The root-inconsistent condition clears without a manual port bounce. SW3 again learns SW2's root ID and uses Gi0/1 at cost 23; PC-A can again ping 10.0.10.3. Record the observed recovery rather than requiring exactly 20 seconds. If it persists, verify that the command changed VLAN 10 and that no other superior source exists.
+The root-inconsistent condition clears without a manual port bounce. SW3 again learns SW2's root ID and uses Gi0/1 at cost 23; PC-A can again ping 10.0.10.3. If the inconsistency persists, check that the priority command named VLAN 10.
 :::
 
 ```state
@@ -296,7 +298,7 @@ The root-inconsistent condition clears without a manual port bounce. SW3 again l
 
 ## Step 7: Prepare loop guard and record received BPDUs
 
-For the missing-BPDU exercise, remove root guard from SW1's sending port to keep this experiment focused on one feature. Configure loop guard on SW3's receiving root port. These commands require platform support; if your Packet Tracer image rejects loop guard, use the worksheet exercise in Step 8 and skip the suppression command entirely.
+Loop guard belongs on a port that expects BPDUs, and SW3 Gi0/1 is a root port. First remove root guard from SW1 Gi0/1 so that only one feature is under test (`no spanning-tree guard` clears either guard). Then configure loop guard on SW3 Gi0/1. If Packet Tracer rejects `spanning-tree guard loop`, take the paper path in Step 8 and do not enter the filter command.
 
 ```ios SW1
 SW1# configure terminal
@@ -315,7 +317,7 @@ SW3# show spanning-tree inconsistentports
 ```
 
 :::expected
-SW3 Gi0/1 is still root/forwarding for VLAN 10 and receives BPDUs before the fault. On an implementing image, detail identifies loop guard as enabled; repeated readings show received BPDU activity. The inconsistent-port list is empty. Do not infer enabled loop protection from command acceptance alone, and do not inject the fault if you cannot establish this baseline.
+SW3 Gi0/1 is still root/forwarding for VLAN 10 and receives BPDUs before the fault. The `detail` output shows loop guard as enabled, and its received-BPDU counter rises each time you repeat the command. The inconsistent-port list is empty. If the output does not show loop guard as enabled, take the paper path in Step 8.
 :::
 
 ```state
@@ -324,7 +326,7 @@ SW3 Gi0/1 is still root/forwarding for VLAN 10 and receives BPDUs before the fau
 
 ## Step 8: Observe a controlled BPDU-loss fault or interpret the exhibit
 
-**CML/hardware only, isolated line topology:** confirm that SW3 has only its Gi0/1 cable and the temporary Fa0/1 test port is shut. On SW1 Gi0/1, temporarily enable interface BPDU filtering. This models lost BPDU delivery while the physical link remains up; it does not reproduce every property of a one-way fiber fault. There is no extra SW2–SW3 link.
+**CML/hardware only, isolated line topology:** confirm that SW3 has only its Gi0/1 cable and the temporary Fa0/1 test port is shut. On SW1 Gi0/1, temporarily enable the interface BPDU filter. SW1 stops sending BPDUs while the link stays up, which is what SW3 would see on a one-way fibre fault.
 
 ```ios SW1
 SW1# configure terminal
@@ -342,7 +344,7 @@ SW3# show spanning-tree interface gigabitethernet0/1 detail
 **Packet Tracer/paper path:** do not enter the filter command. From the healthy baseline, predict the result if SW3 stopped receiving BPDUs but the link stayed up. Interpret the representative evidence below and compare it with root guard's trigger.
 
 :::expected
-On a supported implementation, expired expected BPDU information causes loop inconsistency on SW3 Gi0/1. Physical link status can remain connected while VLAN 10 cannot forward. A representative abbreviated entry is:
+SW3's stored BPDU expires after three missed hellos (about 6 seconds in Rapid PVST+), and Gi0/1 becomes loop-inconsistent. The link still shows connected, but VLAN 10 does not forward:
 
 ```output Representative loop-guard evidence
 Name                 Interface                Inconsistency
@@ -350,7 +352,7 @@ Name                 Interface                Inconsistency
 VLAN0010             GigabitEthernet0/1        Loop Inconsistent
 ```
 
-The reason is missing expected BPDUs, not a received superior BID. VLAN 999 may also be listed depending on its roles and received information. Do not require a fixed role label or six-second trigger from every software version. Root guard would not detect this same absence of control traffic.
+The trigger is missing BPDUs, not a superior BPDU, so root guard would not have caught this. VLAN 999 is listed too if Gi0/1 is also SW3's root port for that VLAN.
 :::
 
 ```state
@@ -359,7 +361,7 @@ The reason is missing expected BPDUs, not a received superior BID. VLAN 999 may 
 
 ## Step 9: Remove filtering and restore the boundary
 
-On the CML/hardware path, remove the exact filter introduced in Step 8. On the Packet Tracer/paper path no filter was installed, so simply verify the running configuration and restore root guard. Root guard on SW1 and loop guard on SW3 are on different interfaces at opposite ends and are compatible with this intended design.
+On the CML/hardware path, remove the exact filter introduced in Step 8. On the Packet Tracer/paper path no filter was installed, so simply verify the running configuration and restore root guard. Root guard on SW1 Gi0/1 and loop guard on SW3 Gi0/1 do not conflict: they are on different ports, a designated port and a root port.
 
 ```ios SW1
 SW1# configure terminal
@@ -428,9 +430,9 @@ SW3# copy running-config startup-config
 ```
 
 :::expected
-No deliberate fault remains: SW3 priority is 28672, its temporary Fa0/1 is shut, filtering is absent, and SW2 remains root. All three management IPs and both PCs are reachable within VLAN 10. Record any simulator-only omissions in your notes so the saved project does not imply a feature was demonstrated when it was only studied. Accept each device’s save filename prompt and wait for completion before moving to the next device.
+No deliberate fault remains: SW3 priority is 28672, its temporary Fa0/1 is shut, filtering is absent, and SW2 remains root. All three management IPs and both PCs are reachable within VLAN 10. Press Enter at each `Destination filename [startup-config]?` prompt.
 
-Submit one row for each tested or interpreted feature: intended port role; received or missing BPDU trigger; resulting interface/instance state; affected traffic; evidence that identifies the cause; corrective action; and fresh verification. Mark loop-guard worksheet results as supplied, not observed. The optional timer exercise is configuration interpretation, not a timed recovery measurement.
+Check yourself: for BPDU guard, root guard and loop guard, state from memory the trigger, the state it left, how much traffic stopped, the command that showed the cause, and how the port recovered. If you took the paper path for loop guard, note that you have not yet seen it run.
 :::
 
 ```state

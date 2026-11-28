@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The /25 covers .50 and wins longest match. .150 does not match it. AD is not compared between different installed prefix lengths; overlapping prefixes are not equal-cost paths, and removing the primary defeats standby operation.",
-    "fix": "```ios R1\nR1# configure terminal\nR1(config)# no ip route 192.168.20.0 255.255.255.128 10.0.13.2 5\nR1(config)# ip route 192.168.20.0 255.255.255.0 10.0.13.2 5\nR1(config)# end\nR1# show ip route static\n```\nOnly the distance-1 /24 should remain selected while the primary works. Verify both destination decisions, then test primary-link failure and recovery in the isolated lab before saving."
+    "explanation": "The backup is a separate /25 (.0 to .127), so it wins longest match for .50, while .150 uses the primary. AD is not compared across prefix lengths, and the primary must stay installed.",
+    "fix": "Replace the /25 backup with a /24 at the higher AD.\n\n```ios R1\nR1# configure terminal\nR1(config)# no ip route 192.168.20.0 255.255.255.128 10.0.13.2 5\nR1(config)# ip route 192.168.20.0 255.255.255.0 10.0.13.2 5\nR1(config)# end\nR1# show ip route static\n```\n\nOnly the AD 1 /24 should be selected while the primary works. Check both destinations, then test primary failure and recovery in the lab before saving."
   },
   {
     "id": "static-routing-ipv4-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "R2's connected /30 covers the router's ping source, but no route covers PC-A. The outbound route exists, /16 violates the plan, and R2's own address is not its next router.",
-    "fix": "```ios R2\nR2# configure terminal\nR2(config)# ip route 192.168.10.0 255.255.255.0 gigabitethernet0/0 10.0.12.1\nR2(config)# end\nR2# show ip route static\n```\nRepeat PC-A-to-PC-B and reverse pings. Both should succeed under the stated conditions. Verify before saving."
+    "explanation": "R2's connected /30 covers the router ping's source, but nothing covers PC-A's LAN, so replies to PC-A fail. The outbound route already exists, and R2's own address cannot be its next hop.",
+    "fix": "Add the return route on R2.\n\n```ios R2\nR2# configure terminal\nR2(config)# ip route 192.168.10.0 255.255.255.0 gigabitethernet0/0 10.0.12.1\nR2(config)# end\nR2# show ip route static\n```\n\nPing PC-A to PC-B and back. Both should work. Save after verifying."
   }
 ]

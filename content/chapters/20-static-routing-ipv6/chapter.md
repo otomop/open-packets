@@ -31,9 +31,9 @@ sources:
   - { title: "Cisco: Route Selection in Cisco Routers", url: "https://www.cisco.com/c/en/us/support/docs/ip/enhanced-interior-gateway-routing-protocol-eigrp/8651-21.html" }
 ---
 
-IPv6 static routing uses the route-selection method you already practiced with IPv4. The destination is still a prefix, a next hop is still the next router, and a reply still needs its own route. The important additions are 128-bit prefix notation, IPv6 forwarding configuration, Neighbor Discovery, and the interface scope of a link-local next hop.
+R1 has an IPv6 address on every interface, yet PC-A cannot reach PC-B on the LAN behind R2. Nothing is broken. R1 has no route to `2001:db8:20::/64`, so it drops the packet. You solved this problem for IPv4 in Chapter 18 with `ip route`. Here you solve it for IPv6 with `ipv6 route`.
 
-Keep those differences separate. Learning a new address format should not make you abandon the careful sequence of checking the configuration, installed routes and actual traffic.
+Most of what you know carries over: longest prefix match, administrative distance, and the rule that a reply needs its own route. Three things are new. The router must be told to forward IPv6 at all, it finds the next hop's MAC address with Neighbor Discovery instead of ARP, and a link-local next hop such as `fe80::2` must be paired with an exit interface. By the end you will be able to configure network, default, host and floating IPv6 static routes, read them in the routing table, and find the fault when a route is installed but traffic still fails.
 
 ## Apply the IPv4 routing method to IPv6
 
@@ -46,17 +46,17 @@ Keep those differences separate. Learning a new address format should not make y
 - Ethernet next-hop MAC resolution uses **Neighbor Discovery**, not ARP.
 :::
 
-An IPv6 packet matches the longest installed prefix that covers its destination. A packet for `2001:db8:20::12` can match `2001:db8:20::12/128`, `2001:db8:20::/64` and `::/0`. If all three are installed, /128 wins. If that host route is removed, /64 wins. If neither specific prefix exists but a default does, /0 supplies the forwarding instruction.
+A router chooses a route for an IPv6 packet the same way it does for IPv4: it uses the installed route with the longest prefix that contains the destination. A packet for `2001:db8:20::12` can match `2001:db8:20::12/128`, `2001:db8:20::/64` and `::/0`. If all three are installed, /128 wins. If that host route is removed, /64 wins. If neither specific prefix exists but a default does, `::/0` forwards the packet.
 
-Administrative distance helps decide which candidate route to an identical prefix enters the routing table. It does not make a less specific installed prefix beat a longer one. Keep installation and packet forwarding as two decisions, just as in the IPv4 chapter.
+Administrative distance answers a different question. When two sources offer a route to the same prefix, the one with the lower distance is installed in the routing table. Distance never lets a shorter prefix beat a longer one: a /128 with distance 200 still beats a /64 with distance 1.
 
-A router carrying both address families has separate IPv4 and IPv6 routing information. A successful IPv4 ping can support your physical-link investigation, but it does not prove an IPv6 address, next hop, gateway or forwarding setting is correct. Begin a complaint by identifying the destination address family, then inspect that family's configuration and table.
+IPv4 and IPv6 have separate routing tables on the same router. A successful IPv4 ping shows that the cable and interface work, but it says nothing about the IPv6 addresses, routes or gateways. Start a fault report by asking which address family the destination is in, then read that family's table: `show ipv6 route`, not `show ip route`.
 
-The examples use `2001:db8::/32` documentation space within an isolated lab. The /64 transit links are a teaching choice. They do not contradict the use of other supported prefix lengths, including /127 on appropriate point-to-point router links.
+The examples use the documentation prefix `2001:db8::/32` and give every link a /64.
 
 ## Enable addressing and forwarding
 
-Configure a router interface with a predictable global-form address and a chosen link-local address:
+A Cisco router forwards IPv4 by default but does not forward IPv6 until you enter `ipv6 unicast-routing`. Addressing the interfaces is not enough.
 
 ```ios R1
 R1# configure terminal
@@ -69,15 +69,19 @@ R1(config-if)# end
 R1# show ipv6 interface brief
 ```
 
-Each line has a different job. The global forwarding command allows R1 to move IPv6 packets between interfaces. The address line assigns `2001:db8:12::1` and a /64 prefix. The next line explicitly chooses `fe80::1` for this link. `no shutdown` enables the physical interface administratively; the peer and cable must also be working for a usable link.
+Each line has a different job. The global command lets R1 move IPv6 packets between interfaces. The first address line assigns `2001:db8:12::1` with a /64 prefix. The second replaces the automatically generated link-local address with `fe80::1`, which is easier to read and type as a next hop. `no shutdown` enables the interface; the link comes up when the peer and cable are also working.
 
-An IOS router can have IPv6 addresses and answer traffic addressed to itself while IPv6 forwarding is disabled. Therefore, “I can ping the router” is not enough to establish that it can carry a PC's traffic to another interface. Look for the global command and test through the router.
+:::trap Pinging the router proves little
+Without `ipv6 unicast-routing`, a router still answers pings to its own IPv6 addresses. It behaves like a host: it replies, but it does not forward a PC's packet out of another interface. Test through the router, not just to it.
+:::
 
-The interface's local and connected routes are also evidence. A connected /64 describes its attached subnet, while a local /128 identifies an address belonging to the router itself. These are different from a remote /128 **static host route**, which instructs forwarding toward another device.
+Each addressed interface that is up adds two routes. A connected route (code `C`) describes the attached /64. A local route (code `L`) is a /128 for the router's own address. Do not confuse a local /128 with a **static host route**, which is a /128 you configure for a single address on some other device.
 
-Router Advertisements can provide attached hosts with prefix and default-router information when IPv6 router operation is enabled and the interface's RA settings permit it. The global command is necessary in this basic lab but does not override an explicit RA suppression or an incorrectly configured prefix.
+`ipv6 unicast-routing` also makes the router send Router Advertisements on its interfaces. That is how the SLAAC hosts from Chapter 19 learn their prefix and default gateway.
 
 ## Choose an IPv6 route form
+
+`ipv6 route` takes a destination prefix and then says how to reach it: a next-hop address, an exit interface, or both.
 
 | Form | Example | Interpretation |
 |---|---|---|
@@ -85,25 +89,21 @@ Router Advertisements can provide attached hosts with prefix and default-router 
 | Exit interface only | `ipv6 route 2001:db8:20::/64 serial0/0/0` | Direct traffic onto the specified point-to-point interface |
 | Fully specified | `ipv6 route 2001:db8:20::/64 gigabitethernet0/0 fe80::2` | Use this neighbor on this exact link |
 
-The **recursive** example works when R1 has a usable resolving route to `2001:db8:12::2`, such as the connected transit /64. The same principle applies to a suitable non-link-local unicast next hop; a link-local address has the additional scope requirement described next.
+A **recursive** route names only a next-hop address. The router must look that address up in the routing table to find the exit interface, which is the recursion. R1 can use `2001:db8:12::2` because it has the connected route `2001:db8:12::/64` on Gi0/0. If that connected route disappears, the static route is removed from the table as well. IOS does not use a default route to resolve a recursive IPv6 next hop.
 
-Recursion must resolve to a usable path without depending on the route being resolved. Also, do not assume that any default automatically resolves every recursive next hop: documented IOS XE behavior excludes default-based IPv6 static recursion unless explicitly enabled. This course uses directly connected resolving prefixes and does not require the advanced override.
+An **interface-only** route suits a point-to-point serial link, where only one device is at the other end. On Ethernet it causes trouble. With no next hop, R1 treats every address in the remote prefix as directly attached and sends a Neighbor Discovery request for PC-B itself onto the transit link. PC-B is behind R2 and never hears the request, so nothing answers. On Ethernet, always name the neighboring router as the next hop.
 
-An **interface-only** route is reasonable for a true point-to-point interface because only one peer can receive the traffic. Ordinary Ethernet is a multiaccess link type even when the drawing shows only two routers. Without an explicit next hop, an interface-only route treats covered destinations as directly attached and may attempt Neighbor Discovery for those remote destinations on the transit link.
-
-That is the wrong assumption for a LAN behind another router. The remote PC cannot hear a link-local discovery request on the transit segment. Specialized proxy mechanisms exist, but they are not configured or required here. Name the adjacent router as the next hop.
-
-A **fully specified** route states both the exit and the neighbor. It still needs Layer 2 resolution for that neighbor on Ethernet. An active interface and installed static route do not guarantee that the stated neighbor address exists or will answer.
+A **fully specified** route gives both the exit interface and the next hop. It is the only form that works with a link-local next hop, and the next section explains why. The router still has to resolve the next hop's MAC address with Neighbor Discovery, so the route can be installed and still fail if no device on that link owns the address.
 
 ## Scope a link-local next hop
 
-A link-local address is meaningful only within one link. The text `fe80::2` can legitimately identify interfaces on several different links. IOS cannot infer which link you mean merely from those 128 address bits.
+A link-local address is meaningful only on one link. Every link uses the same `fe80::/10` range, so `fe80::2` can exist on several of a router's links at once. Given `fe80::2` alone, IOS cannot tell which interface to send the packet out of. You must tell it.
 
 ```diagram
 {"type":"topology","title":"A link-local next hop includes its link","caption":"The two R2 interfaces deliberately use different link-local values in this lab so a wrong-interface error is visible.","nodes":[{"id":"r1","kind":"router","label":"R1","sub":"fe80::1 on each link","x":3,"y":3},{"id":"r2","kind":"router","label":"R2","sub":"Primary fe80::2; backup fe80::3","x":9,"y":3}],"links":[{"from":"r1","to":"r2","label":"2001:db8:12::/64; peer fe80::2","fromLabel":"Gi0/0","toLabel":"Gi0/0","accent":true},{"from":"r1","to":"r2","label":"2001:db8:13::/64; peer fe80::3","fromLabel":"Gi0/1","toLabel":"Gi0/1","style":"dashed"}],"trace":{"flows":[{"path":["r1","r2"],"via":[0],"label":"Packet for 2001:db8:20::/64","tags":{"r1":"2001:db8:20::/64 via fe80::2 Gi0/0","r2":"Destination not rewritten to fe80::2"}},{"path":["r1","r2"],"via":[1],"label":"A route pairing fe80::2 with Gi0/1","stop":"r1","stopText":"No fe80::2 on Gi0/1 · cannot deliver"}]}}
 ```
 
-For R1's primary route, the useful next-hop identity is **fe80::2 on GigabitEthernet0/0**. The correct command is:
+For R1's primary route, the next hop is **fe80::2 on GigabitEthernet0/0**. The correct command is:
 
 ```ios R1
 R1# configure terminal
@@ -111,11 +111,11 @@ R1(config)# ipv6 route 2001:db8:20::/64 gigabitethernet0/0 fe80::2
 R1(config)# end
 ```
 
-Omitting the interface from a link-local next-hop command is invalid. Supplying an interface makes the syntax complete, but does not prove you supplied the **correct** interface. If `fe80::2` is not present on Gi0/1, a route through that pair cannot deliver to the intended neighbor even if its interface is up and the route is installed.
+IOS rejects a link-local next hop with no interface. It accepts any interface you supply, though, including the wrong one. If you pair `fe80::2` with Gi0/1, the route is installed while Gi0/1 is up, but R2's address on that link is `fe80::3`. No device answers for `fe80::2` there and the traffic is dropped.
 
-Read the peer's `show ipv6 interface brief` to establish its actual address on the connected interface. The local neighbor cache can corroborate bindings learned through traffic, but it is not guaranteed to contain every peer address. Pinging a peer's global address alone does not necessarily reveal its link-local address in the cache.
+To find the right pair, run `show ipv6 interface brief` on the peer and read the link-local address of the interface that faces you. `show ipv6 neighbors` on your own router lists the neighbors it has already resolved, each with its interface.
 
-A link-local ping also needs a link selection. Documented IOS interactive behavior asks for `Output Interface:` after a command such as `ping fe80::2`. Enter the local exit interface, not the peer's interface name. Exact prompt support varies in Packet Tracer; the lab also tests the globally unique transit addresses to establish connectivity independently.
+A link-local ping needs the same information. After `ping fe80::2`, IOS asks `Output Interface:`. Enter your own exit interface, such as `gigabitethernet0/0`, not the peer's. Packet Tracer does not always show this prompt, so the lab also tests the global transit addresses.
 
 :::trap
 The next hop can be link-local while the packet's destination is a remote global unicast address. The router resolves the local neighbor and forwards the original packet toward it. It does not replace the packet's destination with `fe80::2`.
@@ -123,9 +123,11 @@ The next hop can be link-local while the packet's destination is a remote global
 
 ## Network, default, host and floating routes
 
-A **network route** covers the remote LAN. In the diagram, R1's route to `2001:db8:20::/64` points to R2's primary neighbor. R2 needs the corresponding return route for R1's `2001:db8:10::/64`.
+The four route types the exam names are the same command with a different prefix length or distance.
 
-A **default route** covers destinations without a more specific installed match:
+A **network route** covers a remote subnet. In the diagram, R1's route to `2001:db8:20::/64` points to R2 on the primary link. R2 needs the matching route back to R1's LAN, `2001:db8:10::/64`.
+
+A **default route** uses `::/0`, which matches every destination. Because it is the shortest possible prefix, it is used only when nothing more specific matches:
 
 ```ios R1
 R1# configure terminal
@@ -133,11 +135,11 @@ R1(config)# ipv6 route ::/0 gigabitethernet0/0 fe80::2
 R1(config)# end
 ```
 
-A default does not create downstream connectivity or guarantee a reply. In the lab it reaches a separately configured R2 loopback, `2001:db8:99::8/128`. The destination actually exists and R2 already has a return route to the source LAN, so the test has a complete expected path.
+A default route only hands the packet to the next router. That router still needs a route to the destination and a route back to the source. In the lab the default reaches a loopback on R2, `2001:db8:99::8/128`, and R2 already has a return route to PC-A's LAN, so the ping succeeds.
 
-A **host route** uses /128. For `2001:db8:20::12/128` through the backup link, only that address takes the more specific path. Other addresses in `2001:db8:20::/64` keep their /64 path. A distance-200 host route can win that forwarding decision because its prefix is longer; it is not competing for installation with the different /64.
+A **host route** uses /128 and matches one address. With `2001:db8:20::12/128` pointing out of the backup link, only PC-B's address takes that path. Every other address in `2001:db8:20::/64` keeps using the /64 route. This holds even if the host route has distance 200, because the /128 and the /64 are different prefixes and distance compares only routes to the same prefix.
 
-A **floating static route** uses a greater distance than the primary for the same prefix:
+A **floating static route** is a backup for a prefix that already has a route. Give it the same prefix and a higher distance:
 
 ```ios R1
 R1# configure terminal
@@ -147,41 +149,43 @@ R1# show running-config
 R1# show ipv6 route static
 ```
 
-With the primary working, the distance-1 route is selected and the distance-5 route remains configured. If the primary interface becomes unusable, the backup can install. It still needs a functioning backup link, the correct neighbor on that link and valid downstream/return paths.
+While the primary works, the distance-1 route is in the table and the distance-5 route sits in the running configuration only. When Gi0/0 goes down, IOS removes the primary and installs the backup. The backup still needs a working link, the correct neighbor on that link, and a return route on R2.
 
-Equal distances can allow multiple usable paths to the same prefix, subject to platform support. That is different from standby. A more-specific destination typo is also not standby: it can take matching traffic while the preferred broad route is healthy.
+Two routes to the same prefix with equal distances are both installed and share the traffic. That is load balancing, not a backup.
 
-Ordinary floating routes react to changes in route eligibility; they do not continuously test remote applications. A peer failure behind a switch may leave the local interface up. Inspect what actually caused the preferred route to disappear instead of assuming a distance-5 entry proves one particular physical failure.
+A floating route takes over only when the primary leaves the routing table, which normally means its exit interface went down. It does not test the path. If R2 fails behind a switch, R1's interface stays up, the primary stays installed and the traffic is lost.
 
 ## Follow the request and reply
 
-Assume PC-A has `2001:db8:10::11/64` and gateway `fe80::1`. PC-B has `2001:db8:20::12/64` and gateway `fe80::2`. In this lab the /64 LANs are explicitly configured as on-link. In general IPv6, on-link information is separate from simply assigning a host address.
+Trace one ping to see every decision. PC-A is `2001:db8:10::11/64` with gateway `fe80::1`. PC-B is `2001:db8:20::12/64` with gateway `fe80::2`.
 
-PC-A identifies PC-B as off-link and selects its default router. It resolves R1's local-link address to an Ethernet address if necessary. R1 receives the frame, reads the unchanged destination `2001:db8:20::12` and selects its remote /64 route. It resolves R2's scoped next hop and sends a new Ethernet frame across the transit link.
+PC-A sees that PC-B is in a different prefix and sends the packet to its default gateway. It uses Neighbor Discovery to find R1's MAC address if it does not already have it. R1 receives the frame, reads the destination `2001:db8:20::12` and matches its /64 static route. It resolves `fe80::2` on Gi0/0 and sends a new Ethernet frame across the transit link.
 
-R2 then uses its connected LAN route and resolves PC-B. The IPv6 source and destination addresses remain PC-A and PC-B through this unfiltered, untranslated lab path. Routers change the link-layer framing and decrement **Hop Limit**, IPv6's hop counter corresponding to IPv4 TTL, as they forward.
+R2 matches its connected LAN route and resolves PC-B. The IPv6 source and destination addresses stay the same from PC-A to PC-B. Each router replaces the Ethernet header and decrements the **Hop Limit**, the IPv6 field that does the job of the IPv4 TTL.
 
-For the reply, PC-B selects its own gateway. R2 must have a route covering `2001:db8:10::11`. R1 finally delivers the reply through its connected LAN. Forward and return routes can legitimately use different links, provided both directions work.
+The reply is a separate routing problem. PC-B sends it to its own gateway, and R2 must have a route that covers `2001:db8:10::11`. R1 then delivers it through its connected LAN. The forward and return paths may use different links, as long as both work.
 
-A router-originated ping can use a transit source that the far router already knows as connected. That success does not establish a return route to the PC LAN. Test from the actual PCs or deliberately select an appropriate router source on an image that supports it. Record the source used, not just the destination that answered.
+:::trap A router's own ping can mislead you
+When R1 pings PC-B, it sources the packet from its exit interface, `2001:db8:12::1`. R2 is connected to that prefix, so the reply returns even when R2 has no route to PC-A's LAN. Test from the PCs, and note the source address of every ping you rely on.
+:::
 
 ## Verify and troubleshoot
 
-Representative selected-route output:
+`show ipv6 route static` lists the static routes that are installed:
 
 ```output R1# show ipv6 route static
 S   2001:DB8:20::/64 [1/0]             ← destination, distance, metric
      via FE80::2, GigabitEthernet0/0  ← complete scoped next hop
 ```
 
-After a primary-link failure, the intended backup entry is:
+After a primary-link failure, the backup entry replaces it:
 
 ```output R1# show ipv6 route static
 S   2001:DB8:20::/64 [5/0]
      via FE80::3, GigabitEthernet0/1  ← different link and neighbor
 ```
 
-The brackets describe administrative distance and metric, not hop count and packet loss. `show ipv6 route static` filters selected static entries. Use `show running-config` to find unselected backup candidates as well.
+The brackets hold administrative distance and metric. A static route's metric is 0. This command shows only installed routes, so a floating route that is waiting does not appear. Use `show running-config` to see every configured route. To ask which single route the router would use for one destination, add the address: `show ipv6 route 2001:db8:20::12`.
 
 | Observation | Next evidence to collect |
 |---|---|
@@ -191,14 +195,18 @@ The brackets describe administrative distance and metric, not hop count and pack
 | Local pings work but transit fails | Global IPv6 forwarding and both end-host gateways |
 | Unexpected backup path | Exact prefix lengths, distances and the primary route's current eligibility |
 
-In the neighbor cache, a reachable state means recently confirmed reachability. Stale alone is not a fault. Incomplete means address resolution has not completed; sustained incomplete state during repeated failure is useful evidence of a local resolution problem. Compare the address **and interface** before deciding that a similarly named neighbor elsewhere in the table is the correct one.
-
-Do not require an exact route-table entry count. Local multicast entries, formatting and additional implementation-generated routes can vary. The meaningful checks are whether the necessary connected, local and remote prefixes are present with the intended next hops.
+`show ipv6 neighbors` shows the neighbor cache, IPv6's equivalent of the ARP table. `REACH` means the neighbor answered recently. `STALE` means the entry has not been confirmed lately; it is normal and is rechecked when traffic next uses it. `INCMP` (incomplete) means the router asked for the MAC address and has no answer yet. An entry that stays incomplete while pings fail points to a wrong next-hop address or the wrong interface. Check the interface column as well as the address, because the same `fe80::` address can appear on two links.
 
 ## Exam focus
 
-You have now configured and tested routes in both address families. Chapter 21 returns to IPv4 to introduce OSPF's neighbor and path calculations; Chapter 22 then transfers those mechanisms to IPv6. Keep longest prefix match, next-hop scope and the return path as your checks when routes become learned automatically.
+The exam asks you to configure and verify four IPv6 static route types and to find the fault in a broken one. Make sure you can do each of these from memory:
 
-Configure each static-route type from an address plan, read its selected entry, and explain how its next hop is reached. Practice spotting a correct link-local address paired with the wrong exit interface; valid command syntax does not guarantee valid forwarding.
+- Write a network, default (`::/0`), host (`/128`) and floating route from an address plan.
+- Reject `ipv6 route 2001:db8:20::/64 fe80::2` on sight: a link-local next hop needs an exit interface.
+- Spot a link-local next hop paired with the wrong interface. The command is accepted and the route is installed, but traffic fails.
+- Read `[1/0]` and `[5/0]` as distance and metric, and explain why a floating route is missing from `show ipv6 route static`.
+- Pick the forwarding route by longest prefix match first, and use distance only between routes to the same prefix.
+- Name `ipv6 unicast-routing` when the router answers pings but does not forward.
+- Check the return route whenever a router's ping works and a PC's ping fails.
 
-For every failed endpoint test, walk the request and the reply separately. Combine route-table evidence with interface and neighbor information. You should finish able to justify both the proposed repair and the test that demonstrates it worked.
+Static routes do not adapt when the network changes. Chapter 21 returns to IPv4 and introduces OSPF, which learns routes from neighboring routers, and Chapter 22 applies it to IPv6. Longest prefix match, next-hop scope and the return path stay your checks when routes are learned automatically.

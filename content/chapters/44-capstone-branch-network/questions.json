@@ -8,7 +8,7 @@
       "v2:4.1"
     ],
     "difficulty": 1,
-    "prompt": "On a non-AAA lab router, SSHv2, keys and a local username already exist. Which two commands under every applicable VTY range require local-user login and restrict incoming transport to SSH? (Choose two.)",
+    "prompt": "A non-AAA lab router already has SSHv2, keys and a local username. Which two commands under every VTY range require local login and allow only SSH? (Choose two.)",
     "options": [
       "transport input telnet ssh",
       "transport input ssh",
@@ -20,11 +20,11 @@
       1,
       3
     ],
-    "explanation": "Transport input restricts the accepted remote protocol; login local selects the local username database in this non-AAA configuration. A separate access-class can further restrict client source addresses.",
+    "explanation": "`transport input ssh` limits remote access to SSH, and `login local` uses the local username database. An access-class can add a source restriction.",
     "whyWrong": {
-      "0": "This also permits Telnet.",
-      "2": "A line password alone does not select local username authentication.",
-      "4": "The SSH version command belongs in global configuration and is already present."
+      "0": "This also allows Telnet.",
+      "2": "A line password does not use the local username database.",
+      "4": "`ip ssh version 2` is a global command and is already present."
     }
   },
   {
@@ -40,7 +40,7 @@
       "title": "Representative SW1 SSH state",
       "text": "SSH Disabled\nPlease create RSA keys to enable SSH.\nConfigured VTY transport: ssh\nConfigured authentication: login local"
     },
-    "prompt": "A fresh SW1 has a hostname, domain name, local user and correct SSH-only VTY settings. The output explicitly reports no RSA key. Which action supplies the missing prerequisite?",
+    "prompt": "A fresh SW1 has a hostname, domain name, local user and SSH-only VTY settings, but the output reports no RSA key. What supplies the missing prerequisite?",
     "options": [
       "Replace the local account with a VTY line password",
       "Reapply the SSH-only transport setting on the VTYs",
@@ -50,11 +50,11 @@
     "answer": [
       2
     ],
-    "explanation": "The exhibit identifies the missing server key. Generate it using supported syntax, verify SSHv2 state, then test a fresh authorized login; a failure message without this evidence would need broader investigation.",
+    "explanation": "The output shows the SSH server key is missing. Generate a 2048-bit RSA key pair, then verify SSHv2 and test a fresh login.",
     "whyWrong": {
-      "0": "A line password cannot supply missing server key material.",
-      "1": "The transport setting already exists and does not generate a key.",
-      "3": "Idle timeout affects an established session, not creation of the SSH server key."
+      "0": "A line password cannot supply a server key.",
+      "1": "The transport setting exists and does not create a key.",
+      "3": "An idle timeout does not create an SSH key."
     }
   },
   {
@@ -70,7 +70,7 @@
       "title": "Representative SW1 channel state",
       "text": "Po1(SD) LACP Fa0/23(I) Fa0/24(I)\nSW1 members: channel-group 1 mode passive\nSW2 members: channel-group 1 mode passive"
     },
-    "prompt": "Both switches have compatible operational trunk ports in channel group 1, but both ends use LACP passive. Which change initiates negotiation while retaining LACP?",
+    "prompt": "Both switches have working trunk ports in channel group 1, but both ends use LACP passive. Which change starts negotiation while keeping LACP?",
     "options": [
       "Set both ends to channel-group 1 mode on",
       "Set one end to channel-group 1 mode active",
@@ -80,11 +80,11 @@
     "answer": [
       1
     ],
-    "explanation": "LACP passive responds but does not initiate. One active end is sufficient to start negotiation; compatible link and channel settings are still required.",
+    "explanation": "LACP passive only responds, so at least one end must be active.",
     "whyWrong": {
-      "0": "On selects static bundling rather than LACP.",
-      "2": "A native-VLAN change does not provide an LACP initiator.",
-      "3": "PortFast changes STP edge behavior and is inappropriate for this inter-switch link."
+      "0": "`on` is a static bundle, not LACP.",
+      "2": "The native VLAN does not start LACP.",
+      "3": "PortFast is for edge ports, not inter-switch links."
     }
   },
   {
@@ -95,7 +95,7 @@
       "v2:2.5.a"
     ],
     "difficulty": 2,
-    "prompt": "Both switches use base STP priority 32768 in VLANs 10,20,99,999. SW2 currently wins by MAC address. Which SW1 command makes it preferred over current and future default-priority peers in all four VLANs?",
+    "prompt": "Both switches use priority 32768 in VLANs 10, 20, 99 and 999, and SW2 wins by MAC address. Which SW1 command makes it root in all four VLANs against default-priority peers?",
     "options": [
       "spanning-tree vlan 10,20,99,999 priority 32768",
       "spanning-tree vlan 1 root primary",
@@ -105,11 +105,11 @@
     "answer": [
       2
     ],
-    "explanation": "Against the stated default-priority peers, root primary selects a lower base priority, typically 24576 on the documented Catalyst implementation. Check the elected root; the macro is not an unconditional 24576 assignment in every existing topology.",
+    "explanation": "`root primary` lowers the bridge priority below the default peers, typically to 24576 on Catalyst. Check the elected root afterward.",
     "whyWrong": {
-      "0": "Leaving the priority at 32768 leaves MAC address as the tie-breaker.",
-      "1": "Changing VLAN 1 does not select the root for the four named VLANs.",
-      "3": "A higher numerical bridge priority is less preferred."
+      "0": "Keeping 32768 leaves the MAC address as the tie-breaker.",
+      "1": "VLAN 1 is not one of the four VLANs.",
+      "3": "A higher number is less preferred."
     }
   },
   {
@@ -126,7 +126,7 @@
       "title": "Representative SW1 trunk excerpt",
       "text": "Port   Status     Native   Allowed VLANs\nGi0/1  trunking   999      10,99,999\nPo1    trunking   999      10,20,99,999"
     },
-    "prompt": "A guest on SW2 VLAN 20 needs DHCP from R1 behind SW1 Gi0/1. Its access VLAN and Po1 forwarding state are correct, but no lease arrives. R1 Gi0/0.20 is up/up. Which demonstrated fault interrupts the path?",
+    "prompt": "A guest on SW2 VLAN 20 needs DHCP from R1 behind SW1 Gi0/1. Its access VLAN and Po1 are fine, but no lease arrives, and R1 Gi0/0.20 is up/up. What interrupts the path?",
     "options": [
       "VLAN 20 is excluded from the router-facing trunk",
       "VLAN 999 needs an IPv4 address on the switch",
@@ -136,11 +136,11 @@
     "answer": [
       0
     ],
-    "explanation": "SW1 Gi0/1 excludes VLAN 20, so that tagged path to R1 is unavailable. An up/up router subinterface does not certify the switch’s allowed VLAN list.",
+    "explanation": "SW1 Gi0/1 does not allow VLAN 20, so the tagged guest traffic never reaches R1. An up/up subinterface does not check the switch's allowed list.",
     "whyWrong": {
-      "1": "The unused native VLAN needs no routed address for tagged VLAN 20.",
-      "2": "The directly attached router is already the DHCP server; a helper to itself is not needed.",
-      "3": "The guest VLAN can be carried as tagged traffic while another VLAN is native."
+      "1": "The unused native VLAN needs no address for tagged VLAN 20.",
+      "2": "R1 is already the DHCP server, so it needs no helper to itself.",
+      "3": "VLAN 20 can be tagged while another VLAN is native."
     }
   },
   {
@@ -151,7 +151,7 @@
       "v2:2.1.b"
     ],
     "difficulty": 2,
-    "prompt": "A fresh R1 Gi0/0.20 subinterface will route tagged VLAN 20 as 10.10.20.1/24. Its parent is enabled and unaddressed; the switch trunk already carries VLAN 20. Which two subinterface commands are needed? (Choose two.)",
+    "prompt": "R1 Gi0/0.20 must route tagged VLAN 20 as 10.10.20.1/24. The parent is up and the switch trunk carries VLAN 20. Which two subinterface commands are needed? (Choose two.)",
     "options": [
       "encapsulation dot1Q 20",
       "switchport access vlan 20",
@@ -163,11 +163,11 @@
       0,
       2
     ],
-    "explanation": "Bind the VLAN tag to the subinterface, then assign its gateway address. These are the missing settings for the stated fresh interface; the parent and switch path are separate prerequisites.",
+    "explanation": "`encapsulation dot1Q 20` binds the VLAN tag and `ip address` gives the gateway.",
     "whyWrong": {
-      "1": "A routed subinterface uses encapsulation, not an access-switchport command.",
-      "3": "A helper to the same router is not required to route client traffic.",
-      "4": "An OSPF network type does not supply the tag or gateway address."
+      "1": "A routed subinterface uses encapsulation, not switchport commands.",
+      "3": "A helper to the same router is not needed.",
+      "4": "An OSPF network type supplies neither tag nor address."
     }
   },
   {
@@ -184,7 +184,7 @@
       "title": "Representative both transit interfaces",
       "text": "R1: Router ID 1.1.1.1, Network Type POINT_TO_POINT, Hello 10, Dead 40\nR2: Router ID 2.2.2.2, Network Type BROADCAST, Hello 10, Dead 40\nR1 neighbor 2.2.2.2: FULL\nExpected remote LAN route: absent"
     },
-    "prompt": "The two ends of one OSPF transit show the following state. The remote LANs are enabled in area 0, yet expected routes are absent. Which verified inconsistency should be corrected first?",
+    "prompt": "The two ends of an OSPF transit show this state. The LANs are enabled in area 0, but routes are missing. What should you fix first?",
     "options": [
       "Different local OSPF process identifiers",
       "Different IPv4 administrative distances",
@@ -194,11 +194,11 @@
     "answer": [
       2
     ],
-    "explanation": "The output directly establishes a point-to-point/broadcast mismatch. Cisco documents cases where incompatible topology descriptions prevent route calculation even with a FULL relationship; FULL alone would not uniquely diagnose this fault.",
+    "explanation": "The output shows mismatched OSPF network types on the link. Mismatched types can stop route calculation even when the neighbor state is FULL.",
     "whyWrong": {
-      "0": "Process IDs are local and no process-ID conflict is demonstrated.",
-      "1": "No changed administrative distance is shown; it would not fix inconsistent link descriptions.",
-      "3": "No external metric difference is shown and it is not the observed mismatch."
+      "0": "Process IDs are local and do not need to match.",
+      "1": "No administrative distance difference is shown.",
+      "3": "No external metric difference is shown."
     }
   },
   {
@@ -210,7 +210,7 @@
       "v1:1.6"
     ],
     "difficulty": 2,
-    "prompt": "R1 already has pool STAFF with network 10.10.10.0/24 and serves that directly attached VLAN. Reserve .1–.49 and supply gateway .1. Which two additions meet those requirements? (Choose two.)",
+    "prompt": "R1's pool STAFF uses network 10.10.10.0/24 on a directly attached VLAN. Reserve .1 to .49 and give clients gateway .1. Which two additions meet this? (Choose two.)",
     "options": [
       "ip dhcp excluded-address 10.10.10.1 10.10.10.49 in global mode",
       "ip helper-address 10.10.10.1 on the client interface",
@@ -222,11 +222,11 @@
       0,
       3
     ],
-    "explanation": "The exclusion reserves the low addresses, and default-router supplies the gateway option. Available candidates are .50–.254; allocation order and existing leases are separate matters.",
+    "explanation": "The global exclusion reserves .1 to .49 and `default-router` supplies the gateway. Clients lease .50 to .254.",
     "whyWrong": {
-      "1": "The local server does not require a relay to itself.",
-      "2": "The existing pool network already identifies the /24; a host-looking network line does not define the desired starting lease.",
-      "4": "That reserves the intended client range instead of .1–.49."
+      "1": "A local server needs no relay to itself.",
+      "2": "The pool already defines the /24 network.",
+      "4": "That excludes the client range instead of .1 to .49."
     }
   },
   {
@@ -237,7 +237,7 @@
       "v2:4.3"
     ],
     "difficulty": 2,
-    "prompt": "R1’s external ping is confirmed to use source 10.255.12.1. R2 PAT permits only 10.10.10.0/24 and 10.10.20.0/24; the ISP lacks private return routes. Client HTTP and ping succeed. Which next test compares an eligible source?",
+    "prompt": "R1's external ping uses source 10.255.12.1. R2 PAT permits only 10.10.10.0/24 and 10.10.20.0/24, and the ISP has no private return routes. Clients work. Which test uses an eligible source?",
     "options": [
       "Add a default route on the clients toward R2 directly",
       "Ping from R1 with source 10.10.10.1 and inspect R2 NAT",
@@ -247,11 +247,11 @@
     "answer": [
       1
     ],
-    "explanation": "The staff-gateway source lies in the existing selector and still crosses R2’s inside/outside path. Comparing its result with the transit-sourced test demonstrates why the chosen source matters.",
+    "explanation": "Source 10.10.10.1 is inside the PAT selector and crosses R2's inside and outside path. Comparing it with the transit-sourced test shows why the source matters.",
     "whyWrong": {
-      "0": "The clients already use their correct local gateway and work.",
-      "2": "An additional translator is not required for this comparison.",
-      "3": "Expanding translation changes the design instead of testing the stated source rule."
+      "0": "The clients already use the correct gateway and work.",
+      "2": "A second translator is not needed for this comparison.",
+      "3": "Permitting every source changes the design instead of testing it."
     }
   },
   {
@@ -267,7 +267,7 @@
       "title": "Representative GUEST-IN excerpt",
       "text": "10 permit udp any eq 68 any eq 67\n40 deny ip 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255\n70 permit ip 10.10.20.0 0.0.0.255 any"
     },
-    "prompt": "The ACL is inbound on the guest subinterface. Staff echo requests reach guests, but guest echo replies are dropped. Preserve the deny of new guest echo requests to staff. Which change fits?",
+    "prompt": "GUEST-IN is inbound on the guest subinterface. Staff echo requests reach guests, but guest echo replies are dropped. New guest echo requests to staff must stay denied. What change fits?",
     "options": [
       "Permit guest-to-staff ICMP echo-reply before the deny",
       "Move the ACL to the staff subinterface inbound",
@@ -277,11 +277,11 @@
     "answer": [
       0
     ],
-    "explanation": "A staff request leaves the guest subinterface; the guest reply enters it. A preceding echo-reply exception permits that packet type while new guest echo requests still match the deny; this is not state tracking.",
+    "explanation": "The guest reply enters the guest subinterface, so permit guest-to-staff echo-reply before the deny. New echo requests still match the deny, and the ACL does not track state.",
     "whyWrong": {
-      "1": "Moving the list changes which traffic is filtered and does not implement the required guest-source policy.",
+      "1": "Moving the list changes which traffic is filtered and breaks the guest-source policy.",
       "2": "A later entry cannot override the earlier deny.",
-      "3": "Echo matches the request type that the requirement intends to deny."
+      "3": "Echo is the request type that must stay denied."
     }
   },
   {
@@ -292,7 +292,7 @@
       "v2:5.6"
     ],
     "difficulty": 2,
-    "prompt": "With logging trap warnings configured, which listed message is eligible for remote forwarding under that severity threshold?",
+    "prompt": "With `logging trap warnings`, which message is forwarded to the remote server?",
     "options": [
       "%SYS-5-CONFIG_I",
       "%LINEPROTO-5-UPDOWN",
@@ -302,11 +302,11 @@
     "answer": [
       3
     ],
-    "explanation": "Warnings is severity 4, so levels 0–4 qualify and 5–7 do not. Eligibility does not prove the collector received the message, and console/buffer thresholds are independent.",
+    "explanation": "Warnings is severity 4, so levels 0 to 4 are forwarded and 5 to 7 are not. %LINK-3-UPDOWN is severity 3.",
     "whyWrong": {
-      "0": "Severity 5 is outside a threshold of 4.",
-      "1": "Severity 5 is outside a threshold of 4.",
-      "2": "Severity 5 is outside a threshold of 4."
+      "0": "Severity 5 is above the threshold.",
+      "1": "Severity 5 is above the threshold.",
+      "2": "Severity 5 is above the threshold."
     }
   },
   {
@@ -397,7 +397,7 @@
         "caption": "R1 Gi0/1 and R2 Gi0/0 share area 0; the ISP uses a static route relationship."
       }
     },
-    "prompt": "R1 and R2 use passive-interface default and enable OSPF on the branch/HQ LANs and their shared transit. Only the R1–R2 link should form an adjacency. Which two exceptions are needed? (Choose two.)",
+    "prompt": "R1 and R2 use passive-interface default and enable OSPF on their LANs and the shared transit. Only the R1 to R2 link should form an adjacency. Which two interfaces need to be non-passive? (Choose two.)",
     "options": [
       "R1 GigabitEthernet0/0.10",
       "R1 GigabitEthernet0/1",
@@ -409,11 +409,11 @@
       1,
       3
     ],
-    "explanation": "The diagram places the transit on R1 Gi0/1 and R2 Gi0/0. Other enabled LAN interfaces can remain passive while their connected prefixes are advertised through that adjacency.",
+    "explanation": "The transit is R1 Gi0/1 and R2 Gi0/0. The LAN interfaces stay passive while their prefixes are still advertised.",
     "whyWrong": {
       "0": "The staff subinterface should not form a neighbor.",
-      "2": "The HQ server interface should remain passive.",
-      "4": "The ISP is not an OSPF peer in this design."
+      "2": "The HQ server interface should stay passive.",
+      "4": "The ISP is not an OSPF peer."
     }
   },
   {
@@ -430,7 +430,7 @@
       "title": "Representative R1 default route",
       "text": "O*E2 0.0.0.0/0 [110/10] via 10.255.12.2\nR2 design sets external metric 10 explicitly."
     },
-    "prompt": "R1 learns an OSPF external default from R2. R2 must advertise it only while it has its configured static default through 203.0.113.2. Which pair of settings expresses that design?",
+    "prompt": "R1 learns an OSPF default from R2, which must advertise it only while its static default through 203.0.113.2 exists. Which settings do this?",
     "options": [
       "An OSPF network statement plus passive-interface default",
       "A static default plus an OSPF router-id statement",
@@ -440,11 +440,11 @@
     "answer": [
       3
     ],
-    "explanation": "The static default supplies the route; default-information originate advertises a default while the required route exists. This does not prove the upstream service is healthy, and the metric is a separate configuration/default detail.",
+    "explanation": "The static default is the route, and `default-information originate` without `always` advertises a default only while that route exists.",
     "whyWrong": {
-      "0": "Network statements enable interfaces and do not create a default route.",
-      "1": "A router ID does not cause default-route origination.",
-      "2": "Neither an interface-selection statement nor NAT generates the needed default."
+      "0": "A network statement does not create a default route.",
+      "1": "A router ID does not originate a default.",
+      "2": "Neither a network statement nor NAT creates a default."
     }
   },
   {
@@ -461,7 +461,7 @@
       "title": "Representative GUEST-IN after new probes",
       "text": "10 permit udp any eq 68 any eq 67\n20 permit icmp 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255 echo-reply\n35 deny ip 10.10.20.0 0.0.0.255 any (48 matches)\n40 deny ip 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255\n70 permit ip 10.10.20.0 0.0.0.255 any"
     },
-    "prompt": "Fresh guest gateway and external requests increment the unintended line 35. DHCP still works. The intended policy permits both requests while denying guest-to-staff requests. Which repair preserves the rest of that policy?",
+    "prompt": "Guest gateway and external requests increment unintended line 35, while DHCP works. The policy should permit both requests and deny guest-to-staff. Which repair keeps the rest of the policy?",
     "options": [
       "Remove sequence 35 within GUEST-IN",
       "Detach GUEST-IN from the subinterface",
@@ -471,11 +471,11 @@
     "answer": [
       0
     ],
-    "explanation": "The preceding broad deny matches the tested guest packets before the intended entries. Removing that single unintended sequence restores the scoped policy; an empty NAT table alone would not identify this cause.",
+    "explanation": "The broad deny at sequence 35 matches the guest packets before the intended entries. Remove only that sequence.",
     "whyWrong": {
-      "1": "Detaching the list also removes required restrictions.",
-      "2": "Clearing downstream translation state does not remove the upstream deny.",
-      "3": "The gateway is already correct; the packet matches the router’s ACL."
+      "1": "Detaching the list removes the required restrictions.",
+      "2": "Clearing NAT does not remove the ACL deny.",
+      "3": "The gateway is already correct."
     }
   },
   {
@@ -486,7 +486,7 @@
       "v2:1.7"
     ],
     "difficulty": 2,
-    "prompt": "DHCP moved to 10.255.20.10. Its staff pool and return route are correct, filtering permits relay traffic, and R1 has no helper on client-facing Gi0/0.10. Which addition forwards that VLAN’s requests to the new server?",
+    "prompt": "DHCP moved to 10.255.20.10 with a correct staff pool and return route, and R1 has no helper on client-facing Gi0/0.10. What forwards the VLAN's requests to the new server?",
     "options": [
       "Add ip helper-address 10.255.20.10 to R2’s server-facing interface",
       "Add ip helper-address 10.255.20.10 to R1 Gi0/0.10",
@@ -496,11 +496,11 @@
     "answer": [
       1
     ],
-    "explanation": "The helper belongs where the client broadcast arrives, on R1’s staff subinterface. With the stated server and path prerequisites, the relay supplies the staff gateway in giaddr so the server selects the correct pool.",
+    "explanation": "Put the helper where the client broadcast arrives: R1's staff subinterface. The relay sets giaddr to the staff gateway, so the server picks the right pool.",
     "whyWrong": {
-      "0": "The server-facing interface does not receive the original client broadcast.",
-      "2": "Reintroducing the old local server changes the intended design.",
-      "3": "The DNS option does not enable a DHCP relay."
+      "0": "The server-facing interface does not receive the client broadcast.",
+      "2": "A local pool on R1 changes the intended design.",
+      "3": "A DNS option does not enable relay."
     }
   },
   {
@@ -512,7 +512,7 @@
       "v2:4.1"
     ],
     "difficulty": 2,
-    "prompt": "GUEST-IN permits packets from guests to their own gateway 10.10.20.1. R1 must accept SSH only from 10.10.10.0/24, while retaining guest gateway ping. Which additional control fits?",
+    "prompt": "GUEST-IN permits guests to ping their gateway 10.10.20.1. R1 must accept SSH only from 10.10.10.0/24 and still allow the guest ping. Which control fits?",
     "options": [
       "Apply a deny ip any any rule inbound on the guest subinterface",
       "Remove the IP address from the guest gateway subinterface",
@@ -522,11 +522,11 @@
     "answer": [
       2
     ],
-    "explanation": "A VTY access-class restricts remote terminal clients independently of the interface’s general IP traffic. Keep local authentication and SSH-only transport, then test both an allowed staff login and a denied guest login.",
+    "explanation": "An access-class on the VTY lines restricts SSH client sources independently of interface traffic. Keep local login and SSH-only transport.",
     "whyWrong": {
-      "0": "That would also break permitted guest traffic including the gateway ping.",
-      "1": "Removing the gateway breaks the client design.",
-      "3": "An OSPF passive setting does not control SSH access."
+      "0": "A deny ip any any also blocks the permitted guest ping.",
+      "1": "Removing the gateway address breaks the guest design.",
+      "3": "A passive OSPF interface does not control SSH access."
     }
   },
   {
@@ -537,7 +537,7 @@
       "v2:2.1.c"
     ],
     "difficulty": 2,
-    "prompt": "Two 100 Mb/s members carry Po1. After one is shut, Po1 remains in use and a new guest HTTP request completes. Which handover statement is supported?",
+    "prompt": "Two 100 Mb/s members carry Po1. One is shut, Po1 stays up and a new guest HTTP request works. What does this support?",
     "options": [
       "The channel now provides one 100 Mb/s member path; interruption and application performance must be observed",
       "Each surviving flow retains 200 Mb/s because Po1 still has two configured members",
@@ -547,11 +547,11 @@
     "answer": [
       0
     ],
-    "explanation": "The surviving member preserves a path but reduces available aggregate link capacity. A successful request does not measure transient loss, latency or switch-level resilience.",
+    "explanation": "One member keeps a path up but halves the capacity. A successful request does not measure loss, delay or switch-level resilience.",
     "whyWrong": {
-      "1": "A configured but down member contributes no forwarding capacity.",
-      "2": "The observed application result does not establish per-packet handling or lossless failover.",
-      "3": "Only one member link was removed, not an entire switch."
+      "1": "A down member adds no capacity.",
+      "2": "The result says nothing about per-packet handling or lossless failover.",
+      "3": "Only a member link failed, not a whole switch."
     }
   },
   {
@@ -562,7 +562,7 @@
       "v2:4.6"
     ],
     "difficulty": 2,
-    "prompt": "Two guests in VLAN 20 communicate directly through SW2. GUEST-IN is attached only to R1 Gi0/0.20 inbound. What should the acceptance record say about guest-to-guest isolation?",
+    "prompt": "Two guests in VLAN 20 talk directly through SW2, and GUEST-IN is only inbound on R1 Gi0/0.20. What should the acceptance record say about guest-to-guest isolation?",
     "options": [
       "The router ACL blocks the traffic because both hosts have a guest source address",
       "The router ACL is not traversed by ordinary same-subnet switching; this requirement is not implemented",
@@ -572,11 +572,11 @@
     "answer": [
       1
     ],
-    "explanation": "Hosts in the same subnet resolve each other and send frames across the local VLAN. The routed ingress ACL has no opportunity to inspect that direct path. Client isolation would require an appropriate separate design.",
+    "explanation": "Same-subnet frames are switched in the VLAN and never reach the router ACL, so the requirement is not implemented. It needs a separate design such as client isolation.",
     "whyWrong": {
-      "0": "A matching source is useful only if the packet actually crosses the attachment point.",
-      "2": "The router’s implicit deny does not become a switch forwarding rule.",
-      "3": "Additional entries at an untraversed attachment do not change this traffic path."
+      "0": "The ACL only sees traffic that crosses the router.",
+      "2": "The router's implicit deny is not a switch forwarding rule.",
+      "3": "More entries on an untraversed ACL change nothing."
     }
   },
   {
@@ -588,7 +588,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which next step best separates the cause of the guest failure without changing a working path?",
+    "prompt": "Which next step best isolates the guest failure without changing a working path?",
     "options": [
       "Broaden NAT-LANS to permit any source because at least one application failed",
       "Compare the guest DNS setting and a fresh lookup with the DNS server record",
@@ -598,11 +598,11 @@
     "answer": [
       1
     ],
-    "explanation": "The guest already reaches the same external HTTP service by address. The missing dependency in the failing name-based test is resolution; inspect it before changing routing or translation. This narrows the investigation without claiming the exact DNS fault is known.",
+    "explanation": "The guest reaches the external service by address, so the failing step is name resolution. Check the guest DNS setting and a fresh lookup first.",
     "whyWrong": {
-      "0": "The successful guest numeric request already demonstrates an eligible working translation path.",
-      "2": "The hostname is resolved before IP forwarding; the evidence does not identify a default-route fault.",
-      "3": "The successful request and corresponding translation argue against clearing unrelated sessions."
+      "0": "The numeric request already shows NAT works for the guest.",
+      "2": "Names resolve before IP forwarding, so the default route is not implicated.",
+      "3": "A working numeric request shows PAT works, so do not clear sessions."
     },
     "exhibit": {
       "kind": "cli",
@@ -619,7 +619,7 @@
       "v2:2.4"
     ],
     "difficulty": 2,
-    "prompt": "Which action addresses the missing return path while preserving passive client-facing OSPF interfaces?",
+    "prompt": "Which action fixes the missing return path and keeps client-facing OSPF interfaces passive?",
     "options": [
       "Make every client-facing interface nonpassive so endpoints can form neighbors",
       "Extend PAT to HQ traffic so the route advertisement no longer matters",
@@ -629,11 +629,11 @@
     "answer": [
       2
     ],
-    "explanation": "A passive LAN must still be enabled in OSPF to have its prefix advertised. The supplied interface list shows the staff interface is absent, and R2 therefore lacks that return route. Enable the intended staff interface while leaving it passive, then repeat the staff-to-HQ test.",
+    "explanation": "A passive LAN must still be enabled in OSPF for its prefix to be advertised. The staff interface is absent, so R2 lacks the staff route. Enable it in area 0, leave it passive and retest.",
     "whyWrong": {
-      "0": "Hosts do not need an OSPF adjacency, and removing passive status alone does not select an interface for OSPF.",
-      "1": "Changing the NAT boundary avoids the stated routing requirement instead of meeting it.",
-      "3": "FULL describes database synchronization with that peer; it does not prove every intended interface was selected."
+      "0": "Hosts do not form OSPF adjacencies, and removing passive does not select an interface.",
+      "1": "Extending PAT avoids the routing requirement instead of meeting it.",
+      "3": "FULL describes database sync with one peer, not that every interface is selected."
     },
     "exhibit": {
       "kind": "cli",
@@ -649,7 +649,7 @@
       "v2:4.6"
     ],
     "difficulty": 2,
-    "prompt": "A change permits guest HTTPS to HQ host 10.255.20.10, while all other guest-to-HQ traffic remains denied. GUEST-IN is inbound on R1 Gi0/0.20 and currently has sequence 60 denying guest traffic to 10.255.0.0/16. Which change and test pair meets the request?",
+    "prompt": "Guest HTTPS to HQ host 10.255.20.10 must be permitted while other guest-to-HQ traffic stays denied. GUEST-IN has sequence 60 denying guests to 10.255.0.0/16. Which change and test meet this?",
     "options": [
       "Insert a TCP destination-443 permit before sequence 60; test guest HTTPS and a still-denied guest HQ ping",
       "Append a TCP destination-443 permit after sequence 60; test only the new entry’s configuration",
@@ -659,11 +659,11 @@
     "answer": [
       0
     ],
-    "explanation": "A guest request enters with an ephemeral source port and destination 443. A specific permit before the broader deny admits only that requested service. A new allowed application test and a denied control test establish both sides of the requirement; the HQ service and return route must also work.",
+    "explanation": "A specific permit placed before the broader deny admits only that service. Test guest HTTPS and a guest HQ ping that stays denied.",
     "whyWrong": {
-      "1": "The earlier matching deny prevents the appended permit from being reached.",
-      "2": "Permit ip also admits unrelated protocols to the host, including the ping that must remain blocked.",
-      "3": "The initial request is addressed to server port 443; its source is not normally 443."
+      "1": "A permit after sequence 60 is never reached.",
+      "2": "`permit ip` admits other protocols, including the ping that must stay blocked.",
+      "3": "Guest HTTPS has destination port 443, not source port 443."
     }
   },
   {
@@ -675,7 +675,7 @@
       "v2:4.1"
     ],
     "difficulty": 2,
-    "prompt": "After staff is renumbered from 10.10.10.0/24 to 10.20.10.0/24, a client reaches all management addresses and external HTTP. A console check shows local accounts, keys and SSHv2 are healthy; every device still permits only 10.10.10.0/24 in MGMT-SOURCES. Which repair and verification meet the design?",
+    "prompt": "Staff moved from 10.10.10.0/24 to 10.20.10.0/24. A client reaches all management addresses and external HTTP, and SSH keys and accounts are healthy, but MGMT-SOURCES on every device still permits only 10.10.10.0/24. What fixes this?",
     "options": [
       "Replace the local account on R1 and use the old staff gateway as the SSH source",
       "Remove every VTY source filter permanently and rely on successful authentication",
@@ -685,11 +685,11 @@
     "answer": [
       3
     ],
-    "explanation": "Routing and SSH prerequisites have been independently checked. The source policy still refers to the retired prefix on every managed device. Update all four lists through the retained consoles, then verify authorized and unauthorized sources.",
+    "explanation": "Routing and SSH are healthy, so the stale source policy is the fault. Update MGMT-SOURCES on all four managed devices, then test staff and guest logins.",
     "whyWrong": {
-      "0": "The supplied evidence rules out a missing account and the old source is no longer the intended staff identity.",
-      "1": "This removes the staff-only management requirement.",
-      "2": "Internal management should use the routed staff source; the external PAT rule does not repair each VTY policy."
+      "0": "An account is not missing, and the old subnet is no longer staff.",
+      "1": "Removing the filter drops the staff-only requirement.",
+      "2": "The external PAT rule does not repair the VTY source policy."
     }
   },
   {
@@ -701,7 +701,7 @@
       "v2:2.4"
     ],
     "difficulty": 3,
-    "prompt": "SW1 at 10.10.99.11 reaches HQ through R1/R2. R2 translates only 10.10.10.0/24 and 10.10.20.0/24 on its external path; the ISP has no route to 10.10.99.0/24. No other filter or NAT rule applies. Why does SW1’s external ping fail?",
+    "prompt": "SW1 at 10.10.99.11 reaches HQ through R1/R2. R2 translates only 10.10.10.0/24 and 10.10.20.0/24, and the ISP has no route to 10.10.99.0/24. Why does SW1's external ping fail?",
     "options": [
       "The switch lacks a usable gateway for all remote subnets",
       "The HQ interface needs to be marked as NAT outside",
@@ -711,11 +711,115 @@
     "answer": [
       3
     ],
-    "explanation": "The selector does not match the management subnet, so this rule leaves the packet untranslated. The explicitly missing return route explains the failure; the selector itself is not an attached deny filter.",
+    "explanation": "The PAT selector does not match the management subnet, so the packet leaves untranslated. The ISP has no return route to a private source.",
     "whyWrong": {
-      "0": "The stated successful HQ test uses the same remote gateway path.",
-      "1": "Making the internal HQ segment outside would change the intended NAT boundary.",
-      "2": "An addressed management SVI can originate routed traffic through its gateway."
+      "0": "The HQ test uses the same gateway and works.",
+      "1": "Marking the HQ segment outside changes the NAT boundary.",
+      "2": "A management SVI can originate routed traffic."
+    }
+  },
+  {
+    "id": "capstone-branch-network-q24",
+    "type": "single",
+    "objectives": [
+      "v1:2.1.c",
+      "v2:2.1.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "In the capstone design, which VLAN is the management VLAN?",
+    "options": [
+      "VLAN 10",
+      "VLAN 20",
+      "VLAN 99",
+      "VLAN 999"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The design uses staff VLAN 10, guest VLAN 20, management VLAN 99 and unused native VLAN 999.",
+    "whyWrong": {
+      "0": "VLAN 10 is the staff VLAN.",
+      "1": "VLAN 20 is the guest VLAN.",
+      "3": "VLAN 999 is the unused native VLAN."
+    }
+  },
+  {
+    "id": "capstone-branch-network-q25",
+    "type": "single",
+    "objectives": [
+      "v2:2.4",
+      "v2:4.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which device holds the static default toward the simulated ISP and performs interface PAT?",
+    "options": [
+      "SW1",
+      "SW2",
+      "R1",
+      "R2"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "R2 has the static default toward the ISP and performs interface PAT for the two client subnets. R1 provides the VLAN gateways and DHCP.",
+    "whyWrong": {
+      "0": "SW1 is a switch and the intended STP root.",
+      "1": "SW2 is a switch.",
+      "2": "R1 provides the VLAN gateways and DHCP pools."
+    }
+  },
+  {
+    "id": "capstone-branch-network-q26",
+    "type": "single",
+    "objectives": [
+      "v1:2.5.a",
+      "v2:2.5.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which switch is the intended Rapid PVST+ root in the capstone?",
+    "options": [
+      "SW1",
+      "SW2",
+      "R1",
+      "R2"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "SW1 is the intended Rapid PVST+ root. SW1 and SW2 form LACP Port-channel1.",
+    "whyWrong": {
+      "1": "SW2 is the non-root switch.",
+      "2": "R1 is a router, not an STP root.",
+      "3": "R2 is a router, not an STP root."
+    }
+  },
+  {
+    "id": "capstone-branch-network-q27",
+    "type": "single",
+    "objectives": [
+      "v1:5.6",
+      "v2:4.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How does the capstone guest ACL treat return traffic?",
+    "options": [
+      "It tracks sessions and allows returns automatically",
+      "It does not track sessions",
+      "It tracks only TCP sessions",
+      "It tracks sessions only for DHCP"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The guest ACL does not track sessions, so it needs explicit entries for return traffic such as echo replies.",
+    "whyWrong": {
+      "0": "A standard extended ACL is stateless.",
+      "2": "The ACL tracks no TCP sessions.",
+      "3": "The ACL tracks no DHCP sessions."
     }
   }
 ]

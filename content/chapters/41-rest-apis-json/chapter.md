@@ -34,7 +34,9 @@ sources:
   - { title: "Python: JSON parsing and compliance limits", url: "https://docs.python.org/3/library/json.html" }
 ---
 
-A network API gives software a defined way to request information or operations. Reading an exchange requires several separate questions: which resource is addressed, what operation is requested, how is access established, what does the status mean, and how is the returned data structured? You do not need to become an application developer to answer those questions accurately.
+A controller holds the inventory of every switch you manage, and a script can read it in one request, provided you can read what comes back. The reply is an HTTP status line, a few headers and a block of JSON. If you misread a `401` as a network fault, or a quoted `"24"` as a number, you will debug the wrong thing.
+
+[Chapter 40](#/chapter/network-management-and-sdn) showed one such exchange between an application and a controller's northbound API. This chapter takes the exchange apart. By the end you will be able to name the REST constraints, match CRUD operations to HTTP verbs, interpret common status codes, tell Basic, API-key, bearer-token and OAuth authentication apart, and read nested JSON with its objects, arrays and value types.
 
 ## Why network engineers read HTTP
 
@@ -50,29 +52,34 @@ A controller may expose inventory, interfaces, tasks and policies as **resources
 
 Chapter 40 used a successful `GET` response to discuss controller inventory freshness. Now read the whole exchange: the requested operation, credentials, status and typed data. **CRUD** is shorthand for create, read, update and delete; the table below relates those operations to common HTTP methods without replacing an API's own contract.
 
-The v1.1 objectives ask you to describe REST characteristics and recognize JSON components. The announced v2.0 blueprint does not name those standalone objectives. This chapter remains useful preparation for controller and automation work; it does not claim that deploying a RESTCONF service is required here.
+The v1.1 objectives ask you to describe REST API characteristics and recognize the components of JSON. The v2.0 blueprint does not list them separately, but you need both to follow chapters 42 and 43.
 
 ## What makes an API RESTful
 
-**Representational State Transfer (REST)** describes architectural constraints. Client/server separation gives each side a defined responsibility. A stateless interaction carries the context needed to interpret the request rather than depending on a hidden sequence of conversational steps. Responses indicate whether and how they may be cached. A uniform interface lets clients interact through consistent resource identification and representations. Layering permits intermediaries. Code on demand is optional.
+**Representational State Transfer (REST)** is a set of design rules for web APIs, not a protocol. An API that follows them is called RESTful. There are six:
+
+- **Client-server**: the client asks and the server answers, and each can change independently.
+- **Stateless**: every request carries everything needed to process it. The server keeps no memory of the client's previous request.
+- **Cacheable**: each response says whether it may be stored and reused.
+- **Uniform interface**: every resource is identified by a URI and handled with the same small set of methods.
+- **Layered system**: a proxy or load balancer can sit between client and server without the client knowing.
+- **Code on demand** (optional): the server may send code for the client to run.
 
 **Stateless** does not mean the server stores nothing. Servers retain resource data, credentials, authorization information and logs. A token can identify an access context without making a client rely on a prior “select device R1” command remembered in an interactive terminal session.
 
-Caching also does not mean every response is safe to reuse forever. Cache instructions and freshness determine whether a stored response can answer a request. Sensitive responses need appropriate handling. A controller inventory record and its timestamp should be interpreted together.
-
-Many products call their HTTP APIs REST APIs while implementing different subsets of REST conventions. An HTTPS endpoint returning JSON is not, by that fact alone, proof of every REST constraint. For CCNA interpretation, know the architecture and read the supplied API contract rather than inventing behavior from a product label.
+Cacheable does not mean reusable forever: the response's cache headers set how long it stays fresh. Real products also follow these six rules to different degrees, so the API's own documentation decides exact behavior.
 
 ## Requests: URIs, verbs and headers
 
 Consider `https://controller.example/api/devices?site=branch1`. The scheme is `https`, the authority identifies the server, `/api/devices` is the path and `site=branch1` is the query. A query's meaning is defined by the API; adding an undocumented filter does not guarantee filtering.
 
-| Method | Common use | Important qualification |
+| Method | CRUD operation | Watch for |
 |---|---|---|
-| GET | Retrieve a representation | Read semantics; do not use it to request a configuration change |
-| POST | Submit data for processing, often create a subordinate resource | Repeating it can create another operation |
-| PUT | Set the target resource's representation | Can replace or create when the API permits |
-| PATCH | Apply a partial modification | Interpretation depends on the patch media type |
-| DELETE | Remove the target's association/resource | A second deletion may return a different response |
+| GET | **Read**: retrieve a resource | Never changes anything |
+| POST | **Create**: add a new resource; the server usually picks its ID | Sending it twice can create two |
+| PUT | **Update**: replace the whole resource with the body you send | Fields you leave out are lost |
+| PATCH | **Update**: change only the fields you send | The API defines the body format |
+| DELETE | **Delete**: remove the resource | A second DELETE may return `404` |
 
 A **safe** method does not request a state-changing action. Logging a GET or incrementing a request counter does not make GET unsafe: those incidental effects differ from the requested operation.
 
@@ -96,9 +103,9 @@ Read the status before trying to parse a success body. An error may have a diffe
 | 429 | Too many requests | Respect documented backoff and Retry-After when provided |
 | 500 / 502 / 503 | Internal error / invalid upstream response / temporarily unavailable | Diagnose and retry only with appropriate safety and backoff |
 
-`401 Unauthorized` indicates that the request lacks valid authentication credentials for the target; the name can be misleading. `403 Forbidden` indicates refusal. Insufficient permission is a common cause, but 403 does not universally prove that the caller was successfully authenticated. A server can also conceal a forbidden resource using 404.
+The pair that exams and real faults turn on is 401 and 403. `401 Unauthorized` means the server does not know who you are: the credentials are missing, wrong or expired. Despite its name it is about authentication. `403 Forbidden` normally means the server knows who you are and the answer is no: the account lacks permission for this operation. You fix a 401 by authenticating again and a 403 by changing what the account is allowed to do.
 
-A 4xx or 5xx class helps classify the response; it does not allocate personal blame or prove the root cause. A proxy can generate an error before the controller receives the request. A 503 does not prove every part of the submitted body was valid. Capture the status, relevant headers, safe error detail and request identifier before changing several variables.
+The first digit tells you where to look. `4xx` means the request was the problem: fix the URL, the credentials or the body before retrying. `5xx` means the server failed, and the same request may work later. A proxy between you and the controller can generate either kind, so record the status, the error body and any request identifier before changing several things at once.
 
 :::trap Accepted is not completed
 A `202` response can provide a task URL. Inspect that task according to the API contract until it reaches a terminal state. Then verify the required network result; an accepted job is not evidence that every device now has the intended configuration.
@@ -117,17 +124,17 @@ A `202` response can provide a task URL. Inspect that task according to the API 
 
 Basic's encoding does not hide a password from someone who can read the header. Use authenticated HTTPS for real credentials. With curl, `--user username` can request a password interactively; embedding a password directly in a command risks shell-history or process-list exposure.
 
-An API key can be carried using a vendor header or, where documented, a Bearer header. A Bearer header alone does not prove OAuth was used. Tokens may be opaque strings or structured formats; they are not necessarily JWTs and do not all expire after one hour.
+An **API key** is a long secret string issued to you once and sent with every request, usually in a header. A **bearer token** is similar but short-lived: you authenticate, receive a token, send it as `Authorization: Bearer ...` and fetch a new one when it expires. Whoever holds a key or token can use it, which is why both must travel over HTTPS.
 
-OAuth is an authorization framework that can support delegated access. Modern suitable flows avoid giving the client the user's password. Not every flow returns a refresh token, and client-credentials flows concern the application's own access. Do not infer a complete OAuth exchange merely from the word “token.”
+**OAuth 2.0** is the framework behind most token systems. Its purpose is delegation: an application obtains an access token with a limited scope from an authorization server, without ever seeing the user's password.
 
-Cisco APIs provide concrete examples. Meraki documents API-key and OAuth mechanisms. Catalyst Center APIs commonly use an authentication endpoint and an `X-Auth-Token` header. Read the exact product/version documentation for acquisition, lifetime and permissions. This course supplies no supposedly permanent public sandbox password.
+Cisco's own APIs show both patterns. The Meraki dashboard API takes an API key. Catalyst Center has you send Basic credentials once to an authentication endpoint, then present the returned token in an `X-Auth-Token` header on every later request.
 
 When curl reports a certificate failure, inspect trust, hostname, expiry and the system clock. Suppressing validation with `--insecure` removes an important identity check. A lab can use a trusted private CA or a deliberately pinned certificate with the correct name; the existence of a self-signed certificate does not require bypassing verification.
 
 ## JSON: the data encoding you must read
 
-**JSON** is a text representation with six value categories. Object member names are double-quoted strings; arrays preserve item order. Object member order should not carry application meaning.
+**JSON** (JavaScript Object Notation) is text built from two structures and four simple values. An **object** is a set of `"key": value` pairs inside braces `{}`: each key is a double-quoted string, a colon separates the key from its value and commas separate the pairs. An **array** is an ordered list of values inside brackets `[]`. A value can be an object, an array, a string, a number, a boolean or `null`, so objects and arrays nest inside each other.
 
 | Type | Example | Distinguish from |
 |---|---|---|
@@ -154,7 +161,7 @@ JSON has no comments, single-quoted strings or trailing commas. Booleans and nul
 
 Syntactic validity does not establish semantic validity. `{"enabled":"false"}` is valid JSON but may violate an API's boolean requirement. Missing `enabled`, `"enabled":null` and `"enabled":false` can mean three different things. Avoid relying on a programming language's conversion of strings to truth values.
 
-Duplicate member names should be avoided: implementations can handle them differently. Some parsers also accept extensions. Python's default decoder accepts NaN and Infinity, for example, although JSON numbers exclude them. The lab rejects those constants explicitly. Do not call a tool a universally strict validator without checking its options and behavior.
+Avoid duplicate keys in one object, because parsers handle them differently.
 
 ## JSON, XML and YAML side by side
 
@@ -166,7 +173,14 @@ JSON, XML and YAML are data representations, not authentication or encryption sc
 | XML | Elements such as `<name>R1</name>` | NETCONF messages |
 | YAML | Indented mappings and sequence markers | Ansible playbooks and inventory |
 
-YAML supports more styles than indentation alone, and modern YAML specifications accommodate JSON syntax. XML values gain interpretation through the consuming application or schema. The goal here is reliable recognition and reading; Chapter 42 teaches the configuration-management workflow.
+Here is one record in each format. JSON: `{"hostname": "R1", "enabled": true}`. XML: `<device><hostname>R1</hostname><enabled>true</enabled></device>`. YAML:
+
+```yaml
+hostname: R1
+enabled: true
+```
+
+YAML shows nesting by indentation and starts each list item with `-`. [Chapter 42](#/chapter/ansible-terraform) uses it for Ansible playbooks.
 
 ## Reading the output
 
@@ -190,8 +204,8 @@ With curl, `-i` includes **response** headers; it does not print the outgoing re
 
 ## Exam focus
 
-- Distinguish REST style, HTTP semantics, HTTPS protection and JSON encoding.
-- Interpret CRUD mappings, safe/idempotent methods and uncertain outcomes without blind retries.
-- Separate missing valid credentials, refused authorization and unrelated network/TLS failures.
-- Read nested JSON types and paths; distinguish syntax from schema validity.
-- Treat product-specific endpoint paths, token lifetimes and rate limits as documented implementation details rather than universal constants.
+- REST is an architectural style with six constraints. HTTP carries the requests, JSON encodes the data and HTTPS (TLS) protects them.
+- CRUD: POST creates, GET reads, PUT replaces, PATCH modifies, DELETE removes. GET, PUT and DELETE are idempotent; POST and PATCH are not.
+- 2xx is success, 4xx a client error, 5xx a server error. 401 is about authentication, 403 about authorization, 404 means not found, and 202 means accepted but not finished.
+- Authentication types: Basic (Base64, which is not encryption), API key, bearer token and OAuth 2.0.
+- JSON: objects are key:value pairs in braces, arrays are lists in brackets, strings use double quotes, and `true`, `false` and `null` are lowercase. Valid syntax can still be the wrong type for the API.

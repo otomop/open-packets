@@ -12,7 +12,7 @@
       "title": "Representative IOS excerpt",
       "text": "S* 0.0.0.0/0 [1/0] via 10.0.12.2"
     },
-    "prompt": "Which command produces the displayed default route?",
+    "prompt": "Which command creates the default route shown?",
     "options": [
       "ip default-gateway 10.0.12.2",
       "ip route 0.0.0.0 255.255.255.255 10.0.12.2",
@@ -22,11 +22,11 @@
     "answer": [
       3
     ],
-    "explanation": "The destination and mask are both zero, identifying /0. The next hop is 10.0.12.2.",
+    "explanation": "A default route has destination 0.0.0.0 and mask 0.0.0.0, with the next hop 10.0.12.2.",
     "whyWrong": {
-      "0": "ip default-gateway serves host-mode management; it does not create this static route on an IP-routing router.",
-      "1": "A /32 identifies one address, not a default.",
-      "2": "This names the transit subnet as the destination and does not create a default."
+      "0": "ip default-gateway is for a non-routing device and does not create a static route.",
+      "1": "A /32 mask matches one address, not all.",
+      "2": "That names the transit subnet as the destination."
     }
   },
   {
@@ -38,7 +38,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A floating static is configured but loses to a healthy primary route. Which command directly shows the configured backup line?",
+    "prompt": "A floating static route loses to a healthy primary. Which command shows the configured backup line?",
     "options": [
       "show ip route static",
       "show interfaces",
@@ -48,11 +48,11 @@
     "answer": [
       2
     ],
-    "explanation": "The running configuration includes configured candidates even when they are not selected into the routing table.",
+    "explanation": "show running-config lists every configured static route, including one not installed in the routing table.",
     "whyWrong": {
-      "0": "This filters installed routes and normally omits the losing floating candidate.",
-      "1": "Interface details do not list static-route statements.",
-      "3": "ARP shows address-resolution entries, not configured routes."
+      "0": "show ip route static lists installed routes only, so it omits the floating route.",
+      "1": "Interface output does not list static routes.",
+      "3": "ARP shows address resolution, not routes."
     }
   },
   {
@@ -68,7 +68,7 @@
       "title": "Representative IOS excerpt",
       "text": "ip route 10.9.0.0 255.255.0.0 GigabitEthernet0/1 10.0.13.2"
     },
-    "prompt": "A usable fully specified route was entered as shown. Which description is correct?",
+    "prompt": "A static route to 10.9.0.0/16 names exit interface Gi0/1 and next hop 10.0.13.2. What does it do?",
     "options": [
       "It requires ARP resolution for each host in the remote /16.",
       "It names 10.0.13.2 as the remote destination prefix.",
@@ -78,11 +78,11 @@
     "answer": [
       3
     ],
-    "explanation": "The destination and mask define 10.9.0.0/16; the interface and next hop jointly define its exit.",
+    "explanation": "The destination and mask define 10.9.0.0/16, and the interface and next hop give the exit. Traffic goes to 10.0.13.2 out Gi0/1.",
     "whyWrong": {
-      "0": "The Ethernet frame is addressed to the specified next hop, not individually to every remote IP.",
-      "1": "10.9.0.0/16 is the destination; 10.0.13.2 is the next router.",
-      "2": "Both an exit interface and an IP next hop are explicitly supplied."
+      "0": "The frame goes to the next hop's MAC, not to each remote host.",
+      "1": "10.9.0.0/16 is the destination, and 10.0.13.2 is the next router.",
+      "2": "The route names an IP next hop as well as the interface."
     }
   },
   {
@@ -94,7 +94,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A completed traceroute from PC-A lists R1, R2 and PC-B. Which conclusion is justified?",
+    "prompt": "A traceroute from PC-A lists R1, R2 and PC-B. What does it show?",
     "options": [
       "The reverse data path must use exactly the same interfaces.",
       "The trace reached PC-B and received its responses.",
@@ -104,11 +104,11 @@
     "answer": [
       1
     ],
-    "explanation": "A successful trace provides evidence about its probes and replies at that time. It is not a general application or symmetric-routing guarantee.",
+    "explanation": "A completed trace shows the probes reached PC-B and its replies came back at that time. It does not prove the reply path is the same or that applications work.",
     "whyWrong": {
-      "0": "Replies can take another valid route.",
-      "2": "Routes can change after the measurement.",
-      "3": "Application services require their own tests."
+      "0": "Replies can use a different path.",
+      "2": "Routes can change later.",
+      "3": "Applications need their own tests."
     }
   },
   {
@@ -120,7 +120,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "How does an ordinary configured static route learn that a remote application has failed?",
+    "prompt": "How does a static route learn that a remote application has failed?",
     "options": [
       "It does not provide an application health check by itself",
       "It receives periodic updates from the static next hop",
@@ -130,11 +130,11 @@
     "answer": [
       0
     ],
-    "explanation": "A static route defines forwarding information. Interface/resolution eligibility can affect installation, but an ordinary route is not an application monitor.",
+    "explanation": "A static route is only forwarding information. It cannot monitor an application unless you add tracking.",
     "whyWrong": {
-      "1": "Static route statements do not establish a routing-update protocol.",
-      "2": "Static metric zero does not configure an application probe.",
-      "3": "A prefix describes destinations, not service health."
+      "1": "Static routes do not receive updates.",
+      "2": "A static route does not poll applications.",
+      "3": "A prefix length describes destinations, not health."
     }
   },
   {
@@ -146,7 +146,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "Only server 10.20.30.40 must use neighbor 172.16.1.2. Which route leaves other hosts in 10.20.30.0/24 unaffected?",
+    "prompt": "Only server 10.20.30.40 must use neighbor 172.16.1.2. Which route leaves the rest of 10.20.30.0/24 alone?",
     "options": [
       "ip route 10.20.30.40 255.255.255.255 172.16.1.2",
       "ip route 10.20.30.0 255.255.255.0 172.16.1.2",
@@ -156,11 +156,11 @@
     "answer": [
       0
     ],
-    "explanation": "The /32 host route matches only 10.20.30.40.",
+    "explanation": "A host route with mask 255.255.255.255 matches only 10.20.30.40.",
     "whyWrong": {
-      "1": "The /24 applies to the whole subnet.",
-      "2": "The default covers all destinations without a more specific match.",
-      "3": "The host bits are nonzero for that /24 network mask."
+      "1": "The /24 covers the whole subnet.",
+      "2": "The default covers every destination.",
+      "3": "IOS rejects a host address with a /24 mask."
     }
   },
   {
@@ -176,7 +176,7 @@
       "title": "Representative IOS excerpt",
       "text": "S 192.168.20.0/24 is directly connected, GigabitEthernet0/0"
     },
-    "prompt": "Gi0/0 is Ethernet. What consequence follows from this interface-only remote-LAN route?",
+    "prompt": "Gi0/0 is Ethernet and the remote-LAN route names only the interface. What results?",
     "options": [
       "R1 treats covered destinations as on-link and may ARP for each destination.",
       "R1 automatically discovers the correct IP next hop using CDP.",
@@ -186,11 +186,11 @@
     "answer": [
       0
     ],
-    "explanation": "Without an explicit next hop, the Ethernet route can cause destination-by-destination ARP. This is unsuitable as the normal design for a remote LAN.",
+    "explanation": "Without a next hop, R1 treats the destinations as on-link and may ARP for each one. Use a next hop for a remote LAN.",
     "whyWrong": {
-      "1": "CDP does not fill in a missing static-route next hop.",
-      "2": "The S code remains static; the display wording does not make it an interface-address-derived C route.",
-      "3": "The prefix identifies destinations, not the next router."
+      "1": "CDP does not supply a next hop.",
+      "2": "The route is still static (S), not connected.",
+      "3": "The prefix is the destination, not a router."
     }
   },
   {
@@ -202,7 +202,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An OSPF route to 10.5.0.0/16 has distance 110. Which TWO statements correctly describe a static backup to that same prefix?",
+    "prompt": "OSPF has a route to 10.5.0.0/16 at AD 110. Which two statements describe a static backup for the same prefix? (Choose two.)",
     "options": [
       "Distance 5 makes the route less preferred than OSPF.",
       "Distance 255 is the safest usable standby value.",
@@ -213,10 +213,10 @@
       2,
       3
     ],
-    "explanation": "The backup must lose the distance comparison while the preferred route exists, and must have a usable path when that route disappears.",
+    "explanation": "A backup must have a higher AD than OSPF, such as 120, and a usable next hop when the OSPF route disappears.",
     "whyWrong": {
-      "0": "5 is lower than 110 and would be preferred for the same prefix.",
-      "1": "Distance 255 is not installed as a usable route."
+      "0": "AD 5 is lower than 110, so the static would be preferred.",
+      "1": "AD 255 is never installed."
     }
   },
   {
@@ -232,7 +232,7 @@
       "title": "Representative IOS excerpt",
       "text": "Configured:\nip route 192.168.20.0 255.255.255.0 10.0.12.2\nGi0/0: administratively down/down\nNo covering route to 10.0.12.2 in the installed table."
     },
-    "prompt": "The only path to 10.0.12.2 was the now-down Gi0/0 connected subnet. No other route resolves it. Why is the configured next-hop-only route absent?",
+    "prompt": "The only path to 10.0.12.2 was the connected subnet on Gi0/0, which is now down. Why is the next-hop-only route missing?",
     "options": [
       "The remote network must use the transit link's /30 mask.",
       "IOS cannot resolve the configured next hop.",
@@ -242,11 +242,11 @@
     "answer": [
       1
     ],
-    "explanation": "A recursive route requires a valid route that resolves its next hop. The stated resolving route is gone.",
+    "explanation": "A next-hop-only static route needs a route that resolves the next hop. That route went down with Gi0/0, so IOS removes the static.",
     "whyWrong": {
-      "0": "The destination mask describes the remote LAN independently of the transit subnet.",
-      "2": "An ordinary static route does not test the destination with ping.",
-      "3": "Static routing does not require a dynamic-protocol adjacency."
+      "0": "The destination mask is independent of the transit link.",
+      "2": "A static route does not wait for a ping to answer.",
+      "3": "Static routes need no routing protocol neighbor."
     }
   },
   {
@@ -258,7 +258,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1 and R2 have usable defaults pointing at one another and no other route covering 203.0.113.77. With ordinary forwarding and no filtering, what happens to a packet for that address?",
+    "prompt": "R1 and R2 have defaults pointing at each other and no route to 203.0.113.77. What happens to a packet for that address?",
     "options": [
       "The lowest next-hop address breaks the forwarding loop.",
       "It can loop between the routers until its TTL expires.",
@@ -268,11 +268,11 @@
     "answer": [
       1
     ],
-    "explanation": "Each lookup selects a default back to the other router. Each forwarding hop reduces TTL, limiting the loop.",
+    "explanation": "Each router sends the packet back to the other by its default. TTL drops at each hop and the packet is discarded when it reaches 0.",
     "whyWrong": {
-      "0": "Each router independently follows its default; next-hop address magnitude is not a loop-breaking rule.",
-      "2": "Administrative distance selects sources locally; it does not make a router own the destination.",
-      "3": "A forwarding instruction cannot create downstream connectivity."
+      "0": "Next-hop address values do not break loops.",
+      "2": "AD does not make a router the destination.",
+      "3": "A default route does not create Internet access."
     }
   },
   {
@@ -288,7 +288,7 @@
       "title": "Representative IOS excerpt",
       "text": "S 10.1.0.0/16 [1/0] via 10.0.12.2\nS 10.1.0.0/24 [50/0] via 10.0.13.2"
     },
-    "prompt": "Both displayed routes are installed. Which next hop handles 10.1.0.77?",
+    "prompt": "Both routes shown are installed. Which next hop handles 10.1.0.77?",
     "options": [
       "10.0.13.2, because /24 is the longer match",
       "10.0.12.2, because distance 1 is lower",
@@ -298,11 +298,11 @@
     "answer": [
       0
     ],
-    "explanation": "10.1.0.77 matches both prefixes. Forwarding selects /24, independently of the distances of different prefixes.",
+    "explanation": "10.1.0.77 matches both prefixes, and the /24 is longer. Longest match decides, not AD.",
     "whyWrong": {
-      "1": "Distance is not compared between different installed prefix lengths for forwarding.",
-      "2": "A network route covers all matching addresses.",
-      "3": "Overlapping prefixes are not equal-cost paths to one identical prefix."
+      "1": "AD is not compared across different prefixes.",
+      "2": "A network route covers all its addresses.",
+      "3": "Different prefixes are not equal-cost paths."
     }
   },
   {
@@ -318,7 +318,7 @@
       "title": "Representative IOS excerpt",
       "text": "R1: LAN 192.168.10.1/24, transit 10.0.12.1/30\nR2: LAN 192.168.20.1/24, transit 10.0.12.2/30\nR1 ordinary ping to PC-B succeeds; PC-A ping fails."
     },
-    "prompt": "In the shown isolated lab, interfaces, host addressing and the outbound route are verified. R2 has no default or other route to 192.168.10.0/24. Which command on R2 fixes the missing return path?",
+    "prompt": "Interfaces and the outbound route are verified, but R2 has no route to 192.168.10.0/24. Which command on R2 fixes the return path?",
     "options": [
       "ip default-gateway 192.168.10.1",
       "ip route 192.168.20.0 255.255.255.0 10.0.12.1",
@@ -328,11 +328,11 @@
     "answer": [
       3
     ],
-    "explanation": "R2 must route toward the PC-A subnet using R1's adjacent transit address, 10.0.12.1.",
+    "explanation": "R2 needs a route to the PC-A subnet through R1's adjacent address, 10.0.12.1.",
     "whyWrong": {
-      "0": "The host-mode gateway command does not create the required routed entry.",
-      "1": "R2 already has the PC-B LAN connected; the missing destination is PC-A's LAN.",
-      "2": "10.0.12.2 is R2's own transit address, not its next hop."
+      "0": "ip default-gateway does not create a route.",
+      "1": "R2 already has the PC-B LAN connected, and it is PC-A's LAN that is missing.",
+      "2": "10.0.12.2 is R2's own address."
     }
   },
   {
@@ -344,7 +344,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "Which R1 ping source specifically tests the return route to its LAN 192.168.10.0/24 when pinging remote PC-B?",
+    "prompt": "R1 pings remote PC-B. Which source address tests the return route to R1's LAN 192.168.10.0/24?",
     "options": [
       "10.0.12.2, R2's transit address",
       "192.168.20.12, PC-B's address",
@@ -354,11 +354,11 @@
     "answer": [
       2
     ],
-    "explanation": "A reply to 192.168.10.1 requires a route covering that LAN prefix. Select it through supported extended-ping options.",
+    "explanation": "A reply to 192.168.10.1 needs a route to 192.168.10.0/24. Choose that source in an extended ping.",
     "whyWrong": {
-      "0": "R1 cannot normally use another router's address as its own ping source.",
-      "1": "The remote destination is not R1's source address.",
-      "3": "A reply to the transit source tests a different prefix."
+      "0": "R1 cannot use R2's address as its source.",
+      "1": "PC-B is the destination, not the source.",
+      "3": "A transit source tests a different prefix."
     }
   },
   {
@@ -370,7 +370,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "R1's primary interface remains up because it connects to a switch. A remote router beyond that switch fails. No tracking is configured. What should you conclude about the static backup?",
+    "prompt": "R1's primary interface connects to a switch and stays up. A remote router beyond it fails and no tracking is set. What about the backup?",
     "options": [
       "Raising the backup distance enables remote-failure detection.",
       "The primary may remain installed despite the remote failure.",
@@ -380,11 +380,11 @@
     "answer": [
       1
     ],
-    "explanation": "Ordinary static routing does not provide an end-to-end health check. A local active interface can keep a fully specified route installed even when downstream delivery fails.",
+    "explanation": "Static routing has no end-to-end check. The primary stays installed while the local interface is up, even if the far side fails.",
     "whyWrong": {
-      "0": "Distance changes preference rather than adding health monitoring.",
-      "2": "Static routes do not exchange routing-protocol updates.",
-      "3": "No probe tracking is configured, so failed pings do not themselves withdraw the primary."
+      "0": "AD changes preference, not detection.",
+      "2": "Static routes exchange no updates.",
+      "3": "A failed ping does not withdraw the route without tracking."
     }
   },
   {
@@ -396,7 +396,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "The remote LAN is 198.51.100.64/26 and peer 10.0.12.2 is directly reachable. Which command names exactly that destination network?",
+    "prompt": "The remote LAN is 198.51.100.64/26 and peer 10.0.12.2 is reachable. Which command names that network?",
     "options": [
       "ip route 198.51.100.64 255.255.255.0 10.0.12.2",
       "ip route 198.51.100.0 255.255.255.192 10.0.12.2",
@@ -406,11 +406,11 @@
     "answer": [
       2
     ],
-    "explanation": "The /26 mask is 255.255.255.192 and the aligned network starts at .64, covering .64–.127.",
+    "explanation": "The /26 mask is 255.255.255.192, and the network address is 198.51.100.64, covering .64 to .127.",
     "whyWrong": {
-      "0": "The /24 mask does not describe the requested /26 and .64 is not its aligned network.",
-      "1": "That aligned /26 covers .0–.63, a different block.",
-      "3": "A .65 destination has nonzero host bits for this /26 network route."
+      "0": "A /24 mask does not describe a /26.",
+      "1": "That /26 starts at .0, not .64.",
+      "3": "198.51.100.65 has host bits set for this network."
     }
   },
   {
@@ -426,7 +426,7 @@
       "title": "Primary and standby configuration",
       "text": "ip route 192.168.20.0 255.255.255.0 Gi0/0 10.0.12.2\nip route 192.168.20.0 255.255.255.0 Gi0/1 10.0.13.2 5"
     },
-    "prompt": "Which command removes the displayed backup while preserving the primary?",
+    "prompt": "Which command removes the shown backup and keeps the primary?",
     "options": [
       "no ip route 192.168.20.12 255.255.255.255 Gi0/1 10.0.13.2 5",
       "no ip route 192.168.20.0 255.255.255.0 Gi0/0 10.0.12.2",
@@ -436,11 +436,11 @@
     "answer": [
       2
     ],
-    "explanation": "Match the backup’s prefix, mask, exit interface, next hop and explicit distance, then verify configuration.",
+    "explanation": "To remove a static route, repeat its prefix, mask, exit interface, next hop and distance with no in front.",
     "whyWrong": {
-      "0": "This names a host route that is not the shown /24 backup.",
-      "1": "This is the primary statement, which the task requires preserving.",
-      "3": "This targets a different next-hop-only form and does not identify the shown backup."
+      "0": "That is a host route, not the shown /24 backup.",
+      "1": "That is the primary route.",
+      "3": "That is a different next-hop-only form."
     }
   },
   {
@@ -456,7 +456,7 @@
       "title": "Choose the adjacent peer",
       "text": "R1 Gi0/0: 10.0.12.1/30; Gi0/2: 192.168.10.1/24\nR2 Gi0/0: 10.0.12.2/30; Gi0/2: 192.168.20.1/24\nPC-A: 192.168.10.11; remote LAN: 192.168.20.0/24\nR1’s selected exit is Gi0/0; both transit interfaces are up."
     },
-    "prompt": "R1 must reach the remote LAN through the adjacent R2 interface. Which next hop belongs in R1’s fully specified route?",
+    "prompt": "R1 reaches the remote LAN through the adjacent R2 interface. Which next hop goes in R1's route?",
     "options": [
       "192.168.20.1, because it is the remote default gateway",
       "192.168.10.11, because it is the requesting client",
@@ -466,11 +466,11 @@
     "answer": [
       3
     ],
-    "explanation": "For this directly adjacent fully specified path, the next hop is the peer on the selected transit link.",
+    "explanation": "The next hop is the address of the adjacent router on the transit link, which is R2's 10.0.12.2.",
     "whyWrong": {
-      "0": "This is R2’s remote LAN interface, not the stipulated adjacent transit peer.",
-      "1": "The client is the packet source, not the next routed hop toward the remote LAN.",
-      "2": "R1’s own address is not the next router."
+      "0": "That is R2's LAN address, not the adjacent transit peer.",
+      "1": "That is the source client.",
+      "2": "That is R1's own address."
     }
   },
   {
@@ -486,7 +486,7 @@
       "title": "Both configured candidates lose eligibility",
       "text": "R1 configured:\nip route 192.168.20.0 255.255.255.0 Gi0/0 10.0.12.2\nip route 192.168.20.0 255.255.255.0 10.0.13.2 5\nGi0/0 is down. The only route to 10.0.13.2 is also withdrawn.\nNo other route or default resolves either next hop."
     },
-    "prompt": "The primary route is withdrawn. Which result follows from these complete eligibility observations?",
+    "prompt": "The primary route is withdrawn. What happens?",
     "options": [
       "The configured backup installs because its distance exceeds 1",
       "The router creates a new next-hop route from the remote prefix",
@@ -496,11 +496,11 @@
     "answer": [
       2
     ],
-    "explanation": "The primary lost its required interface. The next-hop-only backup also has no valid resolving route. Preference cannot make an ineligible candidate usable.",
+    "explanation": "The primary lost its interface, and the next-hop-only backup has no route to resolve its next hop. No route to the remote /24 can be installed.",
     "whyWrong": {
-      "0": "A suitable distance is insufficient without a resolvable next hop.",
-      "1": "The remote static cannot supply a valid independent path to its own unreachable next hop.",
-      "3": "Configuration persistence does not establish installation."
+      "0": "A higher AD does not help without a resolvable next hop.",
+      "1": "The router does not create new routes.",
+      "3": "Configuration alone does not install a route."
     }
   },
   {
@@ -516,7 +516,7 @@
       "title": "Failover with no reverse route",
       "text": "PC-A 192.168.10.11/24 → PC-B 192.168.20.12/24; both gateways correct.\nAfter direct Gi0/0 link failure:\nR1 installed S 192.168.20.0/24 [5/0] via 10.0.13.2 Gi0/1.\nR2 Gi0/1 and both LANs are up; request delivery is observed.\nR2 has no route or default for 192.168.10.0/24 after its Gi0/0 return route is withdrawn.\nNo filtering."
     },
-    "prompt": "PC-A’s request reaches PC-B over the backup after the direct primary link fails. Which interpretation fits the complete evidence?",
+    "prompt": "After the primary link fails, PC-A's request reaches PC-B over the backup. What does the evidence show?",
     "options": [
       "Different ADs in the two directions prevent replies from being forwarded",
       "R1 must use a /32 instead of a /24 before PC-B can reply",
@@ -526,11 +526,11 @@
     "answer": [
       3
     ],
-    "explanation": "R1 has a working backup for the outbound destination, but R2’s only return route depended on the failed primary. The reverse destination needs its own eligible path.",
+    "explanation": "R1's backup delivers the request, but R2's only return route used the failed primary. R2 needs its own route back to PC-A.",
     "whyWrong": {
-      "0": "Administrative distances are local preferences; opposite directions do not need matching values.",
-      "1": "The /24 already delivered the request to PC-B. Its specificity does not create R2’s missing reverse route.",
-      "2": "Forward and return route tables are independent."
+      "0": "AD is local, and the two directions need no matching values.",
+      "1": "The /24 already delivered the request.",
+      "2": "Each router has its own routing table."
     }
   },
   {
@@ -546,7 +546,7 @@
       "title": "Equal-preference paths violate the standby policy",
       "text": "ip route 192.168.20.0 255.255.255.0 Gi0/0 10.0.12.2\nip route 192.168.20.0 255.255.255.0 Gi0/1 10.0.13.2\nBoth transits work. The installed /24 shows two static next hops at [1/0]."
     },
-    "prompt": "The policy requires Gi0/0 as primary and Gi0/1 as standby. What repair follows from the actual table and configuration?",
+    "prompt": "Policy wants Gi0/0 as primary and Gi0/1 as standby, but both routes have AD 1. What is the fix?",
     "options": [
       "Remove both routes and change the LAN mask to /25",
       "Raise the Gi0/1 candidate’s distance above 1 for the same /24",
@@ -556,11 +556,11 @@
     "answer": [
       1
     ],
-    "explanation": "Both statements omit an override and use AD 1, matching the observed equal-preference installed paths. Reconfigure the intended standby with a higher usable distance while preserving the prefix.",
+    "explanation": "Both routes have the default AD 1 and so share traffic. Raise the Gi0/1 route's AD above 1 for the same /24.",
     "whyWrong": {
-      "0": "No addressing or primary-route failure is shown.",
-      "2": "A more-specific installed prefix can attract traffic despite a higher AD.",
-      "3": "That would prefer the intended standby instead of the primary."
+      "0": "No addressing fault is shown.",
+      "2": "A longer prefix would attract traffic despite higher AD.",
+      "3": "That would make Gi0/1 the preferred route."
     }
   },
   {
@@ -576,7 +576,7 @@
       "title": "Construct matching primary and standby routes",
       "text": "Destination LAN: 198.51.100.64/26\nRequired primary: R1 Gi0/0 to directly adjacent 10.0.12.2\nRequired standby: R1 Gi0/1 to directly adjacent 10.0.13.2, AD 150\nBoth peers and the complete return path work. No other candidate for this /26 exists."
     },
-    "prompt": "Which two configured candidates satisfy the stated network policy? (Choose two.)",
+    "prompt": "Which two configured routes meet the policy, with Gi0/0 primary and Gi0/1 backup for 198.51.100.64/26? (Choose two.)",
     "options": [
       "ip route 198.51.100.64 255.255.255.192 Gi0/0 10.0.12.2",
       "ip route 198.51.100.64 255.255.255.224 Gi0/1 10.0.13.2 150",
@@ -588,11 +588,11 @@
       0,
       4
     ],
-    "explanation": "The network and backup must describe the same /26. Default static AD 1 supplies primary preference; AD 150 is a usable lower preference and the named exits bind each candidate to its intended link.",
+    "explanation": "Both routes must describe the same /26. The primary uses the default AD 1 and the backup uses AD 150.",
     "whyWrong": {
-      "1": "This is a different /27 and can take traffic while the /26 primary is healthy.",
-      "2": "AD 255 cannot supply an installed backup.",
-      "3": "AD 200 would lose to the proposed AD 150 standby, reversing policy."
+      "1": "That is a /27, a different prefix that can attract traffic.",
+      "2": "AD 255 is never installed.",
+      "3": "AD 200 on the primary route would make the backup preferred."
     }
   },
   {
@@ -608,7 +608,7 @@
       "title": "Representative IOS excerpt",
       "text": "Complete relevant R1 routes:\nC 192.168.10.0/24, Gi0/2\nC 10.0.12.0/30, Gi0/0\nS 192.168.20.0/24 [1/0] via 10.0.12.2\nComplete relevant R2 routes (no default):\nC 10.0.12.0/30, Gi0/0\nC 192.168.20.0/24, Gi0/2"
     },
-    "prompt": "All shown interfaces and PC gateways are correct, and no filtering is configured. PC-A at 192.168.10.11 pings PC-B at 192.168.20.12. Which result follows?",
+    "prompt": "Interfaces and PC gateways are correct and nothing is filtered. PC-A (192.168.10.11) pings PC-B (192.168.20.12). What happens?",
     "options": [
       "The request fails because R1 needs a /32 for every PC.",
       "The request can reach PC-B, but R2 lacks a route for its reply to PC-A.",
@@ -618,11 +618,11 @@
     "answer": [
       1
     ],
-    "explanation": "R1 has the outbound /24. R2 can deliver to its connected PC-B LAN but has no route covering the source LAN for the reply.",
+    "explanation": "R1 has the outbound /24, so the request arrives. R2 has no route to PC-A's LAN, so the reply is lost.",
     "whyWrong": {
       "0": "The /24 already covers PC-B.",
-      "2": "Receiving an ordinary packet does not install a reverse static route.",
-      "3": "The reply destination is the PC-A LAN, not the transit subnet."
+      "2": "A received packet does not install a return route.",
+      "3": "The reply goes to PC-A's LAN, not the transit subnet."
     }
   },
   {
@@ -638,7 +638,7 @@
       "title": "Two transits share one destination-facing interface",
       "text": "R1 has /24 primary via R2 on Gi0/0 AD 1 and same-prefix backup via R2 on Gi0/1 AD 5.\nBoth transits stay up and the peer addresses remain reachable.\nR2’s only interface into that destination LAN becomes administratively down.\nNo tracking or alternate route into that LAN exists."
     },
-    "prompt": "Which two conclusions follow after R2’s LAN interface fails? (Choose two.)",
+    "prompt": "R2's LAN interface fails. Which two conclusions follow? (Choose two.)",
     "options": [
       "R1 must withdraw the primary because the final LAN is unavailable",
       "Changing the backup AD alone repairs R2’s failed LAN",
@@ -650,11 +650,11 @@
       3,
       4
     ],
-    "explanation": "R1’s local primary transit remains eligible without remote tracking. Both paths terminate at the same R2, so neither avoids R2’s failed LAN interface.",
+    "explanation": "With no tracking, R1 keeps its primary while the local transit is up. The backup also leads to R2, so neither avoids the failed LAN.",
     "whyWrong": {
-      "0": "The explicit local eligibility evidence remains true; no remote tracking is configured.",
-      "1": "Preference changes cannot restore the destination interface.",
-      "2": "A less-specific default does not replace a still-selected /24 for matching traffic."
+      "0": "R1 only checks its local interface and next hop.",
+      "1": "AD changes cannot repair R2's LAN.",
+      "2": "A default does not replace a still-installed /24."
     }
   },
   {
@@ -670,7 +670,7 @@
       "title": "Alternate recursive next-hop resolution",
       "text": "R1 configuration:\nip route 192.168.20.0 255.255.255.0 10.0.12.2\nip route 192.168.20.0 255.255.255.0 Gi0/1 10.0.13.2 5\nIndependent installed resolver after Gi0/0 failure:\nS 10.0.12.2/32 [1/0] via 10.0.13.2, Gi0/1\nThe Gi0/1 peer is reachable and can reach 10.0.12.2."
     },
-    "prompt": "After Gi0/0 fails, why can R1 still display the remote /24 at distance 1 rather than selecting its distance-5 candidate?",
+    "prompt": "After Gi0/0 fails, R1 still shows the remote /24 at distance 1 instead of the distance-5 route. Why?",
     "options": [
       "The primary is automatically converted into a fully specified route.",
       "The next-hop-only primary can resolve through the surviving host route",
@@ -680,11 +680,11 @@
     "answer": [
       1
     ],
-    "explanation": "The primary is next-hop-only. The supplied independent /32 keeps its next hop recursively reachable through Gi0/1, so it can remain eligible at AD 1. A fully specified primary would bind it to the intended failed exit.",
+    "explanation": "The primary is next-hop-only, so it resolves its next hop recursively. The surviving /32 route keeps that next hop reachable through Gi0/1, so the AD-1 route stays installed.",
     "whyWrong": {
-      "0": "The configuration remains next-hop-only; alternate recursive resolution, not automatic conversion, explains the route.",
-      "2": "For this same prefix the eligible AD-1 candidate remains preferred over AD 5.",
-      "3": "Both candidates describe the identical /24; only the separate /32 resolves the primary’s next hop."
+      "0": "The route stays next-hop-only and is not converted.",
+      "2": "Only the preferred AD-1 route installs for the same prefix.",
+      "3": "Both candidates are the same /24."
     }
   },
   {
@@ -700,7 +700,7 @@
       "title": "Different ping results with incomplete evidence",
       "text": "R1’s ordinary ping to PC-B succeeds.\nPC-A behind R1 cannot ping PC-B.\nThe engineer has not yet recorded R1’s ping source, PC-A’s gateway, or R2’s return routes.\nNo further fault evidence is supplied."
     },
-    "prompt": "What is the most defensible next action before changing routing?",
+    "prompt": "A test works from one source and fails from another. What do you do before changing routing?",
     "options": [
       "Compare the two test sources, host configuration and actual return routes",
       "Raise all static distances to force a new path",
@@ -710,11 +710,115 @@
     "answer": [
       0
     ],
-    "explanation": "The symptom suggests a source-dependent difference but does not uniquely identify its cause. Obtain the PC configuration and route back to its actual source before proposing a repair.",
+    "explanation": "The evidence does not identify the cause. Compare the two sources, their host settings and the return routes first.",
     "whyWrong": {
-      "1": "No source-preference defect has been established.",
-      "2": "Broadening the LAN mask violates the addressing design and can create a new failure.",
-      "3": "Missing reverse routing is possible, but the stated evidence does not yet establish it."
+      "1": "No AD fault has been shown.",
+      "2": "Widening the mask breaks the addressing design.",
+      "3": "A missing return route is possible but not proven."
+    }
+  },
+  {
+    "id": "static-routing-ipv4-q29",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default administrative distance of a static route?",
+    "options": [
+      "0",
+      "1",
+      "5",
+      "110"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A static route has AD 1 unless you add a different distance at the end of the command.",
+    "whyWrong": {
+      "0": "AD 0 is a connected route.",
+      "2": "5 is not a default value.",
+      "3": "110 is OSPF."
+    }
+  },
+  {
+    "id": "static-routing-ipv4-q30",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which mask makes a static route a host route?",
+    "options": [
+      "255.255.255.0",
+      "255.255.255.254",
+      "255.255.255.255",
+      "0.0.0.0"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A host route uses mask 255.255.255.255 (/32) and matches one address.",
+    "whyWrong": {
+      "0": "That is a /24 network route.",
+      "1": "That is a /31 point-to-point network.",
+      "3": "That mask belongs to the default route."
+    }
+  },
+  {
+    "id": "static-routing-ipv4-q31",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How do you turn a static route into a floating static backup?",
+    "options": [
+      "Use a /32 mask on the same destination",
+      "Add a higher distance to the same prefix",
+      "Use a longer prefix than the primary uses",
+      "Point it at a different type of interface"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A floating static has the same prefix as the preferred route and a higher administrative distance at the end of the line.",
+    "whyWrong": {
+      "0": "A /32 is a different, more specific prefix.",
+      "2": "A longer prefix wins longest match instead of waiting.",
+      "3": "The interface type does not set preference."
+    }
+  },
+  {
+    "id": "static-routing-ipv4-q32",
+    "type": "single",
+    "objectives": [
+      "v1:3.3",
+      "v2:3.2"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What happens to a route with administrative distance 255?",
+    "options": [
+      "It is the most preferred route",
+      "It is installed only when no other route exists",
+      "It is never installed in the routing table",
+      "It becomes the default route"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "A route with distance 255 is never installed.",
+    "whyWrong": {
+      "0": "The lowest AD is the most preferred.",
+      "1": "AD 255 is not installed even as a last resort.",
+      "3": "A default route is 0.0.0.0/0, whatever its distance."
     }
   }
 ]

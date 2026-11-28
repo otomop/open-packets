@@ -6,9 +6,9 @@ minutes: 85
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Build a working network, collect its baseline, and break one feature at a time. For each fault, record the symptom, evidence, proposed cause, repair, and client retest. All outputs described below are expected or representative teaching evidence; this lab has not been manually executed in Packet Tracer or CML. Simulator support and response wording vary.
+You will build a working two-router network, record its baseline, then break it four ways, one at a time: a missing return route, a shut interface, a port in the wrong VLAN and a wrong DNS record. Each fault is the kind the lesson's tools are meant to find. For each one, record the symptom, the output that identifies the cause, the repair, and a retest from PC-A.
 
-The configuration blocks are supplied preparation. Your assessed work is choosing useful observations, separating facts from remaining explanations, and proving recovery from PC-A. Use one row per test: source, destination/name, protocol, prediction, observed result, and what that result still leaves uncertain. A predicted result is not an observation; mark any unsupported capture or command as a worksheet instead.
+The configuration blocks are given to you; the work is in the diagnosis. Keep a table with one row per test: source, destination, your prediction, and the result. The expected results were written from the design, not captured from a run, so wording and timing may differ in your Packet Tracer version.
 
 ## Topology
 
@@ -29,7 +29,7 @@ All devices are fresh lab devices. Switch ports are access ports, with no trunks
 
 ## Step 1: Build the complete baseline
 
-Cable the listed ports. Set PC-A and SRV under Desktop → IP Configuration. Open each Cisco CLI, decline the initial setup dialog if offered, and configure the following. If a logging command is unsupported, record that limitation and use current interface state plus Simulation observations for the log portion.
+Cable the listed ports. Set PC-A and SRV under Desktop → IP Configuration. Open each Cisco CLI, decline the initial setup dialog if offered, and configure the following. The two logging lines on each router timestamp log messages and keep them in a memory buffer, so that `show logging` has something to show after a fault. If your version rejects one, carry on without it.
 
 ```ios R1
 Router> enable

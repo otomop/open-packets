@@ -8,7 +8,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "With normal dynamic learning enabled, which two observations create a learned MAC-to-port association within the frame’s VLAN? Choose two.",
+    "prompt": "With dynamic learning enabled, which two observations create a MAC-to-port entry in the frame’s VLAN? Choose two.",
     "options": [
       "The source MAC address in the received frame",
       "The destination MAC address in the received frame",
@@ -20,11 +20,11 @@
       0,
       2
     ],
-    "explanation": "The switch observes a source address arriving through a particular ingress port in a VLAN. That evidence establishes a path toward the source. The destination is looked up separately and does not reveal its own location from this frame.",
+    "explanation": "The switch learns from the source MAC address and the interface the frame arrived on. The destination is only looked up and says nothing about its own location.",
     "whyWrong": {
-      "1": "The current destination is not evidence of where that destination is connected.",
-      "3": "An IP address is not the key used for ordinary dynamic MAC learning.",
-      "4": "The egress interface is a result of forwarding, not the source-location observation."
+      "1": "The destination MAC is not evidence of where that host is connected.",
+      "3": "Dynamic MAC learning does not use the IP address.",
+      "4": "The egress interface is a result of forwarding, not a learning input."
     }
   },
   {
@@ -47,11 +47,11 @@
       1,
       3
     ],
-    "explanation": "Store-and-forward has the full frame available for checking before forwarding it. Cut-through can begin earlier and therefore cannot wait for the entire frame’s FCS result before that initial transmission. Hardware behavior varies; family names alone are insufficient to select a mode.",
+    "explanation": "Store-and-forward receives the whole frame and can check the FCS before forwarding. Cut-through starts forwarding before the full frame and FCS arrive.",
     "whyWrong": {
-      "0": "Waiting for the complete frame describes store-and-forward rather than the defining early-start behavior.",
-      "2": "Destination MAC is used for the destination lookup in either forwarding method.",
-      "4": "The FCS detects corruption; it is not an error-correction code that repairs payload bits."
+      "0": "Waiting for the complete frame describes store-and-forward.",
+      "2": "Both methods look up the destination MAC, not the source.",
+      "4": "The FCS detects corruption; it cannot repair payload bits."
     }
   },
   {
@@ -73,11 +73,11 @@
     "answer": [
       2
     ],
-    "explanation": "EtherType 0x0800 identifies IPv4. It tells the receiving protocol stack what payload follows; it is distinct from the destination MAC used for basic forwarding.",
+    "explanation": "EtherType 0x0800 identifies an IPv4 payload. It names the payload protocol and is separate from the destination MAC used for forwarding.",
     "whyWrong": {
-      "0": "0x0806 identifies ARP.",
-      "1": "0x86DD identifies IPv6.",
-      "3": "0x8100 identifies an 802.1Q tag, not an untagged IPv4 payload."
+      "0": "0x0806 is ARP.",
+      "1": "0x86DD is IPv6.",
+      "3": "0x8100 is an 802.1Q tag."
     }
   },
   {
@@ -99,11 +99,11 @@
     "answer": [
       1
     ],
-    "explanation": "A Layer 2 switch uses the MAC/VLAN entry to choose a forwarding port. IPv4 ARP supplies a host’s on-link IP-to-MAC association; they serve different lookups.",
+    "explanation": "The switch’s MAC table maps MAC and VLAN to a port. An ARP table maps an on-link IPv4 address to a MAC. They serve different lookups.",
     "whyWrong": {
-      "0": "The first description resembles routing, and ARP does not map VLANs to ports.",
-      "2": "Transport sockets and Ethernet payload types are separate from these tables.",
-      "3": "The two table roles are reversed."
+      "0": "Mapping a prefix to a next hop is routing, and ARP does not map VLANs to ports.",
+      "2": "TCP ports and EtherTypes are not what these tables hold.",
+      "3": "This swaps the two tables’ roles."
     }
   },
   {
@@ -129,11 +129,11 @@
     "answer": [
       0
     ],
-    "explanation": "The source refreshes A’s entry on Fa0/1. The destination B is already known on a different forwarding port, Fa0/2, so ordinary unicast forwarding selects that port.",
+    "explanation": "The source entry for A is refreshed on Fa0/1, and B is already known on Fa0/2. A known unicast destination goes out that one port only.",
     "whyWrong": {
-      "1": "The destination is known, so unknown-unicast flooding is unnecessary.",
+      "1": "Flooding is for unknown destinations, and B is known.",
       "2": "Other learned addresses do not make their ports destinations for this frame.",
-      "3": "A known source is normal; same-port filtering concerns the destination."
+      "3": "A known source is normal and does not stop forwarding."
     }
   },
   {
@@ -159,11 +159,11 @@
     "answer": [
       2
     ],
-    "explanation": "Source learning and destination lookup are separate decisions. The frame teaches C’s location, while the existing B entry directs forwarding to Fa0/2. An unfamiliar valid source is not by itself a reason to flood or reject ordinary traffic.",
+    "explanation": "Source learning and destination lookup are separate. The frame teaches C on Fa0/3, and the existing B entry sends it out Fa0/2 only.",
     "whyWrong": {
-      "0": "The switch learns the source C, not the destination B, from this arrival.",
-      "1": "Normal dynamic learning does not require a preconfigured host entry.",
-      "3": "Unknown-unicast flooding depends on an unknown destination, not an unknown source."
+      "0": "The switch learns the source C, not the destination B.",
+      "1": "Dynamic learning needs no preconfigured entry.",
+      "3": "Flooding depends on an unknown destination, not an unknown source."
     }
   },
   {
@@ -189,11 +189,11 @@
     "answer": [
       1
     ],
-    "explanation": "Flooding is limited to eligible forwarding ports in the same VLAN and excludes the ingress port. Fa0/3 is down, Fa0/4 is not forwarding for VLAN 10, and Fa0/5 belongs to VLAN 20. Only Fa0/2 qualifies.",
+    "explanation": "A broadcast floods only to forwarding ports in the same VLAN, excluding the ingress port. Fa0/3 is down, Fa0/4 is not forwarding for VLAN 10, and Fa0/5 is in VLAN 20, so only Fa0/2 qualifies.",
     "whyWrong": {
-      "0": "An operational link is insufficient when it is not forwarding for the VLAN.",
-      "2": "Fa0/5 is in another VLAN and is not an egress for this broadcast.",
-      "3": "The switch does not send the ordinary flooded copy back through its ingress port."
+      "0": "A port that is up but not forwarding for the VLAN gets no copy.",
+      "2": "Fa0/5 is in a different VLAN.",
+      "3": "The ingress port never gets the flooded copy."
     }
   },
   {
@@ -214,11 +214,11 @@
     "answer": [
       3
     ],
-    "explanation": "Padding extends the data area to 46 bytes. Adding the 14-byte untagged header and 4-byte FCS gives 64 bytes. Preamble, start frame delimiter, and interframe gap are excluded from this count.",
+    "explanation": "ARP data is padded to the 46-byte minimum. Add the 14-byte header and 4-byte FCS for a 64-byte frame; preamble and interframe gap are not counted.",
     "whyWrong": {
-      "0": "42 counts only the header and unpadded ARP message.",
-      "1": "46 is the padded data area, not the complete frame.",
-      "2": "60 leaves out the four-byte FCS required by the stated counting scope."
+      "0": "42 is the header plus the unpadded ARP message.",
+      "1": "46 is the padded data field only.",
+      "2": "60 leaves out the 4-byte FCS."
     }
   },
   {
@@ -239,11 +239,11 @@
     "answer": [
       1
     ],
-    "explanation": "The individual/group bit is the least-significant bit of the first octet. In 01 that bit is set, so the address is a group address; this example is an IPv4 multicast MAC. The Ethernet broadcast address is the separate all-ones value.",
+    "explanation": "The individual/group bit is the least significant bit of the first octet. In 01 that bit is set, so 0100.5e01.0203 is a group (multicast) address. Broadcast is the separate all-ones address.",
     "whyWrong": {
-      "0": "A group address is not an individual NIC’s ordinary unicast identifier.",
-      "2": "The relevant classification bits are in the first octet, not the last.",
-      "3": "Many valid unicast/group addresses do not begin with 00; broadcast is ffff.ffff.ffff."
+      "0": "A group address is not one NIC’s unicast identifier.",
+      "2": "The group bit is in the first octet, not the last.",
+      "3": "Broadcast is ffff.ffff.ffff; a nonzero first octet does not make broadcast."
     }
   },
   {
@@ -264,11 +264,11 @@
     "answer": [
       0
     ],
-    "explanation": "A received source frame is evidence of the sender’s location. Sending frames toward B does not provide new source evidence from B, so its inactive dynamic entry can age out. Subsequent traffic for an unknown B is flooded within the eligible VLAN ports until it is relearned.",
+    "explanation": "A dynamic entry refreshes only when a frame arrives with that address as the source. B sent nothing for longer than 300 seconds, so its entry aged out, and traffic to B floods until B is relearned.",
     "whyWrong": {
-      "1": "A VLAN can contain entries for many distinct source MAC addresses.",
-      "2": "Ordinary dynamic aging removes an entry rather than configuring it as static.",
-      "3": "MAC learning is not maintained by TCP acknowledgment tracking."
+      "1": "A VLAN holds entries for many source MACs.",
+      "2": "Aging removes an entry; it never makes it static.",
+      "3": "MAC learning does not depend on TCP acknowledgments."
     }
   },
   {
@@ -294,11 +294,11 @@
     "answer": [
       2
     ],
-    "explanation": "The dynamic clear removes the two learned entries while leaving the configured static entry. Static configuration requires its matching removal command; ordinary dynamic aging or clearing is insufficient. Reserved platform entries are omitted from this exhibit.",
+    "explanation": "`clear mac address-table dynamic` removes learned entries only. The STATIC entry stays until you remove it with its own `no mac address-table static` command.",
     "whyWrong": {
-      "0": "The command is restricted to dynamic entries.",
-      "1": "VLAN 1 does not exempt a dynamic entry from the clear.",
-      "3": "The clear deletes dynamic entries rather than merely resetting countdowns."
+      "0": "The command clears dynamic entries only, not configured ones.",
+      "1": "VLAN 1 entries are not exempt from the clear.",
+      "3": "The clear deletes entries; it does not just reset timers."
     }
   },
   {
@@ -417,11 +417,11 @@
     "answer": [
       3
     ],
-    "explanation": "SW1 creates four separate link domains: three PC links plus the router link. The hub and everything on its shared segment form one more, giving five collision domains by the diagram convention; correctly operating full-duplex switch links do not actually collide. The routed interfaces separate the two broadcast domains.",
+    "explanation": "SW1 gives four collision domains (three PC links plus the router link), and the hub with its attached devices is one more, for five. The two routed interfaces split the network into two broadcast domains.",
     "whyWrong": {
-      "0": "Hub ports do not each separate the shared collision domain.",
-      "1": "The two distinct routed LANs do not share one broadcast domain.",
-      "2": "This misses a link/shared segment and adds a broadcast domain not present in the topology."
+      "0": "Hub ports share one collision domain; they do not each make one.",
+      "1": "The two routed LANs are separate broadcast domains.",
+      "2": "This miscounts the segments and invents a third broadcast domain."
     }
   },
   {
@@ -442,11 +442,11 @@
     "answer": [
       1
     ],
-    "explanation": "The ARP cache on the PC maps IPv4 next-hop addresses to MACs. The switch’s separate table maps MACs within VLANs to ports, so clearing the host cache does not directly delete switch entries. The PC’s later frames can refresh or establish its learned source location.",
+    "explanation": "A host’s ARP cache maps IPv4 addresses to MACs, and the switch’s MAC table maps MAC and VLAN to a port. They are separate, so clearing the ARP cache does not change the switch.",
     "whyWrong": {
-      "0": "A host-cache deletion is not a switch MAC-table removal operation.",
-      "2": "Deleting host ARP entries does not request a VLAN-wide switch clear.",
-      "3": "Host ARP state does not create static switch configuration."
+      "0": "Clearing a host cache does not remove a switch MAC entry.",
+      "2": "No VLAN-wide clear results from a host ARP clear.",
+      "3": "Host ARP state does not create static switch entries."
     }
   },
   {
@@ -472,11 +472,11 @@
     "answer": [
       1
     ],
-    "explanation": "An uplink carries frames whose sources are downstream hosts, so many distinct MACs on it are normal. The inventory supports that explanation. A count alone neither proves an attack nor proves that all traffic is benign; investigate additional evidence if the behavior differs from expectations.",
+    "explanation": "An uplink to another switch carries frames from downstream hosts, so many source MACs on one port are normal. Compare them with the inventory.",
     "whyWrong": {
-      "0": "An uplink carries source frames from many downstream hosts, so multiple learned addresses can legitimately share one physical port.",
-      "2": "These are different addresses on one port, not evidence of one address alternating between ports.",
-      "3": "DYNAMIC identifies learned entries; it does not display or prove an aging configuration."
+      "0": "Many learned MACs can share one uplink port.",
+      "2": "These are distinct addresses; one address moving between ports would look different.",
+      "3": "DYNAMIC means learned, not that aging is disabled."
     }
   },
   {
@@ -497,11 +497,11 @@
     "answer": [
       3
     ],
-    "explanation": "With the stated restrictions absent, ordinary multicast is flooded within the VLAN, excluding ingress. Group delivery can differ when snooping, multicast forwarding state, policy, or reserved control addresses apply. The assumptions in the question make the forwarding decision unambiguous.",
+    "explanation": "With snooping and restrictions off, ordinary multicast floods like broadcast: out all other eligible ports in the VLAN, excluding the ingress port.",
     "whyWrong": {
-      "0": "Lack of a learned unicast-source entry does not by itself require discarding ordinary multicast.",
-      "1": "Only particular control addresses receive special handling; multicast as a whole is not CPU-only.",
-      "2": "The question excludes the receiver-membership restrictions that would support this selection."
+      "0": "Multicast need not be learned as a source, and it is not dropped.",
+      "1": "Only reserved control addresses get CPU handling.",
+      "2": "Receiver selection needs snooping or multicast state, which are disabled."
     }
   },
   {
@@ -527,11 +527,11 @@
     "answer": [
       3
     ],
-    "explanation": "A valid frame from B on Fa0/4 updates B’s dynamic MAC location immediately. A can keep its correct IP-to-MAC mapping; the switch’s updated destination lookup chooses the new port.",
+    "explanation": "B’s first frame on Fa0/4 updates its dynamic entry at once. A’s next frame to B goes out Fa0/4, and A’s IP-to-MAC mapping is unchanged.",
     "whyWrong": {
-      "0": "New source evidence can update a dynamic location without waiting for the old aging interval.",
-      "1": "The host’s unchanged IP-to-MAC mapping does not prevent the switch from learning the new physical path.",
-      "2": "Ordinary learning updates the entry rather than keeping both ports as simultaneous unicast destinations."
+      "0": "New source evidence updates the entry without waiting for the old timer.",
+      "1": "The unchanged ARP entry does not stop the switch relearning B’s port.",
+      "2": "Learning replaces the old port; it does not keep both."
     }
   },
   {
@@ -557,11 +557,11 @@
     "answer": [
       2
     ],
-    "explanation": "Frame 1 updates the dynamic location of source E to Fa0/3. Frame 2 then looks up destination E using that updated table, so it leaves Fa0/3 rather than being same-port filtered. The initial table is not a permanent forwarding rule.",
+    "explanation": "Frame 1 moves E’s learned location to Fa0/3. Frame 2 looks up E in that updated table and leaves Fa0/3.",
     "whyWrong": {
-      "0": "The source frame from E changed its learned location before the second lookup.",
-      "1": "The destination has a known current entry; a normal source move does not require unknown-unicast flooding.",
-      "3": "Destination lookup selects E’s port, and ordinary bridging does not reflect the frame through its ingress."
+      "0": "E’s source frame changed its location before the second lookup.",
+      "1": "E has a current entry, so there is no unknown-unicast flood.",
+      "3": "The lookup selects E’s port; a switch does not send a frame back out its ingress port."
     }
   },
   {
@@ -587,11 +587,111 @@
     "answer": [
       0
     ],
-    "explanation": "The first request teaches A on each switch along its path. B’s reply reaches S1 and teaches B on Fa0/24. C’s final frame is sent by S2 only to the already-known B port, so S1 never sees C transmit and cannot learn C from that frame.",
+    "explanation": "A’s request teaches A on Fa0/1, and B’s reply teaches B on Fa0/24. C’s frame goes only to the known B port on S2, so S1 never sees C transmit and cannot learn it.",
     "whyWrong": {
-      "1": "C’s source frame stays on S2’s local path to B and does not reach S1.",
-      "2": "Fa0/3 is C’s port on S2, not a learned S1 port; A already transmitted into S1.",
-      "3": "B’s reply supplied source evidence; the stated immediate sequence includes no aging event."
+      "1": "C’s frame stays on S2’s path to B and never reaches S1.",
+      "2": "Fa0/3 is C’s port on S2, and S1 did learn A.",
+      "3": "S1 never saw C, and no aging occurs in this sequence."
+    }
+  },
+  {
+    "id": "ethernet-switching-q20",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How is a MAC address written?",
+    "options": [
+      "48 bits, as 12 hexadecimal digits",
+      "32 bits, as four decimal octets",
+      "64 bits, as 16 hexadecimal digits",
+      "48 bits, as 6 decimal numbers"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A MAC address is 48 bits, written as 12 hexadecimal digits.",
+    "whyWrong": {
+      "1": "That describes an IPv4 address.",
+      "2": "A MAC address is 48 bits, not 64.",
+      "3": "MAC addresses are written in hexadecimal, not decimal."
+    }
+  },
+  {
+    "id": "ethernet-switching-q21",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the Ethernet broadcast destination address?",
+    "options": [
+      "ffff.ffff.ffff",
+      "0000.0000.0000",
+      "0100.5e00.0001",
+      "aaaa.aaaa.aaaa"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The Ethernet broadcast destination is ffff.ffff.ffff.",
+    "whyWrong": {
+      "1": "All zeros is not the broadcast address.",
+      "2": "0100.5e00.0001 is in the IPv4 multicast MAC range.",
+      "3": "aaaa.aaaa.aaaa is an ordinary unicast-looking address."
+    }
+  },
+  {
+    "id": "ethernet-switching-q22",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.a"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is the default aging time for a dynamic MAC table entry on a Catalyst switch?",
+    "options": [
+      "60 seconds",
+      "300 seconds",
+      "600 seconds",
+      "3600 seconds"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A dynamic entry ages out after 300 seconds (5 minutes) without a frame from that source.",
+    "whyWrong": {
+      "0": "60 seconds is not the Catalyst default.",
+      "2": "600 seconds is not the Catalyst default.",
+      "3": "One hour is not the Catalyst default."
+    }
+  },
+  {
+    "id": "ethernet-switching-q23",
+    "type": "single",
+    "objectives": [
+      "v1:1.13.c"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How does a switch forward an unknown-unicast frame?",
+    "options": [
+      "Floods it to eligible VLAN ports except ingress",
+      "Drops it until the destination is learned",
+      "Sends it only to the uplink or router port",
+      "Floods it out every port including ingress"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Unknown-unicast and broadcast frames flood to eligible forwarding ports in the same VLAN, excluding the ingress port.",
+    "whyWrong": {
+      "1": "The switch forwards the frame rather than dropping it.",
+      "2": "A switch has no special path to a router for unknown destinations.",
+      "3": "The ingress port is excluded, and so are ports in other VLANs."
     }
   }
 ]

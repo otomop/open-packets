@@ -30,9 +30,9 @@ sources:
   - { title: "ISC BIND: dig command documentation", url: "https://bind9.readthedocs.io/en/latest/manpages.html" }
 ---
 
-DNS lets applications use names while IP forwarding uses addresses. When a user cannot reach an application by name, your job is to establish which name was queried, which server answered, what record was returned, and whether that result matches the intended service.
+A user reports that the intranet is down. You ping the web server by address and it replies, and the page loads by address. Switching, routing and the server are all fine. What failed is the step before any packet went to the server: turning the name the user typed into the right address. Until you can show where that step broke, every other test points you the wrong way.
 
-The v1.1 objective asks you to explain DNS's network role. The v2.0 objective specifically asks you to diagnose A, AAAA, CNAME, MX, NS, and PTR records. The examples therefore emphasize these six types and evidence-based troubleshooting. The IOS client configuration supports that work; building a production recursive resolver or authoritative service is not the scope of this chapter.
+Chapter 6 introduced port 53, and Chapter 24 showed DHCP handing each host the address of a DNS server. This chapter covers what happens when the host uses that address: who it asks, who holds the answer, what a record contains and how long an answer is remembered. By the end you will be able to read the six record types the exam names, configure an IOS router as a DNS client, and tell apart a query that timed out, a name that does not exist, a wrong answer and a broken application.
 
 ## What names and DNS records provide
 
@@ -45,33 +45,37 @@ The v1.1 objective asks you to explain DNS's network role. The v2.0 objective sp
 - A DNS answer does not prove that the destination application is reachable or healthy.
 :::
 
-A **domain name** consists of labels separated by dots, such as `app.lab.example`. The hierarchy is interpreted from the right: the root, a top-level domain, and the labels below it. An **FQDN**, or fully qualified domain name, identifies the complete name. A trailing dot makes that absolute meaning explicit in DNS tools and zone notation. Applications often accept an apparently complete name without a trailing dot; search behavior depends on the client, so avoid universal rules based only on punctuation.
+IP forwarding works only with addresses, but people and applications use names. DNS is the distributed database that connects the two. A host asks a DNS server a question such as "what is the IPv4 address of `app.lab.example`?" and gets back a **record**, a piece of data stored under that name. The host then sends its packets to the returned address. DNS takes no further part, which is why a correct answer tells you nothing about the application behind it.
 
-A **zone** is an administratively served portion of the namespace. An **authoritative server** answers from the zone data for which it is responsible. A zone can delegate a subdomain to other authoritative servers. A server does not need to contain every organization's records to participate in DNS.
+A **domain name** is a series of labels separated by dots, read from right to left: in `app.lab.example`, `example` is the top-level domain, `lab` is a domain inside it and `app` is a host. Above the top-level domains sits the unnamed **root**. An **FQDN**, or fully qualified domain name, is the complete name, as opposed to a short name such as `app` that a client completes with a configured suffix. In DNS tools a trailing dot, as in `app.lab.example.`, marks a name as already complete.
 
-The client normally uses a **stub resolver**, part of its operating-system or application environment, to ask a configured DNS service. A **recursive resolver** does the necessary lookup work on the client's behalf and may cache results. One device can perform more than one DNS role; the roles describe what it is doing for a particular query.
+No single server holds every name. The namespace is divided into **zones**, each run by one organisation. An **authoritative server** holds the records of its zone and answers from that data. A zone can **delegate** part of its namespace: the `example` zone can hand `lab.example` to other authoritative servers, which then answer for every name under it.
 
-DHCP option 6 can supply resolver addresses, but DHCP and DNS remain separate services. A host may receive a correct address and gateway while being given an incorrect resolver. Changing a DHCP pool's DNS option does not immediately update all already-configured clients; check their actual settings and obtain refreshed configuration through the appropriate renewal process.
+Three roles take part in a lookup. The **stub resolver** is the DNS client built into every operating system; it sends the question to the host's configured DNS server and waits. That server is a **recursive resolver**: it searches on the client's behalf, returns the final answer and caches what it learned. The authoritative servers answer the resolver's questions. One machine can fill more than one role. In this chapter's lab, DNS1 at 10.1.1.53 holds the `lab.example` records and is also the server that PC-A and R1 ask.
+
+A host usually learns its resolver address from DHCP option 6, the `dns-server` line in an IOS pool. The two services stay separate: a host can receive a correct address and gateway with the wrong resolver, in which case it works by address and fails by name. Changing the pool does not reach hosts that already hold a lease. They keep the old resolver until they renew, so check the host's actual setting before you retest.
 
 ## Follow a lookup and its cached answer
 
-Suppose a resolver has no relevant cached information, is allowed to perform recursion, and is not forwarding the request to another resolver. For `www.example.com`, it can ask a root server, follow a referral to a `.com` server, and follow the domain's delegation to an authoritative server. A **referral** directs the resolver toward servers that may know the next portion of the name. The root need not know the application's final address.
+A recursive resolver finds an answer by working down the hierarchy from the root, one referral at a time. Suppose a client asks its resolver for the A record of `www.example.com` and the resolver has nothing cached. The resolver asks a root server. The root does not know the address, but it knows which servers handle `.com`, so it replies with a **referral** to them. A `.com` server in turn refers the resolver to the authoritative servers for `example.com`. One of those returns the address, and the resolver passes it back to the client.
 
 ```diagram
 {"type":"sequence","title":"A simplified uncached recursive lookup","caption":"This example has no forwarding resolver or useful cached delegation; real lookups can omit stages because of caching or local policy.","actors":["Client","Recursive resolver","Root","TLD server","Authoritative server"],"steps":[{"from":0,"to":1,"label":"Ask for www.example.com A","accent":true},{"from":1,"to":2,"label":"Find the next authority"},{"from":2,"to":1,"label":"Referral toward .com"},{"from":1,"to":3,"label":"Find example.com authority"},{"from":3,"to":1,"label":"Referral for example.com"},{"from":1,"to":4,"label":"Query the required name/type"},{"from":4,"to":1,"label":"Address answer and TTL"},{"from":1,"to":0,"label":"Return the result","accent":true}]}
 ```
 
-The resolver can reuse cached information instead of repeating the entire process. A **recursive query** asks the receiving service to complete resolution if it supports and permits that work. An **iterative query** can receive an answer or a referral, which the querying resolver follows itself. A client configured with an authoritative-only server may not receive general recursive service; reachability of port 53 alone does not establish that server's permitted role.
+Two kinds of query appear in that exchange. The client's question is a **recursive query**: return the final answer, whatever work that takes. The resolver's questions to the other servers are **iterative queries**: each server replies with the best it has, either the answer or a referral, and the resolver follows the referrals itself.
 
-A TTL of 3,600 seconds allows ordinary caching for up to one hour from receipt, subject to resolver policy. If a resolver obtained an answer 15 minutes ago, a simple unrefreshed cache has 2,700 seconds remaining. Changing the authoritative record does not push the change instantly into every cache. Lowering a TTL is useful before a planned change only after earlier cached copies have had time to expire; it cannot retroactively shorten a copy already held elsewhere.
+Walking the hierarchy for every lookup would be slow, so resolvers and hosts cache what they learn. Every record carries a **TTL**, the number of seconds a cache may reuse it. If a resolver receives a record with a TTL of 3,600 and is asked for the same name 15 minutes later, it answers from its cache with 2,700 seconds remaining. At zero the entry is discarded and the next query goes back to the authoritative server.
 
-Negative answers can be cached too. A name created after a negative lookup may remain unavailable through a resolver holding the earlier result. The zone's **SOA (Start of Authority)** record carries its authority and maintenance information, including the values used for negative caching. RFC 2308 derives that lifetime from the smaller of the SOA record's TTL and its MINIMUM field. You need the operational implication here, not a complete lesson in zone-maintenance timers: query the relevant server and inspect the actual remaining lifetime before deciding an edit failed.
+Changing a record therefore does not change what caches already hold. If you move `app.lab.example` to a new address, resolvers that cached the old address keep giving it out until their copy expires.
 
-Small queries commonly use UDP. A truncated reply, indicated by **TC**, may require retry over TCP; DNS implementations must support TCP as described by RFC 7766. TCP can also carry ordinary queries by choice and full zone transfers. The traditional unextended DNS UDP limit is 512 bytes, while EDNS allows a larger advertised size. Do not assume every answer above 512 bytes requires TCP today, or that UDP-only reachability proves complete DNS connectivity.
+Failures are cached too. A resolver that is told a name does not exist remembers that negative answer for a time taken from the zone's **SOA (Start of Authority)** record, which holds the zone's administrative settings. A name created just after someone looked it up can stay "missing" through that resolver until the negative entry expires.
+
+DNS servers listen on port 53 for both UDP and TCP. Most queries are small and use UDP. When a reply is too large for the UDP message, the server sets the **TC** (truncated) flag and the client repeats the query over TCP. Full zone transfers also use TCP, and RFC 7766 requires DNS implementations to support TCP for ordinary queries. In practice a firewall or ACL must permit both UDP 53 and TCP 53, because a path that passes only UDP fails for the large replies.
 
 ## Choose and verify the correct record type
 
-A **resource record** associates a name and type with data. Record types matter because a correct answer of the wrong type may not help the application. Ask which address family or service the client actually needs.
+A **resource record** has an owner name, a type, a TTL and data. A client always asks for one specific type, so the first question in any DNS fault is which type the application needs.
 
 | Type | Example data | What to verify |
 |---|---|---|
@@ -82,23 +86,20 @@ A **resource record** associates a name and type with data. Record types matter 
 | NS | `lab.example → ns1.lab.example` | Correct authority/delegation and reachable name-server addresses |
 | PTR | `80.1.1.10.in-addr.arpa → app.lab.example` | Reverse data for the particular address |
 
-An **A record** and an **AAAA record** are separate data. An IPv4 answer does not establish an IPv6 address. A name can have several records of a type, so compare all returned addresses with the intended design. Multiple addresses do not by themselves prove that every backend works or that a particular client will choose the same one each time.
+An **A record** holds an IPv4 address and an **AAAA record** holds an IPv6 address. They are separate records: a name with an A record and no AAAA record works for an IPv4 client and gives an IPv6-only client no address.
 
-A **CNAME** makes its owner name an alias of another name. `www.lab.example` can point to `app.lab.example`, whose address records identify the server. For a web lookup, follow the alias until a usable requested address record is found. A target may itself be an alias; a loop or missing final address prevents completion. An alias is not inherently invalid just because its target has no address record, but it cannot then provide the address-based service being requested.
+A **CNAME** (canonical name) makes one name an alias of another. With `www.lab.example CNAME app.lab.example`, a client asking for the A record of `www` is told that the real name is `app`, and the lookup continues with `app`'s A record. The address is then kept in one place: change `app`'s A record and every alias follows. Two rules cause most CNAME faults. The chain has to end in a record of the requested type, so an alias whose target has no A record, or two aliases that point at each other, resolve to nothing. And a name that has a CNAME cannot hold any other ordinary record. You cannot add an A record beside it, and the top of a zone (`lab.example` itself), which must hold SOA and NS records, cannot be a CNAME.
 
-Ordinary CNAME data cannot coexist with other ordinary record data at that same owner name. Thus a conventional zone apex, which already has SOA and NS data, cannot also be an ordinary CNAME. Provider-specific alias conveniences are not evidence that standard CNAME rules changed. Correct the data according to the actual record type rather than adding contradictory records to make a symptom disappear.
+An **MX record** tells sending mail servers where to deliver mail for a domain. Its data is a preference number and a hostname, as in `lab.example MX 10 mail.lab.example`. The lowest preference is tried first, so with MX 10 and MX 20 the second server is the backup; equal values share the load. The data is a hostname and never an address, so delivery takes two lookups: the domain's MX record, then the A or AAAA record of the exchanger it names. That hostname needs its own address record and must not be a CNAME. Mail and web use different records, so a working website tells you nothing about mail.
 
-An **MX record** has a preference value and an exchanger hostname. Smaller preferences are preferred; equal values can distribute attempts according to sender behavior. The exchanger needs appropriate address records and must not itself be a CNAME alias. For `lab.example MX 10 mail.lab.example`, query the domain's MX record, then resolve `mail.lab.example`, then test the intended mail service. Website success establishes none of those mail dependencies.
+An **NS record** names an authoritative server for a zone. NS records make delegation work: the parent zone holds NS records for the child zone, and those are the referrals the resolver followed in the previous section. If the parent still names a retired server, resolvers are sent to a machine that cannot answer, and every name in the child zone fails even though the new server's records are correct. The resolver also needs the name server's address; when that server's name lies inside the zone it serves, the parent supplies the address with the referral as a **glue** record. Do not confuse an NS record with the DNS server address set on a PC. NS names the servers that hold a zone; the PC setting chooses the resolver the PC asks.
 
-An **NS record** identifies an authoritative server. It is not the DNS-resolver IP address entered in a PC's settings. If a domain delegates to a wrong or unreachable server, the records behind that delegation may become unavailable. Compare parent delegation and the intended authoritative service. The name-server hostname must also be resolvable; necessary parent-supplied address information is called **glue**. Detailed delegation administration belongs to DNS operations, but you must recognize the dependency when diagnosing an unreachable authority.
+A **PTR record** maps an address back to a name. For IPv4 the octets are reversed and `in-addr.arpa` is added: the PTR for `10.1.1.80` is stored at `80.1.1.10.in-addr.arpa`. IPv6 uses its hexadecimal digits in reverse order under `ip6.arpa`. Forward and reverse records live in different zones and are created separately, so adding an A record does not create its PTR.
 
-A **PTR record** maps a reverse-lookup name to a hostname. IPv4 reverses its octets under `in-addr.arpa`: `10.1.1.80` becomes `80.1.1.10.in-addr.arpa`. IPv6 reverse lookup uses hexadecimal digits in reverse order under `ip6.arpa`; ordinary tools construct this for you. Forward A/AAAA and reverse PTR data are managed separately. A correct forward record does not automatically prove a matching PTR exists.
-
-SOA describes a zone's authority and maintenance information; TXT carries text used by various applications and verification systems. Recognize their purpose when they appear, but the six record types above are the explicit v2 diagnosis focus.
 
 ## Configure the router as a DNS client
 
-A router can forward users' DNS packets, advertise resolver addresses through DHCP, and resolve names for its own commands. These are three different functions. Configuring `ip name-server` affects the router's own lookups; it does not change every attached PC's settings or make the router an authoritative DNS server.
+A router touches DNS in three separate ways. It forwards users' DNS packets like any other traffic. It can hand out a resolver address through its DHCP pools. And it can be a DNS client itself, so that you can type `ping app.lab.example` at its prompt. The commands below configure only the third. They do not change what the PCs use, and they do not make the router a DNS server.
 
 ```ios R1
 R1# configure terminal
@@ -111,21 +112,22 @@ R1# show hosts
 R1# ping app.lab.example
 ```
 
-`ip domain-lookup` enables the documented IOS DNS client function. Some releases display or accept the spelling `ip domain lookup`; use the supported syntax. `ip name-server` selects the resolver, and `ip domain name` supplies a default suffix for unqualified names such as `app`. `ip host` creates a local static mapping. Static/cached name information can satisfy a lookup before a new DNS query occurs.
+- `ip domain-lookup` turns the router's DNS client on. It is on by default, so a configuration normally shows only its negative, `no ip domain-lookup`. Newer releases also accept `ip domain lookup`.
+- `ip name-server` names the resolver the router asks. You can list more than one address.
+- `ip domain name` sets the default suffix; older releases and Packet Tracer spell it `ip domain-name`. A name typed with no dot, such as `app`, is looked up as `app.lab.example`.
+- `ip host` creates a static name-to-address entry on the router. The router checks its own host table before it sends a query, so `ping localweb` works with no DNS server at all.
 
-If an IOS **domain list** is configured, Cisco's referenced procedure uses that list instead of the single default domain name. It is not an extra suffix appended after `ip domain name`. This matters when a short name fails but its full name works. Verify the complete name being queried, not only that a resolver address is present.
+`show hosts` displays the default domain, the name servers and the host table. Entries flagged `perm` are static `ip host` mappings; entries flagged `temp` are cached DNS answers, which age out. `clear host app.lab.example` removes one cached entry and `clear host *` removes them all, so the next lookup sends a new query. A static mapping is configuration, so remove it with `no ip host localweb`.
 
-`show hosts` reports name-service settings and the host table. Permanent entries represent static mappings; temporary entries can be cached answers. On the documented IOS implementation, `clear host app.lab.example` clears the named hostname-cache entry; `clear host *` selects all entries in the applicable cache. Removing an intentional static mapping from configuration uses `no ip host name`. Inspect the resulting table instead of assuming identical cache handling on every image. Do not assume a cached name will still be present for a later test—inspect the actual table.
-
-Disabling lookup with `no ip domain-lookup` prevents the router from making ordinary DNS lookups for its own command names. It does not block forwarded UDP/TCP 53 traffic for users. A console typo can otherwise trigger hostname lookup depending on IOS command handling and settings. Configure or disable the client deliberately; do not promise that every spelling error, resolver, or image produces the same delay or error text.
+Many lab routers carry `no ip domain-lookup`. With lookup on, IOS treats an unrecognised word typed at the EXEC prompt as a hostname and tries to resolve it. With no name server configured it broadcasts the query to 255.255.255.255, and the prompt hangs until the attempts time out. Turning lookup off removes that delay and affects only the router's own lookups: users' DNS packets are still forwarded and `ip host` entries still work. The router can then resolve only static names, which is the first thing to check when it can ping an address but not a name.
 
 :::trap A cached answer is still an answer
-A successful name-based ping can use a local mapping or an earlier cached result. It does not prove that a new DNS query reached a server. Conversely, a cached negative answer can remain after the authoritative record is fixed. Inspect the name table or query the chosen server explicitly before deciding which stage works.
+A successful name-based ping can use a static mapping or an earlier cached result. It does not prove that a new DNS query reached a server. Inspect `show hosts`, or query the server directly, before deciding which stage works.
 :::
 
 ## Diagnose the failing stage
 
-Use a specific name, requested type, resolver, and expected result. Compare the client's actual DNS setting with the design. Query that resolver explicitly when the tool permits it. Then determine whether you received a reply, whether it contains usable data, and whether the returned data is correct.
+A connection by name has four stages, and each can fail on its own: the client chooses a resolver, the resolver replies, the reply holds the right data, and the application connects to the returned address. Find the first stage that fails. Fix exactly what you are testing (the full name, the record type and the server), query that server directly with `nslookup`, and read what comes back.
 
 | Observed result | Meaning | Next useful check |
 |---|---|---|
@@ -136,15 +138,17 @@ Use a specific name, requested type, resolver, and expected result. Compare the 
 | Usable but wrong address | Resolution returned data inconsistent with the design | Record, alias chain, cache, split views or local override |
 | Correct address, failed application | Resolution succeeded for the tested type | Address reachability, application port, server behavior |
 
-**NXDOMAIN** is not proof that your PC directly reached an authoritative server; a recursive resolver can return a cached negative answer. **NODATA** is a completed no-data result, commonly represented by `NOERROR` without the requested answer. An arbitrary `NOERROR` response with zero answers can instead be a referral, so inspect the response context. **SERVFAIL** does not uniquely identify a missing record or one failed upstream device.
+A timeout means no reply at all, so the problem is reaching the resolver; the records are not yet in question. The next three rows are all replies. **NXDOMAIN** says the name does not exist, and it can come from the resolver's negative cache. **NODATA** is a reply with status `NOERROR` and an empty answer: the name exists but has no record of the requested type, as when you ask for AAAA at a name that has only an A record. **SERVFAIL** says the resolver tried and could not finish, which usually points upstream, at unreachable authoritative servers or a broken delegation.
 
-Testing by IP is useful but should match the service. A successful ping tests ICMP reachability, not HTTP or mail. A browser may require a particular hostname for virtual hosting or certificates, so failure of an IP-literal URL is not automatically a network failure. In the controlled Packet Tracer lab, one HTTP server serves the same simple page by address and name, making that comparison valid.
+A wrong address means the lookup worked and the data is bad: a mistaken record, a stale cache or a local override. Some organisations also run split DNS, in which internal and public servers deliberately return different answers for the same name, so always test through the resolver the affected client uses.
 
-Applications can use local host files or caches, while a diagnostic query can contact the configured DNS server directly. If `ping` and `nslookup` disagree, compare the exact name, address family, selected server, and local overrides before changing authoritative data. Windows `ipconfig /displaydns` and `/flushdns` inspect and clear its client cache; clearing that cache does not edit a hosts file or purge a remote resolver.
+Testing by address splits the problem in half. If `http://10.1.1.80` loads and `http://app.lab.example` does not, the fault is in resolution. If neither loads, fix reachability or the service first. Match the test to the service: a ping proves that ICMP reaches the address, not that the web server answers on port 80.
+
+When `ping` and `nslookup` disagree on a PC, they took different paths. `nslookup` always sends a query to a DNS server. `ping`, browsers and most applications use the operating system's resolver, which consults the local hosts file and its own cache first. On Windows, `ipconfig /displaydns` lists that cache and `ipconfig /flushdns` empties it. Flushing a PC's cache does not edit the hosts file or clear the resolver's cache.
 
 ## Reading the output
 
-These are representative, abbreviated teaching records, not captured simulator runs. A real tool's labels and formatting may differ.
+These outputs are representative. Labels and layout vary between tools and versions.
 
 ```output Client query: nslookup www.lab.example 10.1.1.53
 Server:  ns1.lab.example
@@ -156,23 +160,23 @@ Address: 10.1.1.80  ← Returned application address
 Aliases: www.lab.example  ← The alias points to the canonical name
 ```
 
-`Non-authoritative answer` normally means the response was not marked authoritative for this data; it is common when asking a recursive resolver and is not a failure indication. Likewise, `Server: UnKnown` can indicate no reverse name for the queried resolver. Inspect the actual answer before calling the lookup unsuccessful.
+`Non-authoritative answer` means the reply came from a resolver's cache or recursion instead of directly from the zone's authoritative server. It is normal and does not mean the answer is wrong. `Server: UnKnown` on the first line means only that the resolver's own address has no PTR record.
 
 ```output Representative dig response excerpts
 ;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 1001  ← A negative name result was received
 ;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 1002  ← Failure response, not silence
 ```
 
-With `nslookup`, request a type and server explicitly: `nslookup -type=MX lab.example 10.1.1.53`. With `dig`, the equivalent form is `dig @10.1.1.53 lab.example MX`; `dig -x 10.1.1.80` constructs the reverse lookup. These tools are not equally available in Packet Tracer, so record-based MX, NS, PTR, and IPv6 exercises have a paper path. Do not install a DNS service or alter a public zone just to reproduce an example.
+With `nslookup`, request a type and server explicitly: `nslookup -type=MX lab.example 10.1.1.53`. With `dig`, the equivalent form is `dig @10.1.1.53 lab.example MX`; `dig -x 10.1.1.80` constructs the reverse lookup. Packet Tracer supports only part of this, so the lab handles the MX, NS, PTR and AAAA cases on paper.
 
-Finish by retesting the corrected record chain and the actual service from the affected client. A working query from a different network can use another resolver or view. Keep the before/after evidence so the repair explains the user's original failure.
+After a repair, repeat the original test from the affected client: the same name through the same resolver, then the application itself.
 
 ## Exam focus
 
-- Distinguish client resolver settings, recursive service, and authoritative data.
-- Diagnose A, AAAA, CNAME, MX, NS, and PTR dependencies.
-- Explain ordinary caching and why record edits may not be visible immediately.
-- Recognize both UDP and TCP 53 and a truncated response.
-- Separate timeout, NXDOMAIN, NODATA, SERVFAIL, and a wrong answer.
-- Configure and inspect the router's own DNS client without confusing it with user forwarding.
-- Verify the corrected name/type/server result and then the required application.
+- Hosts learn their resolver from DHCP option 6 or static configuration.
+- A stub resolver asks a recursive resolver, which follows referrals from the root to a TLD server to the authoritative server.
+- DNS uses UDP 53 and TCP 53; a truncated (TC) reply is retried over TCP.
+- A TTL is a cache lifetime in seconds. Caches, including negative caches, keep an old answer until it expires.
+- A is IPv4, AAAA is IPv6, CNAME is an alias, MX is mail (lowest preference first), NS is zone authority, PTR is reverse lookup.
+- On IOS: `ip name-server`, `ip domain name`, `ip host`, `ip domain-lookup` (on by default) and `show hosts`.
+- Separate a timeout, NXDOMAIN, NODATA, SERVFAIL, a wrong answer and a failed application.

@@ -7,11 +7,11 @@ minutes: 95
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The addressing and initial OSPF settings are supplied. Your work is to predict elections and routes, prove them from separate observations, and diagnose a fault before applying its repair. The challenge adds an independently planned LAN and a directional-cost test.
+You will build the lesson's three-router network from blank devices and watch OSPF do what the lesson described: elect a DR and BDR on the shared segment, form a point-to-point adjacency on the direct link, prefer the cost-11 path over the cost-26 path, and fail over when the shared link goes down. The addressing and OSPF settings are supplied. Your work is to predict each election and route, then check the prediction against what the routers show.
 
-Build from blank devices. You will prove a broadcast election, a point-to-point adjacency, two client routes, and failover between known-cost paths. Keep a table of observations before and after each fault.
+Steps 1 to 5 build and verify. Step 6 shuts a link to force a failover, and Step 8 mismatches the timers on one link so that you can see what a rejected Hello looks like. The challenge adds a LAN that you plan yourself.
 
-Use a new Packet Tracer file with **three 2911 routers**, **one 2960 switch**, and **two PCs**. The 2911 provides Gi0/0, Gi0/1, and Gi0/2. Use straight-through copper for router–switch links, and crossover or the auto-connect tool for router–router and direct PC–router links. On CML/other images, map the interfaces explicitly before typing. All output in this guide is representative, not a recorded run; simulator commands and timing can differ.
+Use a new Packet Tracer file with **three 2911 routers**, **one 2960 switch**, and **two PCs**. The 2911 provides Gi0/0, Gi0/1, and Gi0/2. Use straight-through copper for router–switch links, and crossover or the auto-connect tool for router–router and PC–router links. On other platforms, map the interface names before typing. The results in this guide are representative; simulator wording and timing can differ.
 
 ## Topology
 
@@ -31,11 +31,11 @@ Use a new Packet Tracer file with **three 2911 routers**, **one 2960 switch**, a
 | PC-A | 192.168.10.10/24 | Gateway 192.168.10.1 |
 | PC-B | 192.168.30.10/24 | Gateway 192.168.30.1 |
 
-The switch needs no management IP for this lab. There is no simulated Internet destination and no default route is needed: OSPF will carry both specific client prefixes. Shared-interface costs will be 10, direct-link costs 25, and client-LAN costs 1, in both directions.
+The switch needs no IP address, and no default route is needed because OSPF carries both client prefixes. You will set the cost to 10 on the shared segment, 25 on the direct link and 1 on each client LAN, on every router, so the totals match the lesson's worked example.
 
 ### Prediction and observation sheet
 
-Before each relevant step, fill the prediction column. Record actual results only after the device has converged; keep the prediction even if it was wrong.
+Fill in the prediction column before each step. Record the actual result once the routers have settled, and keep your prediction even if it was wrong.
 
 | Checkpoint | Predict | Record actual evidence |
 |---|---|---|
@@ -46,11 +46,13 @@ Before each relevant step, fill the prediction column. Record actual results onl
 | R1 restored | Existing election versus preferred path | Roles and both route costs |
 | Direct timers mismatched | Direct adjacency and client reachability | Both effective timer pairs, neighbors and selected route |
 
-Calculate every path from the router whose route table you are predicting. Add outgoing costs along that path, including the destination LAN; do not add the receiving interface's cost.
+Calculate each path from the router whose routing table you are predicting. Add the outgoing interface costs along the path, including the destination LAN's. Do not add the cost of an interface the packet arrives on.
 
 ## Step 1: Cable and address the devices
 
-Cable exactly as shown. Set each PC under Desktop > IP Configuration to the static address, mask 255.255.255.0, and gateway in the table; DNS is not needed. Decline the initial router setup dialog if it appears. Configure SW1 and all router addresses below. The shared interfaces deliberately remain shut until the election steps.
+Cable exactly as shown. Set each PC under Desktop > IP Configuration to the static address, mask 255.255.255.0, and gateway in the table; DNS is not needed. Decline the initial router setup dialog if it appears. Configure SW1 and all router addresses below. The routers' shared interfaces stay shut for now, so that you control the order in which they join the election.
+
+SW1's router-facing ports use PortFast (Chapter 15) so that they forward as soon as they come up. Without it, the 30-second spanning-tree delay would use up most of OSPF's 40-second wait time, and a router could elect itself before it hears the others.
 
 ```ios SW1
 Switch> enable
@@ -59,6 +61,7 @@ Switch(config)# hostname SW1
 SW1(config)# interface range fastethernet0/1 - 3
 SW1(config-if-range)# switchport mode access
 SW1(config-if-range)# switchport access vlan 1
+SW1(config-if-range)# spanning-tree portfast
 SW1(config-if-range)# no shutdown
 SW1(config-if-range)# end
 ```
@@ -126,7 +129,7 @@ Each PC can ping its own gateway. R1 and R3 can ping each other on 10.0.13.1/30 
 
 ## Step 2: Start R1 first and establish its DR role
 
-Configure only R1 now. Wait until its shared interface reports State DR, normally after the initial wait interval (40 seconds with these defaults), before starting R2 or R3. Verify rather than relying on wall-clock timing.
+Configure only R1 now. `ip ospf priority 100` sets R1's election priority on the shared interface, and the `ip ospf cost` commands set the costs listed under the topology. With no other router on the segment, R1 listens for the wait time (40 seconds, the same as the dead interval) and then elects itself DR. Repeat `show ip ospf interface gigabitethernet0/0` until it reports State DR before you start R2 or R3.
 
 ```ios R1
 R1# configure terminal
@@ -167,9 +170,9 @@ R1 has RID 1.1.1.1 and process 10. Gi0/0 is broadcast, cost 10, priority 100, an
 
 ## Step 3: Add R2 and R3
 
-Before running the next blocks, write how the startup order and R3 priority zero affect the election. Do not treat the three router IDs as if this were a fresh simultaneous election.
+Predict the roles before you run the next blocks. R1 is already DR, so this is not a new election among three routers. Think about which role is still vacant when R2 arrives, and what priority 0 does to R3.
 
-Run R2 first and wait until it is Full with R1 and its interface shows BDR. Then run R3. Different local process numbers are intentional.
+Configure R2 first and wait until it is Full with R1 and its interface shows BDR. Then configure R3. The routers use process IDs 10, 20 and 30 on purpose, to show that the process ID is local.
 
 ```ios R2
 R2# configure terminal
@@ -219,7 +222,7 @@ R3# show ip ospf neighbor
 
 
 :::expected
-R1 remains DR, R2 becomes BDR, and R3 is DROTHER on Gi0/0. R1 sees R2 as FULL/BDR and R3 as FULL/DROTHER on Gi0/0, plus R3 as FULL/ - on Gi0/1. R3 sees R1 as FULL/DR and R2 as FULL/BDR on the shared link. Process 10, 20, and 30 do not have to match.
+R1 remains DR, R2 becomes BDR, and R3 is DROTHER on Gi0/0. R1 sees R2 as FULL/BDR and R3 as FULL/DROTHER on Gi0/0, plus R3 as FULL/ - on Gi0/1. R3 sees R1 as FULL/DR and R2 as FULL/BDR on the shared link. The different process IDs make no difference.
 :::
 
 ```state
@@ -228,9 +231,9 @@ R1 remains DR, R2 becomes BDR, and R3 is DROTHER on Gi0/0. R1 sees R2 as FULL/BD
 
 ## Step 4: Prove the client routes and their metrics
 
-Calculate both candidate path totals in each direction before running the commands. The solution after the checks lets you compare your arithmetic with the intended result.
+Before you run the commands, calculate the total cost of both candidate paths in each direction. The solution after the checks shows the arithmetic.
 
-On R1 and R3, inspect routes and the database. Then open each PC Desktop > Command Prompt and ping the remote PC. Repeat once if initial ARP resolution causes a lost first echo.
+On R1 and R3, inspect the routes and the database. `show ip ospf database` lists the LSAs in the LSDB; you only need to confirm that router IDs 1.1.1.1, 2.2.2.2 and 3.3.3.3 all appear under Router Link States. Then open Desktop > Command Prompt on each PC and ping the remote PC. Repeat the ping once if ARP costs you the first echo.
 
 ```ios R1
 R1# show ip route ospf
@@ -243,7 +246,7 @@ R3# show ip route ospf
 R3# ping 192.168.10.1 source 192.168.30.1
 ```
 
-If the simulator rejects the one-line source option, use the corresponding PC ping below; those packets already have the client-LAN source.
+The `source` option makes the router ping from its client-LAN address, so the reply needs the OSPF route back to that LAN. If the simulator rejects the option, use the PC pings below, which already have a client-LAN source.
 ```text
 ping 192.168.30.10
 ```
@@ -263,7 +266,7 @@ R1 learns 192.168.30.0/24 [110/11] via 10.0.123.3, Gi0/0. R3 learns 192.168.10.0
 
 ## Step 5: Test a higher priority without restarting anything
 
-Raise R3 shared-interface priority while R1 and R2 are healthy. Do not clear a process or bounce a link.
+Raise R3's priority on the shared interface from 0 to 200 while R1 and R2 are healthy. Do not clear the OSPF process or shut any link. Predict whether R3's role changes.
 
 ```ios R3
 R3# configure terminal
@@ -275,7 +278,7 @@ R3# show ip ospf interface gigabitethernet0/0
 
 
 :::expected
-R3 now has configured priority 200 but remains DROTHER. R1 remains DR and R2 BDR. This proves non-preemption; changing priority alone does not reset existing roles.
+R3 now has priority 200 but is still a DROTHER. R1 is still DR and R2 still BDR. The election is non-preemptive: a higher priority matters only at the next election.
 :::
 
 ```state
@@ -284,9 +287,9 @@ R3 now has configured priority 200 but remains DROTHER. R1 remains DR and R2 BDR
 
 ## Step 6: Remove the preferred transit and observe failover
 
-Predict the two route metrics and the surviving election before shutdown. Leave this fault in place while recording all three routers; the following step is a separate recovery.
+Predict the new roles on the shared segment and both route costs before you shut anything.
 
-On R1 only, shut the shared transit. Keep the direct link and both PC LANs up. Observe before restoring it.
+On R1 only, shut the shared interface. Keep the direct link and both client LANs up. SW1 keeps R2's and R3's own links up, so those two routers drop R1 as a neighbor only when their 40-second dead interval for it runs out. Record all three routers before you move on; Step 7 restores the link.
 
 ```ios R1
 R1# configure terminal
@@ -308,7 +311,7 @@ R3# show ip route ospf
 
 
 :::expected
-After loss is detected, R2 is promoted from BDR to DR and R3 becomes BDR. R1 still has a Full point-to-point adjacency to R3. R1 reaches LAN 30 via 10.0.13.2, Gi0/1, at cost 25 + 1 = 26; R3 reaches LAN 10 via 10.0.13.1 at cost 26. PC traffic may lose packets during convergence, then recover. Do not assume an exact duration.
+Once the dead interval expires, R2 is promoted from BDR to DR and R3, now the only other eligible router, becomes BDR. R1 still has a Full point-to-point adjacency with R3. R1 reaches LAN 30 via 10.0.13.2, Gi0/1, at cost 25 + 1 = 26, and R3 reaches LAN 10 via 10.0.13.1 at cost 26. R1 also lists 10.0.123.0/24 as an OSPF route at cost 25 + 10 = 35, because it is no longer connected to that subnet. PC pings may drop for a few seconds while the routes change, then recover.
 :::
 
 ```state
@@ -334,7 +337,7 @@ R3# show ip ospf interface gigabitethernet0/0
 
 
 :::expected
-R2 remains DR and R3 BDR. Returning R1 is DROTHER; a return does not erase existing roles. R1 and R3 resume the cost-11 shared path after convergence. Save these roles in your notes, not as a promise about roles after a future cold restart.
+R2 is still DR and R3 still BDR. R1 returns as a DROTHER despite its priority of 100, because both roles were taken. R1 and R3 go back to the cost-11 shared path. These roles are not permanent: after a restart of all three routers the result depends on which routers are present when the election runs.
 :::
 
 ```state
@@ -343,7 +346,7 @@ R2 remains DR and R3 BDR. Returning R1 is DROTHER; a return does not erase exist
 
 ## Step 8: Introduce a timer mismatch on the direct link
 
-Change both timer values on R1 Gi0/1 only, leaving R3 at its defaults. Wait for the adjacency to disappear and compare both ends. The shared link remains available.
+`ip ospf hello-interval` and `ip ospf dead-interval` set the timers on one interface. Change both on R1 Gi0/1 only and leave R3 at its defaults. Wait for the adjacency to disappear, then compare both ends. The shared segment stays up.
 
 ```ios R1
 R1# configure terminal
@@ -362,7 +365,7 @@ R3# show ip ospf neighbor
 
 
 :::expected
-The direct adjacency cannot remain healthy with R1 at 5/20 and R3 at 10/40. R1 and R3 can still exchange routes over the shared segment, so client ping success alone can hide this failed backup adjacency. No process-ID or priority change would fix the timer mismatch.
+Each router now ignores the other's Hellos, because the timers inside them do not match its own. R1 drops R3 after 20 seconds and R3 drops R1 after 40. R1 and R3 still exchange routes over the shared segment, so the client pings keep working and hide the failed backup adjacency. Only matching timers will bring it back.
 :::
 
 ```state
@@ -371,7 +374,7 @@ The direct adjacency cannot remain healthy with R1 at 5/20 and R3 at 10/40. R1 a
 
 ## Step 9: Restore the timers and save the working network
 
-Remove only the deliberate timer overrides. Verify the direct neighbor returns and both client pings work before saving each device.
+Remove the two timer overrides. Check that the direct neighbor returns and both client pings work, then save each device.
 
 ```ios R1
 R1# configure terminal
@@ -399,7 +402,7 @@ SW1# copy running-config startup-config
 Accept the default destination filename when asked, then save the Packet Tracer project file.
 
 :::expected
-Both direct interfaces use 10/40 and the point-to-point adjacency is Full. R2/R3 may retain DR/BDR on the shared segment. The saved priorities are R1 100, R2 50, R3 200; those preferences do not retroactively alter the current election.
+Both direct interfaces use 10/40 and the point-to-point adjacency is Full. R2 and R3 keep DR and BDR on the shared segment. The saved priorities are R1 100, R2 50 and R3 200; they take effect only at the next election.
 :::
 
 ```state
@@ -409,10 +412,11 @@ Both direct interfaces use 10/40 and the point-to-point adjacency is Full. R2/R3
 ## Troubleshooting
 
 - No shared neighbor: check SW1 access VLAN 1, the three /24 addresses, shutdown state, area 0, and passive exceptions.
+- Roles differ from the guide: the election depends on arrival order. Check that SW1 Fa0/1–3 have PortFast, shut Gi0/0 on all three routers, then bring them up in the order R1, R2, R3, waiting for each role before the next.
 - Direct neighbor absent: compare /30 addresses, point-to-point settings, timers, and interface activation on both ends.
 - Full neighbors but no remote LAN: verify Gi0/2 is up, has its correct /24 address, and is activated in the local OSPF process. Passive is intended there.
-- A wrong metric: check explicit interface costs and calculate from the router issuing the command. Incoming interface cost is not added.
-- A ping fails: inspect the source PC's mask/gateway and the return route. Initial ARP loss is different from repeated failure after convergence.
+- A wrong metric: check the `ip ospf cost` on each interface and calculate from the router whose table you are reading. Incoming interface costs are not added.
+- A ping fails: check the source PC's mask and gateway, then the return route. One lost echo while ARP resolves is normal; repeated failure is not.
 
 ## Challenge
 
@@ -463,7 +467,7 @@ R1(config-if)# end
 R1# show ip route ospf
 ```
 
-R1 chooses direct cost `25 + 1 = 26` to LAN 30 instead of shared cost `40 + 1 = 41`. R3 still chooses shared cost `10 + 1 = 11` to LAN 10. R1 can also reach the new R2 LAN through R3 at `25 + 10 + 5 = 40`, which is cheaper than its now-direct shared choice `40 + 5 = 45`; this is a further reason to read the complete table. R3's path to the new LAN remains 15. Changing one outgoing cost can affect several prefixes, but does not change the reverse direction's configured cost.
+R1 chooses direct cost `25 + 1 = 26` to LAN 30 instead of shared cost `40 + 1 = 41`. R3 still chooses shared cost `10 + 1 = 11` to LAN 10. R1 can also reach the new R2 LAN through R3 at `25 + 10 + 5 = 40`, which is cheaper than the shared-segment path at `40 + 5 = 45`, so read the whole table, not one route. R3's path to the new LAN remains 15. Changing one outgoing cost can affect several prefixes, but does not change the reverse direction's configured cost.
 
 Collect both R1 and R3 route displays and endpoint tests before recovery. Then restore only the changed cost:
 

@@ -1,160 +1,192 @@
 [
   {
     "id": "ospfv3-c01",
-    "front": "OSPFv3 for IPv6 uses which Next Header number?",
-    "back": "89, directly over IPv6 rather than TCP or UDP.",
+    "front": "Which IPv6 Next Header value carries OSPFv3?",
+    "back": "89. OSPFv3 rides directly on IPv6, with no TCP or UDP.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ospfv3-c02",
-    "front": "OSPFv3 multicast groups on an ordinary IPv6 link?",
-    "back": "ff02::5 AllSPFRouters; ff02::6 AllDRouters. They have link-local scope.",
+    "front": "Which two multicast addresses does OSPFv3 use?",
+    "back": "ff02::5 for all OSPF routers and ff02::6 for the DR and BDR.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ospfv3-c03",
-    "front": "Source address of an OSPFv3 Hello on an ordinary link?",
-    "back": "The sending interface's link-local address. ff02::5 is the multicast destination.",
+    "front": "What source address does an OSPFv3 Hello use?",
+    "back": "The sending interface's link-local address.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ospfv3-c04",
-    "front": "Must OSPFv3 neighbors have the same global IPv6 prefix?",
-    "back": "No. They communicate per link using link-local addressing; still verify the intended global addressing and client path.",
+    "front": "Why can two OSPFv3 routers become neighbors when their global prefixes differ?",
+    "back": "The adjacency uses link-local addresses, and the OSPFv3 Hello carries no subnet mask or prefix.",
     "tags": [
       "compare"
     ]
   },
   {
+    "id": "ospfv3-c28",
+    "front": "Which global command must be present before an IOS router runs OSPFv3?",
+    "back": "ipv6 unicast-routing.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
     "id": "ospfv3-c05",
-    "front": "OSPFv3 router ID size and format?",
-    "back": "32 bits, dotted decimal, such as 1.1.1.1. It is not a 128-bit IPv6 next-hop address.",
+    "front": "What format is an OSPFv3 router ID?",
+    "back": "32 bits in dotted decimal, such as 1.1.1.1, the same as OSPFv2. It is never an IPv6 address.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "ospfv3-c06",
-    "front": "No IPv4 addresses and no explicit RID on classic IOS OSPFv3?",
-    "back": "The process can fail to obtain a RID. Configure a unique router-id explicitly.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "ospfv3-c07",
-    "front": "Normal IOS broadcast/point-to-point OSPFv3 Hello and dead defaults?",
-    "back": "10 seconds and 40 seconds. Compare effective timers after any configuration changes.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
-    "id": "ospfv3-c08",
-    "front": "Which OSPFv3 identifier distinguishes instances on the same link?",
-    "back": "The instance ID; it must agree for the intended relationship. Classic IPv6-unicast syntax uses instance 0 by default.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ospfv3-c09",
-    "front": "Does the local OSPFv3 process number have to match the neighbor?",
-    "back": "No. It is local configuration, unlike the area and compatible on-link instance ID.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ospfv3-c10",
-    "front": "Classic command to activate OSPFv3 process 10 in area 0?",
-    "back": "ipv6 ospf 10 area 0 under the interface. It is not an IPv4-style network statement.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "ospfv3-c11",
-    "front": "What distinguishes the address-family interface activation from classic ipv6 ospf?",
-    "back": "Address-family style uses ospfv3 PROCESS ipv6 area AREA. Match the command family to the supported process configuration; do not mix forms blindly.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "ospfv3-c15",
-    "front": "Meaning of O and [110/11] in show ipv6 route?",
-    "back": "O is an intra-area OSPF route here; 110 is administrative distance, 11 is metric. Interpret the next hop with its exit interface.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ospfv3-c16",
-    "front": "Normal OSPFv3 advertisement of an interface in Loopback state?",
-    "back": "A global address is represented as a /128 host prefix, even if its address command has /64. Verify the actual advertised route.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ospfv3-c17",
-    "front": "Does OSPFv3 preempt an existing DR when a higher-priority router joins?",
-    "back": "No. It retains the OSPF election and non-preemption principles used in OSPFv2.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ospfv3-c18",
-    "front": "What does Interface ID mean in show ipv6 ospf neighbor?",
-    "back": "The neighbor's interface identifier. The final Interface column names the local interface.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "ospfv3-c19",
-    "front": "OSPFv3 repeatedly in ExStart/Exchange: what should you compare?",
-    "back": "MTUs and database-exchange evidence, along with the intended link parameters. Do not bypass MTU checking as the first repair.",
+    "front": "How does IOS choose the OSPFv3 router ID?",
+    "back": "The router-id command, then the highest loopback IPv4 address, then the highest active IPv4 address. An IPv6-only router needs it set manually.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
     "id": "ospfv3-c20",
-    "front": "What does a controlled OSPFv3 process restart do to adjacencies?",
-    "back": "It drops the local process adjacencies and can apply a pending RID change. It does not guarantee a fresh segment-wide DR election.",
+    "front": "How do you apply a changed router ID to a running classic OSPFv3 process?",
+    "back": "clear ipv6 ospf process. It drops and rebuilds that router's adjacencies.",
     "tags": [
       "troubleshoot"
     ]
   },
   {
-    "id": "ospfv3-c21",
-    "front": "Does a passive OSPFv3 LAN still need interface activation?",
-    "back": "Yes. Passive suppresses neighbor formation; activation is needed to advertise its connected prefix.",
+    "id": "ospfv3-c09",
+    "front": "Which OSPFv3 number is local to a router and need not match its neighbor's?",
+    "back": "The process ID, as in ipv6 router ospf 10.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv3-c08",
+    "front": "What is the OSPFv3 instance ID?",
+    "back": "A value in every OSPFv3 packet that lets separate instances share a link. Neighbors must match; the default is 0.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv3-c31",
+    "front": "What must match for two OSPFv3 routers to become neighbors?",
+    "back": "Area ID, Hello and dead intervals, and instance ID. The router IDs must differ.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv3-c07",
+    "front": "What are the default OSPFv3 Hello and dead intervals on Ethernet and point-to-point links?",
+    "back": "Hello 10 seconds, dead 40 seconds.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv3-c19",
+    "front": "An OSPFv3 neighbor is stuck in ExStart or Exchange. What do you compare first?",
+    "back": "The interface MTU on both ends. A mismatch stalls the database exchange.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ospfv3-c27",
+    "front": "How is the DR chosen in a fresh OSPFv3 election on Ethernet?",
+    "back": "Highest interface priority (default 1; 0 is never eligible), then highest router ID. The runner-up becomes BDR.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv3-c17",
+    "front": "A higher-priority router joins a segment that already has a DR and BDR. What changes?",
+    "back": "Nothing. The election is not preemptive, so the new router is a DROTHER until a role becomes free.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv3-c25",
+    "front": "What does FULL/ - mean in show ipv6 ospf neighbor?",
+    "back": "A complete adjacency on a point-to-point link, where no DR or BDR is elected. Set with ipv6 ospf network point-to-point.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv3-c30",
+    "front": "How does IOS calculate the default OSPFv3 interface cost?",
+    "back": "100 Mbps reference bandwidth divided by the interface bandwidth, minimum 1. The same as OSPFv2.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "ospfv3-c15",
+    "front": "In show ipv6 route, what do O and [110/11] mean?",
+    "back": "O is an intra-area OSPF route. 110 is the administrative distance and 11 is the total cost.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "ospfv3-c23",
-    "front": "Is the dotted-decimal OSPFv3 router ID its IPv6 next-hop address?",
-    "back": "No. The RID identifies the OSPF speaker; forwarding commonly uses its link-local address and the local exit interface.",
+    "front": "What does OSPFv3 install as a route's next hop?",
+    "back": "The neighbor's link-local address with the local exit interface, such as FE80::3, GigabitEthernet0/0. Never the router ID.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "ospfv3-c24",
-    "front": "Does an OSPFv3 Full neighbor prove the intended global LAN prefix is correct?",
-    "back": "No. Check the actual LAN address, its activation and the learned prefix. Link-local adjacency can work despite a global addressing-plan error.",
+    "id": "ospfv3-c10",
+    "front": "Which classic command enables OSPFv3 process 10 in area 0 on an interface?",
+    "back": "ipv6 ospf 10 area 0, in interface mode. OSPFv3 has no network statement.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ospfv3-c11",
+    "front": "Which address-family command enables OSPFv3 process 10 for IPv6 in area 0 on an interface?",
+    "back": "ospfv3 10 ipv6 area 0, used with router ospfv3 10.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "ospfv3-c21",
+    "front": "What does passive-interface do to an OSPFv3-enabled LAN interface?",
+    "back": "It stops Hellos and neighbors on that interface. The LAN prefix is still advertised.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "ospfv3-c26",
+    "front": "OSPFv3 neighbors are Full but a remote LAN's /64 is missing. What is the usual cause?",
+    "back": "OSPFv3 is not enabled on that LAN interface, or the interface is down.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "ospfv3-c16",
+    "front": "How does OSPFv3 advertise a loopback address configured as /64?",
+    "back": "As a /128 host route, unless the loopback's OSPF network type is set to point-to-point.",
     "tags": [
       "concept"
     ]

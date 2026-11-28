@@ -1,172 +1,180 @@
 [
   {
     "id": "nat-pat-c01",
-    "front": "Inside local address?",
-    "back": "The address representing an inside host within the inside network; for the example, 10.20.30.10.",
+    "front": "What is an inside local address?",
+    "back": "An inside host's own address, as used on the inside network. In the example, 10.20.30.10.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "nat-pat-c02",
-    "front": "Inside global address?",
-    "back": "The address representing the inside host to the outside network; for the example, 198.51.100.17. It need not be public space.",
+    "front": "What is an inside global address?",
+    "back": "The address that represents an inside host on the outside network: its translated address. In the example, 198.51.100.17.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "nat-pat-c03",
-    "front": "Outside global vs outside local?",
-    "back": "Outside global identifies the outside host on its own network; outside local is its inside-side representation. They match when no outside-address translation applies.",
+    "front": "How do outside global and outside local addresses differ?",
+    "back": "Outside global is the outside host's real address; outside local is how the inside network sees it. They are equal unless outside addresses are translated.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "nat-pat-c05",
-    "front": "Command for static NAT (and the order of the addresses)?",
-    "back": "`ip nat inside source static INSIDE-LOCAL INSIDE-GLOBAL`: local first, global second. Substitute the actual addresses.",
+    "id": "nat-pat-c25",
+    "front": "In what order does `show ip nat translations` list the four addresses?",
+    "back": "Inside global, Inside local, Outside local, Outside global. The static command uses the opposite order: local, then global.",
     "tags": [
       "command"
     ]
   },
   {
-    "id": "nat-pat-c06",
-    "front": "Command to define a NAT pool?",
-    "back": "`ip nat pool NAME FIRST LAST netmask MASK`, or the supported prefix-length form. The pool does not install an upstream return route.",
+    "id": "nat-pat-c27",
+    "front": "Which three IPv4 ranges does RFC 1918 reserve for private use?",
+    "back": "10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16.",
     "tags": [
-      "command"
+      "number"
     ]
   },
   {
-    "id": "nat-pat-c07",
-    "front": "Command that ties an ACL to a pool for dynamic NAT?",
-    "back": "`ip nat inside source list ACL pool NAME`. Without overload, active inside address mappings receive distinct pool addresses.",
+    "id": "nat-pat-c26",
+    "front": "How does PAT differ from dynamic NAT without overload?",
+    "back": "PAT lets many hosts share one address by translating source ports. Dynamic NAT gives each active host its own pool address.",
     "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "nat-pat-c08",
-    "front": "Command for PAT using the outside interface's address?",
-    "back": "`ip nat inside source list ACL interface OUTSIDE-INTERFACE overload`.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "nat-pat-c09",
-    "front": "Command for PAT sharing a pool's addresses?",
-    "back": "`ip nat inside source list ACL pool NAME overload`. Read actual translations; do not require a particular address allocation order.",
-    "tags": [
-      "command"
+      "compare"
     ]
   },
   {
     "id": "nat-pat-c10",
-    "front": "Which interface roles does classic inside/outside NAT use?",
-    "back": "For classic inside/outside NAT, configure `ip nat inside` and `ip nat outside` on the intended paths. Static mapping state may still appear despite incorrect roles.",
+    "front": "Which two interface commands does every inside source NAT configuration need?",
+    "back": "`ip nat inside` on the LAN-facing interface and `ip nat outside` on the provider-facing interface.",
     "tags": [
       "command",
       "troubleshoot"
     ]
   },
   {
-    "id": "nat-pat-c13",
-    "front": "What does `clear ip nat translation *` remove?",
-    "back": "Dynamic translation state. Configured NAT rules and static mappings remain. Active sessions can be interrupted; inspect image-specific dependencies before changing in-use rules.",
+    "id": "nat-pat-c05",
+    "front": "Which command statically maps 10.20.30.10 to 198.51.100.17, and in what address order?",
+    "back": "`ip nat inside source static 10.20.30.10 198.51.100.17`: inside local first, inside global second.",
     "tags": [
       "command"
-    ]
-  },
-  {
-    "id": "nat-pat-c14",
-    "front": "Which two show commands verify NAT state and allocation?",
-    "back": "show ip nat translations lists mappings. show ip nat statistics reports roles, counters and pool allocation; correlate both with fresh client traffic.",
-    "tags": [
-      "command"
-    ]
-  },
-  {
-    "id": "nat-pat-c15",
-    "front": "Does an address-only NAT row prove the mapping is static?",
-    "back": "No. Correlate the row with configuration or supported detailed output; ordinary dynamic NAT can also show address-only state.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "nat-pat-c16",
-    "front": "What does a `deny` in a NAT selection ACL do to a packet?",
-    "back": "It does not select the packet for that NAT rule. Forwarding still depends on routes and other features; a NAT selector is not itself an interface filter.",
-    "tags": [
-      "concept",
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "nat-pat-c17",
-    "front": "Hits vs Misses in `show ip nat statistics`?",
-    "back": "Hits reflect matching translation lookups; a top-level miss need not be a dropped packet. Correlate allocation/failure counters and fresh traffic when testing pool exhaustion.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "nat-pat-c18",
-    "front": "NAT order of operations, inside→outside and outside→inside?",
-    "back": "For the classic path here: inside-to-outside routes before source translation; outside-to-inside translates the destination before routing toward the inside host.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "nat-pat-c19",
-    "front": "How does PAT separate two hosts' ICMP echo flows?",
-    "back": "It can translate the ICMP query identifier and reverse the mapping on the reply. This is different from IPv4 Identification.",
-    "tags": [
-      "concept"
     ]
   },
   {
     "id": "nat-pat-c20",
-    "front": "Command to forward only TCP port 80 on 198.51.100.17 to inside server 10.20.30.50?",
-    "back": "`ip nat inside source static tcp 10.20.30.50 80 198.51.100.17 80`. This adds a service mapping; it is not a complete firewall policy.",
+    "front": "Which command publishes only TCP port 80 of inside server 10.20.30.50 as 198.51.100.17:80?",
+    "back": "`ip nat inside source static tcp 10.20.30.50 80 198.51.100.17 80`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c06",
+    "front": "Which command creates pool PUBPOOL holding 198.51.100.20 and .21 in a /28?",
+    "back": "`ip nat pool PUBPOOL 198.51.100.20 198.51.100.21 netmask 255.255.255.240`: name, first address, last address, mask.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c07",
+    "front": "Which command binds ACL 1 to pool PUBPOOL for dynamic NAT?",
+    "back": "`ip nat inside source list 1 pool PUBPOOL`. Without overload, each active host takes one pool address.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c08",
+    "front": "Which command makes the hosts in ACL 1 share the address of outside interface Gi0/0/1?",
+    "back": "`ip nat inside source list 1 interface gigabitethernet0/0/1 overload`.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c09",
+    "front": "Which command makes the hosts in ACL 1 share the addresses of pool PUBPOOL?",
+    "back": "`ip nat inside source list 1 pool PUBPOOL overload`.",
     "tags": [
       "command"
     ]
   },
   {
     "id": "nat-pat-c21",
-    "front": "What limits an ordinary dynamic pool without overload?",
-    "back": "Each active inside-address mapping needs its own available global address. Count allocated addresses rather than treating every flow as a separate host.",
+    "front": "Why can a third host fail to get out through a two-address pool without overload?",
+    "back": "Each active inside host holds one pool address. With both allocated, a new host gets no translation until one is freed.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "nat-pat-c16",
+    "front": "A packet's source address does not match the NAT ACL. What happens to the packet?",
+    "back": "It is not translated, but it is still routed if a route exists. It leaves with its original source address.",
+    "tags": [
+      "concept",
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c18",
+    "front": "In which order does a router route and translate, inside→outside and outside→inside?",
+    "back": "Inside to outside: route first, then translate the source. Outside to inside: translate the destination first, then route.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "nat-pat-c22",
-    "front": "Does configuring a NAT pool install its upstream return route?",
-    "back": "No. Verify a route toward the translated block on the return path; the pool mask does not create that route.",
+    "front": "What must the upstream router have before replies can reach a NAT pool address?",
+    "back": "A route to the pool's address block that points at the NAT router. Configuring the pool does not create it.",
     "tags": [
       "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c19",
+    "front": "How does PAT tell two hosts' pings apart when ICMP has no ports?",
+    "back": "It uses the ICMP query identifier in place of a port. The Echo Reply carries the same identifier back.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "nat-pat-c14",
+    "front": "Which command shows NAT interface roles, pool usage and hit counters?",
+    "back": "`show ip nat statistics`. `show ip nat translations` lists the individual mappings.",
+    "tags": [
+      "command"
+    ]
+  },
+  {
+    "id": "nat-pat-c15",
+    "front": "What does a `---` row in `show ip nat translations` represent?",
+    "back": "An address-only mapping with no ports: a static entry, or a pool address that dynamic NAT has lent to a host.",
+    "tags": [
+      "troubleshoot"
+    ]
+  },
+  {
+    "id": "nat-pat-c13",
+    "front": "What does `clear ip nat translation *` remove?",
+    "back": "Every dynamic translation entry. NAT rules and static mappings stay.",
+    "tags": [
+      "command"
     ]
   },
   {
     "id": "nat-pat-c23",
-    "front": "Does a translation row prove the application succeeded?",
-    "back": "No. It establishes mapping state. Correlate the request, reply and actual application response.",
+    "front": "A translation entry exists but the application still fails. What do you check next?",
+    "back": "The return route to the inside global address, then filters and the service itself. An entry only shows that the mapping was made.",
     "tags": [
       "troubleshoot"
-    ]
-  },
-  {
-    "id": "nat-pat-c24",
-    "front": "Does PAT identify every connection using the port number alone?",
-    "back": "No. Protocol and address/port flow information matter. Read the complete displayed mapping rather than treating a port as globally unique.",
-    "tags": [
-      "concept"
     ]
   }
 ]

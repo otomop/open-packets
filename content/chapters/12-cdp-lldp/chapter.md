@@ -26,9 +26,9 @@ sources:
   - {"title": "IEEE: 802.1AB Station and Media Access Control Connectivity Discovery", "url": "https://standards.ieee.org/ieee/802.1AB/6047/"}
 ---
 
-CDP and LLDP help you identify the device at the other end of a network link. You can use their advertisements to check a cable connection, find the correct neighboring port, and compare the operating network with its documentation. The result is evidence to investigate, rather than a complete test of the network.
+A diagram says SW1 Gi0/1 connects to SW2 Gi0/2. Before you change that trunk, shut a port or trace a fault, you need to know whether the diagram is still true, and walking to the wiring closet is slow. CDP and LLDP let every device announce itself on each link, so one show command lists the neighbor on the far end of each local port.
 
-In this chapter, start with the device where you ran the command. Read each neighbor entry as a relationship between that device's local port and the advertised port on another device. Then verify the relationship from the other end before correcting a diagram.
+Earlier chapters built links and tested them with ping. This chapter adds a different kind of evidence: what is physically adjacent, learned at Layer 2 with no IP configuration at all. By the end you can turn CDP and LLDP on and off globally and per interface, read a neighbor table without mixing up the local and remote ports, recall the default timers, and correct a wrong diagram from the output.
 
 ## What neighbor discovery tells you
 
@@ -40,22 +40,22 @@ On Ethernet, these exchanges operate at Layer 2 and do not need a working IPv4 c
 
 The information comes from the neighbor's own advertisements. Typical fields include device identity, sending port, capabilities, software, and a management address. Advertisements use **type-length-value fields (TLVs)**, which identify each piece of information and its size. Some fields are optional, so an absent management address or software string does not automatically mean the advertisement is defective.
 
-In ordinary switch links, discovery describes adjacent protocol speakers, not an IP route through the network. Routers do not route these Ethernet advertisements between IP subnets. However, the table alone cannot certify one uninterrupted physical cable: a hub, transparent device, or deliberate Layer 2 protocol transport can complicate the path. Ordinary LLDP uses a reserved link-local destination that compliant bridges do not simply forward as user multicast. Do not assume every unmanaged switch forwards it.
+Advertisements travel one hop. A switch or router that runs the protocol reads each advertisement it receives and does not forward it, so the table lists directly connected neighbors and nothing beyond them. Each protocol sends to its own reserved multicast MAC address: `0100.0ccc.cccc` for CDP and `0180.c200.000e` for LLDP. A hub, which runs neither protocol, repeats the frames unseen, so a neighbor entry shows which device is adjacent but does not prove there is a single cable between you.
 
 ## Configure and verify CDP
 
 :::facts
 - CDP and LLDP are Layer 2 discovery protocols; a neighbor entry does not prove IP reachability.
-- Referenced classic IOS CDP defaults: advertisements every **60 seconds**, holdtime **180 seconds**, version **2** advertisements enabled.
+- CDP defaults: **enabled**; advertisements every **60 seconds**, holdtime **180 seconds**, version **2**.
 - CDP controls: global `cdp run`; interface `cdp enable`. Both levels must permit operation.
-- Referenced Catalyst LLDP timer defaults: **30-second** advertisements, **120-second** holdtime, **2-second** reinitialization delay.
+- LLDP defaults on Catalyst switches: **disabled**; once enabled, advertisements every **30 seconds**, holdtime **120 seconds**, reinitialization delay **2 seconds**.
 - LLDP controls: global `lldp run`; interface `lldp transmit` and `lldp receive` are separate.
 - Read a row as **local device/local interface → neighbor identity/neighbor port**.
 :::
 
-CDP is enabled by default on the supported classic IOS Ethernet interfaces described in Cisco's guide. This is a useful starting expectation, not a statement about every Cisco product, interface type, or saved configuration. Check `show cdp` for device-wide status and `show cdp interface` for the participating interfaces. Our lab explicitly enables the required settings.
+CDP is Cisco-proprietary and is on by default, globally and on every interface, on Cisco routers and Catalyst switches. Check `show cdp` for the global timers and `show cdp interface` for the interfaces taking part.
 
-A switch sending an advertisement every 60 seconds normally refreshes the receiver's entry before its advertised 180-second lifetime expires. The **holdtime** is the lifetime supplied by the sender, not a routing convergence timer. If advertisements stop arriving, the receiver eventually removes the cached entry. A local link-down event or explicit table clear can remove information earlier, so do not promise an entry will remain for exactly three minutes after every fault.
+A switch sends an advertisement every 60 seconds, and each advertisement carries a **holdtime** of 180 seconds: how long the receiver should keep the entry if nothing newer arrives. Three advertisements fit inside one holdtime, so a single lost frame does not delete a neighbor. If advertisements stop, the receiver removes the entry when the holdtime runs out. A link-down event or `clear cdp table` removes it sooner.
 
 Use `no cdp run` to disable CDP globally. Use `no cdp enable` under an interface to disable it on that port. The positive interface command cannot override global disablement. The following starts CDP and sets familiar timer values on a selected switch link:
 
@@ -78,7 +78,7 @@ CDPv2 can advertise native-VLAN and duplex information. A mismatch message is a 
 
 LLDP is especially useful when the network includes equipment from different vendors or endpoints with LLDP support. A server, phone, or appliance must actually implement and enable LLDP to appear. An ordinary PC with no discovery agent will not appear simply because it has an IP address or responds to ping.
 
-Cisco's referenced Catalyst 2960 guide documents LLDP as globally disabled initially. Defaults vary across product families and software, so configure the intended directions explicitly. `lldp run` enables the process; `lldp transmit` allows advertisements out of the selected interface; `lldp receive` allows processing of incoming advertisements. Verify the effective interface state instead of assuming that one global command overrides previous interface settings.
+LLDP is off by default on Catalyst switches. `lldp run` turns it on globally, and every interface then transmits and receives unless you turn a direction off. `lldp transmit` allows advertisements out of the selected interface and `lldp receive` allows incoming advertisements to be processed; each has a `no` form. The global commands `lldp timer`, `lldp holdtime` and `lldp reinit` change the 30-second, 120-second and 2-second defaults. The reinitialization delay is how long LLDP waits before it initializes on an interface.
 
 ```ios SW1
 SW1# configure terminal
@@ -98,7 +98,7 @@ SW1 can learn SW2 only when SW2 transmits toward SW1 and SW1 receives on that li
 { "type": "matrix", "title": "Conditions for SW1 to learn SW2", "rows": ["SW2 transmits", "SW2 does not transmit"], "cols": ["SW1 receives", "SW1 does not receive"], "cells": [["Can refresh entry", "Cannot refresh entry"], ["Cannot refresh entry", "Cannot refresh entry"]], "tones": {"Can refresh entry":"accent", "Cannot refresh entry":"neutral"}, "caption": "Assume LLDP is globally enabled and the link works; existing cached entries can remain temporarily after a direction is disabled." }
 ```
 
-LLDP identifies the sending device with a **chassis ID** and the sending interface with a **port ID**. Those IDs can use different representations; a chassis ID is not universally a MAC address, and a port ID is not universally a familiar IOS interface name. Use the advertised system name and port description as additional evidence. Do not substitute a guessed interface name for an unfamiliar identifier.
+LLDP identifies the sending device with a **chassis ID** and the sending interface with a **port ID**. Those IDs can use different representations; a chassis ID is not universally a MAC address, and a port ID is not universally a familiar IOS interface name. Use the advertised system name and port description as additional evidence.
 
 **LLDP-MED**, Media Endpoint Discovery, extends LLDP for compatible endpoints such as phones. It can communicate network policy, including voice VLAN and QoS parameters, along with power and location information. This helps a phone obtain the information needed for its role. It does not replace DHCP, assign an arbitrary IP address, or establish that a voice call will succeed.
 
@@ -181,7 +181,7 @@ A neighbor can advertise a management address even when your device has no route
 - Configure CDP globally and per interface; verify both levels.
 - Configure LLDP globally and check transmit and receive directions separately.
 - Read local interface, remote port, identity, capability, and management address correctly.
-- Recognize the referenced default timers without assuming all product defaults are identical.
+- Recall the defaults: CDP on, 60/180 seconds; LLDP off, 30/120 seconds with a 2-second reinitialization delay.
 - Distinguish cached neighbor information from current link state and IP reachability.
 - Compare observations from both ends with a documented topology and justify corrections.
 - Explain discovery policy on internal, endpoint, and external links.

@@ -5,7 +5,7 @@ title: EtherChannel
 subtitle: Build and verify LACP bundles without confusing aggregate capacity with one flow.
 part: switching
 domain: switching
-minutes: { lesson: 55, lab: 75 }
+minutes: { lesson: 55, lab: 40 }
 summary: Explain LACP negotiation, compatible member settings, Layer 2 and Layer 3 port channels, endpoint teaming requirements, and traffic distribution; configure, verify, fault, and restore both bundle types.
 objectives:
   v1: ["2.4"]
@@ -27,9 +27,9 @@ sources:
   - {"title": "Cisco: EtherChannel load balancing and redundancy", "url": "https://www.cisco.com/c/en/us/support/docs/lan-switching/etherchannel/12023-4.html"}
 ---
 
-An EtherChannel combines compatible Ethernet links into one logical interface. The arrangement can increase capacity across several traffic flows and keep a connection operating when one member fails. It also introduces a requirement: both ends must agree about which links belong to the bundle and how those links carry traffic.
+The trunk between SW1 and SW2 is running out of capacity, so you add a second cable. Nothing gets faster. Spanning tree sees two parallel paths between the same switches, which is a loop, and blocks one of them. EtherChannel solves this by bundling the cables into one logical interface, a port channel, that spanning tree treats as a single link. Both cables forward, and if one fails the other carries on.
 
-You will first build a Layer 2 trunk bundle with LACP, then a routed Layer 3 bundle. Use the logical interface and member state together when verifying either design. Working traffic alone does not establish that every intended link has joined the channel.
+This chapter builds on trunks (chapter 10), routed ports (chapter 11) and neighbor tables (chapter 12). You will learn the three ways a bundle forms (LACP, PAgP and static), which mode pairs work, and what must match on every member. By the end you can configure and verify a Layer 2 and a Layer 3 EtherChannel with LACP, and explain why a port channel that is up may be running on fewer links than you intended.
 
 ## Why links are bundled
 
@@ -37,7 +37,7 @@ Without aggregation, two parallel switch links are separate Layer 2 paths. Ether
 
 An **EtherChannel**, also called a **port channel**, groups its physical **member interfaces** into one logical link. STP handles a Layer 2 port channel as one interface for the relevant VLAN. The members are used by the bundle, rather than each becoming an independent competing STP path. STP can still block the entire logical port channel if it is redundant with another path. Aggregation does not disable loop prevention.
 
-Two 1-Gbps members provide up to 2 Gbps of aggregate link capacity in each direction when traffic distribution uses both links. They do not turn every individual transfer into a 2-Gbps transfer. If one member fails, a normally configured bundle can continue through the surviving member with less capacity. Features that require a minimum number of active links can deliberately change that behavior.
+Two 1-Gbps members provide up to 2 Gbps of aggregate link capacity in each direction when traffic distribution uses both links. They do not turn every individual transfer into a 2-Gbps transfer. If one member fails, the bundle continues through the surviving member with less capacity.
 
 Port channels are useful between switches, between routing-capable devices, and toward a server or appliance that supports the corresponding aggregation mode. A **NIC** is a network interface card or adapter. **Teaming**, also called bonding in some systems, coordinates several adapters as one host connectivity design; its selected mode determines whether the switch must aggregate its ports. A two-NIC server does not automatically need LACP. Its operating system, virtual switch, appliance configuration, and physical attachment must support the chosen design.
 
@@ -54,25 +54,26 @@ Port channels are useful between switches, between routing-capable devices, and 
 - `on` uses static aggregation without LACP or PAgP negotiation. Both endpoints need compatible static configuration.
 - `S` means Layer 2, `R` means Layer 3, and `U` means in use in common `show etherchannel summary` output. Member `P` means bundled.
 - Configure a routed port channel's IP address on the logical interface, not on each member.
+- Every member must match in speed, duplex, access or trunk mode, and VLAN settings. A bundle has at most **8** active members.
 :::
 
 LACP exchanges information about the sending system and its ports. The switches use that information, together with local interface compatibility, to select links for one aggregate. A physically up port is only a candidate; it must also join the correct partner and bundle. LACP active mode does not mean that the port is the only forwarding member, and passive mode does not mean a standby-only data link.
 
-| Endpoint A | Endpoint B | Negotiation result, assuming compatible links |
+| One end | Other end | Result when the members are compatible |
 |---|---|---|
-| LACP active | LACP active | Can form a bundle |
-| LACP active | LACP passive | Can form a bundle |
-| LACP passive | LACP passive | No initiating LACP peer |
-| PAgP desirable | PAgP desirable or auto | Can form a PAgP bundle |
-| PAgP auto | PAgP auto | No initiating PAgP peer |
-| Static on | Static on | Static bundle; no negotiation validation |
-| LACP active | PAgP desirable or static on | Incompatible aggregation methods |
+| LACP `active` | LACP `active` or `passive` | Bundle forms |
+| LACP `passive` | LACP `passive` | No bundle: neither end starts negotiation |
+| PAgP `desirable` | PAgP `desirable` or `auto` | Bundle forms |
+| PAgP `auto` | PAgP `auto` | No bundle: neither end starts negotiation |
+| `on` | `on` | Bundle forms with no negotiation and no checking |
+| `on` | Any LACP or PAgP mode | No bundle, and a risk of a loop |
+| Any LACP mode | Any PAgP mode | No bundle: different protocols |
 
-Use LACP for the main exercises. PAgP and static mode are useful comparisons, not alternative spellings of LACP. `channel-group 1 mode on` does not make the switch answer a neighbor's LACP packets. An asymmetric static/dynamic setup can cause loss or loops; do not create it casually on a production link.
+The keyword after `mode` selects the protocol as well as the behavior: `active` and `passive` are LACP, `desirable` and `auto` are PAgP, and `on` is neither. Both ends must use the same protocol. A port in `on` mode sends no negotiation frames and answers none, so pairing it with any LACP or PAgP mode fails. That pairing can also create a loop, because one switch bundles the links while the other treats them as separate ports. The labs use LACP, the standard and the usual choice.
 
 The **channel-group number** identifies the local bundle. SW1 group 1 can connect to SW2 group 5; matching numbers are an administrative convenience, not an LACP requirement. What matters is that the intended links on each device belong to the correct local group and identify the same appropriate aggregation partner.
 
-When LACP does not form, members may be suspended, down, or operate individually depending on platform and configuration. Do not promise that passive/passive will preserve user connectivity. Read the member flags and interface state. Cisco's referenced current Catalyst guide, for example, documents standalone forwarding as disabled by default.
+When negotiation fails, the members do not join the bundle. `show etherchannel summary` then flags each one `I` (stand-alone), `s` (suspended) or `D` (down), depending on the platform, instead of `P`.
 
 ## Check both ends before configuring
 
@@ -121,7 +122,7 @@ SW1(config-if)# switchport trunk allowed vlan 10,99
 SW1(config-if)# end
 ```
 
-Once the bundle exists, make common trunk changes on its logical interface and verify the resulting member settings. Do not edit only one member's allowed VLAN list as a way to add a VLAN to the channel. Configuration inheritance and consistency checks can vary by image; the running configuration and operational output show what actually took effect.
+Once the bundle exists, make trunk changes on the port-channel interface; IOS applies them to the members. Changing only one member's allowed VLAN list makes that member inconsistent with the bundle, and the switch suspends it. To move a member to a different protocol or take it out of the bundle, shut it down, enter `no channel-group`, and then apply the new `channel-group` command.
 
 A **Layer 3 EtherChannel** is a routed connection. Its members are routed ports, and the logical port channel holds one IP address for the local end. It does not carry a switchport access VLAN or trunk allowed list. The far end has another usable address in the same transit subnet, just as with an ordinary routed Ethernet link.
 
@@ -143,7 +144,7 @@ D1(config-if-range)# channel-group 1 mode active
 D1(config-if-range)# end
 ```
 
-D2 uses 10.13.12.2/30 on its corresponding logical interface. After both endpoints are ready, enable the members, inspect the bundle and connected route, and ping across it. Recall Chapter 01's connected-subnet and local-address distinction; the interface is now the logical bundle:
+D2 uses 10.13.12.2/30 on its corresponding logical interface. After both endpoints are ready, enable the members, inspect the bundle and connected route, and ping across it. Recall the connected (C) and local (L) routes from chapter 11; the interface is now the logical bundle:
 
 ```output D1# show ip route — representative excerpt
 C  10.13.12.0/30 is directly connected, Port-channel1
@@ -162,9 +163,9 @@ A four-member 1-Gbps bundle has up to 4 Gbps of aggregate capacity per direction
 
 Suppose a distribution switch routes traffic toward many clients through an EtherChannel. Those outgoing Ethernet frames may all have the distribution switch's source MAC. If its selected method uses only that MAC, the downstream traffic can concentrate on one member. An available destination-based or source-and-destination IP method may provide more varied input. Verify the current method rather than assume a product-family default.
 
-Use `show etherchannel load-balance` on a supporting image. The referenced Catalyst platforms configure the method with the global `port-channel load-balance` command, so a change can affect several bundles. Choose it deliberately and inspect actual counters under representative traffic. The two ends can make independent outbound selections; matching hash settings are not required for LACP formation.
+`show etherchannel load-balance` displays the current method. On the Catalyst 2960 and 3560 the default is `src-mac`. The global command `port-channel load-balance` changes it, for example to `src-dst-ip`, and applies to every port channel on the switch. Each end chooses its own outbound member, so the two switches do not need the same method for the bundle to form.
 
-Member-count limits also depend on platform. The referenced Catalyst 3560 guide describes up to eight active LACP members with additional configured links in standby, up to sixteen total. This is a platform example, not an IEEE-wide limit or a substitute for checking the target switch. The required labs use only two members and do not depend on standby-member selection.
+A port channel on these Catalyst switches has at most eight active members. LACP lets you assign up to sixteen ports to one group: eight carry traffic and the rest wait in hot standby. PAgP and static bundles stop at eight.
 
 ## Read the bundle and partner state
 
@@ -196,7 +197,7 @@ For a Layer 2 trunk channel, check the bundle, then `show interfaces trunk` and 
 
 For a Layer 3 channel, verify that the IP address belongs to `Port-channel1`, that the members are routed and unnumbered, and that the expected connected prefix appears when the interface is operational. Test both directions. A successful peer ping establishes the local transit exchange, not reachability to every network beyond the peer.
 
-When a member fails, record the member flags, active member count, and logical state before restoring it. Brief packet loss can occur while traffic is reassigned; do not promise zero loss or a fixed recovery interval. In a two-member lab with no minimum-links requirement above one, the healthy member can maintain the channel while available capacity drops.
+When a member fails, record the member flags, active member count, and logical state before restoring it. A few packets may be lost while traffic moves to the surviving member. The port channel stays up as long as one member remains, with less capacity.
 
 When an intended bundle fails completely, compare the actual configuration with the connection table. Check physical state, compatible LACP modes, partner identity, routed versus switched mode, and VLAN consistency. Make one justified change, then repeat the same checks. Do not force static `on` simply to obtain an up flag; that removes negotiation without correcting an incompatible design.
 

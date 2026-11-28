@@ -32,9 +32,11 @@ sources:
   - { title: "RFC 2308: DNS negative caching", url: "https://www.rfc-editor.org/rfc/rfc2308.html" }
 ---
 
-## Define the problem and preserve evidence
+A user in one building cannot open an application on a server in another. You checked the client's own settings in chapter 30 and they are correct, so the fault is somewhere along the path: a switch port in the wrong VLAN, an interface that is down or taking errors, a router with no route back, or a service giving the wrong answer. You cannot watch a packet being dropped. You can only run tests and read tables, and each tool shows one small part of the path.
 
-Chapter 30 established the client's adapter, address, route and resolver evidence. Now follow the same failed exchange through switches, routers and services. Reuse the MAC/ARP distinction from Chapter 7, the return-path reasoning from Chapter 18, and the timed logs and counters from Chapters 27–28 to choose a test that separates plausible causes.
+This chapter is about choosing the tool that answers the question in front of you and reading its output correctly. You will use ping and traceroute, interface status and error counters, the MAC and ARP tables, syslog messages and packet captures, building on the switching, routing and logging chapters. By the end you will be able to take a vague report, narrow it to one device and one cause, fix it, and prove the fix from the client that complained.
+
+## Define the problem and preserve evidence
 
 :::facts
 - A successful ping demonstrates a completed ICMP exchange for that source, destination, size, and time. It does not test every application.
@@ -48,13 +50,13 @@ Chapter 30 established the client's adapter, address, route and resolver evidenc
 
 Write down a baseline and a **hypothesis**: a proposed cause that a test could support or disprove. For example, “PC-A is in the wrong access VLAN” predicts that its learned MAC will appear in an unexpected VLAN and that the gateway will not receive its local broadcasts. “R2 lacks a return route” predicts different results when R1 uses its transit address versus its LAN address as the source.
 
-Use a repeatable sequence: define the problem, gather evidence, choose a hypothesis, make a focused test, apply a justified correction, verify service, and document the outcome. There is no mandatory exam ritual with one uniquely correct number of steps. Avoid several simultaneous changes: if you change an address, a route, and a VLAN together, a successful retest will not tell you which was wrong.
+Use a repeatable sequence: define the problem, gather evidence, choose a hypothesis, make a focused test, apply a justified correction, verify service, and document the outcome. Make one change at a time: if you change an address, a route, and a VLAN together, a successful retest will not tell you which was wrong.
 
-Keep original evidence in your notes. Record the device, command, source/destination, time, and whether the clock is trustworthy. Capture sensitive configuration only in an appropriate private location. Restarting a device can erase volatile evidence; shutting an interface does not inherently clear every counter or its logging buffer. Check what a proposed action actually changes.
+Save the evidence before you change anything: the device, the command, its output and the time. A reload erases the counters and the log buffer, and with them the record of what went wrong.
 
 ## Choose the next test
 
-A **bottom-up** approach starts with power, media, and interface state. **Top-down** starts with the application. **Divide-and-conquer** chooses a useful middle test, such as an IP-address ping, and uses the result to narrow the next investigation. **Follow-the-path** checks forwarding and return delivery across the actual topology. Comparing an affected host with a working peer is useful when their intended policies match.
+You rarely have time to check every layer on every device, so pick a starting point that rules out the most with one test. A **bottom-up** approach starts with power, media, and interface state. **Top-down** starts with the application. **Divide-and-conquer** chooses a useful middle test, such as an IP-address ping, and uses the result to narrow the next investigation. **Follow-the-path** checks forwarding and return delivery across the actual topology. Comparing an affected host with a working peer is useful when their intended policies match.
 
 | Evidence wanted | Useful check | What it does not establish |
 |---|---|---|
@@ -72,9 +74,9 @@ A useful test answers a specific question. If an IP ping works but a browser fai
 
 ## Ping and extended ping
 
-For IPv4, ICMP echo request is type **8**, echo reply type **0**. The referenced IOS basic ping defaults to **five 100-byte datagrams** with a **two-second wait**; read the actual command output because tools and options differ. Windows `ping` normally sends four requests with 32 bytes of ICMP data. IOS datagram size and a host tool's payload-size argument are different scopes: an ordinary IPv4 packet adds 20 bytes of IP header and 8 bytes of ICMP header to an echo payload.
+Ping answers one question: can an ICMP echo request reach this address, and can the reply get back? In IPv4 the echo request is ICMP type **8** and the echo reply is type **0**. IOS `ping` sends **five 100-byte packets** by default and waits **two seconds** for each reply. Windows `ping` sends four requests with 32 bytes of data. The two sizes are counted differently: the IOS figure is the whole IP packet, while the Windows figure is only the ICMP data, before the 8-byte ICMP header and 20-byte IP header are added.
 
-This is representative output, not a recorded run:
+Typical output:
 
 ```output R1# ping 10.0.20.10
 Sending 5, 100-byte ICMP Echos to 10.0.20.10, timeout is 2 seconds:
@@ -82,7 +84,7 @@ Sending 5, 100-byte ICMP Echos to 10.0.20.10, timeout is 2 seconds:
 Success rate is 80 percent (4/5)
 ```
 
-An initial delay can occur during address resolution, but the period alone does not prove ARP caused it. Repeat the test and inspect the relevant ARP entry or capture. Persistent loss needs investigation even if small pings sometimes succeed. A `U` identifies an unreachable response rather than an echo reply. Its ICMP code can distinguish a reported network/host delivery problem, port unreachable, fragmentation needed, or administrative prohibition; those are reports to investigate, not a substitute for configuration evidence.
+IOS prints one character per probe: `!` for a reply, `.` for no reply within the timeout, and `U` for an ICMP destination unreachable message sent back by a router. A single period at the start, as here, is common: the first packet was dropped while a device on the path used ARP to learn a next-hop MAC address. Run the ping again. `!!!!!` confirms it was ARP; loss on the second run is a real problem. A `U` means some router could not forward the packet, usually because it has no route to the destination or a filter forbids it. The ICMP code inside the message says which.
 
 **Extended ping** lets you choose a source address owned by the router. Suppose R1's transit address is `10.0.99.1`, its client LAN address is `10.0.10.1`, and the remote server is `10.0.20.10`. The ordinary IOS test normally uses the outgoing interface address. A sourced test makes the reply destination different:
 
@@ -91,15 +93,14 @@ R1# ping 10.0.20.10 source 10.0.99.1
 R1# ping 10.0.20.10 source 10.0.10.1
 ```
 
-If only the first succeeds, inspect return routing and source-dependent policy. You have narrowed the difference; you have not yet proved a missing route. The sourced request is still router-originated and does not exercise the PC's access port or every ingress policy applied to the PC. Confirm the diagnosis with routes, captures, and a final client test.
+Both pings take the same forward path. What differs is where the reply has to go. The server answers the first ping to 10.0.99.1, on a subnet R2 is directly connected to. It answers the second to 10.0.10.1, which R2 can reach only with a route to 10.0.10.0/24. If the first works and the second fails, check R2's route back to the client LAN. This is how a router can ping a server that its own clients cannot reach. A sourced ping still starts at the router and skips the PC's switch port, so finish with a test from the PC.
 
-On an image without the one-line source syntax, enter `ping` at privileged EXEC, supply the target, choose `y` for extended commands, and enter the source when prompted. Retain defaults for unrelated fields. Increasing repeat count samples more exchanges; it does not guarantee that an intermittent fault will appear. Use bounded tests.
+If an image lacks the one-line form, enter `ping` alone at privileged EXEC, answer `y` to “Extended commands” and type the source address when asked. Accept the defaults for the other prompts.
 
-**MTU** testing compares sizes while holding other variables steady. In IPv4, setting **DF**, Don't Fragment, prevents routers from fragmenting that packet. A received fragmentation-needed message is positive evidence of a size constraint; large-probe silence alone could also be filtering or loss. On supporting IOS, `ping 10.0.20.10 repeat 5 size 1500 df-bit` requests a 1500-byte IP datagram. Windows `ping -n 4 -l 1472 -f 10.0.20.10` requests 1472 data bytes, making 1500 with ordinary headers. Do not transfer these IPv4 arithmetic rules blindly to IPv6.
-
+**MTU** testing compares sizes while holding other variables steady. In IPv4, setting **DF**, Don't Fragment, prevents routers from fragmenting that packet. A received fragmentation-needed message is positive evidence of a size constraint; large-probe silence alone could also be filtering or loss. On supporting IOS, `ping 10.0.20.10 repeat 5 size 1500 df-bit` requests a 1500-byte IP datagram. Windows `ping -n 4 -l 1472 -f 10.0.20.10` requests 1472 data bytes, making 1500 with ordinary headers.
 ## Interpret traceroute
 
-Traceroute sends probes with increasing **TTL**. A transit router that expires an IPv4 TTL can return ICMP **time exceeded**, type **11**, code **0**. Conventional IOS traceroute uses UDP probes toward high destination ports beginning at **33434**; reaching a closed destination port normally yields ICMP destination unreachable, type **3**, code **3**. Windows `tracert` uses echo requests and expects an echo reply from the destination. Common Linux traceroute implementations support UDP, ICMP, and TCP methods; check the installed tool and selected options.
+Ping tells you whether the far end answers; traceroute tells you which routers are on the way. It sends probes with **TTL** 1, then 2, then 3, and so on. Each router subtracts one from the TTL, and the router that brings it to zero discards the packet and returns ICMP **time exceeded**, type **11**, code **0**, which reveals that router's address. Conventional IOS traceroute uses UDP probes toward high destination ports beginning at **33434**; reaching a closed destination port normally yields ICMP destination unreachable, type **3**, code **3**. Windows `tracert` uses echo requests and expects an echo reply from the destination. Common Linux traceroute implementations support UDP, ICMP, and TCP methods; check the installed tool and selected options.
 
 The responding address identifies the source of an ICMP response; it is not guaranteed to be the interface that received your probe. Each reported time is a round trip for that probe. It includes processing and the reply path, which can differ from the outward path. Different probes can also follow different equal-cost routes.
 
@@ -109,7 +110,7 @@ The responding address identifies the source of an ICMP response; it is not guar
 3  203.0.113.10   4 ms  4 ms  5 ms  ← later probes received destination replies
 ```
 
-The middle stars do not prove a broken link. Filtering, response rate limits, return-path behavior, and load sharing can affect what appears. Nor do the later replies certify application performance. If all later hops are silent, inspect the last known path and both directions, but do not label that last responding device as the culprit without further evidence. Compare the trace's actual source and probe protocol with the affected application.
+The stars at hop 2 do not mean a broken link, because hop 3 answered. That router forwards packets but does not send ICMP replies, or limits how many it sends. If every hop after a certain point is silent, the fault lies at or beyond the last router that answered, on either the forward or the return path.
 
 :::trap A received TTL is not a hop count
 A reply with TTL 126 has an unknown initial TTL unless you have independent evidence of the sender's setting. You cannot infer “two routers” merely by assuming it started at 128. Even a known difference describes that packet's return path, not necessarily the request path.
@@ -117,38 +118,47 @@ A reply with TTL 126 has an unknown initial TTL unless you have independent evid
 
 ## Interfaces, counters, MAC and ARP tables
 
-Read interface state before interpreting counters. On routed Ethernet, `administratively down` identifies the local administrative shutdown state; `down/down` directs attention toward link and peer availability. `up/up` confirms those operational states but does not certify configuration or service. `up/down` requires interface-type-specific investigation rather than one universal explanation. On switches, `err-disabled` calls for the recorded protection/error cause; `inactive` can indicate an unavailable access VLAN. Consult the VLAN state and intended design before enabling or moving a port.
+Start with the two status words that `show ip interface brief` and `show interfaces` print for every interface. The first is the line status (Layer 1) and the second is the line protocol (Layer 2).
 
-Compare counters over a known interval. If CRC increases from 120 to 145 during one minute, **25 new errors** occurred; 145 old errors over months is different evidence. CRC/FCS errors indicate received corruption, not its unique cause. Inspect cables, optics where applicable, both endpoints, and negotiated settings. On a 100-Mb/s link, displayed half duplex at one end and full at the other directly establishes a duplex mismatch. Late collisions support that diagnosis on the half-duplex side but can have other causes. A few clean input counters do not certify the cable.
+| Status / protocol | Meaning | Check |
+|---|---|---|
+| administratively down / down | `shutdown` is configured on this interface | Enter `no shutdown` |
+| down / down | No signal from the other end | Cable, peer powered off or shut down, speed mismatch |
+| up / down | Signal present, Layer 2 not working | Rare on Ethernet; encapsulation mismatch on serial links |
+| up / up | The link works | Counters, VLAN, addressing |
 
-Runts and giants refer to sizes outside what the interface accepts; exact giant thresholds and tagged-frame counting depend on platform and configuration. Output drops indicate discarded outgoing traffic, often queue pressure; compare traffic and queue evidence. Do not diagnose every drop as a bad cable. Correct the demonstrated cause, then compare fresh counter increments. Preserve the original snapshot before an approved `clear counters`.
+On a switch, `show interfaces status` adds two more states. `err-disabled` means a protection feature such as port security shut the port; find and fix the cause before you re-enable it. `inactive` means the port's access VLAN does not exist on the switch.
 
-The **MAC address table** maps a VLAN/MAC to a learned switch port. The **ARP table** maps an IPv4 neighbor to a link-layer address. They answer different questions. A learned MAC proves source frames were observed, not that the host has the right IP address. A missing entry can reflect aging, a reset, filtering, or lack of recent relevant traffic. Use the configured aging policy rather than memorizing one global timer. An incomplete ARP entry means resolution is not complete at this observation; it does not prove the neighbor never replied in the past.
+An interface that is up/up can still lose traffic, and the counters in `show interfaces` show how. Counters accumulate from the last reboot or `clear counters`, so read them twice and compare. If CRC goes from 120 to 145 in one minute, **25 new errors** occurred; a total of 145 that has not moved in months is history.
+
+**CRC** errors count received frames whose checksum failed because the frame was damaged on the way: a bad cable or connector, interference, or a duplex mismatch. **Collisions** are normal on a half-duplex link. **Late collisions**, detected after the first 64 bytes of a frame, should not happen on a healthy link and are the classic sign of a duplex mismatch. **Runts** are frames shorter than the 64-byte Ethernet minimum, often the pieces left by collisions; **giants** are longer than the interface accepts. **Output drops** count packets discarded because the output queue was full, which points to congestion, not to a cable.
+
+A **duplex mismatch** usually arises when one end is hard-set to full duplex with autonegotiation off and the other end is left on auto. The auto end can sense the speed but receives no duplex information, so at 10 or 100 Mb/s it falls back to half duplex. The link stays up/up and performs badly: the half-duplex end counts collisions and late collisions, and the full-duplex end counts CRC errors and runts. A **speed mismatch** usually takes the link down/down instead. Fix either by configuring both ends the same way: both auto, or both the same fixed `speed` and `duplex`. Then check that the counters have stopped rising.
+
+The **MAC address table** on a switch maps a MAC address and VLAN to the port where the switch saw that address as a source. The **ARP table** on a router or host maps an IPv4 address to a MAC address. Use them together to find where a host is attached: read its MAC address from the router's `show arp`, then look that address up in `show mac address-table` on the switch. An entry in the wrong VLAN or on an unexpected port is your finding. Dynamic MAC entries age out after 300 seconds without traffic by default, so a missing entry may only mean the host has been quiet; ping it and look again. An ARP entry shown as `Incomplete` means the router sent a request and has had no reply.
 
 ## Logs and device operations
 
-Use `show logging` to inspect enabled destinations, thresholds, and buffered events. On an image supporting output filters, `show logging | include LINK` displays only lines containing `LINK`: the pipe passes the output to a display filter and does not change logging policy. Read the complete output when context or simulator support requires it. A message commonly contains `%FACILITY-SEVERITY-MNEMONIC: text`. Lower severity numbers are more severe: **0 emergency, 1 alert, 2 critical, 3 error, 4 warning, 5 notification, 6 informational, 7 debugging**. A threshold of warnings selects levels 0–4 for that destination; selection does not prove delivery to the remote collector.
+Counters tell you what is happening now; logs tell you when something changed. `show logging` shows where the device sends log messages, the severity threshold for each destination, and the messages held in its buffer. To find one kind of event, filter the output: `show logging | include LINK` prints only the lines containing `LINK`. Each message has the form `%FACILITY-SEVERITY-MNEMONIC: text`. Lower severity numbers are more severe: **0 emergency, 1 alert, 2 critical, 3 error, 4 warning, 5 notification, 6 informational, 7 debugging**. A threshold includes its own level and every more severe one, so `warnings` selects levels 0–4.
 
 ```output Representative relevant log lines
 Sep 20 10:15:01: %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down  ← link event, severity 3
 Sep 20 10:15:02: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down  ← separate severity-5 event
 ```
 
-A log can correlate a symptom with an event, but a down message does not uniquely identify a cable pull. Check both ends and current configuration. A timestamp with `*` on documented IOS displays indicates an unauthoritative clock; it does not establish one specific missing NTP command. Compare synchronization and clock adjustments before ordering events across devices.
+These two messages arrive as a pair when a link drops: the interface went down (severity 3), then its line protocol (severity 5). They tell you when, not why, so check both ends of the link. A `*` before a timestamp means the device's clock is not synchronized, so do not compare its times with another device's. `show version` adds the uptime and the reason for the last reload, which tells you whether the device restarted during the outage.
 
-`show version` helps identify software, uptime, and reported reload information. CPU and memory displays help assess device load; compare a sustained trend with a baseline instead of treating one busy instant as the cause. Exact environmental commands depend on the model. A historical CDP neighbor may remain until aging, and a reboot can remove evidence.
-
-For a controlled lab, configure a bounded log buffer with `logging buffered 16384 informational`. `terminal monitor` requests eligible log/debug output in the current remote terminal; logging destination settings still matter. Debugging can affect device resources and expose sensitive details. Use a focused supported debug only when needed, then stop it with `undebug all`. Capture existing evidence before clearing logs.
+`logging buffered 16384 informational` keeps messages of severity 0–6 in a 16,384-byte memory buffer. Log messages appear on the console by default but not in an SSH or Telnet session; `terminal monitor` turns them on for your session. `debug` output is severity 7 and can overload a busy router, so debug one thing at a time and stop with `undebug all`.
 
 ## Reading packet captures
 
-A **packet capture** records traffic visible at its collection point. First identify the interface, direction, filter, time range, and whether packets were dropped by the capture mechanism. Absence from one capture is not proof of absence everywhere. Packet Tracer Simulation mode displays simulated PDUs; a real capture may come from a switch mirror port or a router capture facility. Their setup syntax is platform-specific and is not the core recall task here.
+A **packet capture** shows the packets that passed one point, so it settles what was actually sent. Note where it was taken and with what filter: a packet missing from one capture may have taken another path. Packet Tracer's Simulation mode shows simulated packets in the same way; on real equipment a capture comes from a switch mirror port or the router's own capture feature.
 
-For ARP, ask which next-hop IP is being resolved and whether its request and reply are visible. For a remote destination, a host normally resolves its gateway, not the remote server. For DHCP, follow the transaction between the client subnet, relay, and server; a missing Offer narrows the failed stage but does not uniquely prove exhaustion. For DNS, a received NXDOMAIN is a negative name result; SERVFAIL reports inability to complete resolution. A timeout contains no such answer. A completed NODATA result lacks the requested type. Consult Chapter 25 for aliases, caching, and authoritative dependencies.
+In a capture, look for the reply to each request. For ARP, a host sending to another subnet should be asking for its gateway's MAC address, not the remote server's. For DHCP, find which of the four messages is missing: a Discover with no Offer points at the server or the relay. For DNS, NXDOMAIN means the name does not exist, SERVFAIL means the server could not complete the lookup, and no answer at all is a timeout.
 
 For TCP, distinguish a successful handshake, a reset, and unanswered requests. SYN/SYN-ACK/ACK establishes the connection; it does not prove HTTP or another application subsequently succeeds. A matching RST reports an active rejection/reset, possibly generated by the endpoint or an intermediary. Use a server-side capture and service status before asserting which device generated it. Repeated SYNs without replies leave both forward and return delivery uncertain.
 
-Wireshark's retransmission and duplicate-ACK labels are analysis based on captured sequence history. Loss is a common explanation, but reordering, incomplete captures, and duplicated capture paths can affect labels. Compare both directions and the same flow. Avoid turning a label into an unsupported accusation against one link.
+Wireshark labels such as *retransmission* and *duplicate ACK* usually point to packet loss, but an incomplete capture produces the same labels, so check a second capture point before you blame a link.
 
 ## Work through a complete diagnosis
 
@@ -167,9 +177,10 @@ Repeat the sourced test, then test from PC-A by address, exact name, and actual 
 
 ## Exam focus
 
-- Match a test to the question it can answer; do not certify every layer from one successful ping.
-- Compare source addresses and return destinations when a router works but its clients fail.
-- Read ping/traceroute responses as evidence with scope and limitations.
-- Combine interface state, current configuration, counter changes, MAC/ARP entries, and relevant logs.
-- Interpret capture flows and distinguish a received error from silence.
-- Verify the repaired application from the affected client and retain useful notes.
+- IOS ping symbols: `!` reply, `.` timeout, `U` destination unreachable. Defaults: five 100-byte packets, two-second timeout.
+- Traceroute raises the TTL one hop at a time and routers answer with ICMP time exceeded. IOS probes with UDP; Windows `tracert` probes with ICMP echo. A row of `* * *` followed by later replies is not a break.
+- When a router can ping a server but its clients cannot, use `ping … source` and check the return route.
+- Interface status pairs: administratively down/down, down/down, up/down, up/up. Switch ports add `err-disabled` and `inactive`.
+- Duplex mismatch: link up, late collisions on the half-duplex end, CRC errors and runts on the full-duplex end. Speed mismatch: link down.
+- Syslog severities 0–7 by name and number; a threshold includes that level and all more severe ones.
+- A ping that works proves ICMP reachability only. After any fix, retest the original application from the affected client.

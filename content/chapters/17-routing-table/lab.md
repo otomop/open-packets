@@ -6,9 +6,9 @@ minutes: 70
 ---
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Use a small routed network to compare a predicted route with actual traffic. Static commands are supplied as a baseline; Chapter 18 teaches their construction and failure behavior. Dynamic-route and ECMP examples are worksheets, so you do not need to configure OSPF before its lesson.
+Build two routers and two PCs, then predict which route each packet uses before you send it. You read connected and local entries, watch a more-specific route override a working /24, and add a default route. The static-route commands are supplied for you to type; Chapter 18 teaches how to design them. Steps 4, 8 and 9 are paper exercises on overlapping prefixes, administrative distance and ECMP, so you do not need OSPF yet.
 
-Packet Tracer is suitable for the core topology. Record its version and each router image. CEF and filtered display commands vary by simulator; use the full routing table where a filter is unavailable and mark any CEF interpretation that was not executed.
+Packet Tracer runs every device step. If your version lacks `show ip cef`, read the full `show ip route` instead and note that you skipped the CEF check.
 
 ## Topology
 
@@ -19,7 +19,7 @@ Packet Tracer is suitable for the core topology. Record its version and each rou
 | R2 Gi0/1 ↔ PC-B FastEthernet0 | R2 `198.51.100.1/24`; PC-B `198.51.100.200/24`, gateway `198.51.100.1` |
 | R2 Loopback0 | `203.0.113.9/32`, test destination |
 
-Use Packet Tracer's automatic cable selection or copper crossover for these direct Ethernet connections. No switch, Internet service or previous chapter project is required. A loopback is a logical router interface; its address gives the default-route test a real destination.
+Use Packet Tracer's automatic cable selection or copper crossover cables; there is no switch. A loopback is a logical interface inside the router that is always up. R2's loopback gives the default-route test in Step 7 a real destination.
 
 ```diagram
 {"type":"topology","title":"A route in each direction","caption":"R1 and R2 need routes to the opposite PC's subnet. The R2 loopback is used later to test a default.","nodes":[{"id":"A","kind":"pc","label":"PC-A","sub":"192.0.2.10/24","x":1,"y":3},{"id":"R1","kind":"router","label":"R1","sub":"10.0.12.1/30","x":4,"y":3},{"id":"R2","kind":"router","label":"R2","sub":"10.0.12.2/30","x":8,"y":3},{"id":"B","kind":"pc","label":"PC-B","sub":"198.51.100.200/24","x":11,"y":3}],"links":[{"from":"A","to":"R1","toLabel":"Gi0/1"},{"from":"R1","to":"R2","fromLabel":"Gi0/0","toLabel":"Gi0/0","accent":true},{"from":"R2","to":"B","fromLabel":"Gi0/1"}]}
@@ -27,7 +27,7 @@ Use Packet Tracer's automatic cable selection or copper crossover for these dire
 
 ## Step 1: Build and address the network
 
-Create fresh devices and configure both routers. Leave routing protocols disabled.
+Add the devices and configure both routers. Do not configure a routing protocol. The loopback needs no `no shutdown`; it comes up when you create it.
 
 ```ios R1
 Router> enable
@@ -62,10 +62,10 @@ R2(config-if)# end
 R2# show ip interface brief
 ```
 
-Set each PC's static address, mask and gateway using Desktop → IP Configuration. Ping each PC's own gateway and ping `10.0.12.2` from R1. Repeat an initial attempt if needed for address resolution.
+Set each PC's static address, mask and gateway using Desktop → IP Configuration. Ping each PC's own gateway, and ping `10.0.12.2` from R1. The first ping can lose a packet while ARP resolves; repeat it.
 
 :::expected
-The connected Ethernet interfaces are up/up. Each PC reaches its own gateway and R1 reaches R2's transit address. End-to-end PC traffic is not expected yet because the routers lack routes to the opposite LAN.
+The four Ethernet interfaces are up/up. Each PC reaches its own gateway and R1 reaches `10.0.12.2`. PC-A cannot reach PC-B yet, because neither router has a route to the other LAN.
 :::
 
 ```state
@@ -74,10 +74,10 @@ The connected Ethernet interfaces are up/up. Each PC reaches its own gateway and
 
 ## Step 2: Identify connected and local entries
 
-Run `show ip route` on both routers. On R1, find the connected `192.0.2.0/24` and local `192.0.2.1/32` entries. Record their codes and interfaces. Inspect `show ip route 192.0.2.1` and `show ip route 192.0.2.10` where supported.
+Run `show ip route` on both routers. On R1, find the connected `192.0.2.0/24` and local `192.0.2.1/32` entries and note their codes and interfaces. Then run `show ip route 192.0.2.1` and `show ip route 192.0.2.10` and compare which entry each address matches.
 
 :::expected
-The router's own address matches its local /32; PC-A's address matches the connected /24. A display heading that groups prefixes is not another route. R2's /32 loopback may not use the same two-line C/L pattern as an ordinary /24 Ethernet interface.
+R1's own address `192.0.2.1` matches the `L` /32, and PC-A's address matches the `C` /24. Each router has only `C` and `L` entries so far. The `is variably subnetted` lines are headings, not routes. R2's /32 loopback normally shows one `C` line instead of a `C` and `L` pair.
 :::
 
 ```state
@@ -86,7 +86,7 @@ The router's own address matches its local /32; PC-A's address matches the conne
 
 ## Step 3: Install the supplied bidirectional baseline
 
-These commands name the remote destination network, its mask and the neighboring router. The return route on R2 is as necessary as the forward route on R1.
+A static route has the form `ip route NETWORK MASK NEXT-HOP`: the remote network, its mask, and the neighboring router to send to. R1 needs a route to PC-B's LAN through R2. R2 needs a route back to PC-A's LAN through R1, or PC-B's replies are dropped at R2.
 
 ```ios R1
 R1# configure terminal
@@ -102,10 +102,10 @@ R2(config)# end
 R2# show ip route
 ```
 
-From PC-A, ping `198.51.100.200`. From PC-B, ping `192.0.2.10`. Record each router's selected prefix, next hop and outgoing interface for the opposite host.
+From PC-A, ping `198.51.100.200`. From PC-B, ping `192.0.2.10`. On each router, note the prefix, the bracketed numbers, the next hop and the outgoing interface used to reach the opposite host.
 
 :::expected
-Each router installs an `S` route to the opposite LAN, normally showing `[1/0]`. Both PC tests succeed once adjacency resolution completes. A route on only R1 would not establish a working reply path.
+Each router shows an `S` route to the opposite LAN with `[1/0]`: administrative distance 1, metric 0. Both pings succeed; the first may lose a packet to ARP.
 :::
 
 ```state
@@ -114,7 +114,7 @@ Each router installs an `S` route to the opposite LAN, normally showing `[1/0]`.
 
 ## Step 4: Predict overlapping-prefix lookups
 
-Use this authored worksheet without entering configuration:
+This is a paper exercise; type nothing on the routers. A router has these four routes installed:
 
 | Installed route | Next hop |
 |---|---|
@@ -123,10 +123,10 @@ Use this authored worksheet without entering configuration:
 | `O 172.16.44.0/23 [110/30]` | `10.0.0.4` |
 | `S 172.16.44.128/25 [200/0]` | `10.0.0.5` |
 
-All listed routes are installed and their next hops are resolvable. Determine the selected next hop for `172.16.44.9`, `172.16.44.200`, `172.16.45.200` and `172.16.60.7`. Show the ranges that establish each match.
+Write the address range of each route first. Then find the next hop for `172.16.44.9`, `172.16.44.200`, `172.16.45.200` and `172.16.60.7`.
 
 :::solution
-The next hops are `10.0.0.4`, `10.0.0.5`, `10.0.0.4` and `10.0.0.2`, respectively. The /25 wins for its matching destination despite AD 200 because forwarding compares installed prefix lengths.
+The ranges are `172.16.32.0–172.16.63.255` for the /19, `172.16.40.0–172.16.47.255` for the /21, `172.16.44.0–172.16.45.255` for the /23 and `172.16.44.128–172.16.44.255` for the /25. The next hops are `10.0.0.4`, `10.0.0.5`, `10.0.0.4` and `10.0.0.2`, in that order. The /25 wins for `172.16.44.200` despite its AD of 200, because a packet lookup compares prefix lengths, not distances.
 :::
 
 ```state
@@ -135,7 +135,7 @@ The next hops are `10.0.0.4`, `10.0.0.5`, `10.0.0.4` and `10.0.0.2`, respectivel
 
 ## Step 5: Introduce a more-specific discard route
 
-Before applying the supplied fault, predict the selected prefixes and outcomes for PC-B (.200) and R2’s LAN address (.1). Record both predictions, then add the controlled fault on R1:
+Now add a second, more-specific route on R1. It points to `Null0`, the discard interface from the lesson, so R1 drops every packet that matches it. Before you type it, predict which route R1 will use for PC-B (`198.51.100.200`) and for R2's LAN address (`198.51.100.1`), and whether each ping will work.
 
 ```ios R1
 R1# configure terminal
@@ -145,10 +145,10 @@ R1# show ip route
 R1# show ip route 198.51.100.200
 ```
 
-From PC-A, ping `198.51.100.200` and `198.51.100.1`. Explain the different results before changing anything. Where supported, inspect `show ip cef 198.51.100.200`.
+From PC-A, ping `198.51.100.200` and `198.51.100.1`, and explain the different results before changing anything. If your version supports it, run `show ip cef 198.51.100.200` to see the forwarding entry R1 uses for that address.
 
 :::expected
-PC-B's `.200` matches the /25 discard route and fails. R2's LAN address `.1` lies outside that /25 and still matches the working /24. The presence of a route does not necessarily mean its action is forwarding to a live neighbor.
+The /25 covers `198.51.100.128–198.51.100.255`. PC-B's `.200` is inside it, so `show ip route 198.51.100.200` reports the /25 through `Null0` and the ping fails. R2's `.1` is outside the /25, still matches the /24 and still answers. Both static routes are in the table together.
 :::
 
 ```state
@@ -167,7 +167,7 @@ R1# show ip route 198.51.100.200
 Repeat both PC-A pings and the reverse PC-B-to-PC-A ping.
 
 :::expected
-PC-B's address again matches the /24 through `10.0.12.2`, and the end-to-end tests work. You repaired the more-specific discard without removing the legitimate /24 route.
+PC-B's address matches the /24 through `10.0.12.2` again, and all three pings work. You removed only the /25 and left the /24 alone.
 :::
 
 ```state
@@ -176,7 +176,7 @@ PC-B's address again matches the /24 through `10.0.12.2`, and the end-to-end tes
 
 ## Step 7: Add and verify a default route
 
-Write the request source/destination and the route needed for its reply. Before changing R1, ping R2's loopback `203.0.113.9` from PC-A and confirm that R1 has no matching route. Add the default:
+R2's loopback `203.0.113.9` is in neither LAN. Ping it from PC-A, then read `show ip route` on R1 and confirm that no entry contains that address. Now add a default route on R1. It is the same `ip route` command with a network and mask of all zeros:
 
 ```ios R1
 R1# configure terminal
@@ -186,10 +186,10 @@ R1# show ip route
 R1# show ip route 0.0.0.0
 ```
 
-Repeat the PC-A ping and inspect `show ip cef 203.0.113.9` if available. Also compare the destination-specific `show ip route 203.0.113.9` result with the full table. Its exact default-lookup display is image dependent; record what yours actually reports.
+Repeat the PC-A ping. Then run `show ip route 203.0.113.9` and, if available, `show ip cef 203.0.113.9`, and compare both with the full table.
 
 :::expected
-The full table contains the `S*` default through R2, and PC-A can now reach R2's actual loopback. R2 already has the return route to PC-A's subnet. The default changes this lookup but does not replace the more-specific route to PC-B.
+Before the default, the ping fails and R1 answers PC-A with destination host unreachable. Afterwards the table shows `Gateway of last resort is 10.0.12.2 to network 0.0.0.0` and an `S*` entry, and the ping succeeds; R2 already has the return route to PC-A's subnet. `show ip route 203.0.113.9` typically still answers `% Network not in table`, because that command does not report the default route. Traffic to PC-B keeps using the more-specific /24.
 :::
 
 ```state
@@ -198,10 +198,10 @@ The full table contains the `S*` default through R2, and PC-A can now reach R2's
 
 ## Step 8: Distinguish AD from protocol metrics
 
-For this paper exercise, three eligible candidates describe exactly `10.50.0.0/16`: OSPF AD 110/cost 20, RIP AD 120/hop count 2, and static AD 130. All next hops are reachable and no policy changes these preferences. Identify the installed source, then remove the OSPF candidate on paper and repeat.
+This is a paper exercise. Three sources offer a route to exactly `10.50.0.0/16`: OSPF with cost 20, RIP with hop count 2, and a static route configured with AD 130. All next hops are reachable. Write the route line that is installed, including its brackets. Then assume OSPF loses the route and write the new line.
 
 :::solution
-OSPF is preferred first by AD. Without OSPF, RIP is preferred over the static candidate. OSPF cost 20 is not compared numerically with RIP's two hops. The static route is selected only after the more-preferred sources disappear; actual failover also requires a working forwarding and return path.
+First `O 10.50.0.0/16 [110/20]`: OSPF has the lowest AD. Without OSPF, `R 10.50.0.0/16 [120/2]`: 120 beats 130. OSPF's cost of 20 is never compared with RIP's 2 hops. The static route is a floating static route; it is installed only after both protocols lose the prefix.
 :::
 
 ```state
@@ -217,10 +217,10 @@ O    10.70.0.0/16 [110/20] via 10.0.12.2, 00:00:30, GigabitEthernet0/0
                 [110/20] via 10.0.13.2, 00:00:30, GigabitEthernet0/2
 ```
 
-List the available paths and decide whether the output proves that one file transfer will run twice as fast. This is a supplied example, not a claim that your two-router topology has a second link.
+This is a paper exercise; your two-router topology has no second link. List the next hops R1 can use for `10.70.0.0/16`, and decide whether one file transfer to that network will run twice as fast as it would over a single link.
 
 :::solution
-Both next hops are installed for the same prefix at equal cost. The output does not establish a 50/50 byte split, packet-by-packet alternation or doubled throughput for one flow. Hashing behavior and path limits depend on the device and configuration.
+R1 can use `10.0.12.2` through Gi0/0 and `10.0.13.2` through Gi0/2: two equal-cost paths to one prefix. One transfer does not run twice as fast. CEF keeps each flow on one path, so a single transfer uses one link.
 :::
 
 ```state
@@ -229,10 +229,10 @@ Both next hops are installed for the same prefix at equal cost. The output does 
 
 ## Step 10: Save the corrected lab and evidence
 
-Confirm that R1's temporary Null0 route is absent, both remote LAN routes are present and the default points from R1 to R2. Repeat PC-to-PC traffic and the PC-A-to-loopback test. On each router run `copy running-config startup-config` and accept the filename with Enter. Save the Packet Tracer project.
+Check the final state: R1's Null0 route is gone, each router has its route to the opposite LAN, and R1 has the default route through R2. Repeat the PC-to-PC pings and the PC-A ping to `203.0.113.9`. On each router run `copy running-config startup-config` and press Enter to accept the filename. Save the Packet Tracer project.
 
 :::expected
-The saved network has working bidirectional LAN routing and a default on R1. Your worksheet separately records the overlapping-prefix, AD and ECMP exercises. Record unsupported CEF commands as unexecuted rather than treating written answers as device verification. Submit a five-state evidence table: connected-only, bidirectional baseline, active /25 discard fault, repaired /24, and added default. For each tested destination record the selected prefix/action, source address, predicted result and actual result. Keep the three closed-answer worksheets separate from observed device evidence.
+All pings work and both configurations are saved. For your notes, list the five states you observed: connected routes only, static routes both ways, the /25 discard, the repaired /24, and the default route. For each, write the destination you tested, the route it matched, your prediction and the actual result. Keep the three paper exercises separate from what you observed on the devices.
 :::
 
 ```state
@@ -243,16 +243,16 @@ The saved network has working bidirectional LAN routing and a default on R1. You
 
 | Symptom | Evidence to inspect |
 |---|---|
-| Own gateway unreachable | PC mask/gateway, cable, router address and interface state |
-| R1 reaches R2 but PC-to-PC fails | Routes to both LANs and the hosts' gateways; a transit ping exercises different addresses |
+| Own gateway unreachable | PC mask and gateway, cable, router address and interface state |
+| R1 reaches R2 but PC-to-PC fails | The route to the opposite LAN on each router, and each PC's gateway |
 | Only `.200` fails after Step 5 | The /25 Null0 match, compared with the /24 used by `.1` |
-| A configured static route is missing from the table | Destination/mask, next-hop resolution and a preferred route for the same prefix |
-| Default exists but loopback ping fails | Selected forwarding entry, R2 loopback state and route back to PC-A |
-| Route looks correct but neighbor traffic fails | ARP/adjacency, interface state and any unexpected filtering |
+| A configured static route is missing from the table | Typing errors in the network or mask, and whether the next hop on `10.0.12.0/30` is reachable |
+| Default exists but loopback ping fails | The `S*` entry on R1, R2's Loopback0 address and R2's route back to PC-A |
+| Route looks correct but the neighbor does not answer | `show ip arp` and the interface state on both routers |
 
 ## Challenge
 
-Use this independent paper network. Do not enter its routes in the two-router project. A management PC is 192.0.2.10/24 with gateway R3 192.0.2.1. Every listed next hop is reachable and no filtering or policy routing applies. These are all relevant **installed** R3 entries:
+This is a separate paper network; do not enter its routes in the two-router project. A management PC is 192.0.2.10/24 with gateway R3 at 192.0.2.1. Every listed next hop is reachable and nothing filters traffic. These are all the **installed** routes on R3:
 
 | Prefix | Source / preference | Action |
 |---|---|---|
@@ -263,14 +263,12 @@ Use this independent paper network. Do not enter its routes in the two-router pr
 | 10.72.9.128/26 | static AD 200 | Null0 |
 | 0.0.0.0/0 | static AD 1 | via 10.0.32.2 |
 
-Before opening the answer, produce a destination/action table for 192.0.2.1, 192.0.2.10, 10.72.9.130, 10.72.9.200, 10.72.12.7 and 203.0.113.25. Show the boundaries of the /20, /23 and /26. Explain why a route’s lower AD cannot overrule a longer installed match.
+Before opening the answer, write the address ranges of the /20, /23 and /26. Then state the route and action R3 uses for 192.0.2.1, 192.0.2.10, 10.72.9.130, 10.72.9.200, 10.72.12.7 and 203.0.113.25. Explain why the /20’s lower AD cannot overrule a longer match.
 
 Then consider two **independent** changes, each starting from the table above:
 
-1. Only the /26 discard entry is withdrawn. Determine the new action for 10.72.9.130.
-2. A ping from the management PC to 10.72.9.200 reaches the remote host, but the host’s reply reaches a remote router that has no matching route or default for 192.0.2.10. State the reply’s source/destination and explain whether R3’s correct forward entry proves a working exchange.
-
-Submit six baseline decisions, the three ranges, both changed-state explanations and the evidence you would collect before modifying any route.
+1. Only the /26 discard route is removed. What does R3 now do with a packet to 10.72.9.130?
+2. A ping from the management PC reaches host 10.72.9.200, but the reply arrives at a remote router that has no route and no default for 192.0.2.10. State the reply’s source and destination, and explain whether R3’s correct forward route proves that the ping works.
 
 :::solution
 The /20 spans 10.72.0.0–10.72.15.255; the /23 spans 10.72.8.0–10.72.9.255; the /26 spans 10.72.9.128–10.72.9.191.
@@ -284,7 +282,9 @@ The /20 spans 10.72.0.0–10.72.15.255; the /23 spans 10.72.8.0–10.72.9.255; t
 | 10.72.12.7 | /20, via 10.0.30.2 |
 | 203.0.113.25 | default /0, via 10.0.32.2 |
 
-After withdrawing only /26, 10.72.9.130 matches the remaining /23 through 10.0.31.2. The decision is recalculated from the current installed table; the former discard does not remain effective.
+The /20 has AD 1 and the /23 has AD 110, yet the /23 wins for 10.72.9.200: AD only compares routes to the same prefix, and these are different prefixes.
 
-In the separate return-path case, the reply is source 10.72.9.200, destination 192.0.2.10. The remote router without a matching route cannot forward it toward the requester. R3’s forward lookup alone does not prove a reply path. Inspect the full route table at the reported failure point, the relevant interface/neighbor state and a test from the original PC before proposing a change.
+After the /26 is removed, 10.72.9.130 matches the /23 and is forwarded to 10.0.31.2. Each packet is looked up in the table as it stands now.
+
+In the return-path case, the reply has source 10.72.9.200 and destination 192.0.2.10. The remote router has no route for 192.0.2.10, so it drops the reply and the ping fails. R3’s forward route proves only the outbound half. Read the routing table on the router that dropped the reply before changing anything on R3.
 :::

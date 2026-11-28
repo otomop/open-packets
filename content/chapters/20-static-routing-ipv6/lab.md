@@ -7,12 +7,11 @@ minutes: 90
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-Use the supplied interface settings as a baseline. The routing work is to predict the selected prefix, scoped neighbor and return path, then compare those predictions with observations before repairing a fault.
+You will build every route type from the lesson on two routers joined by a primary and a backup link: network routes in both directions, floating backups, a host route and a default route. Along the way you will see three faults from the lesson for yourself: a missing return route, a failed primary link, and a link-local next hop paired with the wrong interface.
 
+Start a new Packet Tracer project. The layout is the one from the IPv4 static-routing chapter, but all the IPv6 configuration is given here. Before each step, predict which route the router will use, then compare your prediction with the output.
 
-Start a new isolated project. This lab reuses the physical layout from the IPv4 static-routing chapter but supplies the complete IPv6 setup here. You will verify a missing return route, fail and restore the primary link, and repair a link-local next hop attached to the wrong link.
-
-No simulator execution is claimed. Output and prompts below are representative of documented IOS behavior. Packet Tracer may omit diagnostic options or detailed neighbor states. Record your version's differences and use the full tables and configuration as alternative evidence.
+The outputs shown are what IOS prints. Packet Tracer differs in small ways, such as leaving out the `Output Interface:` prompt or some neighbor states. Where that matters, the step says what to check instead.
 
 ## Topology
 
@@ -43,11 +42,11 @@ Use two 2911 routers with three GigabitEthernet ports each. Use default 2960 swi
 | PC-B | `2001:db8:20::12/64` | Automatic local-link address |
 | R2 Loopback0, added later | `2001:db8:99::8/128` | Not used as a next hop |
 
-PC-A's static IPv6 gateway is `fe80::1`. PC-B's is `fe80::2`. These gateway values belong to the router on each PC's own LAN. R2 intentionally uses `fe80::3` on the backup transit link, so the scope exercise has distinct peers to verify.
+PC-A's gateway is `fe80::1`, R1's address on LAN A. PC-B's gateway is `fe80::2`, R2's address on LAN B. R2 uses `fe80::3` on the backup link so that you can tell its two transit interfaces apart in Step 9.
 
 ### Route and evidence worksheet
 
-Before adding a route, write its destination prefix, next-hop address **and exit interface**, and expected distance. Keep separate rows for R1 and R2; the outbound path is not the return path.
+Before adding a route, write its destination prefix, next-hop address **and exit interface**, and expected distance. Keep separate columns for R1 and R2, because each direction needs its own route.
 
 | State | R1 route to PC-B | R2 route to PC-A | Endpoint result and evidence |
 |---|---|---|---|
@@ -57,7 +56,7 @@ Before adding a route, write its destination prefix, next-hop address **and exit
 | Wrong /128 present | PC-B versus R2 LAN address | Unchanged or changed? | Neighbor evidence for the selected next hop |
 | /128 repaired | Prediction / actual | Selected return path | Both endpoints; explain any asymmetry |
 
-Do not use a successful router-originated ping as a substitute for a client test unless you have verified the source address and its return lookup.
+Test from the PCs. A ping from a router uses a transit source address and can succeed when the PCs cannot reach each other.
 
 ## Step 1: Configure R1
 
@@ -85,7 +84,7 @@ R1# show ipv6 interface brief
 ```
 
 :::expected
-The assigned addresses appear. Gi0/2 should become up/up after its switch port is ready; the transit ports may remain down until R2 is configured. R1 can use `fe80::1` on separate links without a same-link duplicate.
+The three global addresses and `FE80::1` appear. Gi0/2 becomes up/up once its switch port is ready, which takes about 30 seconds. Gi0/0 and Gi0/1 stay down until R2 is configured. R1 can use `fe80::1` on all three interfaces because each is a different link.
 :::
 
 ```state
@@ -120,7 +119,7 @@ R2# ping 2001:db8:13::1
 ```
 
 :::expected
-Both transit links should become up/up and both pings should succeed after discovery. Read the actual interface names and peer addresses rather than relying only on green cable indicators. Correct a local-link failure before adding remote routes.
+Both transit links are up/up and both pings succeed. The first ping may lose a packet while Neighbor Discovery resolves R1's MAC address. If a ping fails, fix the addresses or cabling on that link before you add any routes.
 :::
 
 ```state
@@ -143,16 +142,16 @@ From PC-B:
 ping 2001:db8:20::1
 ```
 
-On R1, run the following command by itself, then answer its interactive prompt:
+A link-local address exists on every link, so IOS has to ask which interface to send the ping from. On R1, enter this command and answer the prompt:
 
 ```ios R1
 R1# ping fe80::2
 ```
 
 :::expected
-Both local PC pings should succeed. Documented IOS behavior asks `Output Interface:` for the link-local ping; enter `gigabitethernet0/0` and allow the test to finish. It should reach R2's primary address. Repeat `ping fe80::3` and select `gigabitethernet0/1` for the backup neighbor.
+Both PC pings succeed. For the link-local ping, IOS asks `Output Interface:`. Type `gigabitethernet0/0` in full and the ping reaches R2's primary interface. Then run `ping fe80::3` and answer `gigabitethernet0/1` to reach R2's backup interface.
 
-If this prompt is not modeled, use the successful global transit pings from Step 2 and the peer's interface display as evidence, and record the unsupported scoped-ping observation. Do not infer a link's identity from the address text alone.
+If Packet Tracer does not show the prompt, rely on the Step 2 pings and on `show ipv6 interface brief` on R2, which lists the link-local address of each interface.
 :::
 
 ```state
@@ -161,7 +160,7 @@ If this prompt is not modeled, use the successful global transit pings from Step
 
 ## Step 4: Add only the outbound remote-LAN route
 
-Before adding it, predict which source prefixes R2 can currently return to. Write separate predictions for an explicitly transit-sourced router probe and a PC-A probe; the commands below do not guarantee which source an unsourced router ping chooses.
+R1 gets a route to LAN B, but R2 gets nothing yet. Before you start, predict two results: a ping to PC-B from R1 itself, which is sourced from `2001:db8:12::1`, and a ping to PC-B from PC-A. Which of those source addresses can R2 route a reply to?
 
 ```ios R1
 R1# configure terminal
@@ -171,10 +170,10 @@ R1# show ipv6 route static
 R1# ping 2001:db8:20::12
 ```
 
-Then ping `2001:db8:20::12` from PC-A. Inspect R2's full IPv6 table before fixing anything.
+Then ping `2001:db8:20::12` from PC-A. Run `show ipv6 route` on R2 before fixing anything.
 
 :::expected
-R1 selects the remote /64 through `fe80::2` on Gi0/0. Its router-originated ping may succeed using a transit source that R2 knows as connected; inspect the source if your image displays it. PC-A's ping should fail because R2 has no route covering `2001:db8:10::11`. The missing return prefix in R2's table establishes the fault; router ping source selection alone is not assumed as universal evidence.
+R1 installs the /64 through `fe80::2` on Gi0/0. R1's own ping succeeds, because R2 is connected to the transit prefix the ping came from. PC-A's ping fails: the request reaches PC-B, but R2 has no route covering `2001:db8:10::11` and drops the reply. R2's table shows only its connected and local routes.
 :::
 
 ```state
@@ -191,7 +190,7 @@ R2# show ipv6 route static
 ```
 
 :::expected
-PC-A-to-PC-B ping and the reverse ping should now succeed. R2 has the return /64 through R1 on the primary link. Record both installed entries before adding standby routes. A successful test in only one direction can still conceal a source-dependent issue, so perform both endpoint tests.
+R2 now has `2001:DB8:10::/64 [1/0]` through `FE80::1` on Gi0/0. Ping from PC-A to PC-B and from PC-B to PC-A; both succeed. Record both installed routes before you add the backups.
 :::
 
 ```state
@@ -200,9 +199,9 @@ PC-A-to-PC-B ping and the reverse ping should now succeed. R2 has the return /64
 
 ## Step 6: Configure both floating routes
 
-Predict which entries belong in the running configuration and which should appear in the installed table while the primary is healthy.
+Each router gets a second route to the same /64 through the backup link, with distance 5. Predict which routes will appear in `show ipv6 route static` while the primary link is up.
 
-First add R1's standby path.
+First add R1's backup route.
 
 ```ios R1
 R1# configure terminal
@@ -212,7 +211,7 @@ R1# show running-config
 R1# show ipv6 route static
 ```
 
-Then add R2's standby return path in its separate console:
+Then add R2's backup return route:
 
 ```ios R2
 R2# configure terminal
@@ -222,7 +221,7 @@ R2# show ipv6 route static
 ```
 
 :::expected
-Each router retains two configured candidates for its remote /64. With both primary links working, the installed route remains distance 1 through Gi0/0. The distance-5 candidate is not normally displayed by the installed-static filter.
+The running configuration on each router holds two routes to the remote /64. `show ipv6 route static` shows only the distance-1 route through Gi0/0. The distance-5 route is not installed, so it is not listed.
 :::
 
 ```state
@@ -231,9 +230,7 @@ Each router retains two configured candidates for its remote /64. With both prim
 
 ## Step 7: Fail the primary and observe the backup
 
-Record both expected interface/address pairs and distances before shutdown. After the change, collect both routing tables and PC tests before opening the recovery step.
-
-Shut R1 Gi0/0 and keep it shut until the checks are complete.
+Write down the route you expect each router to install once the primary link is down: next hop, interface and distance. Then shut R1 Gi0/0 and leave it shut until you have checked both routers and both PCs.
 
 ```ios R1
 R1# configure terminal
@@ -244,17 +241,17 @@ R1# show ipv6 interface brief
 R1# show ipv6 route static
 ```
 
-On R2, inspect the same two show commands. Repeat PC pings after allowing link and route updates; no continuous-ping extension is required.
+Run the same two show commands on R2, then repeat the PC pings.
 
 :::expected
-Because the primary routers are directly cabled, R2's Gi0/0 should lose carrier as well. The remote /64 on each router should move to Gi0/1 at distance 5. R1 uses `fe80::3`; R2 uses `fe80::1`.
+The routers are cabled directly, so R2's Gi0/0 goes down too. Each router removes its distance-1 route and installs the distance-5 route through Gi0/1. R1 uses `fe80::3`; R2 uses `fe80::1`.
 
 ```output R1# show ipv6 route static
 S   2001:DB8:20::/64 [5/0]
      via FE80::3, GigabitEthernet0/1
 ```
 
-Endpoint pings should recover on the backup. No exact loss count or convergence time is promised. If the path fails, inspect the backup neighbor and the reverse route before bringing the primary back.
+The PC pings work again over the backup link. If they fail, check the backup next hop on R1 and the backup return route on R2 before you bring the primary back.
 :::
 
 ```state
@@ -272,7 +269,7 @@ R1# show ipv6 route static
 ```
 
 :::expected
-After link recovery, both routers select their distance-1 primary routes again. Backup candidates remain in the running configuration. Verify both endpoint pings before the next controlled fault.
+Once Gi0/0 is up on both routers, each reinstalls its distance-1 route. The backups stay in the running configuration. Confirm both PC pings before the next step.
 :::
 
 ```state
@@ -281,9 +278,7 @@ After link recovery, both routers select their distance-1 primary routes again. 
 
 ## Step 9: Introduce a host route with the wrong scoped neighbor
 
-Before typing, predict the selected route for PC-B and for R2's LAN address. Explain on paper whether distance 200 prevents a more-specific /128 from being selected.
-
-This deliberately incorrect /128 is syntactically complete. It identifies R2's **primary** link-local address on R1's **backup** interface, where that address does not exist.
+This step adds a host route for PC-B that contains a deliberate mistake: it pairs R2's **primary** link-local address, `fe80::2`, with R1's **backup** interface, Gi0/1. IOS accepts the command. Before typing it, predict which route R1 will use for PC-B and which for R2's LAN address `2001:db8:20::1`, and whether distance 200 stops the /128 from being used.
 
 ```ios R1
 R1# configure terminal
@@ -295,9 +290,9 @@ R1# show ipv6 route
 From PC-A, ping `2001:db8:20::12`, then separately ping `2001:db8:20::1`. On R1 inspect `show ipv6 neighbors`. On R2 confirm Gi0/1 actually uses `fe80::3`.
 
 :::expected
-The host route can install on the active interface and wins for PC-B's address despite distance 200. It cannot resolve the intended next hop on that link, so PC-B's test should fail. The LAN router address `2001:db8:20::1` is not covered by /128 and should still work through the /64 primary.
+The /128 is installed because Gi0/1 is up, and it wins for PC-B's address despite distance 200, because it is the longest match. No device on that link owns `fe80::2`, so R1 cannot resolve the next hop and the ping to PC-B fails. `2001:db8:20::1` is outside the /128 and still works through the /64.
 
-An unresolved neighbor may appear as incomplete or may disappear between attempts. Compare the interface/address pair rather than requiring one exact state label. If the simulator does not model the expected resolution failure, record that limitation; the peer-address mismatch is still clear in the configuration.
+In `show ipv6 neighbors`, `FE80::2` on Gi0/1 shows as `INCMP` or is missing. `FE80::2` on Gi0/0 is a different neighbor. If Packet Tracer delivers the ping anyway, the mismatch is still visible in the configuration: R2's Gi0/1 is `fe80::3`.
 :::
 
 ```state
@@ -315,7 +310,7 @@ R1# show ipv6 route 2001:db8:20::12
 ```
 
 :::expected
-PC-A should now reach PC-B through the /128's valid backup next hop. The /64 primary still serves the other LAN addresses. Use the full table if the address-specific query is unsupported. A reply can return over the primary; this asymmetry is valid in the stated lab with no filtering or translation.
+`show ipv6 route` followed by an address shows the one route R1 uses for that destination: here the /128 through `FE80::3` on Gi0/1. If Packet Tracer rejects the command, read the full table. PC-A reaches PC-B over the backup link, and the reply returns over the primary because R2 still uses its distance-1 route. Different paths in each direction are fine. The /64 still serves the rest of LAN B.
 :::
 
 ```state
@@ -324,7 +319,7 @@ PC-A should now reach PC-B through the /128's valid backup next hop. The /64 pri
 
 ## Step 11: Add a real destination for a default route
 
-On R2 create the logical test interface:
+A default route needs a destination that no other route covers. Create one on R2 with a loopback, a virtual interface that is up whenever the router is:
 
 ```ios R2
 R2# configure terminal
@@ -337,7 +332,7 @@ R2# show ipv6 route
 From PC-A, ping `2001:db8:99::8` before adding a default to R1.
 
 :::expected
-R2 has the loopback destination locally, but R1 has no covering remote route or default. The PC ping should fail. Confirm the absent covering prefix in R1's table. No cable or external service is needed for the loopback.
+R2 lists the loopback address as a /128. The PC ping fails: R1 has no route that covers `2001:db8:99::8` and no default, so it drops the packet. Confirm that in R1's table.
 :::
 
 ```state
@@ -354,7 +349,7 @@ R1# show ipv6 route static
 ```
 
 :::expected
-R1 lists the default `::/0` through R2. PC-A's ping to `2001:db8:99::8` should now succeed. R2 already has the return route to the PC-A LAN. PC-B still follows its more specific /128; a default does not override specific routes. This is an isolated routing test, not proof of public IPv6 connectivity.
+R1 lists `::/0 [1/0]` through `FE80::2` on Gi0/0. PC-A's ping to `2001:db8:99::8` now succeeds, because R2 already has a return route to LAN A. Traffic to PC-B still uses the /128: a default route never overrides a more specific one.
 :::
 
 ```state
@@ -384,7 +379,7 @@ R2# show ipv6 route
 ```
 
 :::expected
-R1 retains only its primary and floating remote-LAN candidates; R2 retains its corresponding return candidates. No temporary host route, default or loopback remains. Both physical paths are enabled. Confirm PC-to-PC ping once more.
+R1 keeps its primary and floating routes to LAN B, and R2 keeps its primary and floating routes to LAN A. The host route, the default route and the loopback are gone. Confirm the PC-to-PC ping once more.
 :::
 
 ```state
@@ -404,7 +399,7 @@ R2# copy running-config startup-config
 ```
 
 :::expected
-Accept R2's prompt separately. Save the Packet Tracer project as `20-ipv6-static-baseline.pkt`. Keep your route and neighbor observations with the file. Project saving and startup-configuration saving are distinct actions.
+Both routers report `[OK]`. Then save the Packet Tracer project as `20-ipv6-static-baseline.pkt`. Saving the project file does not save a router's running configuration, so do both.
 :::
 
 ```state
@@ -417,15 +412,15 @@ Accept R2's prompt separately. Save the Packet Tracer project as `20-ipv6-static
 - **A link-local route is rejected:** include the local exit interface. Valid syntax still needs the correct neighbor on that link.
 - **An installed route does not deliver:** compare the scoped next hop against the peer's interface, generate traffic, and inspect neighbor resolution. Then check downstream and return routes.
 - **Router pings work but PC pings fail:** confirm the source used by the router, the return prefix for the PC, both PC gateways and `ipv6 unicast-routing`.
-- **The standby never appears:** inspect the preferred route's eligibility and the backup interface. The ordinary route is not an end-to-end health monitor.
-- **Both paths have distance 1:** read the backup configuration and restore its intended distance 5. Equal-cost multipath is different from standby.
+- **The backup route never appears:** it is installed only when the primary route leaves the table. Check that the primary's exit interface is really down and that the backup interface is up.
+- **Both routes are installed at distance 1:** the backup was entered without its distance. Remove it and add it again with `5` at the end.
 - **One address fails while the rest of the LAN works:** check for a more specific /128 overriding the working /64.
 
 ## Challenge
 
 In a copy of the cleaned baseline, add a **new service destination** `2001:db8:77::7/128` on R2 Loopback7. PC-A must reach only that new host prefix using primary R1 Gi0/0, with R1 Gi0/1 as a distance-25 standby. Use link-local next hops. Do not add a default route or widen the host prefix. Preserve all existing LAN routes and R2's primary/floating return routes.
 
-Before configuring anything, write the two R1 routes, their scoped next hops, the selected route while healthy, and the selected route after primary failure. Explain why R2's existing LAN-A routes are sufficient for replies to PC-A. Then perform these separate phases:
+Before configuring anything, write the two R1 routes with their next hops and interfaces, the route used while the primary is up, and the route used after it fails. Explain why R2's existing routes to LAN A are enough for the replies. Then work in three phases:
 
 1. Add the new loopback and routes. Record the /128 entry and ping the service from PC-A.
 2. Shut only R1 Gi0/0. Keep it down while collecting both routers' return/forward entries and another PC-A service test.

@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "The interface list checks the incoming SSH request even though its destination is R1 itself. It misses the WEB-only permit and reaches deny 20 before the VTY access class can allow the source. An outbound VTY rule does not admit an incoming session; moving HTTP below the deny would break its working service; established would miss a normal initial SSH SYN because ACK/RST is not yet set.",
-    "fix": "Use the local console and a supported sequence-editing image.\n\n```ios\nR1# configure terminal\nR1(config)# ip access-list extended CLIENTS-IN\nR1(config-ext-nacl)# 15 permit tcp host 10.100.10.10 host 10.100.10.1 eq 22\nR1(config-ext-nacl)# end\nR1# show access-lists CLIENTS-IN\n```\nRetry a new SSH session from PC-A, confirm WEB still loads, and confirm an unapproved client remains blocked. If insertion is unsupported, build an equivalent complete replacement ACL under a new name and replace the interface reference."
+    "explanation": "The interface ACL also checks SSH sent to R1 itself. The WEB-only permit misses it, deny 20 drops it, and the VTY access class never sees it, so permit TCP/22 from PC-A before the deny.",
+    "fix": "Use the console.\n\n```ios\nR1# configure terminal\nR1(config)# ip access-list extended CLIENTS-IN\nR1(config-ext-nacl)# 15 permit tcp host 10.100.10.10 host 10.100.10.1 eq 22\nR1(config-ext-nacl)# end\nR1# show access-lists CLIENTS-IN\n```\nStart a new SSH session from PC-A, confirm WEB still loads and confirm another client is still blocked. If the image cannot insert by sequence number, build a complete replacement ACL under a new name and attach it instead."
   },
   {
     "id": "acls-t02",
@@ -58,8 +58,8 @@
     "answer": [
       2
     ],
-    "explanation": "Every IPv4 packet matches sequence 10, so the router never reaches deny 20. Placing the specific deny first implements the intended exception. Reversing direction on the client interface would miss requests; another permit does not repair order; SSH uses TCP.",
-    "fix": "Build a complete replacement before changing the reference.\n\n```ios\nR1# configure terminal\nR1(config)# ip access-list extended BRANCH-FIXED\nR1(config-ext-nacl)# deny tcp 10.100.10.0 0.0.0.255 host 10.100.20.30 eq 22\nR1(config-ext-nacl)# permit ip any any\nR1(config-ext-nacl)# exit\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# ip access-group BRANCH-FIXED in\nR1(config-if)# end\nR1# show access-lists BRANCH-FIXED\n```\nStart a new SSH connection and verify denial. Test a separately permitted service and compare counter changes. Existing application sessions and cached displays are not sufficient fresh tests."
+    "explanation": "Sequence 10 permits every IPv4 packet, so the SSH deny at 20 is never reached. Put the specific deny before the general permit.",
+    "fix": "Build a complete replacement ACL, then change the reference.\n\n```ios\nR1# configure terminal\nR1(config)# ip access-list extended BRANCH-FIXED\nR1(config-ext-nacl)# deny tcp 10.100.10.0 0.0.0.255 host 10.100.20.30 eq 22\nR1(config-ext-nacl)# permit ip any any\nR1(config-ext-nacl)# exit\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# ip access-group BRANCH-FIXED in\nR1(config-if)# end\nR1# show access-lists BRANCH-FIXED\n```\nStart a new SSH connection and confirm it is denied. Test a permitted service and check the counters."
   },
   {
     "id": "acls-t03",
@@ -89,7 +89,7 @@
     "answer": [
       0
     ],
-    "explanation": "ACL 10 matches only the source. Inbound on G0/0 it rejects PC-B before any destination is selected. Outbound on G0/1 confines that rejection to traffic entering the server LAN. Outbound on G0/0 tests replies with different sources; deleting permit any would deny everyone evaluated by the list; applying it everywhere would broaden the error.",
-    "fix": "Configure through the console. First attach the unchanged list at the correct destination boundary; retain the original ingress restriction until this attachment is confirmed.\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# ip access-group 10 out\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/1\n```\nConfirm that G0/1 names ACL 10 as its outgoing list. Then remove the incorrect ingress attachment.\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# no ip access-group 10 in\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/0\nR1# show ip interface gigabitethernet0/1\n```\nVerify that PC-B remains denied toward the tested server in 10.100.20.0/24 and can again reach the tested host in 10.100.30.0/24, while another client retains its permitted access. Attaching the correct restriction before removing the old one avoids an interval of unintended server access. If the policy later distinguishes two servers in the same LAN, use an extended ACL."
+    "explanation": "ACL 10 matches only the source, so inbound on G0/0 it blocks PC-B to every destination. Outbound on G0/1 blocks PC-B only toward the server LAN.",
+    "fix": "Use the console. Attach the list at the correct place first and keep the old attachment until you have confirmed it.\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# ip access-group 10 out\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/1\n```\nConfirm that G0/1 names ACL 10 as its outgoing list. Then remove the incorrect ingress attachment.\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/0\nR1(config-if)# no ip access-group 10 in\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/0\nR1# show ip interface gigabitethernet0/1\n```\nVerify that PC-B is still denied to the server in 10.100.20.0/24 and can reach the host in 10.100.30.0/24, and that another client keeps its access. Attaching the new restriction first avoids a gap in filtering. To separate two servers in one LAN, use an extended ACL."
   }
 ]

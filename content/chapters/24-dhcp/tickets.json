@@ -31,8 +31,8 @@
     "answer": [
       2
     ],
-    "explanation": "The client broadcast arrives on Gi0/0, but only Gi0/1 has the helper. Move it to the receiving client interface. Capacity is not exhausted: 254 − 49 − 2 = 203 addresses are available under the stated conditions. The return route is supplied. An old client can keep working with a valid lease; its later unicast renewal might also work without this helper, so it does not validate initial relay acquisition.",
-    "fix": "Move the helper, then repeat the fresh client request.\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# no ip helper-address 10.10.20.2\nR1(config-if)# interface gigabitethernet0/0\nR1(config-if)# ip helper-address 10.10.20.2\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/0\n```\n\nVerify a new R2 binding and the client’s actual address, mask, gateway, and DNS setting. Test the gateway and intended remote service. Save the corrected configuration after verification."
+    "explanation": "The client broadcast arrives on Gi0/0, but the helper is only on Gi0/1. Move it to the client-facing interface. The pool is not exhausted, and an old lease does not test initial acquisition.",
+    "fix": "Move the helper, then repeat the fresh client request.\n\n```ios\nR1# configure terminal\nR1(config)# interface gigabitethernet0/1\nR1(config-if)# no ip helper-address 10.10.20.2\nR1(config-if)# interface gigabitethernet0/0\nR1(config-if)# ip helper-address 10.10.20.2\nR1(config-if)# end\nR1# show ip interface gigabitethernet0/0\n```\n\nCheck for a new binding on R2 and confirm the client's address, mask, gateway and DNS. Test the gateway and a remote service, then save."
   },
   {
     "id": "dhcp-t02",
@@ -41,7 +41,7 @@
       "v1:4.3",
       "v2:1.7"
     ],
-    "scenario": "An isolated training room uses R1 as a verified relay and R2 as an IOS DHCP server. The first three clients still have valid leases and are powered on. A fourth fresh client receives no allocation. Its Discover reaches R2. The reserved infrastructure range is .1–.49; the upper exclusion was temporary for this exercise. These are representative records, not simulator captures.",
+    "scenario": "An isolated training room uses R1 as a verified relay and R2 as an IOS DHCP server. The first three clients still have valid leases and are powered on. A fourth fresh client receives no allocation. Its Discover reaches R2. The reserved infrastructure range is .1–.49; the upper exclusion was temporary for this exercise.",
     "exhibits": [
       {
         "title": "R2 pool configuration",
@@ -62,7 +62,7 @@
     "answer": [
       1
     ],
-    "explanation": "The two exclusions leave only .50–.52, all of which are occupied. Removing the temporary upper exclusion expands the candidate range to .50–.254, 205 addresses, while preserving static infrastructure. Broadly deleting bindings risks allocating an address still in use. Changing a working helper does not add capacity; removing gateway protection is unsafe. Existing eight-hour leases can expire or be released; they are not permanent.",
-    "fix": "Remove only the temporary exclusion.\n\n```ios\nR2# configure terminal\nR2(config)# no ip dhcp excluded-address 10.10.10.53 10.10.10.254\nR2(config)# end\nR2# show ip dhcp pool\nR2# show ip dhcp binding\n```\n\nRetry DHCP on the fourth client, confirm its new address is outside .1–.49 and distinct from active clients, and test the gateway. Verify all original clients retain service. Save after the check."
+    "explanation": "The exclusions leave only .50 to .52, and all three are leased. Removing the temporary upper exclusion opens .50 to .254. Clearing bindings could hand out addresses still in use.",
+    "fix": "Remove only the temporary exclusion.\n\n```ios\nR2# configure terminal\nR2(config)# no ip dhcp excluded-address 10.10.10.53 10.10.10.254\nR2(config)# end\nR2# show ip dhcp pool\nR2# show ip dhcp binding\n```\n\nRetry the fourth client. Confirm its address is outside .1 to .49 and unique, and that the original clients still work. Then save."
   }
 ]

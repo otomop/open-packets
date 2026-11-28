@@ -33,7 +33,9 @@ sources:
   - { title: "RFC 3418: SNMP management information", url: "https://www.rfc-editor.org/rfc/rfc3418.html" }
 ---
 
-A useful outage record needs a time reference, descriptions of events and measurements of device state. These services provide different evidence. Learn what each record means before using it to explain an outage: accurate arithmetic cannot rescue an unreliable timestamp, and a received notification does not establish the cause of the reported event.
+A branch loses its WAN link at 09:15 and recovers a minute later. Afterwards you are asked what happened. The router's log holds a link-down message, but its clock says 1 March 1993. The monitoring system shows the interface up at 09:15 and up again at 09:16. Every record is true, and none can be placed against the others, so you cannot say what happened first.
+
+Three management services solve this. NTP gives every device the same clock. Syslog records events as they happen, each with a severity. SNMP lets a monitoring station read counters and state from a device and receive alerts from it. Building on the device access from Chapter 8 and the UDP ports from Chapter 6, you will configure NTP in client and server roles, read any syslog message and predict where it is sent, and explain what SNMP's versions and messages do.
 
 ## Time, events and measurements
 
@@ -45,17 +47,17 @@ A useful outage record needs a time reference, descriptions of events and measur
 - Compare clocks and time zones before correlating records from different devices.
 :::
 
-Suppose a branch loses access at 09:15. The router's event log can show a neighbor transition, while interface counters show whether traffic or errors increased around that time. Without a shared clock reference, apparently simultaneous records may describe different moments. **NTP** provides that common time reference; it does not diagnose the outage.
+Take the 09:15 outage again. **NTP**, the Network Time Protocol, keeps device clocks in step, so that a timestamp on one device means the same moment on another. It explains nothing by itself, but without it the other two services cannot be compared.
 
-**Syslog** supplies an event description, severity and source context. **SNMP** supplies selected management values, often sampled repeatedly to create trends. Polling and event notifications complement one another: a counter increase can survive between samples even when a short-lived interface state change is no longer visible.
+**Syslog** is the device's own account of events: an interface changed state, a neighbor went down, someone changed the configuration. **SNMP**, the Simple Network Management Protocol, works the other way round: a management station asks the device for values such as interface counters, usually every few minutes, and builds trends from them. The two complement each other. A poll every minute can miss a link that dropped for 15 seconds, and the syslog message catches it. The log message does not say how much traffic the link was carrying, and the counters do.
 
-The v1.1 blueprint requires configuring/verifying NTP client and server roles, explaining SNMP, and describing syslog facilities and severities. The v2.0 blueprint retains SNMP function and emphasizes interpreting syslog. NTP remains useful preparation for credible timestamps; detailed SNMP deployment and advanced NTP security configuration are additional context rather than separate required configuration objectives here.
+For the v1.1 exam you configure and verify NTP in client and server mode, explain SNMP, and describe syslog facilities and severity levels. The v2.0 exam keeps SNMP and asks you to interpret syslog messages.
 
 ## Understand NTP sources and stratum
 
-NTP exchanges timestamps to estimate clock **offset** and network delay, then disciplines the local clock. It needs usable measurements, not just a configured server address. Initial synchronization and recovery take time; read the current association rather than requiring success after a fixed number of seconds.
+An NTP client sends its server a small UDP packet stamped with the client's time, and the server returns it with its own timestamps added. From those times the client works out its **offset** from the server and the delay on the path, then adjusts its clock gradually. It repeats this at every poll interval and needs several good exchanges before it declares itself synchronized, so a new association takes a few minutes to settle.
 
-**Stratum** describes position in the time-distribution hierarchy. In a conventional diagram, a directly attached reference clock is called stratum 0, a server using that reference is stratum 1, and a synchronized downstream device adds one. Ordinary synchronized network strata are 1–15; 16 indicates unsynchronized state. A packet's stratum-0 value has protocol meanings such as a control response and should not be mistaken for an ordinary preferred network server.
+**Stratum** says how many NTP steps a device is from a reference clock. The reference itself, such as an atomic clock or GPS receiver, is stratum 0 and is not on the network. A server attached directly to it is stratum 1. Every device that synchronizes to a server reports that server's stratum plus one. Usable values run from 1 to 15, and 16 means unsynchronized.
 
 | Example | Reported stratum | Interpretation |
 |---|---:|---|
@@ -68,11 +70,11 @@ NTP exchanges timestamps to estimate clock **offset** and network delay, then di
 {"type":"topology","title":"A synchronized NTP hierarchy","caption":"These are NTP associations, not counts of routers along the IP path. A device can receive time and serve downstream clients.","nodes":[{"id":"S","kind":"server","label":"Reference server","sub":"stratum 1","x":2,"y":3},{"id":"R1","kind":"router","label":"R1","sub":"stratum 2","x":6,"y":3},{"id":"R2","kind":"router","label":"R2","sub":"stratum 3","x":10,"y":3}],"links":[{"from":"S","to":"R1","label":"NTP","accent":true},{"from":"R1","to":"R2","label":"NTP"}]}
 ```
 
-Lower stratum is not proof of better accuracy, security or reachability. Source-selection checks can reject an unsuitable server despite a lower advertised number. Similarly, a manually adjusted clock can look correct without NTP synchronization. Read both the time source and synchronization state.
+Stratum counts NTP associations, not routers on the path: a client ten router hops from a stratum 1 server is still stratum 2. When a client has several servers configured, it prefers the lowest stratum among those it judges trustworthy. A clock set by hand can also show the right time without being synchronized to anything, so read the synchronization state and the selected source instead of judging by the displayed time.
 
 ## Configure and verify NTP
 
-Configure a client with the server's actual reachable address:
+`ntp server` makes a router an NTP client of the address you name:
 
 ```ios R2
 R2# configure terminal
@@ -83,9 +85,9 @@ R2# show ntp associations
 R2# show clock detail
 ```
 
-A synchronized router can provide time to permitted downstream clients; it does not need `ntp master` just to relay time learned from a valid source. Interface restrictions, NTP access policy, authentication and platform support can still limit which clients receive usable service.
+That one command also covers the server role. An IOS device that is synchronized answers NTP requests from other devices automatically, so R2 becomes a server for anything that points `ntp server` at it. This is what the objective means by client and server mode: the same router is a client of its upstream source and a server to the devices downstream.
 
-For a deliberately isolated lab with no external time reference, configure a local master. The following date is an example for the exercise; set an appropriate lab time before using the router as the source.
+`ntp master` is for the top of the hierarchy when no external source exists, as in an isolated lab. It tells the router to trust its own clock and serve it. Set the clock first:
 
 ```ios R1
 R1# clock set 12:00:00 20 Sep 2026
@@ -95,7 +97,7 @@ R1(config)# end
 R1# show ntp status
 ```
 
-`ntp master 8` makes the local clock available at stratum 8; a client actually synchronized to it reports 9. The documented default without a number is also 8. This does not make the clock independently accurate. Do not use it as a routine repair for a lost authoritative source or assume it always loses selection to every external source. Repair and verify the intended source.
+`ntp master 8` serves the local clock at stratum 8, so a client synchronized to it reports 9. With no number the default is also 8. The high number is deliberate: if a real source becomes reachable, its lower stratum is preferred. The command does not make the clock accurate. It serves whatever time you typed, so it is not a repair for a router that has lost its real source.
 
 Representative output for the stated local-master lab:
 
@@ -107,25 +109,25 @@ Clock is synchronized, stratum 9, reference is 10.60.0.1  ← local device's sta
  * sys.peer, ~ configured
 ```
 
-The association's `st` belongs to the remote server; the first line reports the local client's stratum. In this IOS-style output, `*` identifies the selected peer and `~` a configured association. Other symbols and legends vary; use the legend printed by the actual command. The local-clock reference value is descriptive information, not an address the client should ping.
+`show ntp status` describes this router: synchronized or not, its own stratum and the server it follows. `show ntp associations` describes the servers. The `st` column is the server's stratum, `*` marks the server currently selected and `~` marks one that was configured by hand. `ref clock` is where that server gets its time; `127.127.1.1` is how IOS names a router's own clock and is not an address to ping.
 
-The **reach register** is eight bits displayed in octal, or base eight. Octal `377` equals `3 × 64 + 7 × 8 + 7 = 255`, the eight-bit binary value `11111111`. `377` represents eight recent successful poll results; `0` represents no successful result retained in that window, or an initial association. It does not prove that the peer has never responded in its lifetime. Starting from zero, consecutive successes produce `1, 3, 7, 17, 37, 77, 177, 377` in octal. `poll` reports the current interval, so do not impose a universal 64-second schedule.
+`reach` records the last eight polls as eight bits, a 1 for each reply and a 0 for each miss, and displays them in octal. Eight replies in a row are `11111111`, which is octal `377`. A new association climbs through `1, 3, 7, 17, 37, 77, 177, 377` as replies arrive, and `0` means none of the last eight polls was answered. `poll` is the current interval in seconds.
 
 :::trap Reachability and synchronization are different
-A nonzero reach value does not by itself establish selected synchronization or trustworthy time. A zero value with a successful ping warrants checking NTP service, the relevant UDP path, authentication, source restrictions and initial convergence. It does not prove an ACL is the cause.
+A nonzero reach means replies are arriving. It does not mean the server has been selected: look for the `*` and for `Clock is synchronized`. A reach of zero when ping works means ICMP gets through and NTP does not. Check that the server is itself synchronized, that UDP 123 is permitted, and that the association has had time to converge.
 :::
 
-Optional features include selecting a stable loopback source, source authentication and updating a supported hardware calendar. Changing the source address also changes return-route and access-policy requirements. NTP authentication does not encrypt the time exchange or independently prove that the supplied clock is accurate; use the supported security method for the actual platform.
+Three optional commands appear in real configurations. `ntp source loopback0` sends NTP packets from a stable loopback address. `ntp authenticate`, with `ntp authentication-key` and `ntp trusted-key`, makes a client accept time only from servers that share a key; it does not encrypt the exchange. `ntp update-calendar` copies NTP time to the hardware clock on platforms that have one.
 
 ## Read syslog messages
 
-An IOS-style message commonly contains a timestamp followed by `%FACILITY-SEVERITY-MNEMONIC: description`. A configured sequence number can precede it. Read the fields literally:
+Every IOS log message has the same shape: an optional sequence number, a timestamp, then `%FACILITY-SEVERITY-MNEMONIC: description`. Once you can pick out those fields you can read any message, including ones you have never seen.
 
 ```output Representative IOS event
 000045: Sep 20 12:07:41.123 UTC: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.60.0.60)
 ```
 
-`SYS` identifies the IOS component, `5` the severity, and `CONFIG_I` the event mnemonic. The description identifies the reported management session. It does not list every changed command or establish that this user caused a later interface event. The traditional words “from console” do not override the explicit VTY/session detail.
+`SYS` is the facility, the part of IOS that generated the message. `5` is the severity. `CONFIG_I` is the mnemonic, a short code for the event. The description says that someone left configuration mode: here `admin`, on line vty0 from 10.60.0.60, which is a remote session even though the fixed wording says “from console”. The message records that a configuration session ended, not which commands were entered.
 
 | Level | IOS keyword | Meaning |
 |---|---|---|
@@ -138,15 +140,15 @@ An IOS-style message commonly contains a timestamp followed by `%FACILITY-SEVERI
 | 6 | informational | Informational message |
 | 7 | debugging | Debug-level detail |
 
-Lower numbers are more severe. Severity is part of the message definition, not an independent measurement of business impact. A level-5 line-protocol transition can still interrupt an important service. Read the interface, state and surrounding evidence.
+Lower numbers are more severe, and you need all eight names in order. A common memory aid is “Every Awesome Cisco Engineer Will Need Ice cream Daily”. The severity is fixed by the message type, not by the damage done: `%LINEPROTO-5-UPDOWN` is level 5 whether the interface is a test loopback or the only WAN link.
 
-A timestamp marked `*` on the relevant IOS display means the clock is not considered authoritative; it does not prove the device has never used NTP. A plausible date without an asterisk does not certify UTC accuracy. Check `show clock detail`, synchronization and timezone settings. `service timestamps log datetime msec` changes formatting; it does not synchronize time.
+An asterisk before a timestamp, as in `*Mar  1 00:04:12`, means the router does not consider its clock authoritative because the time has not been set or synchronized. Treat such timestamps as unreliable and check `show clock detail`. `service timestamps log datetime msec` only changes how the time is printed, adding the date and milliseconds.
 
-**Facility** also has a transport meaning. A syslog PRI value encodes a numeric facility and severity as `facility × 8 + severity`. For an example explicitly using `local7` (23), `<189>` represents severity 5: `189 − 23 × 8 = 5`. The IOS component `SYS` in the message is distinct from that transport facility. Cisco's referenced logging guide documents local7 as its default, but read the actual configuration. PRI arithmetic is useful interpretation practice, not a replacement for reading message content.
+The word **facility** has a second meaning. When a message is sent to a syslog server, the packet carries a numeric syslog facility that the server uses to sort messages, and this is separate from the `SYS` or `LINK` in the text. Cisco devices send as `local7` (facility 23) unless `logging facility` changes it. The packet combines both numbers into one priority value, `facility × 8 + severity`, so a severity 5 message sent as local7 arrives marked `<189>`: `23 × 8 + 5 = 189`.
 
 ## Select logging destinations and thresholds
 
-The common destinations below have independent settings. Defaults and supported persistence vary, so verify them with `show logging` instead of assuming all devices use the same buffer or severity.
+IOS can send each message to four places, and each has its own on/off setting and severity threshold. `show logging` lists all four.
 
 | Destination | Typical controls | What to verify |
 |---|---|---|
@@ -155,7 +157,7 @@ The common destinations below have independent settings. Defaults and supported 
 | Memory buffer | `logging buffered`; `show logging` | Size, threshold, retained interval |
 | Remote collector | `logging host`; `logging trap` | Destination, transport, threshold and actual reception |
 
-A basic threshold includes its numeric level and every lower, more severe level. `logging trap warnings` permits 0–4 and excludes 5–7 for that destination, subject to other filters and delivery. It does not mean “only warnings.” The name `logging trap` concerns syslog forwarding; it is not the command that enables SNMP traps.
+A threshold names the least severe level a destination accepts; that level and everything more severe get through. `logging trap warnings` therefore sends levels 0–4 to the server and holds back 5–7. It does not mean “only warnings”. Despite its name, `logging trap` sets the threshold for the syslog server and has nothing to do with SNMP traps.
 
 ```ios R2
 R2# configure terminal
@@ -169,13 +171,13 @@ R2(config)# end
 R2# show logging
 ```
 
-In an existing SSH session, `terminal monitor` requests eligible live messages for that session. `terminal no monitor` stops that display. `logging synchronous` controls how unsolicited messages interact with typed input; it does not enable collection. The lab uses console access and includes remote-session behavior as a worksheet, so no weaker management protocol is needed.
+Console messages appear on the console port automatically. An SSH or Telnet session shows nothing until you type `terminal monitor` in that session, which is why a remote engineer can miss messages that a console user sees; `terminal no monitor` turns the display off again. `logging synchronous`, a line command, reprints the command you were typing after a message interrupts it. It does not change what is logged.
 
-A memory buffer is finite and can overwrite old records. Ordinary buffered logs are lost on reload; some platforms support separately configured persistent logging. A remote collector can retain records independently of the router, but retention still depends on its storage and policy. UDP 514 has no transport acknowledgment. Other transports, including secured options, require compatible endpoints and explicit configuration; a configured logging host is not proof of delivery.
+The buffer lives in RAM. It has a fixed size, so new messages overwrite the oldest, and a reload empties it. A syslog server keeps messages off the device, which is the reason to configure one. Messages travel to it over UDP 514 with no acknowledgment, so the router cannot tell whether they arrived. Check on the server.
 
 ## Understand SNMP operations and security
 
-An **SNMP manager** requests information from an **agent**. A **Management Information Base (MIB)** defines managed objects and their types; an **object identifier (OID)** identifies an object or instance in the hierarchy. The agent supplies the value. A scalar instance commonly ends in `.0`, while table instances use indexes. Do not assume interface index 3 always means physical port Gi0/3; correlate the interface's name and index.
+Syslog tells you what a device chose to report. SNMP lets a monitoring station ask. The station is the **manager**, often called an NMS (network management station), and software on each device, the **agent**, answers it. What can be asked is defined by the **Management Information Base (MIB)**, a catalogue of the variables a device exposes, such as its name, uptime and per-interface counters. Each variable is named by an **object identifier (OID)**, a dotted string of numbers such as `1.3.6.1.2.1.1.5.0` for the device name. Single values end in `.0`. Values in a table, such as interface counters, end in a row index, which is not necessarily the port number.
 
 | Operation | Purpose | Common UDP direction |
 |---|---|---|
@@ -187,11 +189,11 @@ An **SNMP manager** requests information from an **agent**. A **Management Infor
 | Trap | Send a notification without protocol acknowledgment | Agent to receiver destination 162 |
 | Inform | Send a notification that expects a Response | Sender to receiver destination 162 |
 
-An inform can be retried according to configured limits; it is not retried forever or guaranteed to reach a human operator. Traps have no SNMP acknowledgment. Notification selection must be configured; an agent does not automatically report every possible event.
+The first four rows are polling: the manager asks and the agent answers. Trap and Inform run the other way and let the agent report an event without waiting to be asked. A Trap is sent once and never acknowledged, so a lost Trap goes unnoticed. An Inform is acknowledged with a Response and is sent again if none arrives. An agent sends only the notifications it has been configured to send.
 
-**SNMPv1 and v2c** use community strings without confidentiality. Read-only access permits supported reads; read-write access can also request supported writes, subject to views and object definitions. v2c supports GetBulk, Inform notifications and Counter64, which v1 does not. A captured community can be reused, so restrict access and prefer an appropriate secure management design.
+The versions differ mainly in security. **SNMPv1 and v2c** authenticate with a **community string**, a shared password sent in clear text in every packet. A read-only (`ro`) community allows the read operations; a read-write (`rw`) community also allows Set. Anyone who captures the string can use it. v2c adds GetBulk, Inform and 64-bit counters to v1 and keeps the same weak security.
 
-For the common SNMPv3 user-based security model, **message authentication** checks the claimed sender and detects alteration of protected message content. **Privacy** encrypts the managed data so an observer cannot read it without the key. These are separate protections; distinguish the configured level:
+**SNMPv3** replaces communities with users and adds two protections. **Authentication** proves who sent a message and that it was not altered. **Privacy** encrypts the contents. Three security levels combine them:
 
 | Level | Authentication | Privacy/encryption |
 |---|---|---|
@@ -199,7 +201,7 @@ For the common SNMPv3 user-based security model, **message authentication** chec
 | authNoPriv | Yes | No |
 | authPriv | Yes | Yes |
 
-SNMPv3 does not imply encryption unless privacy is configured. Algorithms and capabilities are platform-specific; do not treat older MD5/DES examples as current recommendations. Groups and views define permitted operations and object scope. A notification destination is separate from permission to query the agent.
+SNMPv3 encrypts only at `authPriv`; “v3 is always encrypted” is a common wrong answer. Groups and views then define which objects a user may read or write.
 
 The following is a read-only demonstration for the isolated lab. ACL 10 permits just the manager address; as a standard source ACL it uses the selector idea introduced in chapter 26. In `permit host 10.60.0.60`, `host` means exactly one source address. Other sources reach the list's implicit deny. In `snmp-server community LABREAD ro 10`, `ro` grants read-only access and the final `10` attaches that source list to this community. Merely creating the ACL would not restrict the community. Chapter 34 teaches full ACL policy.
 
@@ -212,7 +214,7 @@ R2(config)# end
 R2# show snmp
 ```
 
-Do not deploy this lab community on a shared network. A failed query can result from destination, service, version, community, authorization, object or path problems. A bad-community counter indicates rejected community use, not necessarily a password attack; an old monitoring configuration can cause the same symptom.
+When a query fails, check the agent's address, the SNMP version, the community string, the ACL attached to the community and the path on UDP 161. `show snmp` counts the requests that arrived with an unknown community.
 
 ## Reading the output
 
@@ -224,9 +226,10 @@ For a missing record, verify generation, local policy, transport and receiver pr
 
 ## Exam focus
 
-- Configure and verify NTP client/server roles for v1.1; distinguish local clock settings, server stratum, reach history and selected synchronization.
-- Interpret syslog component, severity, mnemonic, timestamp and description without inventing a cause or actor.
-- Apply severity thresholds correctly and distinguish component facility from transport facility.
-- Separate console, session, buffer and collector behavior; verify reception rather than just a destination command.
-- Explain SNMP manager/agent/MIB/OID, reads versus writes, polling versus notifications, and v3 security levels.
-- Use counter differences with the sampling interval and check for resets or wrap before trusting a calculated rate.
+- NTP uses UDP 123. `ntp server` makes a client, a synchronized router also serves, and `ntp master` serves the local clock (default stratum 8).
+- A client's stratum is its server's plus one; 16 means unsynchronized.
+- `show ntp status` shows the router's own state. `show ntp associations` shows the servers: `*` is the selected one and reach `377` means eight answered polls.
+- A message reads `%FACILITY-SEVERITY-MNEMONIC`. Severities run from 0 emergencies to 7 debugging; lower is more severe.
+- A logging threshold passes its own level and every more severe level. The destinations are console, monitor (`terminal monitor`), buffer and server (`logging host`, `logging trap`, UDP 514).
+- The SNMP manager polls the agent on UDP 161 with Get, GetNext, GetBulk and Set. The agent sends Trap (unacknowledged) or Inform (acknowledged) to UDP 162. A MIB defines the objects and an OID names one.
+- SNMPv1 and v2c use clear-text communities; v3 offers noAuthNoPriv, authNoPriv and authPriv.

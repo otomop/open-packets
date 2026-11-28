@@ -34,7 +34,7 @@ Both endpoints share the supplied local subnet. There is no router, Internet pat
 
 Place, label and cable the three devices. On each endpoint, use **Desktop → IP Configuration → Static** and enter its row from the table. Read it back before continuing.
 
-Open SW1's CLI, decline the initial configuration dialog if offered, and name the switch. The descriptions below document the intended cable endpoints; they do not configure a web service or establish that the cables are correct.
+Open SW1's CLI, decline the initial configuration dialog if offered, and name the switch. `description` attaches a label to an interface so that anyone reading the configuration can see what should be plugged in there. It changes nothing about how the port forwards. `show interfaces status`, from this chapter's "Reading the output" section, then lists every port with its description and link state.
 
 ```ios SW1
 Switch> enable
@@ -81,12 +81,12 @@ The repeated ping receives replies and the browser obtains the page. Ping tests 
 
 On Server-A, change **Services → HTTP → Off**. Keep its power, Ethernet connection and address unchanged. On PC-A, repeat the same ping. Close and reopen the Web Browser and request **http://192.0.2.20** again.
 
-Leave HTTP off while recording the results. An already displayed page may be cached; its presence is not proof of a new successful request. If the browser retains it, inspect events for the fresh request in Simulation mode if available. Use the supplied fallback below if a new response cannot be distinguished.
+Leave HTTP off while you record the results. If the browser still shows the old page, that is a page it kept, not a new response: request the address again, or watch the new request in Simulation mode.
 
 :::expected
-New ping requests still receive replies, while a fresh HTTP request cannot obtain a response from the stopped service. The precise browser error or timeout depends on the simulator. The service's Off setting is direct evidence of the controlled change; a timeout alone would not identify this cause on an unknown network.
+New pings still receive replies, while a fresh HTTP request gets an error or a timeout; the exact message depends on the simulator version. The network path is the same for both tests, so the path is not the fault. The evidence that identifies the cause is the server's own HTTP setting: Off.
 
-If the simulator does not let you distinguish a new response from a retained page, record that limitation. For the written exercise, use the supplied observations: ICMP replies arrive; a new HTTP request gets no service response; the server's HTTP setting is Off.
+If your version does not show a clear failure, use these supplied observations for the written record: ICMP replies arrive; a new HTTP request gets no response; the server's HTTP setting is Off.
 :::
 
 ```state
@@ -95,7 +95,7 @@ If the simulator does not let you distinguish a new response from a retained pag
 
 ## Step 4: Restore the application and retest
 
-On Server-A, return HTTP to **On**. Close and reopen PC-A’s browser, request **http://192.0.2.20**, and compare the page with your baseline. Repeat the ping. If your simulator retains a page without showing a distinguishable new response, record that limitation and use the supplied recovery result: after HTTP is enabled, a fresh HTTP request receives the server page and ping continues to receive replies.
+On Server-A, return HTTP to **On**. Close and reopen PC-A’s browser, request **http://192.0.2.20**, and compare the page with your baseline. Repeat the ping.
 
 :::expected
 Both tests work again. Your explanation identifies the stopped HTTP service and the evidence for it. Changing the switch's address, replacing the cable or introducing a router would not have restored the service setting.
@@ -135,10 +135,10 @@ Draw these three small plans on paper. Trace the stated exchange, then cross out
 | Data center | Leaves L1 and L2 each connect to spines S1 and S2. Server-X attaches to L1; Server-Y attaches to L2. Trace X to Y; then remove S1. |
 | WAN | Branch-A and Branch-B each connect only to HQ. Trace Branch-A to Branch-B; then remove HQ. |
 
-These are verified connection records, not a demand to configure redundant Ethernet links. Assume the normal design can forward on the surviving listed path; do not infer a recovery time.
+Nothing here is configured. Assume the design forwards over any listed path that survives.
 
 :::expected
-The campus is two-tier despite having two CC switches; a path can remain through CC2. The spine-leaf path is X → L1 → a spine → L2 → Y; S2 remains after S1 fails. The WAN's only interbranch path uses HQ, so that path is lost. Local communication inside an unaffected branch can remain possible. Physical alternatives are necessary evidence, but their actual forwarding and failover must be verified in a real design.
+The campus is two-tier despite having two CC switches; a path can remain through CC2. The spine-leaf path is X → L1 → a spine → L2 → Y; S2 remains after S1 fails. The WAN's only interbranch path uses HQ, so that path is lost. Each branch's own LAN keeps working.
 :::
 
 ```state
@@ -152,9 +152,7 @@ A proposed PoE switch has **120 W available**, with **60 W already allocated**. 
 Then consider a separate switch with 60 W remaining whose selected port can supply only 15.4 W. Would that port satisfy one 30 W allocation?
 
 :::expected
-Two additional 30 W allocations use the 60 W remainder exactly. A third would exceed the budget. The second switch fails the per-port requirement despite its sufficient aggregate remainder. Compare source-side allocations consistently; endpoint input power and source allocation are different quantities.
-
-On supported PoE hardware, `show power inline` helps inspect allocation. This worksheet does not require that command to work on the simulated 2960.
+Two additional 30 W allocations use the 60 W remainder exactly. A third would exceed the budget. The second switch fails the per-port requirement despite its sufficient aggregate remainder. On a PoE switch, `show power inline` shows these figures; the simulated 2960 does not support it, which is why this step is on paper.
 :::
 
 ```state

@@ -27,8 +27,8 @@
     "answer": [
       1
     ],
-    "explanation": "CORE is explicitly established as root, and the worksheet gives DSW2's cost as 2. DSW1 adds its Gi1/1 cost 4 for a total of 6, which beats the manually assigned 19 on Te1/1. The cost comparison is decided before port IDs matter; the port's speed is not increased by changing its STP cost.",
-    "fix": "Remove the unintended per-VLAN override, then verify the displayed automatic cost and root path. With the stated short-cost method, Te1/1 should use cost 2 and become root port.\n```ios DSW1\nDSW1# configure terminal\nDSW1(config)# interface tengigabitethernet1/1\nDSW1(config-if)# no spanning-tree vlan 100 cost\nDSW1(config-if)# end\nDSW1# show spanning-tree vlan 100\n```\nRetest traffic and save only after confirming the intended root and path. Interface names in this worksheet belong to its example platform; do not paste them into an unrelated 2960 lab."
+    "explanation": "CORE is root and DSW2's cost is 2. DSW1 adds its Gi1/1 cost 4 for a total of 6, which beats the manual cost 19 on Te1/1. Cost is compared before port IDs.",
+    "fix": "Remove the per-VLAN cost override. With short costs, Te1/1 then has cost 2 and becomes the root port.\n\n```ios DSW1\nDSW1# configure terminal\nDSW1(config)# interface tengigabitethernet1/1\nDSW1(config-if)# no spanning-tree vlan 100 cost\nDSW1(config-if)# end\nDSW1# show spanning-tree vlan 100\n```\n\nConfirm the root and path, retest traffic, then save. The interface names are from this worksheet's platform, so do not paste them into a 2960 lab."
   },
   {
     "id": "spanning-tree-t02",
@@ -58,7 +58,7 @@
     "answer": [
       0
     ],
-    "explanation": "ASW3's mode and ASW1's Peer(STP) indication identify the classic neighbor. The effect is on compatibility behavior of the connecting link; this does not prove that every host port in the network now waits 30 seconds. P2p is the point-to-point link type, not shared.",
-    "fix": "Configure the intended mode on ASW3, then verify the local mode and ASW1 peer behavior after negotiation.\n```ios ASW3\nASW3# configure terminal\nASW3(config)# spanning-tree mode rapid-pvst\nASW3(config)# end\nASW3# show spanning-tree summary\nASW3# show spanning-tree vlan 10\n```\nIf a peer remains in legacy compatibility, confirm that no legacy bridge remains and consult that platform's protocol-migration procedure. Do not enable PortFast on the transit link as a workaround or promise a fixed number of seconds for the Peer(STP) indication to disappear."
+    "explanation": "ASW3 runs classic PVST+, and ASW1 shows a Peer(STP) neighbor on that link. The link uses classic behavior. P2p means point-to-point, not shared.",
+    "fix": "Set the intended mode on ASW3 and check the peer.\n\n```ios ASW3\nASW3# configure terminal\nASW3(config)# spanning-tree mode rapid-pvst\nASW3(config)# end\nASW3# show spanning-tree summary\nASW3# show spanning-tree vlan 10\n```\n\nIf ASW1 still shows a legacy peer, check for another legacy bridge and follow that platform's migration steps. Do not enable PortFast on the transit link as a workaround."
   }
 ]

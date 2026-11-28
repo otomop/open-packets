@@ -1,8 +1,64 @@
 [
   {
-    "id": "exam-readiness-c32",
-    "front": "Does a course readiness score estimate Cisco’s passing score?",
-    "back": "No. Use it to prioritize revision and retain per-objective evidence; it is not a calibrated pass probability or official grading scale.",
+    "id": "exam-readiness-c46",
+    "front": "A router has static 10.1.3.0/24 and OSPF 10.1.3.64/26. Which forwards a packet to 10.1.3.77?",
+    "back": "The /26: the longest matching prefix wins. Administrative distance only decides between sources of the same prefix.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c47",
+    "front": "When is administrative distance compared?",
+    "back": "Only when two routing sources offer the same prefix and length. The lower value is installed.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c48",
+    "front": "What happens once you move past a question in the CCNA exam?",
+    "back": "You cannot return to it, so decide before you advance.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c49",
+    "front": "How do you work through a configuration (lab) item?",
+    "back": "Read the requirements and topology, check the existing state, make the change, then verify it with a show command.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c51",
+    "front": "How do you pace yourself during the exam?",
+    "back": "Divide the remaining time by the remaining items and re-check now and then. A lab item takes longer than a one-line question.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c39",
+    "front": "What do the blueprint verbs describe, configure and troubleshoot require?",
+    "back": "Describe: explain it. Configure: build it on a device. Troubleshoot: find the fault from a symptom and evidence.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "exam-readiness-c50",
+    "front": "Which v1.1 domain carries the most weight?",
+    "back": "IP Connectivity, 25%. Network Fundamentals and Network Access are 20% each.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "exam-readiness-c43",
+    "front": "How do you choose what to revise first?",
+    "back": "Multiply each domain's weight by your gap in it. The largest product comes first, but leave no domain uncovered.",
     "tags": [
       "concept"
     ]
@@ -10,71 +66,31 @@
   {
     "id": "exam-readiness-c37",
     "front": "Why record a correct guess as a revision gap?",
-    "back": "A correct option without a defensible reason is weak evidence of understanding. Rework the decision with changed values and explain why the alternatives fail.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "exam-readiness-c38",
-    "front": "What makes a repeated lab attempt independent?",
-    "back": "Build or diagnose a fresh variation before opening the solution. Record the help used and preserve the first result separately from the corrected result.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "exam-readiness-c39",
-    "front": "How should an exam objective guide a practice task?",
-    "back": "Match its verb: describe and compare need clear explanations; configure, verify and troubleshoot need device or packet evidence. Check the blueprint version for your appointment.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "exam-readiness-c40",
-    "front": "What should follow a narrowly scoped repair?",
-    "back": "Repeat the original failed service test, check a permitted control and any required denial, then record the new state. An accepted command is not the same as restored service.",
+    "back": "A right answer for the wrong reason fails when the numbers change. Rework it until you can say why each wrong option is wrong.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "exam-readiness-c41",
-    "front": "How do you distinguish an unperformed check from a failed check?",
-    "back": "Unperformed means no evidence was collected; failed means the stated test was run and did not meet its condition. Record unsupported simulator features separately and revisit them on a suitable platform.",
+    "front": "Unperformed check versus failed check?",
+    "back": "Unperformed: no test was run, so there is no evidence. Failed: the test ran and did not meet its condition.",
     "tags": [
-      "concept"
+      "compare"
     ]
   },
   {
-    "id": "exam-readiness-c42",
-    "front": "What belongs in a useful mistake record?",
-    "back": "The objective, your original reasoning, the evidence you missed, the corrected rule and a fresh task to attempt later. Copying the answer alone does not show what changed in your reasoning.",
+    "id": "exam-readiness-c52",
+    "front": "How long must you wait to retake a failed CCNA exam?",
+    "back": "Five calendar days, counted from the day after the attempt (Cisco policy as checked in September 2026).",
     "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "exam-readiness-c43",
-    "front": "How should blueprint weight affect a revision plan?",
-    "back": "Combine the weight with demonstrated gaps and available time. A high-weight weak domain deserves attention, but smaller domains still need coverage; a weighted course score is not a pass probability.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "exam-readiness-c44",
-    "front": "Why are mixed questions useful near the end of preparation?",
-    "back": "They require choosing the relevant concept without a chapter heading supplying it. Use unfamiliar values and explain your first choice before reading feedback.",
-    "tags": [
-      "concept"
+      "number"
     ]
   },
   {
     "id": "exam-readiness-c45",
-    "front": "Which source should settle an exam-day logistics question?",
-    "back": "The current Cisco policy, Pearson VUE program page and your appointment instructions. Check the delivery mode and date; do not turn a course note into a permanent rule.",
+    "front": "Where do you confirm exam price, length and rules?",
+    "back": "Cisco's exam and policy pages, Pearson VUE's Cisco page and your appointment confirmation.",
     "tags": [
       "concept"
     ]

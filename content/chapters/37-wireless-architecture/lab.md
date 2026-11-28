@@ -6,12 +6,12 @@ minutes: 80
 ---
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
-Build a management VLAN, a separate client VLAN and the links required for centrally switched wireless service. This lab proves the wired foundation and, where the selected Packet Tracer model supports it, AP registration. The next chapter builds and tests the client WLAN.
+A lightweight AP is only as good as the wired network under it. In this lab you build that network for a centrally switched WLAN: a management VLAN for the AP and controller, a separate client VLAN, an access port for the AP and a trunk for the controller. Then you watch the AP get an address and join the controller, and see what happens to that join when the AP's port goes down. Two written exercises at the end apply the same reasoning to a FlexConnect AP and to link aggregation.
 
-Keep this two-VLAN project as your architecture reference. Chapter 38 starts a separate, simpler project to isolate security and client admission; it does not require carrying this addressing plan into that lab. The same distinction still applies: AP registration proves a management path, while the client WLAN must map onto a working client path.
+Chapter 38 builds and tests the client WLAN in a separate, simpler project, so you do not need to carry this addressing plan forward.
 
 :::note Simulator boundary
-Start with a new file and record your Packet Tracer version. Use a WLC-3504 and LAP-PT if your palette offers them. Their setup pages and exposed features vary. The switch/router work below is independent of those pages. If the controller lacks a required control or the AP cannot register with the available models, complete the explicitly identified controller worksheet using the given values and record “not simulated”; do not record a successful join. No real RF, PoE negotiation, Meraki dashboard or Catalyst 9800 is simulated by this lab.
+Start with a new file. Use a WLC-3504 and a LAP-PT. Their setup pages differ between Packet Tracer versions, but the switch and router work in Steps 1–4 does not depend on them. If your version lacks a control that a step names, or the AP will not register, complete that step on paper from the given values and record “not simulated”. Packet Tracer does not simulate PoE negotiation, FlexConnect, a Meraki dashboard or a Catalyst 9800, which is why Steps 11 and 12 are written exercises.
 :::
 
 ## Topology
@@ -37,12 +37,12 @@ Add Server-PT WEB20 on SW1 Fa0/4 with a copper straight-through cable. There is 
 
 ## Step 1: Place, power and cable the devices
 
-Place the named models, cable the listed interfaces and name the PCs ADMIN and TEST20. Open AP1's Physical tab. If it requires an external power adapter, fit the model's supplied adapter. A non-PoE 2960 model does not supply power simply because Ethernet is connected.
+Place the named models, cable the listed interfaces and name the PCs ADMIN and TEST20. Open AP1's Physical tab and fit its power adapter. The 2960 in Packet Tracer is not a PoE switch, so the AP gets no power from its Ethernet cable.
 
 On both PCs and WEB20, use Desktop → IP Configuration to enter each static address, `255.255.255.0` mask and gateway from the table. Leave DNS blank. On WEB20 select Services → HTTP → On; use its disposable local page as the service target. Keep the controller disconnected from any real network.
 
 :::expected
-Both PCs show the intended values. AP1 has power if supported by the chosen model. The router's Ethernet link may remain down until Step 3. A powered device or green cable is not yet proof of IP reachability.
+Both PCs and WEB20 show the intended values, and AP1 has power. The router's link stays down until Step 3 enables its interface.
 :::
 
 ```state
@@ -51,7 +51,7 @@ Both PCs show the intended values. AP1 has power if supported by the chosen mode
 
 ## Step 2: Configure VLANs and switchports
 
-Before entering the supplied setup, predict which ports carry tagged client traffic and which carry only untagged management. The AP centrally switches client traffic in this design. Start in the SW1 console. The native VLAN is deliberately 10 on both trunks; VLAN 20 remains tagged.
+Before you type, predict which ports carry tagged client traffic and which carry only untagged management. AP1 is centrally switched, so its port, Fa0/1, is an access port in VLAN 10. The controller link, Fa0/24, and the router link, Gi0/1, are trunks: management is untagged, so the native VLAN is 10, and VLAN 20 is tagged.
 
 ```ios SW1
 Switch> enable
@@ -101,7 +101,7 @@ Fa0/1–2 are access members of VLAN 10; Fa0/3–4 are in VLAN 20. Operational t
 
 ## Step 3: Configure routing and the AP DHCP pool
 
-The exclusions leave 50 potential AP leases, `.100–.149`. VLAN 20 uses a static test PC, so it does not yet require a DHCP pool.
+R1 routes between the two VLANs with subinterfaces, as in chapter 11, and gives AP1 its address. The `native` keyword on subinterface `.10` tells R1 that VLAN 10 arrives untagged, which matches the switch trunk. The exclusions leave 50 AP leases, `.100–.149`. VLAN 20 has only static hosts, so it needs no pool.
 
 ```ios R1
 Router> enable
@@ -129,7 +129,7 @@ R1# show ip dhcp pool AP-MGMT
 ```
 
 :::expected
-Gi0/0 and both subinterfaces are up/up once the switch link is active. The pool covers `192.168.10.0/24` with the stated exclusions. No DNS service has been falsely advertised at the router address.
+Gi0/0 and both subinterfaces are up/up. The pool covers `192.168.10.0/24`, and the two exclusions appear in the running configuration.
 :::
 
 ```state
@@ -152,10 +152,10 @@ ping 192.168.20.1
 ping 192.168.10.10
 ```
 
-Open `http://192.168.20.30` from ADMIN and TEST20. Record both page results, not just the ping results. Retry after initial ARP resolution if necessary. Check the return gateway on the destination PC before changing routing.
+Open `http://192.168.20.30` from ADMIN and TEST20. The first ping to a new destination can lose a packet while ARP resolves, so repeat it. If a ping between VLANs fails, check the gateway on the destination PC before you change R1.
 
 :::expected
-Both local gateways and the opposite PC respond in this isolated topology. A loaded page also establishes the configured HTTP service through those wired paths. The ping results support the two VLANs, R1's subinterfaces and both PCs' return paths. It does not prove the controller trunk or a wireless WLAN.
+Each PC reaches its gateway and the other PC, and the WEB20 page loads from both. That proves both VLANs, R1's subinterfaces and the return paths. Nothing has tested the controller trunk yet.
 :::
 
 ```state
@@ -164,9 +164,9 @@ Both local gateways and the opposite PC respond in this isolated topology. A loa
 
 ## Step 5: Address the controller and open its setup page
 
-On WLC1 look for Config → Management. Where exposed, set `192.168.10.5`, mask `255.255.255.0` and gateway `192.168.10.1`. Choose Port 1. A management VLAN value `0` on this AireOS-style interface means untagged; the switch assigns those frames to native VLAN 10.
+On WLC1 open Config → Management and set IP address `192.168.10.5`, mask `255.255.255.0` and gateway `192.168.10.1`. This is the controller's management interface from the lesson: the address you manage it on and the address APs join. Its VLAN identifier `0` means untagged, so SW1 places these frames in native VLAN 10.
 
-From ADMIN open Desktop → Web Browser. Try the controller's HTTPS management URL, `https://192.168.10.5`. A fresh Packet Tracer controller may instead expose its initial setup at `http://192.168.10.5`. Use that HTTP path only for this isolated simulator's day-zero page. Follow the displayed setup fields with these values:
+From ADMIN open Desktop → Web Browser. Try `http://192.168.10.5` first: a fresh Packet Tracer controller serves its first-time setup page over HTTP, then answers on `https://192.168.10.5` once setup is applied. A real controller should be managed over HTTPS. The setup pages insist on creating one WLAN; enter the SSID and key from the table and move on, because chapter 38 explains those security settings. Enter these values where the pages ask for them:
 
 | Field, if requested | Value |
 |---|---|
@@ -179,10 +179,10 @@ From ADMIN open Desktop → Web Browser. Try the controller's HTTPS management U
 | Required initial employee SSID | `ARCH-SETUP` |
 | Initial WLAN security/key | WPA2-Personal, AES / `Cedar-Lab-2026!` |
 
-Apply only after checking the address and VLAN treatment. Reconnect with HTTPS if the model restarts. If the model has no applicable management control or wizard, record the limitation and use this table as the controller worksheet for the remaining architecture observations. Do not guess a different factory address or credentials.
+Check the address and the untagged VLAN before you apply. If the controller restarts, reconnect with HTTPS and log in. If your version has no setup page, record that and treat the table as the controller's configuration for the remaining steps.
 
 :::expected
-Where implemented, ADMIN reaches the management page and can log in. The controller's displayed management configuration matches the worksheet. If not implemented, wired Steps 1–4 remain valid and controller observations are explicitly worksheet answers. No particular setup-page order or restart duration is assumed.
+ADMIN reaches the controller's page and logs in, and the management interface shows `192.168.10.5`, untagged, on Port 1. Reaching it also proves that the Fa0/24 trunk carries native VLAN 10.
 :::
 
 ```state
@@ -191,16 +191,16 @@ Where implemented, ADMIN reaches the management page and can log in. The control
 
 ## Step 6: Check AP addressing and registration separately
 
-On AP1 select DHCP for its wired management interface if the model exposes the choice. Check the IP in its Config/status page. On R1 inspect:
+AP1 uses DHCP by default. Confirm that in its Config tab and note the address it received. On R1 inspect:
 
 ```ios R1
 R1# show ip dhcp binding
 ```
 
-On the controller inspect Wireless → Access Points → All APs, or the model's AP summary. The AP and controller share VLAN 10 in this lab, allowing local discovery without requiring option 43. Wait for the simulator to process registration; do not repeatedly reboot the AP while it is joining.
+On the controller open Wireless → Access Points → All APs. AP1 and WLC1 share VLAN 10, so the AP's local-subnet broadcast finds the controller and no option 43 is needed. The join can take a minute; do not reboot the AP while it is joining.
 
 :::expected
-The AP's actual lease is within `192.168.10.100–149`; the first allocation is not guaranteed to be `.100`. A controller AP record in a registered/operational state is separate evidence that CAPWAP join succeeded. A lease alone is insufficient. If the available models do not implement registration, write the expected sequence: lease → discovery → protected join/configuration → operational AP, and mark it unexecuted.
+R1's binding table shows AP1 with an address in `192.168.10.100–149`. The controller lists AP1 as registered, which is the evidence that discovery and the CAPWAP join succeeded; the lease proves only addressing. If your version does not register the AP, write the sequence from the lesson (lease, discovery, DTLS and join, configuration) and mark it not simulated.
 :::
 
 ```state
@@ -209,9 +209,9 @@ The AP's actual lease is within `192.168.10.100–149`; the first allocation is 
 
 ## Step 7: Inspect the client VLAN mapping
 
-If the controller offers Controller → Interfaces → New, create `users` with VLAN ID `20`, Port `1`, IP `192.168.20.5`, mask `255.255.255.0` and gateway `192.168.20.1`. Leave an optional DHCP-server field unset because this step uses static addresses and creates no client WLAN; if the GUI requires a DHCP server to save, stop this optional step and use the worksheet instead of inventing a service.
+A dynamic interface maps a WLAN to a wired VLAN. On the controller choose Controller → Interfaces → New and create `users` with VLAN ID `20`, Port `1`, IP `192.168.20.5`, mask `255.255.255.0` and gateway `192.168.20.1`. No WLAN uses this interface yet, so leave the DHCP server blank. If the page will not save without one, enter the gateway address `192.168.20.1`.
 
-From TEST20 ping `192.168.20.5` if the model answers that interface. Then inspect SW1:
+From TEST20 ping `192.168.20.5`. Then inspect SW1:
 
 ```ios SW1
 SW1# show interfaces trunk
@@ -219,7 +219,7 @@ SW1# show mac address-table dynamic vlan 20
 ```
 
 :::expected
-The intended mapping is untagged management in VLAN 10 and tagged `users` in VLAN 20 on the same cable. A successful interface ping supports that mapping. A learned controller MAC or GUI interface entry still does not prove wireless client forwarding; Chapter 38 verifies an actual client. Missing dynamic-interface controls or ICMP support are worksheet limitations, not evidence that trunks are unnecessary.
+Fa0/24 is trunking with native VLAN 10 and allows VLANs 10 and 20. The ping succeeds and SW1 learns the controller's MAC address in VLAN 20 on Fa0/24, so one cable carries untagged management and tagged `users` traffic. That is why the controller port is a trunk while the AP port is not. If your version does not answer the ping, record that; chapter 38 tests a real wireless client.
 :::
 
 ```state
@@ -243,7 +243,7 @@ SW1# copy running-config startup-config
 Press Enter there as well. On the controller use its Save Configuration action if available. Save `architecture-baseline.pkt`, then a second copy, `architecture-fault.pkt`.
 
 :::expected
-Your record distinguishes working wired tests from optional controller observations. The fault copy is open, and the baseline remains available for comparison.
+Both startup configurations are saved. You are working in the fault copy, and the baseline file is untouched.
 :::
 
 ```state
@@ -252,7 +252,7 @@ Your record distinguishes working wired tests from optional controller observati
 
 ## Step 9: Remove the AP's Ethernet path and observe
 
-Predict which observations should change: AP registration, ADMIN's controller access and the wired WEB20 page. On SW1 administratively shut only the AP port:
+An AP's registration depends on its management path to the controller. Predict which of these change when the AP's port goes down: AP registration, ADMIN's access to the controller, and the WEB20 page. Then shut only the AP port on SW1:
 
 ```ios SW1
 SW1# configure terminal
@@ -265,7 +265,7 @@ SW1# show interfaces fastethernet0/1
 Observe AP1's wired link, its controller record after the controller detects loss, ADMIN's management access and ADMIN's WEB20 page. Do not repair yet.
 
 :::expected
-Fa0/1 is administratively down. AP–controller communication is interrupted, while ADMIN can still reach R1 and normally WLC1. A stale DHCP binding or temporarily retained AP record can remain; neither proves the disconnected AP is working. If AP registration was not simulated, record this controller effect as a prediction.
+Fa0/1 is administratively down, and AP1 leaves the controller's AP list once the controller notices the loss. ADMIN still reaches R1, WLC1 and the WEB20 page, because none of those paths use Fa0/1. R1 may still list AP1's lease: a binding shows that an address was handed out, not that the device is reachable now.
 :::
 
 ```state
@@ -282,10 +282,10 @@ SW1(config-if)# end
 SW1# show interfaces fastethernet0/1
 ```
 
-Wait for link and, where supported, AP re-registration. Repeat the addressing and controller checks from Step 6 and the WEB20 page from both wired clients. Save the recovered file separately from the original baseline.
+Wait for the link and for AP1 to register again. Repeat the checks from Step 6 and reload the WEB20 page from both PCs. Save this file; the baseline stays as it was.
 
 :::expected
-The link returns up and the AP regains its management path. A working controller implementation again lists the AP operational. The lease can be retained or renewed; do not require a new address to call the recovery successful.
+Fa0/1 is up and the controller lists AP1 again. AP1 may keep its old address or receive a new one; either is correct.
 :::
 
 ```state
@@ -294,7 +294,7 @@ The link returns up and the AP regains its management path. A working controller
 
 ## Step 11: Work through a local-switching change
 
-This is a worksheet, because Packet Tracer's generic AP is not a verified FlexConnect implementation. AP2 is configured to send management untagged in VLAN 10 and a locally switched staff WLAN tagged in VLAN 20. Its only cable goes to SW1 Fa0/5. Write the switch configuration, then compare with the answer.
+This step is a written exercise, because Packet Tracer's AP does not implement FlexConnect local switching. A second AP, AP2, will connect to SW1 Fa0/5. It sends management untagged in VLAN 10 and locally switches a staff WLAN tagged in VLAN 20. Write the configuration for Fa0/5, then compare it with the answer.
 
 :::solution
 ```ios SW1 — worksheet answer; Fa0/5 reserved for the described AP2
@@ -308,7 +308,7 @@ SW1(config-if)# no shutdown
 SW1(config-if)# end
 ```
 
-If VLAN 20 is removed from this trunk's allowed list, AP management can remain healthy while locally switched clients lose their VLAN 20 path. Repair by restoring VLAN 20 to the allowed list and verifying client DHCP/reachability. Creating the VLAN and providing its DHCP/gateway services are additional prerequisites, not effects of changing the port mode.
+Compare this with Fa0/1. AP1 needs only an access port because its clients' traffic leaves the wireless system at the controller. AP2 needs a trunk because its clients' traffic leaves at the AP. If VLAN 20 were missing from AP2's allowed list, AP2 would still join the controller over VLAN 10 while its staff clients received no address.
 :::
 
 ```state
@@ -317,12 +317,14 @@ If VLAN 20 is removed from this trunk's allowed list, AP management can remain h
 
 ## Step 12: Check power and supported aggregation
 
-Complete this hardware worksheet without applying it to the non-PoE simulation. A documented MR53 deployment uses its PoE uplink and second Ethernet port in LACP, management untagged in VLAN 10, clients tagged in VLAN 20. The selected PoE switch has sufficient documented AP power and two compatible ports, Gi1/0/1–2. The AP's dashboard aggregation setting is enabled and its LACP mode is passive.
+This step is also written, because the Packet Tracer 2960 has no PoE and the lab has no two-port AP. Answer both parts.
 
-Write the required switch settings and the evidence you would collect. Configure an actual device only in an authorized isolated lab using its installation guide.
+**Part A.** A Meraki MR53 connects both of its Ethernet ports to a PoE switch on Gi1/0/1–2. The AP bundles them with LACP in passive mode, sends management untagged in VLAN 10 and bridges clients tagged in VLAN 20. Write the switch configuration and the three commands you would use to check power, the bundle and the trunk.
+
+**Part B.** WLC1 gets a second cable to SW1 Fa0/23, and LAG is enabled on the controller. Which `channel-group` mode must SW1 use on Fa0/23–24, and why?
 
 :::solution
-The switch must initiate LACP with `active`; `passive` on both ends would not initiate negotiation. Both members and Port-channel1 need matching trunk/native/allowed VLAN configuration. A representative IOS XE template is:
+**Part A.** The AP is passive, so the switch must be `active`; two passive ends never start LACP. The member ports and Port-channel1 need the same trunk mode, native VLAN and allowed list:
 
 ```ios SW1 — supported hardware worksheet only
 SW1# configure terminal
@@ -343,30 +345,32 @@ SW1# show etherchannel summary
 SW1# show interfaces trunk
 ```
 
-Check the AP's actual power requirement, available switch budget and negotiated allocation; an “on” power status alone does not guarantee full radio capability. Expect a working Layer 2 port-channel with both members bundled, plus matching AP status. On documented legacy AireOS LAG, the switch's static `mode on` would be a different requirement.
+`show power inline` shows each port's allocation. Compare it with what the AP needs, because an AP can be powered and still be short of the power for full radio operation. `show etherchannel summary` should show both members bundled in a Layer 2 port channel.
+
+**Part B.** `channel-group 1 mode on`. An AireOS LAG is a static bundle that runs neither LACP nor PAgP, so `active` or `desirable` on the switch would never form the channel. Fa0/23 and the port channel need the same trunk settings that Fa0/24 received in Step 2.
 :::
 
 ```state
-{"status":"Hardware worksheet only","chips":[{"node":"S","text":"Non-PoE · worksheet not applied"}],"rows":[["MR53","PoE uplink + 2nd port · LACP passive"],["PoE switch","Gi1/0/1–2 · sufficient power"],["VLANs","Mgmt untagged 10 · clients tagged 20"]]}
+{"status":"Hardware worksheet only","chips":[{"node":"S","text":"Non-PoE · worksheet not applied"}],"rows":[["MR53","PoE uplink + 2nd port · LACP passive"],["PoE switch","Gi1/0/1–2 · sufficient power"],["VLANs","Mgmt untagged 10 · clients tagged 20"],["WLC1 LAG","Fa0/23–24 · static mode on"]]}
 ```
 
 ## Troubleshooting
 
 - **PC cannot reach its gateway:** check access VLAN, mask, trunk allowed list, router encapsulation/native setting and interface state before controller settings.
 - **AP lacks an address:** check power/link, access VLAN, DHCP mode and available pool. An old lease entry does not prove current connectivity.
-- **AP has an address but is absent from the controller:** check discovery, IP reachability, permitted CAPWAP traffic, model/software compatibility and certificate/time errors where the platform exposes them.
-- **Management works but a client VLAN fails:** compare the actual tagging and local/central forwarding design. Do not put client VLANs on an AP trunk merely because they exist somewhere in the WLAN.
-- **GUI features are missing:** use the documented worksheet boundary. Do not silently substitute an autonomous AP and call it a registered lightweight AP.
+- **AP has an address but is absent from the controller:** check that the AP can reach the controller's address and that UDP 5246 and 5247 are not filtered. When the two are in different subnets, check that option 43 or DNS supplies the controller address.
+- **Management works but a client VLAN fails:** find where that WLAN's traffic leaves the wireless system. A centrally switched VLAN must be allowed on the controller trunk; a locally switched VLAN must be allowed on the AP trunk.
+- **A controller page is missing in your version:** complete that step on paper. Do not swap in an autonomous AP; it never registers with a controller.
 
 ### Evidence to keep
 
-Submit the written port contract, wired gateway and HTTP results, AP address and registration evidence (or its explicit worksheet limitation), the before/after AP-port fault, and separate central/local forwarding drawings. Power and aggregation are documented design worksheets unless you actually used the specified hardware. Do not claim wireless client service here; Chapter 38 performs that test.
+Keep your port table (which ports are access, which are trunks, and why), the gateway and HTTP results, AP1's address and registration record, your observations from Steps 9 and 10, and your answers to Steps 11 and 12.
 
 ## Challenge
 
-Use a copy of the recovered design. This is an independent **design worksheet**, not a claim that Packet Tracer implements FlexConnect. AP2 on reserved SW1 Fa0/5 locally switches staff VLAN 20 and a new guest VLAN 30; management remains untagged VLAN 10. Its documented management address is `192.168.10.50/24` with gateway `192.168.10.1`. The gateway and DHCP for VLAN 30 must be provided by R1: `192.168.30.1/24` and only `.100–.109` leases. VLAN 30 clients need routed access to WEB20 `192.168.20.30`; no guest-isolation ACL is part of this exercise. The R1 trunk currently allows only 10,20.
+Use a copy of the recovered design. This is a written design exercise for AP2, the FlexConnect AP from Step 11. AP2 on SW1 Fa0/5 locally switches staff VLAN 20 and a new guest VLAN 30; management remains untagged VLAN 10. Its documented management address is `192.168.10.50/24` with gateway `192.168.10.1`. The gateway and DHCP for VLAN 30 must be provided by R1: `192.168.30.1/24` and only `.100–.109` leases. VLAN 30 clients need routed access to WEB20 `192.168.20.30`; no guest-isolation ACL is part of this exercise. The R1 trunk currently allows only 10,20.
 
-Write the smallest complete switch/router additions, the AP tagging contract and required client evidence. Preserve AP1 management and existing wired HTTP service. Specify which live tests you can perform now and which guest tests require a supported AP/client implementation. Finally, suppose the WAN to a remote RADIUS server fails but local forwarding and DHCP stay available: does local switching alone establish that a new Enterprise client can authenticate?
+Write the smallest complete switch/router additions, the AP tagging contract and required client evidence. Preserve AP1 management and existing wired HTTP service. Say which tests you can run in Packet Tracer and which need a real FlexConnect AP and client. Finally, suppose the WAN to a remote RADIUS server fails while local forwarding and DHCP stay available: can a new 802.1X client still join, and why?
 
 :::solution
 Create VLAN 30; permit it on AP2's local client trunk and R1's trunk. WLC1's central distribution trunk does not need VLAN 30 for this explicitly local WLAN.
@@ -407,7 +411,7 @@ R1# show ip dhcp pool GUEST
 
 The /24 has 254 ordinary host addresses; excluding 99 + 145 leaves 10 candidates, .100–.109. Keep existing pools and subinterfaces. AP2's management is untagged 10; staff and guest leave locally tagged 20 and 30. AP2's static .50 is already outside the .100–.149 management pool; verify it is unused before assigning it.
 
-On supported equipment, verify a fresh guest lease/mask/gateway, the local gateway and WEB20 HTTP page, then retest staff and AP management. In the supplied simulator, verify the VLAN/trunk/subinterface/pool additions if implemented and repeat ADMIN/TEST20 HTTP; label AP2 and wireless guest outcomes as predictions. A written configuration alone does not establish a successful wireless test.
+In Packet Tracer you can apply and verify the VLAN, trunk, subinterface and pool additions and repeat the ADMIN and TEST20 HTTP tests. The AP2 and guest-client results are predictions; on real equipment you would confirm a guest lease, its gateway and the WEB20 page, then retest staff and AP management.
 
-Local switching does not replace unavailable RADIUS authentication. Existing supported local forwarding and new authentication have different dependencies; new Enterprise authentication needs the configured reachable service or an explicitly supported alternative.
+No. Local switching decides where data is forwarded; it does not authenticate anyone. A new 802.1X client still needs a reachable RADIUS server, so it fails until the WAN returns or a local server is configured. Clients that are already connected keep forwarding.
 :::

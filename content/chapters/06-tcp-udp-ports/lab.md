@@ -4,7 +4,7 @@ environment: packet-tracer
 devices: ["1 × Catalyst 2960 (SW1)", "1 × PC-PT (PC-A)", "1 × Server-PT (SRV1)"]
 minutes: 50
 ---
-Build a local LAN, enable HTTP and DNS, and compare a TCP opening with a UDP query. Then disable one service and use separate tests to identify what still works. These are guided simulator observations, not a claim that a particular Packet Tracer release was manually tested; record the actual ports, sequence values, labels, and behavior shown by your installed version.
+The lesson described a TCP handshake and a UDP query; here you watch both, one PDU at a time. You build a one-switch LAN, turn on HTTP and DNS, and compare the two exchanges in Simulation mode. Then you switch one service off and see that ping keeps working while the page fails. Client ports and sequence numbers differ on every run, so read them from your own PDUs. The lab was not run against every Packet Tracer release; where your version cannot show a field, use the worksheet alternative given in the step.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
@@ -33,7 +33,7 @@ Use copper straight-through cables for both host-to-switch links. Start with new
 
 ## Step 1: Prepare the single LAN
 
-Place new devices and connect the ports in the table. On both endpoints, open **Desktop → IP Configuration**, select **Static**, and enter the address and mask. Enter PC-A's DNS server as shown. Leave the gateways blank because both endpoints are on the same subnet. The new switch's default access ports are sufficient; no switch management address or router configuration is part of this transport exercise.
+Place new devices and connect the ports in the table. On both endpoints, open **Desktop → IP Configuration**, select **Static**, and enter the address and mask. Enter PC-A's DNS server as shown. Leave the gateways blank because both endpoints are on the same subnet. The switch needs no configuration.
 
 On PC-A, open **Desktop → Command Prompt**:
 
@@ -45,7 +45,7 @@ ping 192.168.40.20
 Record the address, mask and DNS server. Wait for the links to forward and repeat an initial ping if necessary.
 
 :::expected
-The settings match the table and the repeated ping receives replies. This establishes an ICMP round trip for the test; it does not yet establish a working HTTP service. If repeated requests fail, check the cable endpoints, link state and two host addresses before investigating transport behavior.
+The settings match the table and the ping receives replies. That proves an ICMP round trip and nothing about HTTP, which is not switched on yet. If pings keep failing, check the cable ports, link lights and both host addresses before going further.
 :::
 
 ```state
@@ -56,18 +56,18 @@ The settings match the table and the repeated ping receives replies. This establ
 
 On SRV1, open **Services → HTTP** and set **HTTP On**. Under **Services → DNS**, set **On** and add an A record named `www.lab.test` with address `192.168.40.20`. Click **Add** and confirm the record appears.
 
-On PC-A, request `http://192.168.40.20` in **Desktop → Web Browser**, then run:
+On PC-A, request `http://192.168.40.20` in **Desktop → Web Browser**. Then run `nslookup`, which asks the PC's configured DNS server to resolve a name and prints the answer:
 
 ```text
 nslookup www.lab.test
 ```
 
-Finally browse to `http://www.lab.test`. Use HTTP explicitly; this exercise does not require HTTPS.
+Finally browse to `http://www.lab.test`. Type `http://` explicitly; this lab does not use HTTPS.
 
-Before reading the expected result, write the conventional transport and server port for (a) this HTTP exchange and (b) a small DNS lookup. Predict whether the server reply uses a new client destination port or reverses the request endpoints.
+Before reading the expected result, write the transport and server port for (a) this HTTP exchange and (b) the DNS lookup. Predict which source and destination ports the server's reply will carry.
 
 :::expected
-Both pages should load and the name should return the intended address. HTTP here uses TCP destination port 80. A small DNS lookup ordinarily uses UDP destination port 53, although real DNS also supports TCP. Replies reverse the relevant client/server endpoint pair; the actual client source port must be observed rather than guessed.
+Both pages load and the name returns `192.168.40.20`. HTTP uses TCP destination port 80. The DNS lookup uses UDP destination port 53. Each reply reverses the request's endpoints, so it returns to whichever source port the client chose.
 :::
 
 ```state
@@ -76,7 +76,7 @@ Both pages should load and the name should return the intended address. HTTP her
 
 ## Step 3: Inspect one TCP opening
 
-Enter **Simulation** mode. In **Edit Filters**, select ARP, TCP, HTTP and DNS; also select UDP if your release lists it separately. Clear old events with **Reset Simulation**, which does not guarantee application or address-resolution caches are erased.
+Enter **Simulation** mode. In **Edit Filters**, select ARP, TCP, HTTP and DNS; also select UDP if your release lists it separately. Clear old events with **Reset Simulation**. This clears the event list; ARP and DNS caches on the devices may remain.
 
 Close and reopen PC-A's browser and request `http://192.168.40.20`. Advance using **Capture/Forward** and inspect the TCP PDUs. Read source/destination IP, source/destination port and flags.
 
@@ -86,12 +86,12 @@ Use this worked row only as a format:
 |---|---|---|---|
 | Illustrative request | `192.168.40.10:51000` | `192.168.40.20:80` | SYN |
 
-Replace `51000` with the client port in your own exchange. Complete the server reply and client's next row yourself before comparing with the expected result. Record why the sequence-number field is not a port number.
+Replace `51000` with the client port in your own exchange. Fill in the server's reply and the client's third segment before you compare with the expected result.
 
 :::expected
 An ordinary opening shows client SYN, server SYN/ACK and client ACK. The server reply has source `192.168.40.20:80` and destination `192.168.40.10:<observed-client-port>`. The third segment returns to the server port. Sequence numbers identify positions in each direction's byte stream; ports identify transport endpoints.
 
-A reused connection might show data without a new opening. Start a new connection or use this explicitly representative opening worksheet if the release cannot show one. Mark worksheet evidence separately from observed PDUs.
+If you see HTTP data with no SYN before it, the browser reused an existing connection: close the browser, reset the simulation and request the page again.
 :::
 
 ```state
@@ -100,14 +100,14 @@ A reused connection might show data without a new opening. Start a new connectio
 
 ## Step 4: Compare a fresh UDP lookup
 
-Add `lookup.lab.test` on SRV1 with the same correct address. Clear the Simulation event list and run `nslookup lookup.lab.test` on PC-A. Advance and inspect the DNS query and reply. A fresh name avoids assuming a particular cache-clearing command.
+Add `lookup.lab.test` on SRV1 with the same correct address. Clear the Simulation event list and run `nslookup lookup.lab.test` on PC-A. Advance and inspect the DNS query and reply. You use a new name so that PC-A cannot answer from its DNS cache and has to send a query.
 
-Complete two rows: query source/destination endpoints and reply source/destination endpoints. Then answer: where would you expect to find SYN, SYN/ACK and ACK in this UDP exchange?
+Complete two rows: the query's source and destination endpoints, and the reply's. Then count the segments that were exchanged before the query, and compare that with Step 3.
 
 :::expected
-For the ordinary UDP query in this exercise, the destination is server port 53 and the reply's source is port 53. The other port is the client's observed query port. There is no UDP transport opening, so no TCP SYN sequence belongs to this exchange. A DNS response is application data carried in UDP; it does not mean UDP itself added acknowledgments or reliability.
+The query goes to server UDP port 53 and the reply comes from port 53 back to the client's source port. Nothing precedes the query: UDP has no handshake, so there is no SYN, SYN/ACK or ACK. The DNS reply is application data, not a UDP acknowledgment.
 
-If the simulator's client command is unavailable, request a newly added name in its browser and inspect the resulting DNS events. If your release cannot expose the fields, use this explicitly illustrative worksheet: PC-A sends UDP from 192.168.40.10:53000 to 192.168.40.20:53. Write the reply endpoints and state whether a transport opening is required. The answer is source 192.168.40.20:53 to destination 192.168.40.10:53000, with no UDP opening. Port 53000 is supplied for the worksheet, not claimed as the simulator’s chosen value. Record that limitation.
+If `nslookup` is unavailable in your release, browse to the new name instead and inspect the DNS events. If the port fields are not shown, work this on paper: PC-A sends UDP from `192.168.40.10:53000` to `192.168.40.20:53`. The reply is from `192.168.40.20:53` to `192.168.40.10:53000`, with no opening.
 :::
 
 ```state
@@ -116,7 +116,7 @@ If the simulator's client command is unavailable, request a newly added name in 
 
 ## Step 5: Interpret a new connection snapshot
 
-Without referring to Step 3's completed rows, interpret this representative snapshot. It belongs to a different Windows PC and is a paper exercise, not claimed output from Packet Tracer.
+The lesson introduced `netstat -an`, which lists a Windows host's listening ports and current TCP connections. Interpret this representative snapshot from a different Windows PC. It is a paper exercise, not Packet Tracer output.
 
 ```output Representative Windows netstat -an excerpt
 Proto  Local Address         Foreign Address        State
@@ -127,7 +127,7 @@ TCP    10.6.0.10:52101       10.6.0.20:80           TIME_WAIT
 
 The documented services are SSH on 22 and HTTP on 80. Identify the PC's server role, its client role and the number of currently established HTTP connections. State the reply endpoints for the established HTTP connection.
 
-Optionally use `netstat` on PC-A if supported, or `netstat -an` on an authorized real Windows computer. A short HTTP connection may close before inspection. Do not count a missing row as proof that your earlier captured exchange never happened.
+Optionally run `netstat` on PC-A if your release supports it, or `netstat -an` on your own Windows computer. A short HTTP connection may already have closed by the time you look.
 
 :::expected
 The PC accepts SSH from `10.6.0.30:52000` at local port 22. It has one established HTTP connection from `10.6.0.10:52100` to `10.6.0.20:80`. The other HTTP row is closing, not established. The reply endpoints are source `10.6.0.20:80` to destination `10.6.0.10:52100`.
@@ -139,19 +139,19 @@ The PC accepts SSH from `10.6.0.30:52000` at local port 22. It has one establish
 
 ## Step 6: Observe a known service fault
 
-Save the working project as `06-transport-baseline.pkt`. On SRV1, set **Services → HTTP → Off**. Keep DNS and addressing unchanged. This is a guided mechanism experiment: you know which setting changed.
+Save the working project as `06-transport-baseline.pkt`. On SRV1, set **Services → HTTP → Off**. Keep DNS and addressing unchanged. This reproduces the lesson's opening problem: the server answers ping but the page will not load.
 
-Before testing, predict the outcome of ping, a fresh name lookup and a new address-based HTTP request. Add `faultcheck.lab.test` pointing to SRV1 for a fresh DNS name, then run:
+Before testing, predict the outcome of ping, a name lookup and a new HTTP request to the address. Add `faultcheck.lab.test` pointing to SRV1 so the lookup is not answered from cache, then run:
 
 ```text
 ping 192.168.40.20
 nslookup faultcheck.lab.test
 ```
 
-Open a new browser request to `http://192.168.40.20`. Do not rely on previously displayed page content. Record the actual response or lack of response; do not demand a particular reset or timeout string.
+Open a new browser request to `http://192.168.40.20` and record what the browser shows.
 
 :::expected
-ICMP and the fresh DNS lookup can still succeed while the new HTTP request fails. The known HTTP Off setting explains this controlled failure. Without that server evidence, ping success plus HTTP failure would justify checking transport and application evidence, not automatically diagnosing a stopped service. DNS and HTTP share a server IP but are separate services.
+Ping and the DNS lookup still succeed; the HTTP request fails. DNS and HTTP share one server address but are separate services on separate ports, and ping tests neither. Here you know the cause because you switched HTTP off. On a real network, "ping works, page fails" tells you only to look at TCP port 80 and the service next.
 :::
 
 ```state
@@ -163,29 +163,28 @@ ICMP and the fresh DNS lookup can still succeed while the new HTTP request fails
 Set **SRV1 → Services → HTTP → On**. Start fresh browser requests to the address and to `http://www.lab.test`. Repeat the fresh name query if needed. Save the repaired project as `06-transport-complete.pkt` only after the intended service works.
 
 :::expected
-Both new HTTP requests load the page, and the name resolves to the intended server. The correction restores the actual failed service rather than merely producing another successful ping. No router, default gateway or switch configuration change was required.
+Both new HTTP requests load the page, and the name resolves to SRV1. You verified the fix with the test that had failed, a page request, not with another ping.
 :::
 
 ```state
 {"status":"HTTP restored","tone":"ok","focus":["V"],"flows":[{"event":["V"],"wait":1.2,"tags":{"V":"Services → HTTP → On"}},{"path":["A","S","V"],"back":true,"label":"http://192.168.40.20","tags":{"A":"HTTP · TCP dst port 80"},"backTags":{"A":"Page loads"}},{"path":["A","S","V"],"back":true,"label":"http://www.lab.test","tags":{"A":"www.lab.test → 192.168.40.20"},"backTags":{"A":"Page loads by name"}}],"chips":[{"node":"V","text":"HTTP Off","tone":"bad","until":0},{"node":"V","text":"HTTP On","tone":"ok","from":0},{"node":"V","text":"DNS On","tone":"ok"}],"rows":[["http://192.168.40.20","Page loads","ok"],["http://www.lab.test","Page loads","ok"],["Changed","HTTP On only · no gateway or switch"],["Saved","06-transport-complete.pkt"]]}
 ```
 
-## Step 8: Submit evidence and attempt the independent variation
+## Step 8: Summarize what each test proved
 
-Prepare a short record using the following rubric. Mark unavailable simulator checks as **worksheet** or **not yet observed**, not as passed.
+Write one line for each row from your own notes. Mark anything you worked on paper as **worksheet**, not as observed.
 
-| Evidence to submit | Satisfactory explanation |
+| What you saw | What it shows |
 |---|---|
-| TCP three-row exchange | Correct directions, server port, observed client port and flags |
-| UDP query/reply | Correct endpoint reversal; no invented UDP opening |
-| New socket snapshot | Correct listening/client role and established count |
-| Known fault and recovery | Predictions, actual tests, changed service and fresh application retest |
-| Independent variation below | Your answer before the reference and any correction afterward |
+| TCP opening, three rows | Directions, server port 80, your client port, and the flags |
+| UDP query and reply | The endpoints reverse; there is no opening |
+| `netstat` snapshot | Which rows are server or client roles, and which are established |
+| HTTP fault and recovery | Which of ping, lookup and page request each failed or passed, and why |
 
-Attempt the challenge before reading its expected box. A copied configuration or a checked step without an explanation is not the submission.
+Then attempt the challenge before opening its solution.
 
 :::expected
-Your record distinguishes address reachability, transport behavior, name resolution and useful application success. Errors are recorded with the corrected rule, not hidden by replacing the first answer.
+Your notes separate four things that can each fail on their own: reachability of the address, the transport connection, name resolution, and the application.
 :::
 
 ```state
@@ -208,7 +207,7 @@ In a separate project copy, add Server-PT SRV2 to SW1 Fa0/3 using straight-throu
 Before generating traffic, predict the destination IP/port for the name lookup and the subsequent HTTP connection. Then test both, record the actual client ports, and explain why the two destination server addresses differ. Finally, on paper, give the cumulative ACK after in-order data beginning at sequence `8001` with length `1200` and no SYN/FIN.
 
 :::solution
-The DNS query goes to the configured resolver `192.168.40.20`, ordinarily UDP port 53 in this small lab query. Its answer identifies SRV2. The later HTTP connection goes to `192.168.40.30` TCP port 80, using a separately observed client port. The DNS server and requested application server need not be the same device.
+The DNS query goes to the configured DNS server `192.168.40.20` on UDP port 53. Its answer identifies SRV2. The later HTTP connection goes to `192.168.40.30` TCP port 80, using a separately observed client port. The DNS server and requested application server need not be the same device.
 
 If the address works but the name does not, verify SRV1's record and a fresh lookup; if the new server is unreachable by address, check its cable, address and HTTP setting independently. The data covers bytes `8001–9200`, so the next expected byte is `9201`. Save the variation separately, or remove SRV2 and its exact DNS record to return to the original baseline.
 :::

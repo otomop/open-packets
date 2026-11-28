@@ -1,24 +1,32 @@
 [
   {
     "id": "spanning-tree-c01",
-    "front": "Default configurable bridge priority, and its display in VLAN 10?",
-    "back": "32768; the VLAN 10 extended system ID produces displayed priority 32778.",
+    "front": "Default bridge priority, and how is it displayed for VLAN 10?",
+    "back": "32768. The VLAN ID is added as the extended system ID, so VLAN 10 shows 32778.",
     "tags": [
       "number"
     ]
   },
   {
     "id": "spanning-tree-c02",
-    "front": "How does a VLAN elect its root bridge?",
-    "back": "Lowest complete BID: priority/system-ID field first, then MAC. Priority zero still has a MAC tie-breaker.",
+    "front": "How is the root bridge elected?",
+    "back": "The lowest bridge ID wins: lowest priority first, then lowest MAC address as the tie-breaker.",
     "tags": [
       "concept"
     ]
   },
   {
+    "id": "spanning-tree-c05",
+    "front": "Which bridge priority values can you configure?",
+    "back": "0 to 61440 in steps of 4096.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
     "id": "spanning-tree-c03",
-    "front": "What does the root-primary macro configure?",
-    "back": "24576 when that wins; for an already lower root, it attempts a value 4096 lower. It is not continuous protection; verify the result, especially near zero.",
+    "front": "What does `spanning-tree vlan 10 root primary` set?",
+    "back": "Priority 24576, or 4096 below the current root if that is needed to win. It runs once and does not protect the root role afterward.",
     "tags": [
       "command",
       "number"
@@ -26,154 +34,162 @@
   },
   {
     "id": "spanning-tree-c04",
-    "front": "What does the root-secondary macro configure?",
-    "back": "Priority 28672. This is a useful preference behind 24576 and ahead of default 32768, not a reserved second-place role.",
+    "front": "What does `spanning-tree vlan 10 root secondary` set?",
+    "back": "Priority 28672: better than the default 32768, worse than a primary at 24576.",
     "tags": [
       "number",
       "command"
     ]
   },
   {
-    "id": "spanning-tree-c05",
-    "front": "Legal configurable bridge priorities?",
-    "back": "0 through 61440, in steps of 4096. The VLAN ID is added for the per-VLAN displayed field.",
-    "tags": [
-      "number"
-    ]
-  },
-  {
     "id": "spanning-tree-c06",
-    "front": "Short-method costs at 10 Mbps, 100 Mbps, 1 Gbps, and 10 Gbps?",
-    "back": "100, 19, 4, and 2 respectively. Verify the cost method before applying the table.",
+    "front": "Short-method costs at 10 Mbps, 100 Mbps, 1 Gbps and 10 Gbps?",
+    "back": "100, 19, 4 and 2.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "spanning-tree-c07",
-    "front": "Root-port comparison when candidates advertise the same root?",
-    "back": "Total root path cost → sender BID → sender port ID → local receiving port ID if still tied.",
+    "id": "spanning-tree-c24",
+    "front": "Long-method costs at 10 Mbps, 100 Mbps, 1 Gbps and 10 Gbps?",
+    "back": "2,000,000, 200,000, 20,000 and 2,000. Selected with `spanning-tree pathcost method long`.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c08",
+    "front": "How does a switch calculate the root path cost through one of its ports?",
+    "back": "The root cost advertised in the BPDU it received, plus the cost of the receiving port. The root advertises 0.",
     "tags": [
       "concept"
     ]
   },
   {
-    "id": "spanning-tree-c08",
-    "front": "How is a candidate root path cost calculated?",
-    "back": "Received advertised root cost plus the cost of the local receiving interface. The root advertises zero.",
+    "id": "spanning-tree-c07",
+    "front": "In what order are root-port candidates compared?",
+    "back": "Lowest total root path cost, then lowest sender bridge ID, then lowest sender port ID, then lowest local port ID.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
+    "id": "spanning-tree-c20",
+    "front": "How is the designated port chosen on a segment?",
+    "back": "The switch advertising the lowest root path cost wins. Ties go to the lowest sender bridge ID, then the lowest sender port ID.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "spanning-tree-c09",
-    "front": "How many root and designated ports are selected?",
-    "back": "One root port per connected non-root bridge per instance; one designated port per segment. The root has no root port.",
+    "front": "How many root ports and designated ports does a tree have?",
+    "back": "One root port on each non-root switch and one designated port on each segment. The root bridge has no root port.",
     "tags": [
       "concept"
     ]
   },
   {
     "id": "spanning-tree-c10",
-    "front": "How do alternate and backup roles differ?",
-    "back": "Alternate: another path toward the root through another bridge. Backup: redundant local attachment to a shared segment served by this bridge's own designated port.",
+    "front": "Alternate port versus backup port?",
+    "back": "Alternate: a blocked second path to the root through another switch. Backup: a blocked second connection to a segment where this switch already has the designated port.",
     "tags": [
       "compare"
     ]
   },
   {
-    "id": "spanning-tree-c11",
-    "front": "Can a healthy alternate remain discarding longer than max age?",
-    "back": "Yes. It remains discarding while valid superior information keeps the redundant path unnecessary. Max age is not a deadline forcing that port to forward.",
+    "id": "spanning-tree-c27",
+    "front": "What does `Altn BLK` mean in `show spanning-tree`?",
+    "back": "An alternate port in the discarding state: a healthy standby path to the root, not a fault.",
     "tags": [
-      "number"
+      "troubleshoot"
     ]
   },
   {
     "id": "spanning-tree-c12",
-    "front": "How does learning differ from forwarding in RSTP?",
-    "back": "Both learn user-frame source MACs; only forwarding permits eligible user frames to leave through the port. Discarding does neither.",
+    "front": "What does a port do in each RSTP state?",
+    "back": "Discarding: no learning, no forwarding. Learning: learns MAC addresses but does not forward. Forwarding: learns and forwards.",
     "tags": [
       "concept"
     ]
   },
   {
+    "id": "spanning-tree-c25",
+    "front": "How do the five 802.1D port states map to RSTP states?",
+    "back": "Disabled, blocking and listening become discarding. Learning and forwarding keep their names.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
     "id": "spanning-tree-c13",
-    "front": "Default hello, max-age, and forward-delay timers?",
-    "back": "2 seconds, 20 seconds, and 15 seconds. These are distinct timers, not one universal convergence guarantee.",
+    "front": "Default hello, max age and forward delay timers?",
+    "back": "2 seconds, 20 seconds and 15 seconds.",
     "tags": [
       "number"
     ]
   },
   {
+    "id": "spanning-tree-c26",
+    "front": "Where do classic STP's 30-second and 50-second delays come from?",
+    "back": "Listening 15 s plus learning 15 s is 30 s. Waiting 20 s for max age first, after an indirect failure, makes 50 s.",
+    "tags": [
+      "number"
+    ]
+  },
+  {
+    "id": "spanning-tree-c18",
+    "front": "How do PVST+ and Rapid PVST+ relate to 802.1D and 802.1w?",
+    "back": "PVST+ runs classic 802.1D STP once per VLAN. Rapid PVST+ runs 802.1w RSTP once per VLAN. Both are Cisco implementations.",
+    "tags": [
+      "compare"
+    ]
+  },
+  {
     "id": "spanning-tree-c15",
-    "front": "Rapid PVST+ command and how to verify the mode?",
-    "back": "Configure `spanning-tree mode rapid-pvst`; check `show spanning-tree summary` and `protocol rstp` in the VLAN view. Older 2960 defaults use PVST+.",
+    "front": "Which command enables Rapid PVST+, and how do you confirm it?",
+    "back": "`spanning-tree mode rapid-pvst`. `show spanning-tree summary` names the mode, and the VLAN view shows `protocol rstp`.",
     "tags": [
       "command"
     ]
   },
   {
+    "id": "spanning-tree-c22",
+    "front": "Why can one trunk port forward in VLAN 10 and block in VLAN 20?",
+    "back": "Rapid PVST+ runs a separate tree for each VLAN, each with its own root, costs and port roles.",
+    "tags": [
+      "concept"
+    ]
+  },
+  {
     "id": "spanning-tree-c16",
-    "front": "What does Prio.Nbr 128.25 represent?",
-    "back": "Port priority 128 and STP port number 25. The STP number is platform-specific and is not necessarily the interface-name suffix.",
+    "front": "What does Prio.Nbr 128.25 mean?",
+    "back": "Port priority 128 and STP port number 25. Together they form the port ID.",
     "tags": [
       "concept",
       "number"
     ]
   },
   {
-    "id": "spanning-tree-c17",
-    "front": "How does show output identify the local root?",
-    "back": "Root ID and local Bridge ID match, with `This bridge is the root`; there is no local root port and root cost is zero.",
-    "tags": [
-      "troubleshoot"
-    ]
-  },
-  {
-    "id": "spanning-tree-c18",
-    "front": "How do STP/RSTP relate to PVST+/Rapid PVST+?",
-    "back": "PVST+ is Cisco's classic per-VLAN version; Rapid PVST+ uses rapid behavior per VLAN. Historical standards are 802.1D and 802.1w.",
-    "tags": [
-      "compare"
-    ]
-  },
-  {
     "id": "spanning-tree-c19",
-    "front": "Default and configurable port-priority values?",
-    "back": "Default 128; values 0–240 in steps of 16. The sending port ID participates before the receiving port ID in root-port ties.",
+    "front": "Default STP port priority, and which values can you set?",
+    "back": "128. Values run from 0 to 240 in steps of 16; lower is better.",
     "tags": [
       "number"
     ]
   },
   {
-    "id": "spanning-tree-c20",
-    "front": "How is the designated end chosen on a segment?",
-    "back": "Compare advertised root ID, root path cost, sender BID, then sender port ID. Do not add the segment's receiving cost to the advertisements.",
+    "id": "spanning-tree-c17",
+    "front": "How does `show spanning-tree` tell you that this switch is the root?",
+    "back": "Root ID and Bridge ID are the same and the output says `This bridge is the root`. There is no root port.",
     "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "spanning-tree-c21",
-    "front": "Does an STP cost change increase link bandwidth?",
-    "back": "No. It changes path selection. A different selected root cost can change the information advertised to neighboring switches.",
-    "tags": [
-      "concept"
-    ]
-  },
-  {
-    "id": "spanning-tree-c22",
-    "front": "Can one trunk have different Rapid PVST+ roles for two VLANs?",
-    "back": "Yes. Each VLAN has its own instance, root and path comparison; read the named VLAN rather than treating the physical port as one universal role.",
-    "tags": [
-      "concept"
+      "troubleshoot"
     ]
   },
   {
     "id": "spanning-tree-c23",
-    "front": "Must every switched user frame travel through the root bridge?",
-    "back": "No. STP supplies a loop-free forwarding topology. Normal destination-MAC forwarding can keep a local exchange away from the root.",
+    "front": "What is the root bridge's role in the tree?",
+    "back": "It is the reference point every switch measures its cost to. User frames still take the forwarding path between hosts and need not cross the root.",
     "tags": [
       "concept"
     ]

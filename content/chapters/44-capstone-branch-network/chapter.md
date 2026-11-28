@@ -31,7 +31,9 @@ sources:
   - { title: "Cisco: IOS XE DHCP server", url: "https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/ip-addressing/b-ip-addressing/m_config-dhcp-server-xe.html" }
   - { title: "RFC 5737: Documentation address blocks", url: "https://www.rfc-editor.org/rfc/rfc5737" }
 ---
-A working branch depends on several features agreeing about the same traffic. A VLAN must reach its gateway, the gateway must have a route, and the return packet must survive routing and policy in the other direction. This capstone combines skills from earlier chapters and gives each requirement an observable acceptance test. The guided lab contains the complete build; this lesson explains the design decisions and how to assess the evidence.
+A new branch office opens on Monday. Staff need addresses, the Internet and the HQ servers. Guests need the Internet and nothing else. You need to manage all of it from your desk. No single feature delivers that: the VLAN has to reach its gateway, the gateway needs a route, the return path has to exist, and NAT and the ACLs have to agree about the same packets.
+
+You have built each of those pieces in its own chapter. This capstone joins them: VLANs, trunks, EtherChannel and spanning tree at Layer 2; router-on-a-stick, DHCP and OSPF at Layer 3; PAT at the edge; and an ACL, SSH, NTP and syslog on top. The lab contains every command. This lesson explains why each choice was made and how to prove the result, so that by the end you can build the branch from its specification and locate a fault by reading evidence.
 
 ## Define the required behavior
 
@@ -86,7 +88,7 @@ The VLAN numbers and subnet numbers resemble each other for readability. They ar
 The external ranges are documentation space, not public Internet services. Keep the Packet Tracer project isolated. The two DHCP ranges each contain **205 candidate addresses** before existing leases, conflicts or other reservations. Excluding `.1–.49` does not promise that the next lease will be exactly `.50`; record the addresses actually assigned.
 
 ```diagram
-{"type":"topology","title":"Fig 44.1 — The integrated branch","caption":"Staff traffic crosses R1 for routing and R2 for external translation; the guest also depends on the inter-switch trunk.","nodes":[{"id":"S","kind":"pc","label":"Staff","sub":"VLAN 10","x":0.5,"y":1},{"id":"G","kind":"pc","label":"Guest","sub":"VLAN 20","x":0.5,"y":5},{"id":"SW1","kind":"switch","label":"SW1","sub":"Root · .99.11","x":2.7,"y":1},{"id":"SW2","kind":"switch","label":"SW2","sub":".99.12","x":2.7,"y":5},{"id":"R1","kind":"router","label":"R1","sub":"Gateways / DHCP","x":5,"y":3},{"id":"R2","kind":"router","label":"R2","sub":"HQ / PAT","x":7.3,"y":3},{"id":"HQ","kind":"server","label":"SRV-HQ","sub":"10.255.20.10","x":7.3,"y":5.5},{"id":"ISP","kind":"router","label":"ISP","x":9.5,"y":3},{"id":"WEB","kind":"server","label":"Remote","sub":"198.51.100.10","x":11.7,"y":3}],"links":[{"from":"S","to":"SW1"},{"from":"G","to":"SW2"},{"from":"SW1","to":"SW2","label":"Po1 · two members","accent":true},{"from":"SW1","to":"R1","label":"802.1Q"},{"from":"R1","to":"R2","label":"OSPF · /30"},{"from":"R2","to":"HQ"},{"from":"R2","to":"ISP","label":"PAT outside"},{"from":"ISP","to":"WEB"}],"trace":{"flows":[{"path":["G","SW2","SW1","R1","R2","ISP","WEB"],"back":true,"label":"Guest HTTP request","tags":{"SW2":"VLAN 20 · over the Po1 trunk","R1":"Gateway 10.10.20.1 · routes to R2","R2":"PAT · 10.10.20.x → 203.0.113.1"},"backTags":{"ISP":"dst 203.0.113.1 · connected","R2":"203.0.113.1 → 10.10.20.x · via R1"}}]}}
+{"type":"topology","title":"Fig 44.1 — The integrated branch","caption":"Staff traffic crosses R1 for routing and R2 for external translation; the guest also depends on the inter-switch trunk.","nodes":[{"id":"S","kind":"pc","label":"PC-STAFF","sub":"VLAN 10","x":0.5,"y":1},{"id":"G","kind":"pc","label":"PC-GUEST","sub":"VLAN 20","x":0.5,"y":5},{"id":"SW1","kind":"switch","label":"SW1","sub":"Root · .99.11","x":2.7,"y":1},{"id":"SW2","kind":"switch","label":"SW2","sub":".99.12","x":2.7,"y":5},{"id":"R1","kind":"router","label":"R1","sub":"Gateways / DHCP","x":5,"y":3},{"id":"R2","kind":"router","label":"R2","sub":"HQ / PAT","x":7.3,"y":3},{"id":"HQ","kind":"server","label":"SRV-HQ","sub":"10.255.20.10","x":7.3,"y":5.5},{"id":"ISP","kind":"router","label":"ISP","x":9.5,"y":3},{"id":"WEB","kind":"server","label":"SRV-REMOTE","sub":"198.51.100.10","x":11.7,"y":3}],"links":[{"from":"S","to":"SW1"},{"from":"G","to":"SW2"},{"from":"SW1","to":"SW2","label":"Po1 · two members","accent":true},{"from":"SW1","to":"R1","label":"802.1Q"},{"from":"R1","to":"R2","label":"OSPF · /30"},{"from":"R2","to":"HQ"},{"from":"R2","to":"ISP","label":"PAT outside"},{"from":"ISP","to":"WEB"}],"trace":{"flows":[{"path":["G","SW2","SW1","R1","R2","ISP","WEB"],"back":true,"label":"Guest HTTP request","tags":{"SW2":"VLAN 20 · over the Po1 trunk","R1":"Gateway 10.10.20.1 · routes to R2","R2":"PAT · 10.10.20.x → 203.0.113.1"},"backTags":{"ISP":"dst 203.0.113.1 · connected","R2":"203.0.113.1 → 10.10.20.x · via R1"}}]}}
 ```
 
 Trace both directions before configuration. Staff traffic to HQ keeps its source address; R2 needs a route back to the staff subnet. External traffic uses R2's `203.0.113.1` as its translated source; the ISP can return to that connected subnet. R2 then needs both the translation state and the inside route to deliver the reply.
@@ -102,9 +104,9 @@ Group  Port-channel  Protocol  Ports
 1      Po1(SU)       LACP      Fa0/23(P) Fa0/24(P)  ← S: Layer 2; U: in use; P: bundled
 ```
 
-These are representative teaching values, not a recorded simulator run. Check both ends and read the actual flag legend. A port-channel existing in the configuration is not proof that both physical members are forwarding in it. One conversation is usually assigned to one member by the balancing method; two links do not automatically double one TCP flow's speed.
+Read the flags on both switches: `SU` on the port-channel and `P` on each member mean a working Layer 2 bundle. Each conversation is hashed onto one member link, so two links add capacity for many flows but do not double the speed of one.
 
-Set SW1's base priority explicitly to **24576** for the four VLANs, leaving SW2 at **32768**. VLAN 20's displayed extended priority is therefore `24576 + 20 = 24596`. The alternative `root primary` macro is conditional: 24576 is typical against default-priority peers, not a universal stored value regardless of the existing root. Verify the elected bridge rather than memorizing the macro as an unconditional assignment.
+Set SW1's priority to **24576** for the four VLANs and leave SW2 at the default **32768**; the lower value wins the root election. The switch adds the VLAN ID to the priority it displays, so VLAN 20 shows `24576 + 20 = 24596`. The `root primary` macro would also work: it sets 24576 when the current root has the default priority.
 
 PortFast and BPDU guard belong on the identified endpoint ports here. Do not enable them on the inter-switch channel. VLAN 999 has no routed address or host access port. Matching an unused native VLAN helps keep ordinary client traffic tagged, but is not a substitute for an explicit allowed list or access policy.
 
@@ -139,7 +141,7 @@ PAT combines inside/outside roles, a source selector and an overloaded mapping. 
 R2(config)# ip nat inside source list NAT-LANS interface gigabitethernet0/1 overload
 ```
 
-The guided lab supplies the interfaces and ACL before this command. Verify with fresh client traffic, the actual application result and the translation table. A table entry establishes translation state; it does not alone establish receipt of the reply or successful HTTP. Dynamic entries can expire at different rates, so do not prescribe one universal “one minute” lifetime.
+The guided lab supplies the interfaces and ACL before this command. Verify with fresh client traffic, the page actually loading and `show ip nat translations`. An entry in the table shows that the outbound packet was translated; the page loading shows that the reply came back.
 
 A plain ping generated by R1 normally uses its egress transit address, `10.255.12.1`. That address is not translated by the lab's selector. A ping sourced from R1's staff gateway address exercises a different source match. Compare those tests deliberately; neither is a complete substitute for a test from the actual client with its own gateway, DNS and local policy.
 
@@ -151,7 +153,7 @@ No eligible traffic, an earlier ACL drop, a missing route, incorrect inside/outs
 
 The guest policy is defined in packet terms. Permit DHCP client-to-server traffic first because initial requests use source `0.0.0.0`. Permit guest ICMP echo replies to staff so a staff diagnostic ping can finish. Deny other guest packets to staff, management and the HQ/transit block, then permit the intended guest source toward other destinations.
 
-This policy does not promise that guests can answer every staff application. UDP replies and TCP replies need their own consideration. The `established` keyword, discussed in the [ACL chapter](#/chapter/acls), checks ACK or RST flags; it does not maintain a session table and must not be described as “only packets from staff-initiated sessions.” The capstone uses a limited ICMP exception instead.
+The ACL is stateless: it judges each packet alone and keeps no record of sessions. The echo-reply permit lets a staff ping to a guest complete, but replies to other staff-initiated traffic, such as a TCP connection to a guest, are still dropped by the deny that follows. The `established` keyword from the [ACL chapter](#/chapter/acls) would admit TCP replies by checking for the ACK or RST flag; the capstone keeps to the ICMP exception.
 
 Apply `GUEST-IN` inbound on R1's guest subinterface. A staff request travels outbound through that interface, while the guest response enters it. Compare those directions explicitly. Traffic between guests in the same VLAN need not traverse R1 at all and is outside this routed ACL's control.
 
@@ -177,7 +179,7 @@ Record actual addresses and counters rather than copying the example numbers. If
 
 Save a working checkpoint, introduce one fault, observe it, and restore the intended state in a separate step. Removing VLAN 20 from the router trunk leaves staff service and the routed transit intact. Making the transit passive affects OSPF reachability while a directly connected ping may still work. Inserting an overly broad guest deny can leave DHCP functioning while blocking the guest gateway and external access.
 
-Do not turn these examples into universal diagnoses. A FULL neighbor with missing routes has several possible causes. Cisco documents network-type mismatches that produce inconsistent topology descriptions; the mismatch must be established from both interfaces rather than inferred from FULL alone. Similarly, no DHCP lease does not prove a Discover never reached a server, and EXSTART does not uniquely prove an MTU mismatch.
+Each of these symptoms has more than one possible cause, so confirm before you repair. A FULL neighbor with missing routes can mean a LAN was never enabled in OSPF, or that the two ends disagree on network type; compare `show ip ospf interface` on both routers. A client with no lease can have a VLAN, trunk, pool or ACL fault; trace the path one hop at a time.
 
 Finish with a concise handover: topology, addressing, tested requirements, observed limitations, fault causes and exact repairs. Rebuild from the specification later to check that the reasoning transfers. Use the individual chapter labs for the objectives this integrated network does not contain.
 

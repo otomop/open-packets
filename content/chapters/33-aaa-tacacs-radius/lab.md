@@ -4,11 +4,11 @@ environment: mixed
 devices: ["1 × 2911 router (R1)", "1 × 2960 switch (SW1)", "1 × PC-PT (Admin-PC)", "1 × Server-PT (AAA)", "Modern IOS/IOS XE syntax worksheet"]
 minutes: 85
 ---
-Build local SSH and a tested console recovery path, then configure TACACS+ and RADIUS in separate saved copies of the same lab. Test success, rejection, and service unavailability. The main simulator configurations use classic server syntax; the final worksheet translates them to named server objects and groups. No Packet Tracer, CML, or hardware execution is claimed. Feature and server-policy support vary, so record unsupported behavior and use the specified paper fallback.
+You will give R1 a local account and a console login that never depends on a server, then make its SSH logins use a central AAA server: first with TACACS+, then, in a second copy of the project, with RADIUS. For each protocol you test the three outcomes the lesson describes: the server accepts the login, the server rejects it (no fallback), and the server does not answer (fallback to local). Packet Tracer uses the older `tacacs-server host` and `radius-server host` commands, so the last step translates the configuration to the named-server syntax of current IOS. The expected results were written from the IOS documentation, not captured from a run; where your version behaves differently, record what you see.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The LAN and SSH commands are supplied preparation. Your main task is to trace the selected line, method list, group, server, and result for a **new session**. Before each login test, record a prediction. Afterward, record the username, server state, list selected, available server/device evidence, outcome, and whether the result was measured or supplied on paper. Never put the actual secret in the evidence table.
+The LAN and SSH commands are given to you. Your task is to follow each **new** login through the chain: line → method list → server group → server → result. Before each login test, write down what you expect; afterwards record the username, whether the server was on, and the outcome.
 
 ## Topology
 

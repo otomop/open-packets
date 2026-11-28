@@ -26,8 +26,8 @@
     "answer": [
       1
     ],
-    "explanation": "The log explicitly says the process cannot obtain a RID. Configure a unique 32-bit identifier; it does not have to be assigned to an IPv4 interface. The passive setting names only Gi0/2, not the transit.",
-    "fix": "```ios R2\nR2# configure terminal\nR2(config)# ipv6 router ospf 20\nR2(config-rtr)# router-id 2.2.2.2\nR2(config-rtr)# end\nR2# show ipv6 ospf\nR2# show ipv6 ospf neighbor\nR2# show ipv6 route ospf\n```\nThis process lacked an active RID. If a different scenario has an already running process with a pending RID change, schedule any required process restart separately and expect adjacency disruption."
+    "explanation": "The log says OSPFv3 cannot get a router ID. Configure a unique 32-bit router-id; it does not need an IPv4 interface.",
+    "fix": "```ios R2\nR2# configure terminal\nR2(config)# ipv6 router ospf 20\nR2(config-rtr)# router-id 2.2.2.2\nR2(config-rtr)# end\nR2# show ipv6 ospf\nR2# show ipv6 ospf neighbor\nR2# show ipv6 route ospf\n```\nIf the process was already running, a router-id change needs a process restart, which drops adjacencies."
   },
   {
     "id": "ospfv3-t02",
@@ -35,7 +35,7 @@
     "objectives": [
       "v2:3.3.a"
     ],
-    "scenario": "R1 and R3 share an up/up two-router link on Gi0/1. Their alternate routed path through R2 still works, but the direct OSPFv3 neighbor is absent. R3 received explicit timer overrides. These are representative interface excerpts.",
+    "scenario": "R1 and R3 share an up/up two-router link on Gi0/1. Traffic still flows over their other path across the shared segment, but the direct OSPFv3 neighbor is absent. R3 received explicit timer overrides. These are representative interface excerpts.",
     "exhibits": [
       {
         "title": "R1 Gi0/1",
@@ -56,7 +56,7 @@
     "answer": [
       2
     ],
-    "explanation": "Area, instance, and intended network type agree. The effective timer pairs do not, so the Hellos do not meet the required parameters. The alternate path can mask this fault from an end-to-end ping.",
-    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/1\nR3(config-if)# no ipv6 ospf hello-interval\nR3(config-if)# no ipv6 ospf dead-interval\nR3(config-if)# end\nR3# show ipv6 ospf interface gigabitethernet0/1\nR3# show ipv6 ospf neighbor\n```\nVerify 10/40 at both ends and a Full direct adjacency. If a new timer pair is intentional, configure and verify both values consistently on both peers instead."
+    "explanation": "The Hello and dead intervals differ (10/40 against 3/12), so each router ignores the other's Hellos. Area, instance and network type match.",
+    "fix": "```ios R3\nR3# configure terminal\nR3(config)# interface gigabitethernet0/1\nR3(config-if)# no ipv6 ospf hello-interval\nR3(config-if)# no ipv6 ospf dead-interval\nR3(config-if)# end\nR3# show ipv6 ospf interface gigabitethernet0/1\nR3# show ipv6 ospf neighbor\n```\nConfirm 10/40 on both ends and a Full direct adjacency. If a new timer pair is intended, set it on both peers."
   }
 ]

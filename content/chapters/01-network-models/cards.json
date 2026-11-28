@@ -17,98 +17,130 @@
   },
   {
     "id": "network-models-c03",
-    "front": "How does the four-layer TCP/IP model relate to OSI?",
-    "back": "Application groups OSI 5–7; Transport matches 4; Internet matches 3; Link groups 1–2.",
+    "front": "How do the four TCP/IP layers map to the OSI layers?",
+    "back": "Application = OSI 5–7. Transport = 4. Internet = 3. Link (Network Access) = 1–2.",
     "tags": [
       "models"
     ]
   },
   {
     "id": "network-models-c04",
-    "front": "How do a MAC address, an IP address, and a transport port differ?",
-    "back": "MAC: the Ethernet link endpoint. IP: the logical network endpoint. TCP/UDP port: the transport endpoint for an application exchange.",
+    "front": "What does each address identify: MAC address, IP address, TCP or UDP port?",
+    "back": "MAC: an interface on the local link (Layer 2). IP: a host across networks (Layer 3). Port: an application on that host (Layer 4).",
     "tags": [
       "addressing"
     ]
   },
   {
     "id": "network-models-c09",
-    "front": "What changes during ordinary IPv4 routing between Ethernet LANs without NAT or tunneling?",
-    "back": "The outgoing Ethernet frame is new; TTL decreases and its IPv4 checksum changes. Source and destination IP stay the same under these assumptions.",
+    "front": "What does a router change when it forwards an IPv4 packet between two Ethernet LANs?",
+    "back": "It builds a new frame with new source and destination MACs and reduces the TTL by 1. The source and destination IP addresses stay the same.",
     "tags": [
       "routing"
     ]
   },
   {
     "id": "network-models-c10",
-    "front": "Can a received TTL alone establish the exact routed hop count?",
-    "back": "No. You also need the packet’s initial TTL and the assumptions about how it changed.",
+    "front": "A packet leaves its sender with TTL 128 and arrives with TTL 126. How many routers forwarded it?",
+    "back": "Two. Each router subtracts 1 from the TTL; switches do not change it.",
     "tags": [
       "diagnostics"
     ]
   },
   {
     "id": "network-models-c11",
-    "front": "How does a simple host with a connected route and default gateway choose a next hop?",
-    "back": "With only a connected route and default gateway: send directly to local destinations; send other destinations to the gateway.",
+    "front": "How does a host decide whether to deliver a packet directly or send it to its default gateway?",
+    "back": "It applies its subnet mask. A destination in its own subnet is delivered directly; any other destination goes to the default gateway.",
     "tags": [
       "routing"
     ]
   },
   {
     "id": "network-models-c13",
-    "front": "Does ordinary Layer 2 switching rewrite endpoint MAC addresses or decrement IP TTL?",
-    "back": "No. Ordinary bridging preserves the source/destination MAC addresses and does not decrement IP TTL.",
-    "tags": [
-      "switching"
-    ]
-  },
-  {
-    "id": "network-models-c14",
-    "front": "Which commands display ARP mappings on IOS and a Windows or Packet Tracer PC?",
-    "back": "IOS: show arp. Windows or Packet Tracer PC: arp -a. They display present IP-to-MAC mappings; entries can age out.",
-    "tags": [
-      "diagnostics"
-    ]
-  },
-  {
-    "id": "network-models-c19",
-    "front": "What does a dynamic switch MAC-table entry associate?",
-    "back": "A VLAN and source MAC with the port where a frame arrived. The switch then looks up destination MACs to select egress ports.",
+    "front": "What does a Layer 2 switch change in a frame it forwards?",
+    "back": "Nothing. The MAC addresses and the IP packet inside, including its TTL, pass through unchanged.",
     "tags": [
       "switching"
     ]
   },
   {
     "id": "network-models-c22",
-    "front": "Does IPv4 ping use TCP or UDP ports?",
-    "back": "Neither. ICMP Echo is carried directly in IPv4. Its success does not establish that a TCP or UDP service works.",
+    "front": "Which protocol does ping use, and how is it carried?",
+    "back": "ICMP Echo Request and Echo Reply, carried directly in IP. Ping uses no TCP or UDP ports.",
     "tags": [
       "icmp"
     ]
   },
   {
     "id": "network-models-c23",
-    "front": "Which address does ARP resolve before a correctly configured host sends to a remote subnet through its default gateway?",
-    "back": "The local gateway’s IPv4 address. The frame uses that gateway’s MAC; the IP packet keeps the remote destination.",
+    "front": "A host sends a packet to another subnet. Which IP address does it resolve with ARP?",
+    "back": "Its default gateway's. The frame goes to the gateway's MAC; the packet keeps the remote destination IP.",
     "tags": [
       "arp"
     ]
   },
   {
     "id": "network-models-c24",
-    "front": "What limits the scope of a normal Ethernet ARP request?",
-    "back": "It stays in the local Layer 2 broadcast domain. Routers can originate separate ARP exchanges on their other links.",
+    "front": "How far does an ARP request travel?",
+    "back": "Across its own LAN (broadcast domain) only. A router does not forward it; the router sends its own ARP request on the next LAN.",
     "tags": [
       "arp"
     ]
   },
   {
     "id": "network-models-c25",
-    "front": "Why must you consider the return path when troubleshooting a ping?",
-    "back": "The source needs an Echo Reply. A remote host can receive the request but fail to return its reply through an incorrect gateway.",
+    "front": "Why does Server-B need a default gateway to answer a ping from PC-A on another subnet?",
+    "back": "Its reply goes to PC-A, which is outside Server-B's subnet, so the reply must go to Server-B's gateway. A ping succeeds only if the reply returns.",
+    "tags": [
+      "routing"
+    ]
+  },
+  {
+    "id": "network-models-c26",
+    "front": "How many bits are in a MAC address, an IPv4 address and an IPv6 address?",
+    "back": "MAC: 48 bits. IPv4: 32 bits. IPv6: 128 bits.",
+    "tags": [
+      "addressing"
+    ]
+  },
+  {
+    "id": "network-models-c27",
+    "front": "How are an ARP request and an ARP reply addressed on Ethernet?",
+    "back": "The request is a broadcast to ff:ff:ff:ff:ff:ff. The reply is a unicast back to the requester.",
+    "tags": [
+      "arp"
+    ]
+  },
+  {
+    "id": "network-models-c28",
+    "front": "Which question does each table answer: routing table, ARP table, MAC address table?",
+    "back": "Routing table: which interface leads to this destination subnet. ARP table: which MAC has this local IP. MAC address table: which switch port leads to this MAC.",
     "tags": [
       "diagnostics"
+    ]
+  },
+  {
+    "id": "network-models-c29",
+    "front": "At which OSI layer does a switch forward, and at which layer does a router forward?",
+    "back": "A switch forwards at Layer 2, by destination MAC address. A router forwards at Layer 3, by destination IP address.",
+    "tags": [
+      "models"
+    ]
+  },
+  {
+    "id": "network-models-c30",
+    "front": "What is encapsulation, and what is de-encapsulation?",
+    "back": "Encapsulation: each layer wraps the data from the layer above in its own header on the way down to the cable. De-encapsulation: the receiver reads and removes each header on the way up to the application.",
+    "tags": [
+      "encapsulation"
+    ]
+  },
+  {
+    "id": "network-models-c31",
+    "front": "What is a broadcast domain, and which device marks its edge?",
+    "back": "The set of devices that one broadcast reaches: one LAN. Switches pass broadcasts on; a router does not, so each router interface starts a new broadcast domain.",
+    "tags": [
+      "switching"
     ]
   }
 ]

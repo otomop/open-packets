@@ -26,8 +26,8 @@
     "answer": [
       0
     ],
-    "explanation": "The option-43 address decodes to the retired 10.10.0.5, and the AP observation confirms that it used that candidate. CAPWAP can cross routed subnets; the independently verified new-controller path should be used after discovery is corrected.",
-    "fix": "In the isolated lab, change only this pool's option, then have one test AP reacquire its DHCP discovery information using that platform's supported renewal/restart procedure. Do not clear every network lease.\n\n```ios\nR1# configure terminal\nR1(config)# ip dhcp pool AP-MGMT\nR1(dhcp-config)# no option 43\nR1(dhcp-config)# option 43 hex f104.0a0a.3205\nR1(dhcp-config)# end\n```\n\nConfirm the next DHCP information names 10.10.50.5, then confirm discovery responses and actual AP registration. A successful ping alone does not prove the join."
+    "explanation": "The option-43 address decodes to the retired controller, 10.10.0.5, and the AP sent its requests there. CAPWAP crosses routed subnets, so the new controller works once discovery points to it.",
+    "fix": "In the lab, change only this pool's option, then have one test AP renew its DHCP information. Do not clear every lease.\n\n```ios\nR1# configure terminal\nR1(config)# ip dhcp pool AP-MGMT\nR1(dhcp-config)# no option 43\nR1(dhcp-config)# option 43 hex f104.0a0a.3205\nR1(dhcp-config)# end\n```\n\nConfirm the next lease names 10.10.50.5, then confirm the AP actually registers. A successful ping alone does not prove the join."
   },
   {
     "id": "wireless-architecture-t02",
@@ -57,7 +57,7 @@
     "answer": [
       0
     ],
-    "explanation": "The access port carries untagged VLAN 10 but does not match the AP's required tagged local guest VLAN. Management and the centrally switched CORP WLAN can work while this separate local forwarding path fails.",
-    "fix": "In the authorized lab, change the AP port to the documented trunk contract:\n\n```ios\nSW1# configure terminal\nSW1(config)# interface gigabitethernet1/0/7\nSW1(config-if)# switchport mode trunk\nSW1(config-if)# switchport trunk native vlan 10\nSW1(config-if)# switchport trunk allowed vlan 10,30\nSW1(config-if)# spanning-tree portfast trunk\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nAllow any link/control reconvergence, confirm AP registration, and request a fresh guest lease. Verify a 10.30.0.x/24 address, gateway 10.30.0.1 and actual guest access; then retest CORP."
+    "explanation": "The AP port is an access port in VLAN 10, but the AP needs the guest VLAN tagged. Management and the central CORP WLAN work while the local guest path fails.",
+    "fix": "Change the AP port to the documented trunk:\n\n```ios\nSW1# configure terminal\nSW1(config)# interface gigabitethernet1/0/7\nSW1(config-if)# switchport mode trunk\nSW1(config-if)# switchport trunk native vlan 10\nSW1(config-if)# switchport trunk allowed vlan 10,30\nSW1(config-if)# spanning-tree portfast trunk\nSW1(config-if)# end\nSW1# show interfaces trunk\n```\n\nWait for reconvergence, confirm AP registration, then request a fresh guest lease. Verify a 10.30.0.x/24 address, gateway 10.30.0.1 and guest access, then retest CORP."
   }
 ]

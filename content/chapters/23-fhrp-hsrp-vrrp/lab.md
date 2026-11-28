@@ -7,11 +7,11 @@ minutes: 75
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
-The required skill is interpreting gateway roles and their limits. The configuration blocks are supplied setup, not a command-memory test. Steps 1–6 establish and observe ordinary gateway replacement. Steps 7–10 are optional tracking/version extensions. Step 11 and the final challenge are status-interpretation exercises that can be completed even when VRRP is unavailable in Packet Tracer.
+You will build the lesson's two-gateway LAN, watch HSRP elect R1, and then break things on purpose: first R1's LAN interface, then its uplink. At each stage you read `show standby` on both routers and check whether PC-A still reaches the server. The skill being practised is reading gateway roles, so the configuration is given to you in full.
 
-The main build uses Packet Tracer and HSRP. VRRP status is a paper exercise because simulator support varies. Configuration is guided practice for understanding FHRP concepts and status; neither track asks you to memorize this entire optional build.
+Steps 1–6 are the core lab. Steps 7–10 are optional: they add uplink tracking and HSRP version 2, and depend on what your Packet Tracer image accepts. Step 11 and the challenge are done on paper, because Packet Tracer does not include VRRP.
 
-Use blank devices and a new file. The 2911 provides the three GigabitEthernet ports named below. Use straight-through copper between routers/PC and the switch; use crossover or auto-connect for router–router and direct server–router links. In CML or on hardware, map your image's interfaces before typing. All examples and expected outputs are authored, not captured from a manual device run.
+Use blank devices and a new file. The 2911 has the three GigabitEthernet ports named below. Use straight-through copper between the switch and the routers and PC; use crossover or auto-connect for the router-to-router and server-to-router links. In CML or on hardware, map your image's interface names before typing. The expected outputs were written for this lab, not captured from a device, so spacing may differ.
 
 ## Topology
 
@@ -32,11 +32,11 @@ Use blank devices and a new file. The 2911 provides the three GigabitEthernet po
 | R3 Gi0/2 | 203.0.113.1 / 255.255.255.0 | Server FastEthernet0 |
 | Server | 203.0.113.10 / 255.255.255.0 | Gateway 203.0.113.1 |
 
-203.0.113.0/24 is a documentation prefix used for simulated remote service, not actual Internet access. No NAT, DNS, HTTP service, or default route is needed for this ping lab. OSPF area 0 supplies specific remote and return routes. Both gateway LANs are passive in OSPF, so R1 and R2 do not form an OSPF adjacency through VLAN 10.
+203.0.113.0/24 is a documentation prefix that stands in for a remote network. Single-area OSPF from Chapter 21 carries the routes between the client LAN and the server in both directions. The VLAN 10 interfaces are passive, so R1 and R2 form OSPF neighbors only with R3, never with each other across the LAN.
 
 ### Record different kinds of evidence separately
 
-For each phase, record the PC gateway field, R1/R2 role and effective priority, the virtual IP/MAC, the switch port for that MAC, and the remote ping result. Add R3's return route when you inspect it. Predict the changes before triggering them.
+For each phase, record the PC's gateway, each router's role and current priority, the virtual IP and MAC, the switch port that leads to that MAC, the server ping result and R3's route back to the client LAN. Write your prediction before you trigger each change.
 
 | Phase | Role/priority prediction | Gateway identity prediction | Actual remote test and return route |
 |---|---|---|---|
@@ -45,7 +45,7 @@ For each phase, record the PC gateway field, R1/R2 role and effective priority, 
 | R1 LAN restored | Your prediction | Your prediction | Your observation |
 | Optional uplink tracked Down | Calculate effective priority | What stays the same? | Observation or labelled worksheet |
 
-Reaching the VIP proves less than reaching the remote server. Do not infer the destination route, return route or application result solely from the word Active.
+A reply from the virtual IP proves less than a reply from the server, so test both.
 
 ## Step 1: Cable the LAN and prepare the hosts
 
@@ -69,7 +69,7 @@ SW1# show vlan brief
 
 
 :::expected
-Fa0/1–3 belong to VLAN 10. These ports connect to hosts or routed router interfaces, so PortFast is appropriate. The switch does not require a management IP. The gateway will not respond until the routers are configured.
+Fa0/1–3 belong to VLAN 10. None of these ports leads to another switch, so PortFast is appropriate. The gateway will not answer until the routers are configured.
 :::
 
 ```state
@@ -78,7 +78,9 @@ Fa0/1–3 belong to VLAN 10. These ports connect to hosts or routed router inter
 
 ## Step 2: Configure both HSRP gateways
 
-Create R1 and R2 with the full configurations below. The two physical LAN addresses differ, but the group and virtual address agree. OSPF is included so that a later failover has a valid return path.
+Configure R1 and R2 with the blocks below. Their real LAN addresses differ, but the group number and virtual IP are the same. `standby version 1` is the default; typing it makes the starting version visible for Step 10.
+
+The OSPF lines follow Chapter 21 and give every failover a working return path. `passive-interface default` stops Hellos on every interface, `no passive-interface` re-enables the uplink, `ip ospf 10 area 0` places an interface in area 0, and `ip ospf network point-to-point` skips the DR election on a two-router link. The costs are set by hand so that the path through R1 is preferred.
 
 ```ios R1
 Router> enable
@@ -140,7 +142,7 @@ R2# show standby brief
 
 
 :::expected
-After election processing, R1 is Active at priority 110 and R2 Standby at 100. Both show the P flag and virtual IP 192.168.10.1. R2 can become active if R1 fails; preempt additionally allows either router to challenge a healthy lower-priority active router.
+Within about half a minute R1 is Active at priority 110 and R2 is Standby at 100. Both show the P flag and virtual IP 192.168.10.1. R1 reports Standby `unknown` until R2 has been configured.
 :::
 
 ```state
@@ -149,7 +151,7 @@ After election processing, R1 is Active at priority 110 and R2 Standby at 100. B
 
 ## Step 3: Complete the remote routing and save a baseline
 
-Configure R3 and verify both OSPF adjacencies before testing the server. R3 uses cost 10 toward R1 and 20 toward R2, so its normal return path to the client LAN is unambiguous.
+Configure R3 and check both OSPF adjacencies before you test the server. R3 uses cost 10 toward R1 and 20 toward R2, so its return path to the client LAN normally runs through R1.
 
 ```ios R3
 Router> enable
@@ -207,7 +209,7 @@ ping 203.0.113.10
 ```
 
 :::expected
-R3 is Full with R1 and R2 over the two point-to-point links. R3 learns 192.168.10.0/24 via 10.0.13.1 at cost 10 + 1 = 11. R1 and R2 learn 203.0.113.0/24 at cost 10 + 1 = 11. PC-A reaches the server after ARP and convergence.
+R3 is Full with R1 and R2 over the two point-to-point links. R3 learns 192.168.10.0/24 via 10.0.13.1 at cost 10 + 1 = 11. R1 and R2 each learn 203.0.113.0/24 at cost 10 + 1 = 11. PC-A reaches the server; the first ping or two may time out while ARP completes.
 :::
 
 ```state
@@ -216,7 +218,7 @@ R3 is Full with R1 and R2 over the two point-to-point links. R3 learns 192.168.1
 
 ## Step 4: Inspect the virtual identity and forwarding path
 
-Record baseline roles on both routers and the virtual MAC learned on the switch. On PC-A, ping the server again, then display the ARP cache.
+Record the baseline: the roles on both routers and the port where SW1 has learned the virtual MAC. On PC-A, ping the server again and then display the ARP cache.
 
 ```ios R1
 R1# show standby
@@ -238,7 +240,7 @@ If the Packet Tracer switch accepts filtering, `show mac address-table address 0
 
 
 :::expected
-The gateway is 192.168.10.1 and the ordinary HSRPv1 group-1 virtual MAC is 0000.0c07.ac01. SW1 should learn it toward Fa0/1, R1. Keep separate notes for the PC ARP mapping, switch port mapping, and remote route; they describe different layers.
+PC-A's ARP cache maps 192.168.10.1 to 0000.0c07.ac01, the HSRPv1 virtual MAC for group 1. SW1 has learned that MAC on Fa0/1, toward R1. Note the ARP entry, the switch port and R1's route to the server separately. Step 5 changes the switch port but not the ARP entry.
 :::
 
 ```state
@@ -247,9 +249,9 @@ The gateway is 192.168.10.1 and the ordinary HSRPv1 group-1 virtual MAC is 0000.
 
 ## Step 5: Fail the active LAN interface and observe
 
-Before shutdown, predict which virtual identity fields stay the same and which switch/role fields change. Collect the observations while R1 Gi0/0 remains down; the next step restores it.
+Before you shut the interface, predict what stays the same and what changes among the gateway IP, the virtual MAC, the roles and the switch port. Then shut only Gi0/0 on R1. On real IOS a shutdown makes R1 send a Resign, so R2 takes over sooner than the 10-second hold time that a power failure would need; Packet Tracer may wait for the timer.
 
-On R1 shut only Gi0/0. This is an interface-failure demonstration, not a promise to reproduce the timer of an unannounced power failure. Repeat the server ping and inspect R2/R3 before restoring anything.
+Repeat the server ping and inspect R2, R3 and SW1 while Gi0/0 is still down. The next step restores it.
 
 ```ios R1
 R1# configure terminal
@@ -272,7 +274,7 @@ SW1# show mac address-table
 
 
 :::expected
-R2 becomes Active after the failure is processed. R3 withdraws the unavailable R1 LAN path and uses R2 at cost 20 + 1 = 21. SW1 learns the virtual MAC toward Fa0/2. After convergence PC-A again reaches the server using the same configured virtual gateway; record any lost pings without claiming a fixed failover duration.
+R2 becomes Active. R3 drops the path through R1 and reaches 192.168.10.0/24 through R2 at cost 20 + 1 = 21. SW1 now lists the virtual MAC on Fa0/2. PC-A reaches the server again through the same gateway IP and the same virtual MAC. Note how many pings were lost.
 :::
 
 ```state
@@ -297,7 +299,7 @@ R3# show ip route 192.168.10.0
 
 
 :::expected
-R1 can reclaim Active because it has priority 110 and preempt. R3 returns to its lower-cost path through R1. Without preempt on R1, recovery alone would not require R2 to give up Active.
+R1 becomes Active again because it has the higher priority and preempt. R3 returns to the cost-11 path through R1. Without preempt on R1, R2 would have stayed Active.
 :::
 
 ```state
@@ -306,7 +308,7 @@ R1 can reclaim Active because it has priority 110 and preempt. R3 returns to its
 
 ## Step 7: Add optional uplink tracking
 
-On the Packet Tracer image, first check interface-mode `standby 1 track ?`. If the legacy interface form is supported, use this R1 block:
+Tracking lets R1 give up the gateway when its uplink fails. The syntax depends on the image, so enter `standby 1 track ?` in interface mode on R1 first. If the help lists interface names, which is the older form that Packet Tracer uses, enter this block:
 
 ```ios R1
 R1# configure terminal
@@ -316,7 +318,9 @@ R1(config-if)# end
 R1# show standby
 ```
 
-On IOS XE images that support object tracking instead, use the following alternative, not both forms:
+If your image rejects the trailing `20`, enter the command without it. The decrement is then the default 10, which only brings R1 down to 100: a tie with R2, and a tie does not cause preemption. In that case also enter `standby 1 priority 105` on R2 Gi0/0. R1's 110 still wins while the uplink is up, and 110 − 10 = 100 loses to 105 when it is down.
+
+If the help offers an object number instead, as on current IOS and IOS XE, use this alternative. Do not configure both forms:
 
 ```ios R1
 R1# configure terminal
@@ -328,10 +332,10 @@ R1(config-if)# end
 R1# show standby
 ```
 
-If neither form exists in your simulator image, leave configuration unchanged and do Steps 8–9 as a paper exercise using the expected results. The basic failover in Steps 5–6 remains executable.
+If your image has neither form, leave the configuration unchanged and read Steps 8–9 as a paper exercise.
 
 :::expected
-While the uplink is up, R1 shows current/configured priority 110 and the track condition Up. R2 already has preempt configured, which is necessary to take over when R1 remains alive on the LAN but its effective priority falls below 100.
+While the uplink is up, `show standby` on R1 still reports priority 110 and lists the tracked interface or object as Up. R2 already has preempt, which it needs in Step 8 to take the role from a router that is still alive on the LAN.
 :::
 
 ```state
@@ -340,9 +344,7 @@ While the uplink is up, R1 shows current/configured priority 110 and the track c
 
 ## Step 8: Fail the uplink while the gateway stays on the LAN
 
-Before the fault, calculate `110 minus 20`, compare it with R2's effective priority, and identify which peer needs preemption. Check your answer against the actual status after the change; do not make a remote-service guarantee from priority alone.
-
-If Step 7 tracking is configured, shut R1 Gi0/1 only. Leave Gi0/0 up. Inspect both HSRP peers and R3, and repeat the remote ping.
+Before the fault, work out 110 − 20, compare the result with R2's priority, and decide which router needs preempt for the roles to change. Then shut only Gi0/1 on R1 and leave Gi0/0 up. Inspect both HSRP peers and R3, and repeat the server ping.
 
 ```ios R1
 R1# configure terminal
@@ -362,7 +364,7 @@ R3# show ip route 192.168.10.0
 
 
 :::expected
-The tracked condition goes Down and R1 becomes priority 110 − 20 = 90. R2 at 100 preempts and becomes Active. R3 uses the R2 return path at cost 21 after OSPF converges. Without tracking, R1 could keep Active while lacking the remote route; without R2 preemption, the priority drop alone would not produce the intended takeover.
+The track state goes Down and R1's priority becomes 110 − 20 = 90 (100, against R2's 105, if you used the default decrement). R2 preempts and becomes Active. R3 reaches the client LAN through R2 at cost 21 and the server ping works again. Without tracking, R1 would have stayed Active with no route to the server. Without preempt on R2, the lower priority alone would have changed nothing.
 :::
 
 ```state
@@ -371,7 +373,7 @@ The tracked condition goes Down and R1 becomes priority 110 − 20 = 90. R2 at 1
 
 ## Step 9: Restore the uplink and verify recovery
 
-Restore the exact interface changed in Step 8. If you used the paper fallback, state the same expected transition without changing the working devices.
+Restore the interface you shut in Step 8. If you are working on paper, write down the transition you expect instead.
 
 ```ios R1
 R1# configure terminal
@@ -388,7 +390,7 @@ R3# show ip route 192.168.10.0
 
 
 :::expected
-Tracking returns Up, R1 effective priority returns to 110, and R1 can preempt again. Wait until OSPF is Full and the remote ping works. The configured tracking decrement stays 20; recovery restores the effective priority rather than deleting the tracking configuration.
+The track state returns to Up, R1's priority returns to 110, and R1 preempts and becomes Active. Wait until OSPF is Full with R3 and the server ping works. The tracking configuration itself is unchanged and will act again at the next uplink failure.
 :::
 
 ```state
@@ -397,7 +399,7 @@ Tracking returns Up, R1 effective priority returns to 110, and R1 can preempt ag
 
 ## Step 10: Compare HSRP versions as an optional extension
 
-In this isolated lab, change both interfaces to HSRPv2 and verify the group again. A temporary mismatch is expected while only one peer has changed; complete both before testing. If your simulator lacks `standby version 2`, compare the expected MAC on paper instead.
+Change both LAN interfaces to HSRP version 2 and check the group again. While only one router has been changed, the two cannot hear each other and both become Active, so finish both before you test. If your image lacks `standby version 2`, work out the new virtual MAC on paper instead.
 
 ```ios R1
 R1# configure terminal
@@ -420,7 +422,7 @@ R1# show standby brief
 
 
 :::expected
-The virtual IP stays 192.168.10.1 but the IPv4 group-1 virtual MAC becomes 0000.0c9f.f001. Both peers must use the same version. Let announcements refresh the host mapping and retest. If a stale PC cache persists, use Desktop > Command Prompt `arp -d` as supported or wait for refresh; this version change differs from ordinary same-version failover.
+The virtual IP stays 192.168.10.1, but the group 1 virtual MAC becomes 0000.0c9f.f001. R1 is Active and R2 is Standby again once both run version 2. Unlike a failover, a version change gives the gateway a new MAC, so PC-A's ARP entry must refresh. If the server ping fails, run `arp -d` in PC-A's Command Prompt and try again.
 :::
 
 ```state
@@ -429,7 +431,7 @@ The virtual IP stays 192.168.10.1 but the IPv4 group-1 virtual MAC becomes 0000.
 
 ## Step 11: Interpret VRRP status on paper
 
-Read these authored summaries as status evidence from a hypothetical supported IOS XE pair; they are not commands to paste or recorded Packet Tracer output.
+These summaries describe an IOS XE pair running VRRPv3. They are for reading, not typing.
 ```output Representative VRRP status summaries
 R1 — Group 1 — Address-Family IPv4
   State Master, Priority 110, Preemption enabled, Address owner No
@@ -442,10 +444,10 @@ R1 — Group 1 — Address-Family IPv6
   Virtual address FE80::1, Master address FE80::3
   Virtual MAC 0000.5e00.0201
 ```
-Write who forwards for each family, whether the IPv4 Master result proves IPv6 leadership, and whether IPv6 uses ARP. Then predict what happens when an IPv4 non-owner with priority 120 and preemption enabled joins.
+Write down which router forwards for each address family, whether R1 being IPv4 Master tells you anything about IPv6, and how IPv6 hosts find the gateway's MAC. Then predict what happens when a third router joins the IPv4 group with priority 120 and default preemption.
 
 :::solution
-R1 is the IPv4 forwarding router. R1 is IPv6 Backup; FE80::3 identifies the IPv6 Master on that link. IPv4 and IPv6 instances are independent. IPv6 uses Neighbor Discovery. A healthy IPv4 priority-120 non-owner can preempt the priority-110 non-owner, subject to election processing and any configured delay. An address-owner case would need separate priority-255 reasoning.
+R1 is the IPv4 Master, so it forwards for 192.168.10.1. For IPv6, R1 is Backup and the router at FE80::3 is the Master. The two instances are independent, so one result says nothing about the other. IPv6 hosts use Neighbor Discovery, not ARP. The new router preempts R1 and becomes IPv4 Master, because VRRP preemption is on by default and 120 beats 110. Only an address owner, at priority 255, could not be displaced.
 :::
 
 ```state
@@ -454,7 +456,7 @@ R1 is the IPv4 forwarding router. R1 is IPv6 Backup; FE80::3 identifies the IPv6
 
 ## Step 12: Save only the restored working configuration
 
-Confirm R1 Gi0/0 and Gi0/1 are up, both HSRP peers agree on the supported version, routing is restored, and PC-A reaches the server. Then save all device configurations and the project file.
+Confirm that R1 Gi0/0 and Gi0/1 are up, both routers run the same HSRP version, R1 is Active, and PC-A reaches the server. Then save all four device configurations and the project file.
 
 ```ios R1
 R1# copy running-config startup-config
@@ -474,7 +476,7 @@ SW1# copy running-config startup-config
 
 
 :::expected
-Your saved lab has no intentional shutdown fault. Record whether you ran HSRPv1 or HSRPv2 and which tracking syntax was supported. A paper exercise does not count as a command executed on a device.
+The saved lab has no interface left shut down. Note whether you finished on HSRPv1 or HSRPv2 and which tracking syntax your image accepted.
 :::
 
 ```state
@@ -483,16 +485,16 @@ Your saved lab has no intentional shutdown fault. Record whether you ran HSRPv1 
 
 ## Troubleshooting
 
-- Both peers Active with unknown Standby: compare VLAN 10 membership, version, group 1, VIP, and control-plane communication.
-- Remote ping fails while the VIP responds: inspect the active router's route to 203.0.113.0/24 and R3's return route to 192.168.10.0/24.
-- R1 uplink fails but role does not change: inspect effective priority, tracking support/status, decrement, and R2 preempt.
-- R1 recovers but stays Standby: inspect R1 preempt and effective priority; do not assume highest configured priority always wins immediately.
-- A PC loses service only when R1 fails: confirm its gateway is .1, not R1's real address .2.
-- An unsupported command: use the documented alternative or paper fallback. Do not claim a feature was verified just because a configuration line was supplied.
+- Both routers are Active with Standby `unknown`: check that Fa0/1 and Fa0/2 are in VLAN 10 and that both routers use the same HSRP version, group 1 and virtual IP.
+- The server ping fails while the virtual IP answers: check the Active router's route to 203.0.113.0/24 and R3's route back to 192.168.10.0/24.
+- R1's uplink fails but the roles do not change: check R1's current priority and track state, the decrement, and preempt on R2.
+- R1 recovers but stays Standby: check that R1 has preempt and that its current priority is back to 110.
+- PC-A loses service only when R1 fails: its gateway is probably R1's real address .2 instead of the virtual .1.
+- A command is rejected: use the alternative given in that step, or treat the step as a paper exercise.
 
 ## Challenge
 
-This is a fresh status worksheet, not a request to reconfigure the guided lab. Treat the following as complete relevant evidence for an isolated pair after convergence. Neither router is a VRRP address owner.
+This is a paper exercise about a different network; do not reconfigure the lab. The status below is everything you know about the pair. Neither router is a VRRP address owner.
 
 ```output Authored challenge requirements and initial state
 HSRP group 12, same version and VLAN on both peers
@@ -519,11 +521,11 @@ Write answers before revealing the solution:
 5. Read the separate VRRPv3 entries: does R1 forward for IPv4, IPv6, both or neither? Which address identifies the IPv6 forwarding peer, and why does the matching group number not settle the answer?
 
 :::solution
-The PC gateway should be `192.168.120.1`, the virtual address. Its initial `.2` gateway can answer while R1 is healthy, masking the dependence on one real router. HSRP failover does not rewrite that static PC field or transfer every real interface address.
+The PC gateway should be `192.168.120.1`, the virtual address. The `.2` gateway answers while R1 is healthy, which hides the mistake until R1 fails. A failover moves the virtual address to R2, never R1's real address.
 
-The tracked failure lowers R1's **effective** priority to `135 - 40 = 95`; its configured baseline stays 135. R2 at 110 has preempt and can become Active while R1 becomes Standby. The intended virtual gateway identity stays the same. On recovery R1 returns to effective 135 and, with preempt enabled, can reclaim Active after protocol processing and any configured delay.
+The tracked failure lowers R1's current priority to 135 − 40 = 95; its configured priority stays 135. R2 at 110 has preempt, so R2 becomes Active and R1 becomes Standby. The virtual IP and MAC do not change. When the uplink recovers, R1 returns to 135 and, with preempt enabled, becomes Active again.
 
-Verify current roles and priorities, the host gateway, the active router's destination route, the remote return route, and an actual host-to-remote test. A role change alone cannot establish end-to-end service. A local line-protocol tracker stays Up if that interface stays Up; it does not detect every remote route or application failure.
+Before you declare service restored, check the roles and priorities, the host's gateway, the Active router's route to the destination, the return route, and a ping from the host to the remote destination. In the fourth case the roles do not change: line-protocol tracking watches only the local interface, and both uplinks are still up.
 
-For the separate VRRPv3 evidence, R1 is IPv4 Master and IPv6 Backup. `FE80::3` identifies the IPv6 forwarding peer on this link. IPv4 and IPv6 instances are independent even when both are numbered 5. This is a status interpretation, not proof that a Packet Tracer VRRP process was executed.
+In the VRRPv3 status, R1 is IPv4 Master and IPv6 Backup, so it forwards for IPv4 only. `FE80::3` is the IPv6 Master on this link. IPv4 and IPv6 groups are separate instances even when both are numbered 5.
 :::

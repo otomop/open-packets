@@ -38,31 +38,35 @@ sources:
   - { title: "Cisco: Next Generation Cryptography", url: "https://sec.cloudapps.cisco.com/security/center/resources/next_generation_cryptography" }
 ---
 
-A branch can reach headquarters over the Internet without trusting every network between them to protect its traffic. **IPsec (Internet Protocol Security)** lets the endpoints authenticate each other and protect selected IP packets. To understand a VPN, start by identifying those endpoints, the traffic selected for protection, and where that protection ends. A successful login or an “up” status is only one part of that assessment.
+A branch office needs to reach servers at headquarters, and the only link between them is the Internet. Every packet crosses routers you do not own, where it can be read or changed. Renting a private circuit for each branch avoids that but costs far more. A **VPN (virtual private network)** built with **IPsec (Internet Protocol Security)** solves the problem on the link you already have: the two ends prove who they are, encrypt each packet before it leaves, and check each packet that arrives.
+
+This chapter uses what you already know. Static routing gets packets to the far gateway, an ACL chooses which traffic to protect, and NAT explains why some VPN traffic has to ride inside UDP. By the end you will be able to describe site-to-site and remote-access VPNs, say what ESP, AH and IKE each do, tell tunnel mode from transport mode, and read the output that shows whether a VPN is carrying traffic.
 
 ## What an IPsec VPN protects
 
 :::facts
 - A site-to-site IPsec VPN normally terminates on two gateways acting for their networks. A remote-access IPsec VPN terminates on a user's device and a VPN gateway.
 - ESP is IP protocol `50`; AH is IP protocol `51`. These are IP protocol numbers, not TCP or UDP ports.
-- IKE commonly starts on UDP `500`. Standard UDP NAT traversal carries IKE and UDP-encapsulated ESP on UDP `4500`.
-- ESP can provide encryption, integrity, data-origin authentication and anti-replay protection according to its negotiated services. AH provides integrity/authentication and anti-replay, but no confidentiality.
+- IKE uses UDP `500`. With NAT traversal, IKE and UDP-encapsulated ESP both move to UDP `4500`.
+- ESP provides encryption, integrity, data-origin authentication and anti-replay protection. AH provides integrity, authentication and anti-replay, but no encryption.
 - ESP tunnel mode protects the complete original IP packet inside a new outer IP header. Transport mode retains the original IP header for routing and protects the carried payload.
 - IKEv2 establishes authenticated negotiation and IPsec security associations. IKEv1 is legacy and deprecated; its phase names still appear in older material and simulator examples.
 - The CCNA verb is **describe**. Full VPN configuration is optional implementation practice, not a requirement to memorize a long crypto template.
 :::
 
-A VPN is a logical connection across another network. “Private” does not automatically mean encrypted: a provider MPLS VPN separates customer forwarding but does not, by that fact alone, encrypt customer packets. An IPsec VPN adds cryptographic protection where it is configured. Nor does a leased or logically private service imply that no other customer's traffic shares any physical infrastructure.
+A VPN is a private connection built across a network that someone else runs. “Private” does not always mean encrypted. A provider's MPLS VPN, a private WAN service, keeps each customer's routes separate but carries the packets unencrypted. An IPsec VPN is private because of cryptography: only the two endpoints hold the keys.
 
-Consider branch PC `10.1.1.10` sending to headquarters server `10.2.2.20`. The branch gateway encrypts the selected packet; the headquarters gateway decrypts it. If the application itself is unencrypted, the packet can be readable on the LAN before encryption and after decryption. HTTPS can provide separate application protection across those segments. IPsec does not remove the need for access policy, endpoint security or application authentication.
+Follow one packet from branch PC `10.1.1.10` to headquarters server `10.2.2.20`. The PC sends it to its default gateway, R-BR, as usual. R-BR sees that the packet is bound for the headquarters LAN, encrypts it, and sends it across the Internet to R-HQ. R-HQ decrypts it and forwards the original packet to the server. The protection covers the path between the two gateways only. On each LAN the packet travels as the application sent it, so plain HTTP is readable there and HTTPS is still worth using.
 
-The transport network must still carry the outer packets between gateways. Encryption does not create reachability, guarantee availability, or prevent an attacker from disrupting the path. It prevents an observer without the relevant keys from reading the protected plaintext and allows the receiving peer to reject packets that fail the negotiated authenticity and integrity checks.
+IPsec does not replace routing. The two gateways must already be able to reach each other's public addresses, and anyone on the path can still drop the packets. What an observer cannot do is read them, and the receiving gateway rejects any packet that was altered or did not come from its peer.
 
 ## Site-to-site and remote access
 
-In a **site-to-site VPN**, a router or firewall at each location handles IPsec for hosts behind it. A branch PC uses its ordinary default gateway; it does not need its own VPN client for the gateway-to-gateway connection. Protection applies to selected traffic, not automatically to every packet from every device. The connection may be maintained or established when traffic requires it, depending on the design.
+IPsec VPNs come in two shapes, and the difference is what sits at each end of the tunnel.
 
-In a **remote-access VPN**, the user's device participates as a VPN endpoint. A laptop can authenticate to a corporate gateway from a home or hotel network and receive policy such as an internal address, routes and DNS settings. The gateway may authenticate a device certificate, user credentials, or both, and the deployment may require multifactor authentication. Successful authentication does not itself mean the user is authorized to reach every internal network.
+A **site-to-site VPN** joins two networks. A router or firewall at each location does the IPsec work for every host behind it, so a branch PC needs no VPN software: it sends packets to its default gateway, and the gateway protects the ones bound for the other site. It is a standing arrangement between two known gateways, which bring the tunnel up whenever traffic needs it without any action from users.
+
+A **remote-access VPN** joins one device to a network. VPN client software on a laptop or phone is the endpoint, and the user connects on demand from home, a hotel or anywhere else. The user, and often the device, authenticates to the corporate VPN gateway, commonly with multifactor authentication. The gateway then gives the client an internal IP address, routes and DNS settings. Being connected does not mean the user can reach everything: the gateway still applies access policy.
 
 | Question | Site-to-site IPsec | Remote-access IPsec |
 |---|---|---|
@@ -72,9 +76,9 @@ In a **remote-access VPN**, the user's device participates as a VPN endpoint. A 
 | Typical identity | Gateway identity | Device and/or user identity |
 | Typical purpose | Connect branch and headquarters networks | Give a remote user approved network access |
 
-**Full tunneling** sends the traffic covered by the full-tunnel policy through the VPN gateway, including Internet access in a typical enterprise full-tunnel design. **Split tunneling** sends selected destinations through the VPN while other traffic follows the local connection. A split-tunnel connection is not protecting traffic that bypasses it. DNS treatment is also a policy decision; do not assume every query follows the same path merely because the VPN is connected.
+A remote-access policy also decides how much of the client's traffic uses the VPN. **Full tunneling** sends all of it through the VPN gateway, web browsing included, so corporate security tools see everything. **Split tunneling** sends only corporate destinations through the VPN. The rest goes straight out of the local connection, which saves bandwidth at the gateway but leaves that traffic outside the VPN's protection.
 
-Cisco Secure Client can use IKEv2/IPsec or a TLS-based VPN, depending on configuration. A client application's name therefore does not prove the underlying protocol. TLS/DTLS remote access is useful comparison context, but the published objective specifically names IPsec remote access. A browser portal giving access to selected applications is also different from assuming every application on that computer has a network-layer IPsec tunnel.
+Remote access is not always IPsec. Cisco Secure Client (formerly AnyConnect) can build its tunnel with IKEv2/IPsec or with **TLS**, the protocol that secures HTTPS, and many deployments choose TLS because TCP 443 is open almost everywhere. A clientless TLS VPN goes further and gives access to selected applications through a web browser alone. The exam objective names IPsec, so know IPsec for both VPN types and TLS as the common remote-access alternative.
 
 ```diagram
 { "type": "topology", "title": "Identify the VPN endpoints", "caption": "The branch path is gateway to gateway. The remote user's device is itself an endpoint. Plaintext can exist beyond the IPsec termination unless another layer protects it.", "nodes": [ { "id": "P", "kind": "pc", "label": "Branch PC", "x": 1, "y": 1 }, { "id": "B", "kind": "router", "label": "R-BR", "sub": "198.51.100.1", "x": 3, "y": 1 }, { "id": "I", "kind": "cloud", "label": "Internet", "x": 6, "y": 3 }, { "id": "H", "kind": "router", "label": "R-HQ", "sub": "203.0.113.1", "x": 9, "y": 1 }, { "id": "S", "kind": "server", "label": "HQ server", "x": 11, "y": 1 }, { "id": "L", "kind": "laptop", "label": "Remote user", "sub": "VPN client", "x": 3, "y": 5 } ], "links": [ { "from": "P", "to": "B" }, { "from": "B", "to": "I", "label": "site-to-site IPsec", "accent": true }, { "from": "I", "to": "H", "accent": true }, { "from": "H", "to": "S" }, { "from": "L", "to": "I", "label": "remote-access IPsec", "style": "dashed" } ],"trace":{"flows":[{"path":["P","B","I","H","S"],"label":"Branch PC to HQ server","tags":{"P":"Sends via its default gateway","B":"Encrypts · outer to 203.0.113.1","I":"Routes on the outer destination","H":"Decrypts · inner packet to server","S":"Readable on LAN unless app encrypts"}}],"chips":[{"node":"B","text":"Site-to-site endpoint"},{"node":"H","text":"Site-to-site endpoint"},{"node":"L","text":"Remote-access endpoint"}]} }
@@ -82,45 +86,59 @@ Cisco Secure Client can use IKEv2/IPsec or a TLS-based VPN, depending on configu
 
 ## IPsec services, ESP and AH
 
-**Confidentiality** prevents an observer from reading protected content. IPsec commonly uses **symmetric encryption**, such as AES, for this purpose: the communicating peers use shared secret key material to protect and recover the content. Both peers obtain suitable traffic keys; the user does not type a new encryption key for every packet.
+IPsec is a framework of protocols that together give a packet four protections. Learn what each protection is before learning which protocol supplies it.
 
-**Integrity** detects unauthorized changes to protected information. **Data-origin authentication** establishes that the packet came from an entity holding the appropriate key. These are related but different from authenticating a person to an application. An authenticated VPN gateway may be forwarding traffic from many internal users.
+**Confidentiality** stops an observer reading the packet. IPsec encrypts with a **symmetric** algorithm such as AES: both peers hold the same secret key, one encrypts with it and the other decrypts. Nobody types that key. IKE generates it, as a later section shows.
 
-**Anti-replay** helps the receiver reject a duplicate protected packet captured and sent again. Sequence numbers and a receive window distinguish acceptable packets from duplicates or packets too old for the window. This is not a promise that IPsec prevents every attack or that every dropped packet was malicious. Window sizes and extended sequence-number features vary; memorizing a universal default is unnecessary here.
+**Integrity** detects any change to the packet in transit. The sender computes a keyed hash (an HMAC, for example with SHA-256) over the packet and attaches the result. The receiver repeats the calculation and drops the packet if the values differ. Because only the peer holds the key, a correct hash also proves where the packet came from: that is **data-origin authentication**. It identifies the peer gateway, not the person whose traffic the gateway carries.
 
-**ESP**, Encapsulating Security Payload, provides the commonly used IPsec data protection. The negotiated transform determines the services. Secure VPN examples normally combine confidentiality and integrity/authentication, using an authenticated-encryption algorithm or encryption plus an integrity mechanism. ESP also permits configurations without encryption, so the label ESP alone is not proof that a particular capture contains encrypted user data. Inspect the negotiated algorithms when that conclusion matters.
+**Anti-replay** stops an attacker capturing a valid packet and sending it again later. Every protected packet carries a sequence number, and the receiver drops duplicates and packets older than its receive window.
 
-**AH**, Authentication Header, authenticates protected packet content and selected IP-header fields but does not encrypt the payload. Ordinary NAT changes addresses included in AH's integrity calculation, making that combination problematic. ESP is the usual choice for encrypted VPN traffic; AH is principally important here for recognizing that authentication is not confidentiality.
+Two protocols can carry the protected packets. **ESP (Encapsulating Security Payload)**, IP protocol 50, provides all four services: it encrypts the packet and adds the integrity check and the sequence number. Almost every IPsec VPN uses ESP.
+
+**AH (Authentication Header)**, IP protocol 51, provides integrity, origin authentication and anti-replay but never encrypts, so the payload stays readable. AH's integrity check also covers the IP addresses in the outer header, so a NAT device that rewrites an address breaks it. For both reasons AH is rare. Remember it for one comparison: AH authenticates; ESP authenticates and encrypts.
+
+| Service | ESP | AH |
+|---|---|---|
+| Confidentiality (encryption) | Yes | No |
+| Integrity and origin authentication | Yes | Yes |
+| Anti-replay | Yes | Yes |
+| IP protocol number | 50 | 51 |
+| Works through NAT | Yes, with NAT traversal | No |
+
+ESP and AH protect packets, but neither creates the keys they need. Other mechanisms complete the framework:
 
 | Function | Relevant mechanism |
 |---|---|
-| Protect user packets | ESP, or AH for its specified services |
+| Protect user packets | ESP (or AH, without encryption) |
 | Authenticate peers and negotiate keying material | IKE |
 | Let ordinary NAT/PAT carry ESP using UDP | NAT traversal |
 | Identify the receiving IPsec SA | Security Parameter Index (SPI) and associated SA context |
 
-With **NAT traversal**, ESP is encapsulated in UDP so a NAT/PAT device can handle a UDP flow. IKE includes NAT detection; UDP 4500 carries the subsequent NAT-T exchange and protected packets in the normal UDP-based design. The ESP content remains protected inside the UDP wrapper. UDP 4500 alone is not proof of a fault or of a specific NAT location.
+ESP has a NAT problem of its own. PAT tells conversations apart by TCP or UDP port, and ESP has no ports. **NAT traversal (NAT-T)** fixes this. During negotiation IKE detects whether a NAT device sits between the peers. If one does, both peers switch to UDP port 4500 and wrap every ESP packet in a UDP header. PAT can then translate the flow like any other, and the ESP packet inside is untouched.
 
 :::trap Protocol 50 is not port 50
-An IPv4 rule permitting `udp ... eq 50` does not permit native ESP. Native ESP uses IP protocol 50. UDP-encapsulated ESP uses UDP 4500 in the NAT-T arrangement described here. A perimeter policy must permit the transport actually in use; it does not necessarily need native ESP when all protected data uses UDP encapsulation.
+An ACL line `permit udp any any eq 50` does not pass ESP. ESP is IP protocol 50, written `permit esp` in an ACL, and it has no port number at all. A firewall in front of a VPN gateway must allow UDP 500 for IKE, plus ESP when there is no NAT on the path or UDP 4500 when NAT-T is in use.
 :::
 
 ## Tunnel mode and transport mode
 
-In **ESP tunnel mode with encryption**, the original IP header, transport header and application data become protected content. A new outer IP header identifies the VPN endpoints. For the branch example, the outer packet goes from `198.51.100.1` to `203.0.113.1`; the inner packet still goes from `10.1.1.10` to `10.2.2.20`. An intermediate router uses the outer destination. It does not need a route to the inner server subnet to forward that encapsulated packet.
+The two modes differ in how much of the original packet is protected and whose addresses the transit network sees.
 
-The observer can still see the outer addresses, packet lengths, timing, and the visible ESP header. Encryption does not conceal all traffic metadata. In particular, the ESP SPI and sequence fields are not the encrypted application payload.
+In **tunnel mode**, the gateway encrypts the entire original packet (IP header, transport header and data) and puts a new outer IP header in front of it. The outer header carries the gateways' addresses. In the branch example the outer packet goes from `198.51.100.1` to `203.0.113.1`, and the inner packet, still addressed from `10.1.1.10` to `10.2.2.20`, is hidden inside. Internet routers forward on the outer destination, so they never need a route to the private `10.2.2.0/24` network. Site-to-site and remote-access VPNs use tunnel mode.
 
-In **transport mode**, ESP is inserted after the original IP header. That header remains available for routing while the carried upper-layer content is protected. A straightforward example is two IPsec-capable hosts protecting their own communication. Another valid arrangement is ESP transport mode protecting a **GRE (Generic Routing Encapsulation)** packet already addressed between two routers. GRE wraps one packet inside another; that wrapping supplies no encryption by itself. In that case GRE has already supplied an outer router-to-router IP header, and its inner user packet is inside the protected payload.
+An observer still sees the outer addresses, the size and timing of the packets, and the ESP header with its SPI and sequence number. Everything from the original packet is encrypted.
+
+In **transport mode**, ESP keeps the original IP header and encrypts only what follows it. No second header is added, so the packet is smaller, but the original addresses stay visible and the two IPsec endpoints must be the packet's own source and destination. The simple case is two hosts protecting their own conversation. The other common case is a **GRE (Generic Routing Encapsulation)** tunnel between two routers. GRE wraps a packet in a new IP header but does not encrypt it. Because GRE has already added the router-to-router header, IPsec can protect the GRE packet in transport mode without adding another.
 
 | ESP with encryption | Tunnel mode | Transport mode |
 |---|---|---|
 | Additional outer IP header supplied by IPsec | Yes | No |
 | Original IP header | Inside encrypted content | Remains outside ESP encryption |
 | Typical simple example | Gateway-to-gateway protection for LAN hosts | Host-to-host protection |
-| Can transport-network routers read the original host header? | Not from the encrypted inner packet | Yes, for the ordinary host-to-host example |
+| Can transit routers read the original IP header? | No | Yes |
 
-```output Simplified ESP packet layouts; not a readable ciphertext capture
+```output Simplified ESP packet layouts
 Tunnel:
 Outer IP (gateway A -> gateway B) | ESP header | encrypted {original IP + transport + data + ESP trailer} | authentication data
 
@@ -128,35 +146,42 @@ Transport:
 Original IP (IPsec endpoint A -> B) | ESP header | encrypted {transport + data + ESP trailer} | authentication data
 ```
 
-These are explanatory layouts. A normal capture on the untrusted path cannot display the encrypted original header in plaintext without appropriate decryption material. AH can also use tunnel or transport mode, but AH never acquires encryption merely by using tunnel mode. The comparison above explicitly assumes ESP with confidentiality enabled.
+AH can use either mode too, but the mode never adds encryption: AH in tunnel mode still sends a readable packet.
 
 ## IKE and security associations
 
-A **security association (SA)** records agreed parameters such as protocol, algorithms, keys, lifetime and traffic scope. An IPsec SA is unidirectional: the outbound SA used to protect a packet corresponds to an inbound SA at the receiver. Bidirectional user traffic needs SAs for both directions. An SPI helps the receiver select the appropriate SA; it is an identifier, not an encryption key or a GRE tunnel number.
+Before two gateways can protect a packet they must agree on algorithms and share keys, and they must do it across the same untrusted network. The result of that agreement is a **security association (SA)**: one peer's record of the protocol, algorithms, keys and lifetime to use with the other. An IPsec SA works in one direction only, so two-way traffic needs a pair, one outbound and one inbound. Each ESP packet carries a **Security Parameter Index (SPI)**, a number that tells the receiver which SA, and so which key, to use.
 
-**IKE (Internet Key Exchange)** negotiates the peer relationship and keying material; its protected negotiation is separate from the IPsec data SAs. In **IKEv2**, the initial `IKE_SA_INIT` exchange agrees parameters and exchanges material for key derivation. `IKE_AUTH` authenticates the peers and normally establishes the first CHILD_SA, which provides the IPsec SA pair. The basic initial exchange has four messages, but authentication methods and later exchanges can add more. Do not treat four as the lifetime packet count of an IKEv2 session.
+**IKE (Internet Key Exchange)** builds the SAs automatically, over UDP 500. It works in two stages. First the peers build one SA to protect their own negotiation. Then, inside that protected channel, they negotiate the IPsec SAs that will carry user data. In **IKEv2** the first stage is the `IKE_SA_INIT` exchange, which agrees algorithms and runs Diffie-Hellman. The second is `IKE_AUTH`, which authenticates the peers and creates the first **CHILD_SA**, IKEv2's name for a pair of IPsec SAs. Each exchange is one request and one reply: four messages in all.
 
-The peers must offer compatible algorithms. If one offers only `AES-CBC-256` and the other only `AES-CBC-128`, they have no common encryption choice, even though both names contain AES. The final number identifies the key length in bits. A proposal's local label may differ at the peers; the offered algorithms and other required parameters must agree. Diagnose the incompatible choice before examining data counters that cannot yet exist.
+Negotiation succeeds only if the peers have a set of algorithms in common. Each side sends **proposals**: an encryption algorithm, an integrity algorithm and a Diffie-Hellman group. If R-BR offers only `AES-CBC-256` and R-HQ offers only `AES-CBC-128`, nothing matches and IKE fails, even though both use AES; the number is the key length in bits. The names given to proposals on each router are local and do not have to match.
 
-Diffie-Hellman allows peers to derive shared secret material without sending that secret directly across the network. DH alone does not establish whom the peer is; authentication supplies that assurance. A pre-shared key is a secret configured for authentication. A certificate associates a public key with an identity under a trust system. Certificates can support larger deployments, but require correct identity checks, trusted issuers, time validity and an effective revocation policy. Revocation is not an instant universal result just because a certificate exists.
+**Diffie-Hellman (DH)** is how both peers arrive at the same secret key without ever sending it. Each sends the other a public value, and each combines the value it receives with a private value of its own to compute the same result. An eavesdropper who sees both public values cannot compute it. DH does not prove who the other side is, so IKE also authenticates the peer. A **pre-shared key (PSK)** is the same secret typed into both gateways; it is simple and suits a handful of tunnels. A **digital certificate** binds a public key to an identity and is signed by a certificate authority that both peers trust. Certificates scale to many peers because no secret has to be shared between them.
 
-IKEv2 can create and rekey additional SAs. The negotiation SA is bidirectional; one negotiation relationship may support multiple protected data flows. A data SA's lifetime and the IKE SA's lifetime are not interchangeable. Rekeying replaces keying material and should be considered separately from a fresh user login.
+SAs do not last for ever. Each has a lifetime, and IKE negotiates fresh keys before it expires (**rekeying**) without interrupting traffic. Unlike the one-way IPsec SAs, the IKE SA is a single two-way SA, and one IKE SA can manage several pairs of IPsec SAs.
 
-Older IOS material calls **IKEv1** negotiation “phase 1” and “phase 2.” Phase 1 establishes the authenticated ISAKMP/IKE SA; phase 2 negotiates the IPsec data SAs. The legacy command `show crypto isakmp sa` reports that IKEv1 state. IKEv2 uses different exchanges and commands; it is not a backward-compatible setting of IKEv1. RFC 9395 deprecates IKEv1. Recognize it when interpreting older examples, but use current IKEv2 guidance for a new supported implementation.
+The older **IKEv1** has the same two stages under different names, and you will still meet them in study material and in Packet Tracer. **Phase 1** builds the ISAKMP SA that protects negotiation, using main mode or the shorter aggressive mode. **Phase 2**, called quick mode, builds the IPsec SAs. `show crypto isakmp sa` displays the phase 1 SA, and its healthy state is `QM_IDLE`. IKEv1 and IKEv2 do not interoperate, and RFC 9395 deprecates IKEv1, so new VPNs use IKEv2.
 
 ## Traffic selection and tunnel interfaces
 
-A **policy-based VPN** commonly uses a crypto map referencing a crypto ACL. A permit in that selection ACL identifies traffic to protect for the configured peer. Traffic excluded from that selection is not automatically discarded as it would be by an interface filter; another policy or routing decision controls its fate. If there is an unencrypted route and no separate restriction, unselected traffic may leave unprotected.
+A gateway does not encrypt everything it forwards. Something must tell it which packets belong in the VPN, and IOS has two ways to say so.
 
-For branch-to-HQ traffic, a simple selector is source `10.1.1.0/24`, destination `10.2.2.0/24`. The opposite gateway uses the reverse perspective. A test ping sourced from a public router interface may not match either protected LAN selector. Test from the protected host or explicitly choose a source inside the protected subnet before concluding that selection failed.
+A **policy-based VPN** uses an ACL. A **crypto map** applied to the WAN interface names the peer, the algorithms and a **crypto ACL**. In a crypto ACL, `permit` means “encrypt this” and `deny` means “do not encrypt this”. Unlike an ACL applied with `ip access-group`, it drops nothing: a packet that does not match is forwarded normally, unencrypted, if a route exists.
 
-A **route-based VPN** represents the protected path with a logical interface, such as an IPsec virtual tunnel interface. Routes direct selected destinations toward that interface. This changes how the forwarding configuration is expressed; it does not eliminate authentication, IPsec SAs, return routes or access policy.
+On R-BR the crypto ACL permits source `10.1.1.0/24` to destination `10.2.2.0/24`. R-HQ needs the mirror image, `10.2.2.0/24` to `10.1.1.0/24`; if the two ACLs are not mirror images, the IPsec SAs fail to form. The ACL also sets a trap when you test. A plain `ping 10.2.2.20` from R-BR is sourced from its WAN address `198.51.100.1`, which the ACL does not match, so the packet is never encrypted. Test from PC-BR, or use `ping 10.2.2.20 source 10.1.1.1`.
 
-**GRE** is separate encapsulation, identified by IP protocol 47. It can carry traffic such as multicast between routers and can be protected by IPsec. Plain GRE supplies no encryption. This explains GRE-over-IPsec references in older designs, but GRE/OSPF tunnel construction, DMVPN components and platform MTU defaults are not required by these VPN describe objectives. A tunnel interface showing up/up is not evidence that its content is encrypted or that a remote application responds.
+A **route-based VPN** uses the routing table instead. The gateway has a logical **tunnel interface** (on IOS, a virtual tunnel interface or VTI), and every packet routed out of that interface is encrypted. A static route or a routing protocol decides what enters the tunnel, with no crypto ACL to maintain. IKE and the IPsec SAs work exactly as before.
+
+**GRE**, IP protocol 47, is a tunnel without security. It wraps any packet in a new IP header, including the multicast packets that routing protocols such as OSPF send, but it encrypts nothing. IPsec with crypto maps carries only unicast IP, so older designs run GRE between the routers for the routing protocol and then protect the GRE packets with IPsec. That design is **GRE over IPsec**. A GRE tunnel interface that shows up/up says nothing about encryption.
 
 ## Verify the path, negotiation and data
 
-Check the evidence in layers. First confirm usable interfaces and an underlay route to the peer's public address. A successful public-address ping tests IP/ICMP reachability, not permission for IKE, ESP or UDP 4500. Then inspect IKE status with the command appropriate to the configured version. On supported IOS XE, `show crypto ikev2 sa` may show READY; legacy IKEv1 examples often show QM_IDLE. Neither is a substitute for inspecting data SAs and testing the application.
+A VPN comes up in a fixed order, so check it in that order: the path between the gateways, then IKE, then the IPsec SAs, then the application. Each step can work while the next one fails.
+
+1. **Path.** The WAN interface is up and there is a route to the peer's public address. A ping to that address proves IP reachability only: a firewall on the path can pass ICMP and still block UDP 500, UDP 4500 or ESP.
+2. **IKE.** `show crypto ikev2 sa` lists the IKE SA with status `READY`. For IKEv1, `show crypto isakmp sa` shows `QM_IDLE`. An empty table means that negotiation failed or that no traffic has yet matched the crypto ACL to start it.
+3. **IPsec.** `show crypto ipsec sa` lists the data SAs with their packet counters.
+4. **Application.** Test the real service from a host on the protected LAN.
 
 ```ios R-BR
 R-BR# show ip interface brief
@@ -165,7 +190,7 @@ R-BR# show crypto ikev2 sa
 R-BR# show crypto ipsec sa
 ```
 
-The following simplified excerpt is representative, not a simulator capture. The counts are cumulative, so compare observations during a controlled test rather than interpreting a lone historical total.
+The counters in `show crypto ipsec sa` are the best evidence. `#pkts encaps` counts packets this router encrypted and sent. `#pkts decaps` counts packets it received and decrypted. Both are running totals, so read them before and after a test and compare. The excerpt below is simplified.
 
 ```output Representative IPsec counters for the same SA before and after a test
                          Before        After
@@ -173,12 +198,20 @@ The following simplified excerpt is representative, not a simulator capture. The
 #pkts decaps                100          100
 ```
 
-This router protected four additional outbound packets but recorded no additional successful inbound decapsulation for that SA. It does not identify a unique cause. Inspect the far peer, WAN transport, remote LAN delivery, return route, selectors, filtering and receive errors. Encrypted traffic might have been lost before reaching the peer or rejected on receipt; the application may also have produced no reply.
+Here R-BR encrypted four more packets and decrypted none. Its own side is working: the pings matched the crypto ACL and left encrypted. Nothing protected came back, so look outward. A filter on the path may be dropping ESP, R-HQ may be rejecting the packets, or the HQ host's reply may not be routed back into the tunnel. The same counters on R-HQ narrow it down: if its decaps did not rise, the packets never arrived.
 
-If both directions increase, the selected SA has carried protected traffic in both directions during that interval. It still does not prove that a particular website, user permission or DNS lookup works. Test the actual application and correlate its timing and addresses. A small successful ping also does not prove that larger packets fit the path; encapsulation adds overhead and MTU problems need separate evidence.
+If both counters rise on both routers, the tunnel is carrying traffic in both directions. A failure beyond that point is an application, DNS or permission problem, not a VPN problem. The one VPN-specific exception is packet size: the extra headers make every packet larger, so a small ping can succeed while full-size packets exceed the path MTU.
 
-An empty IKE table can result from no triggering traffic, configuration not being used, expired negotiation, or failure. A single intermediate or deleted IKE state is not a unique diagnosis of a wrong key. Check matching proposals, peer identities, authentication and transport evidence before changing settings. Unsupported simulator commands call for the supplied evidence worksheet or a suitable IOS XE environment, not invented output.
+When IKE itself fails, the usual causes are proposals with no algorithms in common, a mismatched pre-shared key, a wrong peer address, or a filter blocking UDP 500. Packet Tracer does not support the IKEv2 commands, so the lab supplies that output for you to read.
 
 ## Exam focus
 
-Explain where site-to-site and remote-access VPNs terminate and what traffic is protected. Distinguish encryption from authentication, ESP from AH, IP protocol numbers from UDP ports, and IKE negotiation from data protection. Draw tunnel and transport layouts and describe NAT-T's purpose. V1.1 asks you to describe IPsec remote access and site-to-site VPNs; v2.0 additionally names protocols and transport modes. The optional implementation reference and supplied status-output worksheet make those concepts concrete. They are supplementary observation practice, not additional published exam verbs or a requirement to memorize advanced VPN design.
+Both exam versions ask you to **describe** IPsec VPNs, not to configure them. V1.1 asks you to describe IPsec remote access and site-to-site VPNs; v2.0 additionally names protocols and transport modes. Be ready to:
+
+- say where each VPN type terminates: site-to-site at two gateways, remote access at the user's device and a gateway;
+- define the four services: confidentiality, integrity, data-origin authentication and anti-replay;
+- compare ESP (protocol 50, encrypts) with AH (protocol 51, never encrypts, breaks through NAT);
+- recall the numbers: IKE on UDP 500, NAT-T on UDP 4500, GRE as IP protocol 47;
+- tell tunnel mode (whole packet encrypted, new outer header) from transport mode (original header kept);
+- explain what IKE and an SA are, and recognize IKEv1's phase 1 and phase 2;
+- read the `show crypto ipsec sa` counters to decide whether traffic is protected in both directions.

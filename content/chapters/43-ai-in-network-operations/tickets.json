@@ -27,8 +27,8 @@
     "answer": [
       0
     ],
-    "explanation": "The switch was forced to 1000 Mbps while the verified printer supports only 100 Mbps and is fixed full duplex. Correct the speed/duplex pair on the approved port. No VLAN change is supported; duplex alone cannot fix incompatible speed. Accepted commands do not prove link or printer service.",
-    "fix": "After reviewing the one-port correction and retaining console access, use:\n```ios\nSW2# configure terminal\nSW2(config)# interface gigabitethernet1/0/12\nSW2(config-if)# speed 100\nSW2(config-if)# duplex full\nSW2(config-if)# end\nSW2# show interfaces gigabitethernet1/0/12 status\nSW2# show interfaces gigabitethernet1/0/12\n```\nThese settings match the explicitly verified fixed peer; they are not a recommendation to force every endpoint. Check for link restoration, printer/application access, and new error increments over an interval. Record why capability verification and service testing should have preceded acceptance of the agent's change."
+    "explanation": "The switch was forced to 1000 Mbps while the verified printer supports only 100 Mbps at fixed full duplex. Correct the speed and duplex pair on that one port. A VLAN change does not fix it, and duplex alone cannot fix a speed mismatch.",
+    "fix": "Review the one-port correction and keep console access:\n\n```ios\nSW2# configure terminal\nSW2(config)# interface gigabitethernet1/0/12\nSW2(config-if)# speed 100\nSW2(config-if)# duplex full\nSW2(config-if)# end\nSW2# show interfaces gigabitethernet1/0/12 status\nSW2# show interfaces gigabitethernet1/0/12\n```\n\nThese settings match the verified fixed peer, so do not force them on other endpoints. Check that the link returns, the printer is reachable and error counters stop rising. Record that capability checks and a service test should come before accepting an agent's change."
   },
   {
     "id": "ai-in-network-operations-t02",
@@ -58,7 +58,7 @@
     "answer": [
       2
     ],
-    "explanation": "The change record and service tests explain this particular interval without confirmed service impact. Under the stated detector purpose, it is a false positive for an incident. Neither the learned baseline nor a real measurement justifies shutting the WAN, changing all detection policy without review, or asserting an outage despite the supplied service results.",
-    "fix": "Document the time window, backup change, and service evidence. Review the model/baseline or alert policy through the normal operations process, retaining detection for genuinely harmful behavior. Compare later observations and service tests after any approved adjustment. Do not label all high utilization harmless, and do not infer causation merely because timestamps align."
+    "explanation": "The change record and service tests explain this interval with no service impact, so under the detector's purpose it is a false positive. Do not shut the WAN, change all detection policy unreviewed or declare an outage.",
+    "fix": "Document the time window, the backup change and the service evidence. Review the baseline or alert policy through the normal process and keep detection for harmful behavior. Compare later observations and service tests after any approved change. Do not label all high utilization harmless, and do not infer cause from matching timestamps."
   }
 ]

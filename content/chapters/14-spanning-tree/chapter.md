@@ -24,6 +24,10 @@ sources:
   - { title: "Cisco: Root guard and the limits of priority zero", url: "https://www.cisco.com/c/en/us/support/docs/lan-switching/spanning-tree-protocol/10588-74.html" }
 ---
 
+Chapter 13 bundled parallel links so that they act as one. Networks also need redundant paths between different switches: an access switch with uplinks to two distribution switches, or three switches cabled in a triangle. That redundancy is a loop, and Ethernet has no defence against one. A single broadcast circulates until the links are saturated, and the VLAN is unusable within seconds. Spanning tree lets you keep the spare cables plugged in by blocking just enough ports to leave one loop-free path.
+
+This chapter uses the switching logic from chapter 7 and the trunks from chapter 10. You will work out, from bridge IDs and port costs alone, which switch becomes the root, which ports forward and which port blocks, and then check your answer against `show spanning-tree`. By the end you can predict the tree for a small topology, place the root where you want it, and read the roles and states that Rapid PVST+ displays.
+
 ## Why redundant Ethernet needs spanning tree
 
 You already know that a switch learns a frame's source MAC address and forwards according to its destination MAC address within a VLAN. Now connect three switches in a triangle. A broadcast entering one switch can leave through both interswitch links, return through the third switch, and be flooded again. Ethernet has no hop limit to expire that circulating frame. The TTL inside an IPv4 packet does not help because ordinary Layer 2 switching does not decrement it.
@@ -32,7 +36,7 @@ Repeated flooding can consume link capacity, deliver duplicate frames, and make 
 
 **Spanning Tree Protocol (STP)** permits physical redundancy while selecting a loop-free forwarding topology. A redundant port can remain operational at the physical layer yet discard user frames for a particular VLAN. It still participates in the control protocol, allowing a standby path to become useful after a failure. Do not interpret an intentionally blocked port as a faulty cable or administratively shut interface.
 
-The historical **802.1D STP** used timer-based transitions. **RSTP**, introduced as 802.1w, adds port roles and handshakes that allow faster transitions. Cisco's **Rapid PVST+** runs a rapid spanning-tree instance per VLAN; **PVST+** uses the classic behavior. The CCNA core here is Rapid PVST+: determine the root, calculate paths, and interpret roles and states. Classic STP provides useful comparison, but you do not need a second full legacy design workflow.
+The historical **802.1D STP** used timer-based transitions. **RSTP**, introduced as 802.1w, adds port roles and handshakes that allow faster transitions. Cisco's **Rapid PVST+** runs a rapid spanning-tree instance per VLAN; **PVST+** uses the classic behavior. The CCNA tests Rapid PVST+: determine the root, calculate paths, and interpret roles and states. Classic STP appears here as the comparison that explains why the rapid version exists.
 
 ## Bridge IDs and the root election
 
@@ -40,7 +44,7 @@ The historical **802.1D STP** used timer-based transitions. **RSTP**, introduced
 - Lowest bridge ID wins: compare priority plus extended system ID, then MAC address.
 - Configurable priority defaults to `32768`; legal values are `0`–`61440` in steps of `4096`. VLAN 10 adds `10` to the displayed priority.
 - A root bridge has root path cost `0` and no root port. Each other connected switch selects one root port per instance.
-- Short path costs: 10 Mbps `100`, 100 Mbps `19`, 1 Gbps `4`, 10 Gbps `2`.
+- Short path costs: 10 Mbps `100`, 100 Mbps `19`, 1 Gbps `4`, 10 Gbps `2`. Long path costs: `2000000`, `200000`, `20000`, `2000`.
 - RSTP states are discarding, learning, forwarding. Default hello/max-age/forward-delay timers are `2/20/15` seconds.
 :::
 
@@ -83,19 +87,19 @@ An **alternate port** can replace a failed root path. A **backup port** is diffe
 
 A **role** describes the port's job; a **state** describes what it currently does. A newly selected designated port may still be discarding while the protocol establishes that forwarding is safe. A blocked alternate is therefore normal, but a designated role does not prove that the port already forwards. Read both columns in operational output.
 
-| State | Learns source MAC addresses from user frames? | Forwards user frames? |
-|---|---|---|
-| Discarding | No | No |
-| Learning | Yes | No |
-| Forwarding | Yes | Yes |
+| RSTP state | 802.1D STP equivalent | Learns source MAC addresses? | Forwards user frames? |
+|---|---|---|---|
+| Discarding | Disabled, blocking, listening | No | No |
+| Learning | Learning | Yes | No |
+| Forwarding | Forwarding | Yes | Yes |
 
 Classic STP separates blocking and listening from learning and forwarding; disabled interfaces do not participate. RSTP groups the nonforwarding, nonlearning behavior under discarding. Cisco displays stable rapid alternate ports as `Altn BLK`, even though discarding is the RSTP state name. A healthy blocked port can process BPDUs: blocking user traffic does not mean blocking the protocol that maintains the tree.
 
-Classic transitions can require `15` seconds listening and `15` seconds learning. If stale information must first expire, the default `20`-second max age can add delay. An alternate may remain blocked indefinitely while redundancy is healthy; max age is not a maximum permitted time in blocking. Treat `30` or `50` seconds as conditional timer examples, not a countdown applied to every link event.
+Classic STP moves a port to forwarding on timers. The port spends one forward delay (`15` seconds) listening and another learning, so a new link takes `30` seconds to forward. After an indirect failure, a switch first waits for the stored BPDU to expire at max age (`20` seconds), which gives the classic worst case of `50` seconds. Max age applies to stored BPDU information, not to how long a port may block: a healthy alternate port stays blocked indefinitely.
 
 RSTP uses **proposal/agreement** on point-to-point links to confirm a safe transition. A receiver synchronizes other relevant non-edge forwarding ports before agreeing, preventing a temporary loop while the topology changes. Full-duplex links are considered point-to-point by default; half-duplex links are considered shared. An agreement is not a TCP acknowledgment: these are spanning-tree control messages between bridges.
 
-RSTP also uses periodic BPDUs to detect neighbor loss. Three missed hellos at the default two-second interval correspond to about six seconds; a physical link-down event can be detected earlier. Detection time and completed reconvergence are different measurements. Legacy neighbors, link type, topology, and implementation affect the result, so do not promise zero lost pings or a fixed two-second failover.
+RSTP also uses periodic BPDUs to detect neighbor loss. Three missed hellos at the default two-second interval correspond to about six seconds; a physical link-down event can be detected earlier. Once the failure is detected, the proposal/agreement handshake usually restores forwarding within a few seconds, against 30 to 50 seconds for classic STP.
 
 **Edge ports**, configured using PortFast, can forward immediately when connected to end devices. Receiving a BPDU removes operational edge status unless another feature, such as BPDU guard, shuts the port down. RSTP detects topology changes when non-edge ports enter forwarding; an edge port's ordinary link transitions do not create those changes. Chapter 15 explains safe edge configuration and protection. A legacy PVST+ neighbor can also cause classic interoperability behavior on the connecting port.
 
@@ -143,7 +147,16 @@ SW2# show spanning-tree vlan 10
 
 Verify the transmitted port ID and SW1's chosen root port. This does not override a better path cost or a better sender bridge ID. It is a separate exercise from changing SW1's local cost in the triangle above.
 
-Short costs are sufficient for this lab. Long-cost implementations use a different scale, for example `200000` at 100 Mbps and `20000` at 1 Gbps. Read the configured method and displayed costs before doing arithmetic; do not mix a short-cost table with long-cost output. Leave timers unchanged and adjust only the planned VLAN/interface parameter.
+STP has two cost scales. The **short** method is the original 16-bit scale and the default on the Catalyst 2960 used in the labs. It runs out of room above 10 Gbps, so a **long** 32-bit method was added; the global command `spanning-tree pathcost method long` selects it. `show spanning-tree summary` reports which method is in use. Use the same method on every switch.
+
+| Link speed | Short cost | Long cost |
+|---|---|---|
+| 10 Mbps | 100 | 2,000,000 |
+| 100 Mbps | 19 | 200,000 |
+| 1 Gbps | 4 | 20,000 |
+| 10 Gbps | 2 | 2,000 |
+
+The arithmetic is the same with either scale. With long costs, SW1 in Figure 14.1 would compare 20,000 + 20,000 = 40,000 through SW3 with 200,000 on the direct FastEthernet link and still choose the Gigabit path. Read the displayed costs before you calculate, and never mix the two tables.
 
 ## Reading the output
 

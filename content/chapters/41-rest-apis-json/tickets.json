@@ -22,8 +22,8 @@
     "answer": [
       1
     ],
-    "explanation": "The supplied expiry and explicit error establish an expired credential. This does not require guessing a product-wide one-hour lifetime. Use the documented renewal/acquisition flow, protect the new token and retry the read with limits rather than looping indefinitely. Role or path changes do not address the explicit token_expired evidence; changing header convention is unsupported by the given contract.",
-    "fix": "Replace the expired credential through the deployment's approved authentication flow. Record only safe expiry/error metadata, verify a new read, and implement renewal according to the API contract. A renewal failure should surface for investigation instead of exposing passwords or retrying without a limit."
+    "explanation": "The error body says the token expired. Renew it through the documented flow; changing the role or path does not fix an expired token.",
+    "fix": "Replace the expired credential through the deployment's approved authentication flow. Record only safe expiry and error metadata, then verify a new read. A renewal failure should be raised for investigation, not retried without limit or by exposing passwords."
   },
   {
     "id": "rest-apis-json-t02",
@@ -48,7 +48,7 @@
     "answer": [
       0
     ],
-    "explanation": "The audit explicitly records the first creation and the GET confirms the object. POST is not guaranteed idempotent, so repeating after an uncertain response collided with the existing ID under this API's contract. A timeout by itself would not have proved either success or failure. The GET and server audit describe an existing committed object, not a proposed object or client cache. The supplied conflict does not indicate credential rejection.",
-    "fix": "Reconcile the returned object against the exact intended attributes before treating it as complete. Use documented task/resource lookup or idempotency support for future uncertain outcomes. Do not delete an existing object merely to make a blind retry succeed."
+    "explanation": "The audit shows the first creation committed and the GET confirms the object exists. POST is not idempotent, so repeating after a timeout collided with the existing ID.",
+    "fix": "Compare the returned object with the intended attributes before treating it as complete. For future uncertain outcomes, use task or resource lookup or idempotency support. Do not delete an existing object just to make a blind retry succeed."
   }
 ]

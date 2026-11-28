@@ -22,11 +22,11 @@
     "answer": [
       3
     ],
-    "explanation": "The DHCP-enabled autoconfiguration context identifies link-local fallback. It does not establish which DHCP message, server condition or path failed.",
+    "explanation": "An address in 169.254.0.0/16 on a DHCP-enabled adapter is IPv4 link-local (APIPA) fallback, meaning no DHCP lease was obtained. It does not show why the DHCP exchange failed.",
     "whyWrong": {
-      "0": "No current wireless authentication evidence is supplied.",
-      "1": "DNS query state is not reported; the evidence concerns address acquisition.",
-      "2": "The autoconfiguration address and absent gateway do not show the intended office lease."
+      "0": "The output shows no wireless authentication state.",
+      "1": "DNS lookups are not reported; the output shows address acquisition.",
+      "2": "A link-local address with no gateway is not the office lease."
     }
   },
   {
@@ -50,11 +50,11 @@
       0,
       4
     ],
-    "explanation": "The routing table can contain a default via entry, and NetworkManager's device details can include IP4.GATEWAY. These reports serve different views of the active configuration.",
+    "explanation": "`ip route` shows the default via entry, and `nmcli device show` lists IP4.GATEWAY. Both display the IPv4 default gateway.",
     "whyWrong": {
-      "1": "resolvectl reports resolver information, not default forwarding routes.",
-      "2": "The brief address view lists addresses/prefixes rather than gateways.",
-      "3": "ip link reports link attributes, not the IP routing table."
+      "1": "`resolvectl status` shows DNS resolver settings, not routes.",
+      "2": "`ip -br address` lists addresses and prefixes, not gateways.",
+      "3": "`ip link` shows link attributes, not the routing table."
     }
   },
   {
@@ -70,7 +70,7 @@
       "title": "ip route excerpt",
       "text": "default via 10.1.20.1 dev enp0s3 proto dhcp src 10.1.20.59 metric 100"
     },
-    "prompt": "Which interpretation of this Linux default route is supported?",
+    "prompt": "What does this Linux default route show?",
     "options": [
       "The route applies only to destinations inside 10.1.20.0/24",
       "The default next hop is 10.1.20.59 because it follows src",
@@ -80,11 +80,11 @@
     "answer": [
       3
     ],
-    "explanation": "The next hop follows via; dev identifies the interface. proto dhcp labels this route's origin, while src identifies the preferred source. Other routes must also be considered for a particular destination.",
+    "explanation": "The next hop follows `via` and the interface follows `dev`. `src` is the preferred source address and `proto dhcp` records how the route was learned.",
     "whyWrong": {
-      "0": "default is the fallback route, not a connected /24 route.",
-      "1": "src names a preferred local source address, not the next hop.",
-      "2": "A route-origin label does not prove the origin of every address."
+      "0": "A default route covers all destinations, not only the connected /24.",
+      "1": "`src` is the host's own source address, not the next hop.",
+      "2": "`proto dhcp` describes this route only, not every interface address."
     }
   },
   {
@@ -106,11 +106,11 @@
     "answer": [
       0
     ],
-    "explanation": "Release discards DHCP configuration and renew requests configuration. This can interrupt connectivity, so it belongs in the isolated exercise or an approved change; the command alone is not proof of a captured four-message exchange.",
+    "explanation": "`ipconfig /release` drops the DHCP lease and `ipconfig /renew` requests a new one. This interrupts connectivity, so run it only on a lab PC or in an approved change.",
     "whyWrong": {
-      "1": "These are read-only route and neighbor displays.",
-      "2": "These inspect profiles and configuration rather than discarding a lease.",
-      "3": "These commands inspect/clear DNS cache rather than releasing an address lease."
+      "1": "`route print` and `arp -a` only display tables.",
+      "2": "`netsh wlan show profiles` and `ipconfig /all` only display settings.",
+      "3": "These commands show and clear the DNS cache and do not touch the DHCP lease."
     }
   },
   {
@@ -133,11 +133,11 @@
       0,
       2
     ],
-    "explanation": "The client must select the intended SSID and use the matching WPA2-Personal credential. Security mode is stipulated correct; these two values address network selection and key agreement.",
+    "explanation": "With the security mode fixed as WPA2-Personal, the client needs the correct SSID (case-sensitive) and the matching shared passphrase.",
     "whyWrong": {
-      "1": "A DHCP hostname does not select the SSID or establish the shared key.",
-      "3": "The AP management address is not the network name or key used by the client profile.",
-      "4": "A DNS suffix affects name processing after useful connectivity, not WPA2 key agreement."
+      "1": "The DHCP hostname plays no part in joining the WLAN.",
+      "3": "The AP management address is not part of the client's WLAN profile.",
+      "4": "A DNS suffix matters after connectivity, not for WPA2 key agreement."
     }
   },
   {
@@ -149,7 +149,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which statement correctly describes IPv4 link-local addressing?",
+    "prompt": "Which statement about IPv4 link-local addressing is correct?",
     "options": [
       "It uses 169.254.0.0/16 for local-link communication rather than routed fallback",
       "It is a private routed prefix that can replace an office address without new routes",
@@ -159,11 +159,11 @@
     "answer": [
       0
     ],
-    "explanation": "IPv4 link-local is link-scoped. OS/profile behavior varies, and other adapters or IPv6 may still provide service; the address alone does not reconstruct the DHCP exchange.",
+    "explanation": "IPv4 link-local addresses come from 169.254.0.0/16 and work only on the local link. They are not routed and supply no default gateway.",
     "whyWrong": {
-      "1": "This is link-local scope, not an ordinary RFC 1918 routed LAN substitute.",
-      "2": "Failure can occur after different exchange stages; inspect the actual transaction.",
-      "3": "Link-local selection does not create a usable routed default gateway."
+      "1": "It is link-local, not a routed private prefix like RFC 1918 space.",
+      "2": "The address does not show whether the DISCOVER left the adapter.",
+      "3": "Link-local addressing provides no default gateway."
     }
   },
   {
@@ -185,11 +185,11 @@
     "answer": [
       0
     ],
-    "explanation": "scutil --dns reports resolver configuration. Supplemental domain-specific resolvers can affect VPN queries, so do not assume a single displayed nameserver handles every name.",
+    "explanation": "`scutil --dns` lists the macOS DNS resolvers, including domain-specific (supplemental) ones such as those added by a VPN. A single nameserver may not serve every name.",
     "whyWrong": {
-      "1": "This reports a default route, not resolver selection.",
-      "2": "This maps hardware ports/services to interface names.",
-      "3": "The interface-address display does not provide the complete resolver configuration."
+      "1": "`route -n get default` shows the default route, not resolvers.",
+      "2": "`networksetup -listallhardwareports` maps ports to interface names.",
+      "3": "`ifconfig -a` shows interface addresses, not resolver configuration."
     }
   },
   {
@@ -201,7 +201,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A single-homed host has 10.1.20.57/24 and gateway 10.1.20.254. The actual router is 10.1.20.1; .254 is unused. With no alternate routes, what pattern is expected from this gateway error?",
+    "prompt": "A single-homed host is 10.1.20.57/24 with gateway 10.1.20.254, but the real router is 10.1.20.1 and .254 is unused. What failure pattern do you expect?",
     "options": [
       "Numeric off-link traffic works, but local peers require a working gateway",
       "DNS alone fails because the default gateway selects the resolver for each query",
@@ -211,11 +211,11 @@
     "answer": [
       3
     ],
-    "explanation": "A correct connected-subnet decision permits direct local delivery. Traffic requiring the only default route cannot resolve its unused next hop; this does not identify the state of unrelated services.",
+    "explanation": "Local peers are on the connected subnet and are reached directly with ARP. Anything that needs the default route fails because the unused gateway never answers ARP.",
     "whyWrong": {
       "0": "This reverses local delivery and default-route dependence.",
-      "1": "The configured DNS resolver and IP next-hop selection serve different functions; off-link numeric traffic is affected too.",
-      "2": "On-link peer delivery normally uses the local link directly, not the default gateway."
+      "1": "The gateway does not select the DNS server, and all off-link traffic fails, not just DNS.",
+      "2": "Local peers are reached directly, not through the gateway."
     }
   },
   {
@@ -227,7 +227,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "PC-A is 192.168.40.100/16 on a real /24 LAN. Its gateway is .40.1, proxy ARP is disabled, and remote 192.168.50.10 sits behind another router interface. Which destination does this mask error incorrectly classify as on-link?",
+    "prompt": "PC-A is 192.168.40.100/16 on a real /24 LAN, with gateway 192.168.40.1 and proxy ARP disabled. Which destination does the wrong mask treat as on-link?",
     "options": [
       "8.8.8.8",
       "172.16.5.5",
@@ -237,11 +237,11 @@
     "answer": [
       2
     ],
-    "explanation": "The configured /16 is 192.168.0.0/16, so .50.10 is mistakenly treated as a direct neighbor. The other remote examples remain outside the /16; this says how they are forwarded, not that their entire paths work.",
+    "explanation": "The /16 mask makes 192.168.0.0/16 look local, so 192.168.50.10 is ARPed for directly instead of being sent to the gateway. The other addresses are outside the /16.",
     "whyWrong": {
       "0": "8.8.8.8 is outside 192.168.0.0/16.",
-      "1": "172.16.5.5 is outside the wrong /16 too.",
-      "3": "The gateway is correctly on-link under both the intended /24 and wrong /16."
+      "1": "172.16.5.5 is outside 192.168.0.0/16.",
+      "3": "The gateway is on-link under both the /24 and the /16."
     }
   },
   {
@@ -267,11 +267,11 @@
     "answer": [
       1
     ],
-    "explanation": "0xffffff00 has six f digits, each contributing four one-bits: 24 one-bits followed by eight zeros. The displayed address and broadcast are consistent with that /24.",
+    "explanation": "0xffffff00 is six f digits, which is 24 one-bits followed by eight zeros, so 255.255.255.0 or /24.",
     "whyWrong": {
-      "0": "A /20 mask would be 0xfffff000.",
-      "2": "A /16 mask would be 0xffff0000.",
-      "3": "A /32 mask would be 0xffffffff."
+      "0": "A /20 mask is 0xfffff000.",
+      "2": "A /16 mask is 0xffff0000.",
+      "3": "A /32 mask is 0xffffffff."
     }
   },
   {
@@ -293,11 +293,11 @@
     "answer": [
       1
     ],
-    "explanation": "Inspect the DNS server actually queried, then test its service/path and the name. The successful numeric test does not certify all masks, routes or applications; it simply makes DNS-specific evidence the useful next step.",
+    "explanation": "Pings to the gateway and a remote IP work, so addressing and routing are fine. The name lookup fails, so check the DNS server setting.",
     "whyWrong": {
-      "0": "The tested numeric route worked; inspect the resolver selected for the failing query before changing that working path.",
-      "2": "The DHCP server identity can explain where settings originated, but it is not the server that must answer this DNS query.",
-      "3": "One remote ping does not prove the mask universally correct, but the fresh query failure makes the resolver choice the direct next check."
+      "0": "The numeric ping to a remote address shows the gateway works.",
+      "2": "The DHCP server is not the server that answers DNS queries.",
+      "3": "A working remote ping shows the mask is not the problem."
     }
   },
   {
@@ -312,7 +312,7 @@
       "title": "Representative client details",
       "text": "Wireless state: connected\nSSID: CCNA-LAB\nAuthentication: WPA2-Personal\nIPv4: 169.254.201.44/16 (Autoconfiguration)\nDefault gateway: none"
     },
-    "prompt": "The laptop reports a connection to the intended SSID but has no usable DHCP lease. Which next investigation is justified?",
+    "prompt": "The laptop shows a connection to the intended SSID but has no usable DHCP lease. What should you investigate next?",
     "options": [
       "Replace the DNS resolver first so the client can locate an address for itself",
       "Treat the connection icon as sufficient proof and investigate only the DHCP server",
@@ -322,11 +322,11 @@
     "answer": [
       2
     ],
-    "explanation": "The client lacks the intended lease. Compare current security/data-path evidence with fresh DHCP requests and replies; the icon alone neither proves all WLAN mapping is correct nor identifies a specific failure.",
+    "explanation": "The client is associated but not getting a lease. Check fresh DHCP requests and replies and the path from the WLAN into the LAN.",
     "whyWrong": {
-      "0": "Ordinary DHCP address acquisition does not depend on first resolving a name through DNS.",
-      "1": "The server is one possibility, but current wireless data delivery and VLAN mapping still need evidence.",
-      "3": "A guessed static mask does not repair acquisition and can conceal the actual fault."
+      "0": "DHCP does not need DNS to assign an address.",
+      "1": "A connected icon does not prove the WLAN-to-LAN path works, so do not look only at the server.",
+      "3": "A guessed static mask does not fix lease acquisition."
     }
   },
   {
@@ -337,7 +337,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "Which observation most directly supports investigating a WPA2-Personal key mismatch rather than starting with DNS?",
+    "prompt": "Which observation points to a WPA2-Personal key mismatch rather than DNS?",
     "options": [
       "The client reaches its gateway but a fresh query to the intended resolver times out",
       "A new key-exchange failure appears after the saved profile credential was changed",
@@ -347,11 +347,11 @@
     "answer": [
       1
     ],
-    "explanation": "A fresh key-exchange failure after a credential change supports checking that key and security profile first. Confirm the current event; a generic connection icon is less specific.",
+    "explanation": "A key-exchange failure that appears after the saved passphrase changed points to the WPA2 credential. The other options show a working connection with a DNS or DHCP problem.",
     "whyWrong": {
-      "0": "These observations concern name-resolution service/path after tested connectivity.",
-      "2": "A wrong DNS answer points toward name data rather than a key-exchange failure.",
-      "3": "Usable data delivery and a received DHCP reply instead point toward the supplied client parameters."
+      "0": "Reaching the gateway with a failing DNS query points to DNS.",
+      "2": "A wrong DNS answer is a name-data problem, not a key failure.",
+      "3": "A DHCP reply after reconnecting shows the wireless link works."
     }
   },
   {
@@ -377,11 +377,11 @@
     "answer": [
       3
     ],
-    "explanation": "Both matching routes are defaults. With the stated usable-route conditions, effective metric 25 is preferred to 50; neither connected /24 matches 8.8.8.8.",
+    "explanation": "Both routes matching 8.8.8.8 are default routes of equal prefix length, so the lower metric (25 versus 50) wins. The connected /24 routes do not match.",
     "whyWrong": {
-      "0": "Displayed row order does not override a lower metric for an equal-length match.",
-      "1": "Interface-address size is not the stated route-selection rule.",
-      "2": "Different metrics do not create an equal-cost choice, and default routes do not imply duplication of every packet."
+      "0": "Row order does not beat a lower metric.",
+      "1": "Interface address size is not a route-selection rule.",
+      "2": "Only the best route is used; default routes are not duplicated."
     }
   },
   {
@@ -397,7 +397,7 @@
       "title": "Client and service plan",
       "text": "Client: 192.168.40.120/24\nGateway: 192.168.40.1\nActual DNS: 192.168.40.99\nIntended DNS / Server-A: 192.168.40.20\nWeb server: 192.168.50.20"
     },
-    "prompt": "Only the DNS server selection differs from the intended client plan. Server-A has a verified A record for intranet.example → 192.168.50.20. Numeric HTTP works, but a fresh query is sent to unused 192.168.40.99 and times out. Which correction addresses the shown fault?",
+    "prompt": "Only the DNS server setting differs from the plan. Server-A (192.168.40.20) holds the correct record, but the client sends queries to unused 192.168.40.99 and they time out. Which fix applies?",
     "options": [
       "Set the client's default gateway to the unused .40.99 address",
       "Change the client's mask from /24 to /16 for wider local reach",
@@ -407,11 +407,11 @@
     "answer": [
       2
     ],
-    "explanation": "The intended resolver is .40.20, while the failed query targets unused .40.99. Correcting that selection addresses the demonstrated fault; the numeric HTTP result only establishes that tested IP/application path.",
+    "explanation": "The client queries the wrong resolver address. Set its DNS server to the intended Server-A address, 192.168.40.20.",
     "whyWrong": {
-      "0": "The unused address is not the intended next hop.",
-      "1": "A broader mask does not select the proper DNS service and can introduce an on-link error.",
-      "3": "The record is stipulated correct and should remain pointed at the web server."
+      "0": "The gateway is not the DNS server, and .99 is unused.",
+      "1": "A wider mask does not select the right DNS server.",
+      "3": "The A record is correct and should stay."
     }
   },
   {
@@ -423,7 +423,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "On Windows, `Test-NetConnection 192.168.50.20 -Port 443` reports TCP success. Which conclusion stays within that evidence?",
+    "prompt": "On Windows, `Test-NetConnection 192.168.50.20 -Port 443` reports TCP success. What does that show?",
     "options": [
       "The web certificate must be trusted because TCP used the HTTPS port",
       "The IPv6 route must work because the same server supports both address families",
@@ -433,11 +433,11 @@
     "answer": [
       2
     ],
-    "explanation": "A successful TCP connection tests transport reachability to that address/port. A numeric IPv4 test does not validate DNS, IPv6, TLS certificates or application authorization.",
+    "explanation": "A successful TCP test shows the host can open a TCP connection to that address and port. It does not test DNS, IPv6, TLS certificates or the application.",
     "whyWrong": {
-      "0": "Certificate verification occurs in TLS, after the underlying TCP connection.",
-      "1": "IPv4 success is not proof of IPv6 reachability.",
-      "3": "A numeric target does not require name resolution for that target."
+      "0": "Certificate checks happen in TLS, after the TCP connection.",
+      "1": "An IPv4 test says nothing about IPv6.",
+      "3": "A numeric target skips name resolution, so DNS is untested."
     }
   },
   {
@@ -463,11 +463,11 @@
     "answer": [
       3
     ],
-    "explanation": "The /24 matches 10.70.8.25 more specifically than either /0. Metrics compare matching routes of equal prefix length; they do not let a /0 defeat this /24.",
+    "explanation": "Routers choose the longest prefix match first and use metric only to break ties between routes of equal length. The /24 VPN route is more specific than either default, so it wins despite its larger metric.",
     "whyWrong": {
-      "0": "Private addressing does not prescribe a physical adapter.",
-      "1": "A metric above 100 does not make a valid /24 ineligible.",
-      "2": "The lower metric on a less-specific route does not override longest-prefix matching."
+      "0": "Private addresses do not select a particular adapter.",
+      "1": "A high metric does not disable a valid route.",
+      "2": "A lower metric on a less specific route does not beat the longer prefix."
     }
   },
   {
@@ -483,7 +483,7 @@
       "title": "Client, query and service plan",
       "text": "Client: 192.168.40.120/24, GW 192.168.40.1, DNS 192.168.40.20\nPlan: intranet.example must point to 192.168.50.20\nFresh explicit query to 192.168.40.20: intranet.example A 192.168.50.99\nHTTP to numeric 192.168.50.20 succeeds; .50.99 is unused."
     },
-    "prompt": "What should be corrected first based on this supplied plan and fresh answer?",
+    "prompt": "What should you correct first?",
     "options": [
       "The intranet.example record on the intended resolver, then retest the application",
       "The client’s resolver choice, because a responding server cannot have bad data",
@@ -493,11 +493,11 @@
     "answer": [
       0
     ],
-    "explanation": "The query reaches the intended resolver, but its fresh answer disagrees with the verified service plan. Correct the relevant record and verify a new response, then test the named service.",
+    "explanation": "The client queries the intended resolver, but the answer differs from the verified service address. Fix the record on that DNS server and query again.",
     "whyWrong": {
-      "1": "The resolver selection is correct, but a correctly selected server can hold an incorrect record.",
-      "2": "DNS answer data does not change the adapter prefix.",
-      "3": "No next-hop mismatch is shown; the response identifies wrong name data."
+      "1": "The resolver choice is correct, and a correct server can still hold a wrong record.",
+      "2": "A DNS answer does not change the subnet mask.",
+      "3": "No gateway mismatch is shown; the wrong data is in the DNS answer."
     }
   },
   {
@@ -513,7 +513,7 @@
       "title": "Authored dual-stack tests",
       "text": "portal.example: A 192.0.2.40; AAAA 2001:db8:40::40\nTCP 443 to 192.0.2.40: succeeds\nTCP 443 to 2001:db8:40::40: times out\nClient IPv6 routes have not yet been inspected."
     },
-    "prompt": "Which two conclusions follow without assuming one address family proves the other? Choose two.",
+    "prompt": "Which two conclusions are correct? Choose two.",
     "options": [
       "The failed IPv6 test needs separate IPv6 route and path investigation",
       "The IPv4 test demonstrates TCP reachability to its stated IPv4 endpoint",
@@ -525,11 +525,11 @@
       0,
       1
     ],
-    "explanation": "The two tests use different destination addresses and address families. A succeeded IPv4 TCP connection does not validate IPv6 routing, and an IPv6 timeout alone does not determine the faulty component.",
+    "explanation": "The IPv4 and IPv6 tests use different addresses and paths. IPv4 success confirms IPv4 TCP reachability only, and the IPv6 failure needs its own route and path check.",
     "whyWrong": {
-      "2": "The IPv4 test did not exercise the AAAA destination or its route.",
-      "3": "The successful IPv4 test contradicts treating the IPv6 result as proof of an IPv4 next-hop error.",
-      "4": "Removing valid service data is not justified by a timeout with the path still unexamined."
+      "2": "The IPv4 test never used the AAAA address or its route.",
+      "3": "A working IPv4 test contradicts blaming the IPv4 gateway.",
+      "4": "A timeout does not justify removing a record before checking the IPv6 path."
     }
   },
   {
@@ -541,7 +541,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A client cannot ping an approved server, but a fresh TCP 443 connection and the required HTTPS page both work from that same client. What is justified?",
+    "prompt": "A client cannot ping an approved server, but a fresh TCP 443 connection and the HTTPS page both work. What does this show?",
     "options": [
       "The application has recovered for that tested path; ICMP behavior can be investigated separately",
       "The web response must be cached because ICMP is required before TCP can connect",
@@ -551,11 +551,11 @@
     "answer": [
       0
     ],
-    "explanation": "The fresh TCP and application results demonstrate the required service path. Ping is a different exchange; ICMP filtering or response policy may explain its result, but that cause still needs evidence.",
+    "explanation": "Ping uses ICMP and HTTPS uses TCP, so the service path works even though ping fails. ICMP may be filtered.",
     "whyWrong": {
-      "1": "TCP and HTTPS do not require a successful ICMP echo exchange first.",
-      "2": "Fresh successful off-link application traffic, where applicable, cannot be dismissed solely because ICMP times out.",
-      "3": "One client, destination and service test does not establish universal health."
+      "1": "TCP does not need ICMP echo to succeed first.",
+      "2": "A working off-link HTTPS connection shows the default route works.",
+      "3": "One test from one client does not show other clients or traffic are unaffected."
     }
   },
   {
@@ -571,7 +571,7 @@
       "title": "Windows DHCP and adapter evidence",
       "text": "Plan: automatic address and DNS, intended resolver 192.168.40.20\nFresh DHCP ACK: address .40.120/24, router .40.1, DNS .40.20\nAdapter DNS setting: manually selected 192.168.40.99\nFresh query is sent to .40.99; .99 is unused.\nRenewing the lease repeats the same ACK but leaves the manual DNS choice."
     },
-    "prompt": "Which correction and retest follow from all three observations?",
+    "prompt": "Which correction fixes the fault shown by the three observations?",
     "options": [
       "Repair the DHCP pool’s DNS option because the captured ACK proves it is wrong",
       "Return this client’s resolver selection to the approved automatic setting, then query afresh",
@@ -581,11 +581,11 @@
     "answer": [
       1
     ],
-    "explanation": "The captured lease supplies the intended resolver, but the adapter’s manual DNS override wins for actual queries. Correct that override according to the plan, inspect the active result and issue a fresh name query before the application test.",
+    "explanation": "The DHCP ACK supplies the intended resolver, but a manual DNS setting on the adapter overrides it. Return DNS to automatic, then query again.",
     "whyWrong": {
-      "0": "The ACK carries the intended DNS option; the client override accounts for the mismatch.",
-      "2": "DHCP address configuration can coexist with manually selected DNS.",
-      "3": "A manual DNS choice can coexist with a DHCP address; discarding that valid lease is not the demonstrated repair."
+      "0": "The ACK carries the correct DNS option, so the pool is not wrong.",
+      "2": "The DHCP server is behaving correctly; the manual DNS override causes the mismatch.",
+      "3": "A manual DNS setting can coexist with a DHCP address, so the lease is not the fault."
     }
   },
   {
@@ -600,7 +600,7 @@
       "title": "Authored client incident timeline",
       "text": "09:00 Laptop joined CCNA-LAB and obtained 192.168.40.120/24.\n09:10 Saved WPA2-Personal passphrase was edited; laptop disconnected.\n09:11 New connection attempt: key exchange failed; old IPv4 address still displayed.\n09:12 Wired control PC reaches the gateway and lab web service."
     },
-    "prompt": "Which evidence should drive the next correction?",
+    "prompt": "What should you check next?",
     "options": [
       "The profile change and fresh key failure support checking the intended WLAN credential",
       "The wired control client proves every wireless exchange is also functioning",
@@ -610,11 +610,11 @@
     "answer": [
       0
     ],
-    "explanation": "The retained address is older than the failed new connection. The new key-exchange evidence plus the profile change focus the next check on matching the approved credential and security mode; the wired result is a control for the service, not proof of wireless access.",
+    "explanation": "The old address is a leftover from before the profile change. The new key-exchange failure points to a credential mismatch, and a wired client does not test the wireless link.",
     "whyWrong": {
-      "1": "A wired path does not exercise the wireless security exchange.",
-      "2": "A previously valid stored gateway does not demonstrate a router interface failure.",
-      "3": "A retained lease is not proof of current protected data delivery."
+      "1": "A wired client does not exercise wireless security.",
+      "2": "An old stored gateway does not show R1 lost its interface address.",
+      "3": "A retained address does not show wireless data currently works."
     }
   },
   {
@@ -630,7 +630,7 @@
       "title": "Authored macOS investigation",
       "text": "Active en0 address and intended default route are correct.\nResolver configuration: corp.example uses VPN DNS 10.8.0.53.\nExplicit query: host.corp.example at LAN DNS 192.168.40.20 returns expected 10.70.8.25.\nObserved fresh application lookup instead goes to 10.8.0.53 and returns NXDOMAIN.\nThe VPN is required for approved access to this internal domain."
     },
-    "prompt": "Which next investigation explains the difference without changing the working adapter configuration?",
+    "prompt": "What should you check next to explain the different DNS results?",
     "options": [
       "Replace the active address because a direct DNS response proves duplicate addressing",
       "Clear only the Ethernet ARP entry, because it controls domain-specific resolver choice",
@@ -640,11 +640,11 @@
     "answer": [
       2
     ],
-    "explanation": "The application’s fresh request uses the domain-specific VPN resolver, while the successful manual test explicitly queried another server. Compare the actual selected resolver’s answer with the intended split-DNS policy; the manual result did not test the failing path.",
+    "explanation": "The application uses the domain-specific VPN resolver, while the manual test queried a different server. Compare the VPN resolver's answer with the split-DNS policy.",
     "whyWrong": {
-      "0": "The responses identify different resolver paths, not duplicate IP use.",
-      "1": "ARP mappings do not choose domain-specific DNS resolvers.",
-      "3": "Removing forwarding configuration does not repair inconsistent DNS data."
+      "0": "The different responses come from different resolvers, not duplicate IPs.",
+      "1": "ARP entries do not select DNS resolvers.",
+      "3": "Removing the gateway does not fix inconsistent DNS data."
     }
   },
   {
@@ -660,7 +660,7 @@
       "title": "Client configuration and fresh observations",
       "text": "Plan: 192.168.40.120/24; gateway .40.1; DNS .40.20\nActual: 192.168.40.120/16; gateway .40.1; DNS .40.99\nLocal HTTP at .40.20 succeeds.\nNumeric test to .50.10: client ARPs directly for .50.10, no reply; proxy ARP is disabled.\nFresh DNS query: sent to unused .40.99, no reply."
     },
-    "prompt": "Which explanation accounts for both failed tests while preserving the demonstrated working local service?",
+    "prompt": "What explains both failed tests while local web access still works?",
     "options": [
       "A DNS failure alone changes the next hop selected for the numeric remote test",
       "Two client fields are wrong: the mask changes next-hop choice and the resolver points elsewhere",
@@ -670,11 +670,114 @@
     "answer": [
       1
     ],
-    "explanation": "The intended /24 differs from the configured /16: the client attempts direct ARP for the remote PC. Its query also targets unused .99 rather than the local .20 resolver. These are distinct client faults; repair one and retest its path before repairing the other.",
+    "explanation": "The /16 mask makes the client ARP directly for the remote PC instead of using the gateway. Its DNS setting also points at unused .99 instead of the local resolver .20, so these are two separate faults.",
     "whyWrong": {
-      "0": "The remote test is numeric; DNS does not control the mask-based on-link decision.",
-      "2": "The numeric local HTTP success demonstrates that service worked for this test.",
-      "3": "The gateway value matches the plan, and a local resolver query would not require it under either shown mask."
+      "0": "The remote test is numeric, and DNS does not affect the mask-based on-link decision.",
+      "2": "The local web test succeeded, so the server is up.",
+      "3": "The gateway matches the plan, and a local DNS query does not use it."
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-q25",
+    "type": "single",
+    "objectives": [
+      "v1:1.10",
+      "v2:1.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which Windows command clears the DNS resolver cache?",
+    "options": [
+      "ipconfig /flushdns",
+      "ipconfig /release",
+      "ipconfig /renew",
+      "ipconfig /displaydns"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "`ipconfig /flushdns` clears the DNS cache. `/release` and `/renew` act on the DHCP lease.",
+    "whyWrong": {
+      "1": "`/release` drops the DHCP lease.",
+      "2": "`/renew` requests a new DHCP lease.",
+      "3": "`/displaydns` shows the cache without clearing it."
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-q26",
+    "type": "single",
+    "objectives": [
+      "v1:1.10",
+      "v2:1.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does a ping to a numeric address on the host's own subnet need?",
+    "options": [
+      "Neither a default gateway nor DNS",
+      "A default gateway but not DNS",
+      "DNS but not a default gateway",
+      "Both a default gateway and DNS"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A host reaches an on-subnet address directly with ARP. It needs neither a default gateway nor DNS.",
+    "whyWrong": {
+      "1": "The gateway is used only for other subnets.",
+      "2": "A numeric address needs no name lookup.",
+      "3": "A numeric on-subnet destination needs neither."
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-q27",
+    "type": "single",
+    "objectives": [
+      "v2:1.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "At which step does a wrong WPA2 passphrase make a wireless client fail?",
+    "options": [
+      "The four-way handshake",
+      "The DHCP DISCOVER",
+      "The DNS query",
+      "The TCP three-way handshake"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "WPA2 derives keys in the four-way handshake, which fails when the passphrase is wrong. The client never gets a usable connection.",
+    "whyWrong": {
+      "1": "DHCP comes after the wireless connection is secured.",
+      "2": "DNS queries come after the client has an address.",
+      "3": "The TCP handshake happens only after network access works."
+    }
+  },
+  {
+    "id": "client-os-troubleshooting-q28",
+    "type": "single",
+    "objectives": [
+      "v1:1.10",
+      "v2:1.6"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which Windows command displays the IPv4 routing table?",
+    "options": [
+      "route print",
+      "ipconfig /all",
+      "arp -a",
+      "nslookup"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "`route print` shows the Windows routing table; `netstat -rn` does as well.",
+    "whyWrong": {
+      "1": "`ipconfig /all` shows adapter settings, not the full routing table.",
+      "2": "`arp -a` shows the ARP cache.",
+      "3": "`nslookup` queries DNS."
     }
   }
 ]

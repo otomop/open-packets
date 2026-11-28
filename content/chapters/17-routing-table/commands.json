@@ -8,7 +8,7 @@
     "teaching": {
       "sectionId": "why-the-table-is-the-whole-story",
       "hint": "Begin with the complete installed table so a more-specific route is not hidden.",
-      "takeaway": "This shows selected routes, not every configured candidate. Choose a packet's longest matching prefix after reading the entries; administrative distance does not override a longer installed match.",
+      "takeaway": "The table lists only installed routes, not every configured candidate. For a packet, pick the longest matching prefix; administrative distance never overrides a longer match.",
       "syntax": [
         {
           "text": "show ip route",
@@ -27,7 +27,7 @@
     "teaching": {
       "sectionId": "longest-prefix-match-the-forwarding-decision",
       "hint": "A destination-specific lookup takes the packet's address, not a guessed network address.",
-      "takeaway": "Use the returned prefix to explain the forwarding choice. If only a default should apply, inspect the full table as well because destination-lookup display behavior varies by IOS image.",
+      "takeaway": "The output names the longest matching installed prefix with its source, distance and next hop. If only the default route matches, IOS reports that the network is not in the table, so read the full table too.",
       "syntax": [
         {
           "text": "show ip route",
@@ -39,6 +39,98 @@
         }
       ],
       "focus": "core"
+    }
+  },
+  {
+    "id": "routing-table-d05",
+    "task": "R1 has a /24 OSPF route and a more specific /25 static route in 10.20.30.0. Request the installed entry that a packet to 10.20.30.50 uses.",
+    "mode": "R1#",
+    "answer": "show ip route 10.20.30.50",
+    "accept": [],
+    "teaching": {
+      "sectionId": "longest-prefix-match-the-forwarding-decision",
+      "hint": "Give the packet's destination address and let the router find the longest match.",
+      "takeaway": "10.20.30.50 lies outside 10.20.30.128/25, so the /24 OSPF route is the longest match. Two hosts in one /24 can use different routes when a longer prefix covers only one of them.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "10.20.30.50",
+          "kind": "argument"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "routing-table-d06",
+    "task": "R1 has a floating static route configured behind OSPF. Display only the static routes that are actually installed.",
+    "mode": "R1#",
+    "answer": "show ip route static",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "Filter the routing table by route source.",
+      "takeaway": "Only installed static routes appear. A floating static route that lost to a lower-AD source is in the running configuration but not in this list.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "static",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "routing-table-d07",
+    "task": "Display only the routes on R1 that OSPF supplied and that won installation.",
+    "mode": "R1#",
+    "answer": "show ip route ospf",
+    "accept": [],
+    "teaching": {
+      "sectionId": "reading-the-output",
+      "hint": "Filter the routing table by the protocol that learned the route.",
+      "takeaway": "Each line shows [110/metric]. An OSPF candidate that lost to a connected or static route for the same prefix is not listed.",
+      "syntax": [
+        {
+          "text": "show ip route",
+          "kind": "keyword"
+        },
+        {
+          "text": "ospf",
+          "kind": "keyword"
+        }
+      ],
+      "focus": "core"
+    }
+  },
+  {
+    "id": "routing-table-d08",
+    "task": "show ip route 203.0.113.9 answers % Network not in table, yet R1 has a default route. Display the CEF forwarding entry R1 actually uses for 203.0.113.9.",
+    "mode": "R1#",
+    "answer": "show ip cef 203.0.113.9",
+    "accept": [],
+    "teaching": {
+      "sectionId": "the-default-route-and-the-gateway-of-last-resort",
+      "hint": "The forwarding table includes the default route; the specific-route lookup does not fall back to it.",
+      "takeaway": "The CEF entry shows the match, including 0.0.0.0/0, and its next hop. Read receive as delivered to the router itself, attached as directly connected and drop as discarded.",
+      "syntax": [
+        {
+          "text": "show ip cef",
+          "kind": "keyword"
+        },
+        {
+          "text": "203.0.113.9",
+          "kind": "argument"
+        }
+      ],
+      "focus": "supporting"
     }
   }
 ]

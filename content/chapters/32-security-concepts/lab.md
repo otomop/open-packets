@@ -4,7 +4,7 @@ environment: mixed
 devices: ["Required: paper policy worksheet", "Optional: 1 × 2911 router (R1)", "Optional: 1 × 2960 switch (SW1)", "Optional: 2 × PC-PT (Admin-PC, Test-PC)"]
 minutes: 35
 ---
-Evaluate risks, authentication choices, and security-program actions in a required 35-minute paper exercise. An optional device extension takes about 45 additional minutes and demonstrates one remote-login control using a complete supplied setup. It is not a second SSH configuration exam. No Packet Tracer, CML, or hardware execution is claimed; use the paper evidence when the chosen image lacks the feature.
+This chapter is about concepts, so the required lab is a 35-minute paper exercise: you apply the lesson's vocabulary to three short cases (an exposed backup, a weak password policy, and a security program with a login block). Steps 4–9 are an optional 45-minute device extension in which you watch `login block-for` put a router into quiet mode. Its expected results were written from the IOS documentation, not captured from a run; if your Packet Tracer version lacks the feature, use the paper evidence in Step 3.
 
 Practice revised September 2026. If you completed an earlier version, repeat the revised exercise and update its checkmarks.
 
@@ -124,7 +124,7 @@ R1 Gi0/0 is up/up at .1/24 and both PC pings work. A successful ping tests addre
 
 ## Step 5: Optional — establish and test local management access
 
-The commands below are supplied preparation. Predict what a successful ping, a successful fresh SSH login, and a successful fresh console login each demonstrate before running them.
+The commands below repeat the local SSH setup from chapter 8, with one addition: `security passwords min-length 15` makes IOS reject any new password shorter than 15 characters. Predict what a successful ping, a successful fresh SSH login, and a successful fresh console login each demonstrate before running them.
 
 Keep the console open. Configure length, local secrets, and SSH. If `security passwords min-length 15` is unsupported, record the missing enforcement and continue with the supplied longer lab secrets. This fallback does not claim enforcement. Use the basic `secret` form for simulator compatibility; inspect the actual resulting storage type and record if the image provides only a legacy hash.
 
@@ -193,7 +193,7 @@ A fresh SSH login succeeds and reports privilege 15. Console reauthentication al
 
 ## Step 6: Optional — configure remote-login observation
 
-Enable the documented IOS login block and logging features from the console. If `login block-for` or `show login` is absent, perform Steps 6–8 as a paper state exercise using the stated configuration and outcomes; do not repeatedly attempt to trigger an unsupported feature. If only login event logging is absent, use `show login` plus the controlled session results and record the logging limitation.
+Enable the login block from the console. `login on-failure log` and `login on-success log` write a syslog message for each failed and successful login, and `logging buffered` keeps those messages where `show logging` can display them. If `login block-for` or `show login` is absent, perform Steps 6–8 as a paper state exercise using the stated configuration and outcomes; do not repeatedly attempt to trigger an unsupported feature. If only login event logging is absent, use `show login` plus the controlled session results and record the logging limitation.
 
 ```ios R1
 R1# configure terminal

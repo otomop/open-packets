@@ -18,11 +18,11 @@
     "answer": [
       1
     ],
-    "explanation": "VLSM allows each subnet to use a size suited to its requirements. The allocations still need enough capacity, valid alignment, containment and no overlap.",
+    "explanation": "VLSM gives each subnet the prefix length that fits its requirement. Every subnet still has to be aligned, contained in the parent and non-overlapping.",
     "whyWrong": {
-      "0": "Different sizes do not permit overlapping ordinary routed subnets.",
-      "2": "Ordinary LAN host-address reservations still apply.",
-      "3": "Address sizing does not change private-address uniqueness."
+      "0": "Different sizes do not allow overlapping routed subnets.",
+      "2": "Network and broadcast addresses are still reserved on ordinary LANs.",
+      "3": "Subnet sizing does not make private addresses globally unique."
     }
   },
   {
@@ -34,7 +34,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "When counting modern equal-size child subnets, what is the role of the all-zero and all-one subnet numbers?",
+    "prompt": "When counting equal-size child subnets, what happens to the all-zero and all-one subnet numbers?",
     "options": [
       "Both must be removed from the child-subnet count.",
       "Only the all-zero subnet number remains available.",
@@ -44,11 +44,11 @@
     "answer": [
       2
     ],
-    "explanation": "Adding s prefix bits provides all 2^s subnet numbers. Do not subtract two from that count. Ordinary network and broadcast addresses are still excluded when calculating usable hosts within each LAN.",
+    "explanation": "Adding s prefix bits gives all 2^s subnet numbers; do not subtract two. Network and broadcast addresses are still excluded when counting hosts in each subnet.",
     "whyWrong": {
-      "0": "This applies an obsolete subnet-count subtraction.",
-      "1": "The all-one child-subnet number is also usable.",
-      "3": "The all-zero child-subnet number is also usable."
+      "0": "Subtracting two from the subnet count is an obsolete rule.",
+      "1": "The all-one subnet is also usable.",
+      "3": "The all-zero subnet is also usable."
     }
   },
   {
@@ -72,11 +72,11 @@
       1,
       3
     ],
-    "explanation": "The 172.16.0.0/12 private block ends at 172.31.255.255, and all of 10.0.0.0/8 is private. Thus the listed .31 address and 10 address qualify.",
+    "explanation": "RFC 1918 is 10.0.0.0/8, 172.16.0.0/12 (172.16–172.31) and 192.168.0.0/16. So 172.31.200.1 and 10.255.255.254 are private.",
     "whyWrong": {
-      "0": "172.32 is beyond the RFC 1918 172 range.",
-      "2": "100.64.0.0/10 is shared address space, a separate designation.",
-      "4": "The private block is 192.168.0.0/16, not 192.169.0.0/16."
+      "0": "172.32.x.x is outside 172.16.0.0/12.",
+      "2": "100.64.0.0/10 is shared address space, not RFC 1918.",
+      "4": "192.169.x.x is outside 192.168.0.0/16."
     }
   },
   {
@@ -98,11 +98,11 @@
     "answer": [
       1
     ],
-    "explanation": "Private addresses can be routed within an organization's network. Separate organizations may reuse the same ranges, so they are not globally unique public allocations.",
+    "explanation": "RFC 1918 addresses route normally inside an organization, but many organizations reuse the same ranges, so they are not globally unique.",
     "whyWrong": {
-      "0": "Ordinary routing between nonoverlapping private LANs does not require NAT.",
-      "2": "DHCP assigns configuration; it does not change the address range's designation.",
-      "3": "The private designation does not enforce a security policy."
+      "0": "Routing between non-overlapping private LANs needs no NAT.",
+      "2": "DHCP assigns addresses; it does not change a range’s designation.",
+      "3": "A private address is not a security control."
     }
   },
   {
@@ -124,11 +124,11 @@
     "answer": [
       2
     ],
-    "explanation": "The /20 mask has third-octet increment 16. The containing aligned block is 64–79, with the entire fourth octet available as host bits.",
+    "explanation": "/20 blocks are 16 apart in the third octet, so 77 falls in 64–79. The network is 172.16.64.0 and the broadcast is 172.16.79.255.",
     "whyWrong": {
-      "0": "This treats the address like a /24 and does not start on a /20 boundary.",
-      "1": "72 is not a multiple of 16 and is not a /20 network boundary.",
-      "3": "The block beginning at 80 does not contain third-octet value 77."
+      "0": "That treats the address as a /24, not a /20.",
+      "1": "72 is not a multiple of 16, so it is not a /20 boundary.",
+      "3": "The block starting at 80 does not contain 77."
     }
   },
   {
@@ -150,11 +150,11 @@
     "answer": [
       1
     ],
-    "explanation": "The requirement is 71 usable addresses. A /26 is too small, while /25 is the smallest ordinary subnet with enough usable addresses.",
+    "explanation": "The LAN needs 71 usable addresses. A /26 gives 62 and a /25 gives 126, so /25 is the smallest that fits.",
     "whyWrong": {
-      "0": "62 is less than 71.",
-      "2": "A /27 supplies only 30 usable addresses, fewer than the required 71.",
-      "3": "A /24 fits but consumes more space than necessary."
+      "0": "62 is fewer than 71.",
+      "2": "A /27 gives only 30 usable addresses.",
+      "3": "A /24 fits but wastes space."
     }
   },
   {
@@ -176,10 +176,10 @@
     "answer": [
       3
     ],
-    "explanation": "The new prefix adds seven bits: 2^7 = 128 subnets. Each /23 has nine host bits, giving 512 total addresses and 510 usable addresses.",
+    "explanation": "Going from /16 to /23 adds 7 bits, so 2^7 = 128 subnets. Each /23 has 9 host bits: 512 addresses, 510 usable.",
     "whyWrong": {
-      "0": "These values describe dividing /16 into /24s.",
-      "1": "These values describe dividing /16 into /22s.",
+      "0": "That is dividing a /16 into /24s.",
+      "1": "That is dividing a /16 into /22s.",
       "2": "512 is the total per /23, before removing network and broadcast."
     }
   },
@@ -202,11 +202,11 @@
     "answer": [
       0
     ],
-    "explanation": "The /20 increments by 16 in the third octet, so 200 belongs to 192–207. A /23 increments by two, making the new range 200–201. More network bits narrow the host’s calculated local range even though its address stays the same.",
+    "explanation": "A /20 spans 16 third-octet values, so 200 is in 192–207. A /23 spans 2, so the range narrows to 200–201: more network bits shrink the range.",
     "whyWrong": {
-      "1": "The mask participates in the calculation; changing it can change the range.",
-      "2": "A /23 contains two third-octet values, not eight.",
-      "3": "Neither proposed range follows the stated /20 and /23 boundaries."
+      "1": "The mask is part of the calculation, so changing it changes the range.",
+      "2": "A /23 has two third-octet values, not eight.",
+      "3": "Neither range matches the /20 or /23 boundaries."
     }
   },
   {
@@ -230,11 +230,11 @@
       0,
       2
     ],
-    "explanation": "The /25 occupies .0–.127, then the /26 occupies .128–.191, and the /27 occupies .192–.223. The two /30 links follow at .224/30 and .228/30.",
+    "explanation": "Largest first: the /25 takes .0–.127, the /26 takes .128–.191 and the /27 takes .192–.223. The two /30 links follow at .224/30 and .228/30.",
     "whyWrong": {
-      "1": "This overlaps the 55-address LAN.",
-      "3": "This overlaps the 25-address LAN.",
-      "4": "This is the first link's allocation; the second starts at .228."
+      "1": "192.168.40.160/27 overlaps the /26 at .128–.191.",
+      "3": "192.168.40.192/30 overlaps the /27 at .192–.223.",
+      "4": "The first link is .224/30; the second starts at .228."
     }
   },
   {
@@ -256,11 +256,11 @@
     "answer": [
       2
     ],
-    "explanation": "The two 100-address LANs each require /25, and the 50-address LAN requires /26. Their blocks consume 128 + 128 + 64 = 320 addresses, exceeding a /24's 256.",
+    "explanation": "Two 100-address LANs each need a /25 and the 50-address LAN needs a /26. That is 128 + 128 + 64 = 320 addresses, more than a /24’s 256.",
     "whyWrong": {
-      "0": "Allocation includes the power-of-two block sizes, not just the requested usable-address totals.",
-      "1": "Changing the order cannot increase the parent's capacity.",
-      "3": "A summary changes route representation; it does not free allocated addresses."
+      "0": "Blocks are powers of two, so the totals are larger than the host counts.",
+      "1": "Changing the order cannot add capacity to the parent.",
+      "3": "A summary changes route representation, not allocated space."
     }
   },
   {
@@ -286,11 +286,11 @@
     "answer": [
       3
     ],
-    "explanation": "The networks cover third-octet values 8–11, an aligned group of four. A /22 covers that exact 1,024-address range.",
+    "explanation": "The four /24s cover third-octet values 8–11, an aligned group of four. A /22 covers exactly that range.",
     "whyWrong": {
       "0": "A /23 at .8 covers only .8 and .9.",
-      "1": "This covers .0 through .3, not the listed networks.",
-      "2": "This also includes .12 through .15."
+      "1": "10.44.0.0/22 covers .0–.3.",
+      "2": "A /21 also covers .12–.15."
     }
   },
   {
@@ -316,11 +316,11 @@
     "answer": [
       0
     ],
-    "explanation": "The record is consistent with IPv4 link-local fallback rather than a normal DHCP lease for the intended LAN. Check connectivity, VLAN membership, and DHCP availability; this snapshot alone does not identify the exact failure.",
+    "explanation": "The address is an IPv4 link-local fallback, not a DHCP lease for the intended LAN. Check the PC’s link and whether a DHCP server is reachable.",
     "whyWrong": {
-      "1": "169.254.0.0/16 is link-local, not RFC 1918 space.",
+      "1": "169.254.0.0/16 is link-local, not RFC 1918, and NAT would not fix it.",
       "2": "Provider shared space is 100.64.0.0/10, not this range.",
-      "3": "An arbitrary mask change does not restore the intended DHCP configuration."
+      "3": "Changing the mask does not obtain a DHCP lease."
     }
   },
   {
@@ -346,11 +346,11 @@
     "answer": [
       1
     ],
-    "explanation": "The host .200 and /27 mask match the intended LAN, but gateway .129 does not. Use the actual local router interface .193.",
+    "explanation": "The host address .200 and /27 mask match the plan, but gateway .129 does not. The gateway must be R1’s interface, .193.",
     "whyWrong": {
-      "0": "This changes the planned subnet without correcting the gateway value.",
-      "2": "Address .223 is this /27's broadcast.",
-      "3": "Address .193 is already used by the router, creating a duplicate address."
+      "0": "The planned subnet is a /27, not a /26, and the gateway stays wrong.",
+      "2": ".223 is the /27’s broadcast address.",
+      "3": ".193 is already the router’s address, creating a duplicate."
     }
   },
   {
@@ -372,11 +372,11 @@
     "answer": [
       0
     ],
-    "explanation": "Four extra prefix bits produce 16 subnets, so /28 is the first prefix that meets the minimum of 12. Its four host bits provide 16 total and 14 usable addresses per subnet.",
+    "explanation": "At least 12 subnets needs 4 extra bits (2^4 = 16), so /28. Each /28 has 16 addresses and 14 usable.",
     "whyWrong": {
-      "1": "Eight subnets do not meet the required 12.",
-      "2": "This meets the subnet count but reduces capacity unnecessarily.",
-      "3": "Four subnets do not meet the required 12."
+      "1": "Eight subnets are fewer than 12.",
+      "2": "32 subnets meets the count but cuts capacity unnecessarily.",
+      "3": "Four subnets are fewer than 12."
     }
   },
   {
@@ -398,11 +398,11 @@
     "answer": [
       3
     ],
-    "explanation": "Eight /27s fit inside the first /24, starting at .6.0 through .6.224. Subnet 9 starts at .7.0; subnet 10 starts at .7.32. Advancing through the parent must carry into the third octet.",
+    "explanation": "The first /24 holds eight /27s, .6.0 through .6.224. Subnet 9 starts at 10.50.7.0 and subnet 10 at 10.50.7.32.",
     "whyWrong": {
-      "0": "That is subnet 8.",
-      "1": "That is subnet 9.",
-      "2": "That is subnet 11."
+      "0": "10.50.6.224/27 is subnet 8.",
+      "1": "10.50.7.0/27 is subnet 9.",
+      "2": "10.50.7.64/27 is subnet 11."
     }
   },
   {
@@ -424,11 +424,11 @@
     "answer": [
       0
     ],
-    "explanation": "A /27 has 30 usable addresses. Subtract the gateway, eight assigned devices and four reserved usable addresses: 30 − 1 − 8 − 4 = 17. The reserved addresses are unavailable for the present PC plan.",
+    "explanation": "A /27 has 30 usable addresses. 30 − 1 gateway − 8 devices − 4 reserved = 17.",
     "whyWrong": {
-      "1": "This starts from 32 total addresses without first removing network and broadcast.",
-      "2": "This fails to preserve the four requested future addresses.",
-      "3": "This ignores the existing and reserved usable addresses."
+      "1": "19 starts from 32 without removing network and broadcast.",
+      "2": "21 omits the four reserved future addresses.",
+      "3": "30 ignores the gateway, existing devices and reserved addresses."
     }
   },
   {
@@ -450,11 +450,11 @@
     "answer": [
       1
     ],
-    "explanation": "The block is .224–.227. Network .224 and broadcast .227 leave .225 and .226 as the two usable endpoints. Both endpoints must belong to the same link subnet.",
+    "explanation": "The /30 spans .224–.227. Network .224 and broadcast .227 are reserved, so the endpoints are .225 and .226.",
     "whyWrong": {
-      "0": "This assigns the network address to an endpoint.",
-      "2": "This assigns the broadcast address to an endpoint.",
-      "3": "Address .229 belongs to the next /30, beginning at .228."
+      "0": ".224 is the network address.",
+      "2": ".227 is the broadcast address.",
+      "3": ".229 belongs to the next /30, starting at .228."
     }
   },
   {
@@ -476,11 +476,11 @@
     "answer": [
       2
     ],
-    "explanation": "Each LAN needs /27, a 32-address block. Five blocks consume 160 addresses. A /25 has only 128; /24 is the smallest power-of-two parent that fits. The remaining space is not a sixth requirement.",
+    "explanation": "Each LAN needs a /27 (32 addresses), so five need 160. A /25 holds only 128, so the smallest parent that fits is a /24.",
     "whyWrong": {
-      "0": "64 addresses fit only two of the required /27 blocks.",
-      "1": "128 addresses fit only four /27 blocks.",
-      "3": "This fits but is larger than necessary."
+      "0": "64 addresses hold only two /27s.",
+      "1": "128 addresses hold only four /27s.",
+      "3": "A /23 fits but is larger than needed."
     }
   },
   {
@@ -508,11 +508,11 @@
       0,
       2
     ],
-    "explanation": "The allocations occupy .0–.207. The remaining .208–.255 is exactly .208/28 (.208–.223) plus .224/27 (.224–.255). The 48 remaining addresses are not one power-of-two aligned subnet.",
+    "explanation": "Allocations use .0–.207, so the free space is .208–.255. That is exactly .208/28 plus .224/27; 48 addresses are not one aligned subnet.",
     "whyWrong": {
-      "1": "This includes assigned .192–.207 addresses.",
-      "3": "This covers only half of the free .224–.255 range, so it cannot replace .224/27 in a complete two-prefix answer.",
-      "4": "208 is not a /27 boundary; the containing /27 begins at .192."
+      "1": "10.66.0.192/27 includes allocated .192–.207.",
+      "3": "10.66.0.240/28 covers only half of .224–.255.",
+      "4": ".208 is not a /27 boundary; the /27 starts at .192."
     }
   },
   {
@@ -534,11 +534,11 @@
     "answer": [
       3
     ],
-    "explanation": "The /27 covers .96–.127, so .126 is its last usable address and 255.255.255.224 is its mask. A gateway need not use the first usable address; it must follow the approved, unique-address plan.",
+    "explanation": "The /27 spans .96–.127, so the last usable address is .126 with mask 255.255.255.224.",
     "whyWrong": {
-      "0": "This is the first usable address, not the chosen last usable address.",
-      "1": "This is the subnet broadcast.",
-      "2": "The /26 mask changes the intended subnet to .64–.127."
+      "0": ".97 is the first usable address, not the last.",
+      "1": ".127 is the subnet broadcast.",
+      "2": "A /26 mask puts .126 in a different subnet (.64–.127)."
     }
   },
   {
@@ -560,11 +560,11 @@
     "answer": [
       1
     ],
-    "explanation": "The four /24s cross a /22 boundary. Their smallest single containing prefix is 10.44.8.0/21, covering .8 through .15 and therefore including additional networks.",
+    "explanation": "The four /24s (.9–.12) straddle a /22 boundary, so the smallest single prefix is 10.44.8.0/21. It covers .8–.15, which includes extra networks.",
     "whyWrong": {
-      "0": "This covers .12–.15 and misses .9–.11.",
-      "2": "This covers .8–.11 and misses .12.",
-      "3": "This contains the range but is larger than the required /21."
+      "0": "10.44.12.0/22 covers .12–.15 and misses .9–.11.",
+      "2": "10.44.8.0/22 covers .8–.11 and misses .12.",
+      "3": "10.44.0.0/20 contains the range but is larger than needed."
     }
   },
   {
@@ -590,11 +590,11 @@
     "answer": [
       3
     ],
-    "explanation": "Gi0/0 occupies 10.44.8.0–10.44.8.127. Gi0/1's proposed /24 covers .0–.255, so the two routed interface subnets would overlap.",
+    "explanation": "Gi0/0 holds 10.44.8.0–.127. The proposed /24 on Gi0/1 covers .0–.255, which includes that /25, so the subnets overlap.",
     "whyWrong": {
-      "0": "The lower /25 ends at .127; .140 is outside it, but its proposed /24 still overlaps it.",
-      "1": "Distinct host addresses do not establish separate subnet ranges.",
-      "2": "A /24 retains the first three octets and covers the full fourth octet; .140 does not shift its boundary."
+      "0": "The proposed /24 still overlaps the lower /25 even though .140 is outside it.",
+      "1": "Different host addresses do not make separate subnets; the masks decide.",
+      "2": "A /24 covers the full fourth octet; .140 does not move the boundary."
     }
   },
   {
@@ -620,11 +620,11 @@
     "answer": [
       2
     ],
-    "explanation": "The PC's /25 says .128–.255 is local, so .200 appears local and is an ARP target. With the intended /26, .200 is remote and should be sent through the gateway.",
+    "explanation": "The PC’s /25 makes .128–.255 local, so it treats .200 as local and ARPs for it. With the intended /26, .200 is remote and should go to the gateway.",
     "whyWrong": {
-      "0": "The mistaken /25 still contains gateway .129 and the PC itself.",
-      "1": "This is the intended /26 behavior; the configured /25 extends through .255.",
-      "3": "The PC applies its own configured mask; R1’s mask does not override it."
+      "0": "The /25 still contains gateway .129 and the PC itself.",
+      "1": "That is the /26 behavior; the configured /25 extends to .255.",
+      "3": "The PC uses its own configured mask, not R1’s."
     }
   },
   {
@@ -650,11 +650,11 @@
     "answer": [
       3
     ],
-    "explanation": "The new lower /25 contains .9.0–.9.127. The PC’s carried-over host value .140 lies in the upper /25 even though its first three octets match the gateway. Use the approved .10 address and verify local and cross-LAN tests in both directions. A router address change does not update a statically addressed PC.",
+    "explanation": "The new lower /25 spans .9.0–.9.127, but the PC’s old .140 lies in the upper /25. Set the PC to the approved 10.44.9.10/25 with gateway 10.44.9.1, then test both directions.",
     "whyWrong": {
-      "0": "This abandons the approved /25 and hides the mismatch with a broader host view.",
-      "1": "Gateway .129 is in the upper /25 and no router owns it in this design.",
-      "2": "The router already follows the newly approved allocation; the evidence identifies the host error."
+      "0": "A /24 abandons the approved /25 and hides the mismatch.",
+      "1": "Gateway .129 is in the upper /25 and no router owns it.",
+      "2": "The router already follows the approved plan; the PC is wrong."
     }
   },
   {
@@ -678,11 +678,11 @@
       0,
       2
     ],
-    "explanation": "The proposed /22 spans 10.20.4.0–10.20.7.255. The .6.128/25 is contained inside it, while .0.0/21 contains the entire proposed block.",
+    "explanation": "The proposed /22 spans 10.20.4.0–10.20.7.255. 10.20.6.128/25 lies inside it and 10.20.0.0/21 contains it, so both overlap.",
     "whyWrong": {
-      "1": "This begins after the proposed block.",
-      "3": "This ends before the proposed block.",
-      "4": "This is a separate /22 covering third-octet values 12–15."
+      "1": "10.20.8.0/24 starts after the proposed block.",
+      "3": "10.20.3.0/24 ends before the proposed block.",
+      "4": "10.20.12.0/22 covers third-octet values 12–15, a separate range."
     }
   },
   {
@@ -708,11 +708,11 @@
     "answer": [
       0
     ],
-    "explanation": "The LAN needs /26, which requires 64 contiguous, correctly aligned addresses. There are 128 free addresses in total, but four occupied /27s split them into separate 32-address gaps. Count and placement are separate constraints; keeping all allocations prevents this addition.",
+    "explanation": "A 50-address LAN needs a /26: 64 contiguous aligned addresses. The 128 free addresses are split by occupied /27s into 32-address gaps, so none fits.",
     "whyWrong": {
-      "1": "Total free count does not establish a contiguous aligned /25.",
-      "2": "A subnet cannot skip the occupied addresses between free intervals.",
-      "3": "A /26 normally supplies enough capacity; the obstacle here is fragmentation."
+      "1": "Free total is not the same as a contiguous aligned /25.",
+      "2": "A subnet cannot skip the occupied block between two free gaps.",
+      "3": "A /26 is large enough; fragmentation is the problem."
     }
   },
   {
@@ -738,11 +738,11 @@
     "answer": [
       1
     ],
-    "explanation": "Seventy usable addresses require /25 or larger. However, .65/25 belongs to the lower half .0–.127, including Users .0–.63. Increasing capacity does not preserve the old subnet boundary. Changing Devices does not remove that overlap; the plan needs different available space or an explicitly redesigned allocation.",
+    "explanation": "70 interfaces fit a /25, but .65/25 belongs to .0–.127, which includes Users at .0–.63. The larger mask overlaps Users.",
     "whyWrong": {
-      "0": "A /25 provides 126 usable addresses.",
-      "2": "The mask sets the boundary; the gateway’s old subnet does not remain a separate /26 inside this new interface prefix.",
-      "3": "The conflict is with Users, so changing Devices does not fix it."
+      "0": "A /25 has 126 usable addresses.",
+      "2": "The mask sets the boundary; the old /26 does not remain inside the /25.",
+      "3": "The overlap is with Users, so resizing Devices does not fix it."
     }
   },
   {
@@ -768,11 +768,115 @@
     "answer": [
       2
     ],
-    "explanation": "The approved /23 spans 172.18.40.0–172.18.41.255. A needs /24 (254 usable), B /26 (62), and C /27 (30). The correct plan is aligned, contained, nonoverlapping, and meets all three capacities. Checking only one of those conditions would miss the other proposals’ errors.",
+    "explanation": "The parent spans 172.18.40.0–41.255. A needs a /24, B a /26 and C a /27; only one plan keeps all three aligned, inside the parent and non-overlapping.",
     "whyWrong": {
-      "0": "B’s .41.0/26 extends through .41.63 and overlaps C’s .41.32/27.",
-      "1": "The .42.0/26 allocation falls outside the approved parent.",
-      "3": "A’s /25 has 126 usable addresses and cannot support 200."
+      "0": "B’s .41.0/26 covers .41.0–.63 and overlaps C’s .41.32/27.",
+      "1": "B’s .42.0/26 is outside the approved parent.",
+      "3": "A’s /25 has 126 usable addresses, too few for 200."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q30",
+    "type": "single",
+    "objectives": [
+      "v1:1.7",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which set lists all three RFC 1918 private ranges?",
+    "options": [
+      "10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16",
+      "10.0.0.0/8, 172.16.0.0/16, 192.168.0.0/24",
+      "10.0.0.0/8, 100.64.0.0/10, 192.168.0.0/16",
+      "10.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "RFC 1918 private space is 10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16.",
+    "whyWrong": {
+      "1": "The 172 block is a /12, and the 192.168 block is a /16.",
+      "2": "100.64.0.0/10 is shared address space, not RFC 1918.",
+      "3": "169.254.0.0/16 is link-local, not RFC 1918."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q31",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "When allocating VLSM subnets from an empty parent block, which requirement do you place first?",
+    "options": [
+      "The largest",
+      "The smallest",
+      "The one with the lowest VLAN ID",
+      "The point-to-point links"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Place the largest required blocks first. Every subnet must be aligned, contained in the parent and non-overlapping.",
+    "whyWrong": {
+      "1": "Starting with the smallest leaves misaligned gaps for larger blocks.",
+      "2": "VLAN IDs do not decide allocation order.",
+      "3": "Links are small blocks and go last in a largest-first plan."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q32",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How many equal /26 subnets does a /24 parent contain?",
+    "options": [
+      "2",
+      "4",
+      "8",
+      "64"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "A /26 adds 2 bits to a /24, giving 2^2 = 4 equal subnets.",
+    "whyWrong": {
+      "0": "Two subnets would be /25s.",
+      "2": "Eight subnets would be /27s.",
+      "3": "64 is the number of addresses in one /26, not the subnet count."
+    }
+  },
+  {
+    "id": "subnetting-vlsm-q33",
+    "type": "single",
+    "objectives": [
+      "v1:1.6",
+      "v2:1.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "When counting the addresses a subnet must supply, which interfaces do you include?",
+    "options": [
+      "All addressed interfaces plus growth",
+      "Only the end hosts, not routers",
+      "Hosts plus the broadcast address",
+      "Only interfaces that are up now"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Count all addressed interfaces, including gateways, and any explicit growth allowance.",
+    "whyWrong": {
+      "1": "The gateway interface also needs an address.",
+      "2": "The broadcast address is reserved, not a device you count.",
+      "3": "Addresses are needed for all configured interfaces, not just those up now."
     }
   }
 ]

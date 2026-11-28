@@ -31,8 +31,8 @@
     "answer": [
       1
     ],
-    "explanation": "The capture explicitly identifies native ESP, IP protocol 50. It matches neither UDP permit nor ICMP and therefore reaches deny 40, while IKE can remain healthy. A UDP source-port 50 rule would not match this native-ESP packet, and the existing UDP-4500 permit is for a different encapsulation. ISP forwards the outer gateway addresses and does not need a route to the encrypted private destination.",
-    "fix": "On the isolated ISP device, add a specific native-ESP permit before deny 40.\n\n```ios\nISP# configure terminal\nISP(config)# ip access-list extended OUTSIDE-OUT\nISP(config-ext-nacl)# 25 permit esp host 198.51.100.1 host 203.0.113.1\nISP(config-ext-nacl)# end\nISP# show access-lists OUTSIDE-OUT\n```\nGenerate fresh host traffic and compare both peers’ counter deltas and application results. The filter is only on ISP G0/1 outbound in this scenario; it does not filter the reverse direction. A different deployment using UDP NAT-T needs permission for its actual UDP transport rather than assuming native ESP is always required."
+    "explanation": "The capture shows native ESP, IP protocol 50, which matches no UDP permit and reaches deny 40, while IKE still works. A UDP rule cannot match ESP, and ISP needs no route to the private LANs.",
+    "fix": "On ISP, add a native ESP permit before deny 40.\n\n```ios\nISP# configure terminal\nISP(config)# ip access-list extended OUTSIDE-OUT\nISP(config-ext-nacl)# 25 permit esp host 198.51.100.1 host 203.0.113.1\nISP(config-ext-nacl)# end\nISP# show access-lists OUTSIDE-OUT\n```\nSend new host traffic and compare the counters on both peers. If NAT-T is in use, permit UDP 4500 instead of ESP."
   },
   {
     "id": "vpns-ipsec-t02",
@@ -66,7 +66,7 @@
     "answer": [
       1
     ],
-    "explanation": "The only matching proposal at one peer offers AES-CBC-256 and the other only AES-CBC-128, so the encryption choices do not intersect. Local names need not match. Reversed endpoint perspectives are normal, and no supplied evidence identifies a data-selector problem as this IKE proposal failure. Correct the approved mismatch, then verify later stages separately.",
-    "fix": "Correct the HQ proposal to the agreed deployment requirement on supported IOS XE. Clear the old encryption choice before setting the single agreed choice.\n\n```ios\nR-HQ# configure terminal\nR-HQ(config)# crypto ikev2 proposal HQ-PROP\nR-HQ(config-ikev2-proposal)# no encryption\nR-HQ(config-ikev2-proposal)# encryption aes-cbc-256\nR-HQ(config-ikev2-proposal)# end\nR-HQ# show crypto ikev2 proposal HQ-PROP\n```\nAllow the failed negotiation to retry and generate fresh matching host traffic. Verify the negotiated IKEv2 relationship, IPsec SAs and actual host result. Proposal compatibility is necessary but does not by itself prove correct selectors, return routes or application permissions."
+    "explanation": "One peer offers only AES-CBC-256 and the other only AES-CBC-128, so the proposals share no encryption algorithm. Proposal names need not match, and reversed addresses are normal.",
+    "fix": "Set the HQ proposal to the agreed algorithm, clearing the old one first.\n\n```ios\nR-HQ# configure terminal\nR-HQ(config)# crypto ikev2 proposal HQ-PROP\nR-HQ(config-ikev2-proposal)# no encryption\nR-HQ(config-ikev2-proposal)# encryption aes-cbc-256\nR-HQ(config-ikev2-proposal)# end\nR-HQ# show crypto ikev2 proposal HQ-PROP\n```\nGenerate matching host traffic, then check the IKEv2 SA, the IPsec SAs and the host result. A matching proposal does not prove the selectors and routes are right."
   }
 ]

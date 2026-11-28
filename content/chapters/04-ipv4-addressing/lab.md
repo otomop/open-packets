@@ -46,7 +46,7 @@ First work from these requirements without looking at the completed table below.
 | Usable range and total usable addresses | Calculate | Calculate |
 | R1 gateway and whether each PC is a valid unique host | Decide | Decide |
 
-Compare both complete ranges to establish that they do not overlap. From PC-A, classify `.150` and `.194` as local or remote. Assuming an empty ARP cache and no extra host routes, write which IP address PC-A would resolve for each destination. Do not change a packet's destination IP merely because it needs a gateway.
+Compare both complete ranges to establish that they do not overlap. From PC-A, classify `.150` and `.194` as local or remote. Assuming an empty ARP cache and no extra host routes, write which IP address PC-A would resolve for each destination. Using a gateway does not change the packet's destination IP.
 
 After recording your answers, compare with the answer table. Then start a new Packet Tracer file and place the specified models. Rename the workspace labels so the devices match the diagram. Connect each listed port. On the router's CLI tab, decline the initial configuration dialog if it appears, then press Enter to obtain `Router>`.
 
@@ -199,7 +199,7 @@ R1# show ip interface brief
 ```
 
 :::expected
-The proposed address has all host bits zero. IOS should reject it as an invalid host address; exact error wording varies by image. Gi0/2 should remain unassigned, and Gi0/0 and Gi0/1 retain their working addresses. Do not interpret a prompt returning as proof that the command succeeded.
+The proposed address has all host bits zero. IOS rejects it with a message such as `Bad mask /27 for address 192.168.44.224`. Gi0/2 should remain unassigned, and Gi0/0 and Gi0/1 retain their working addresses. Do not interpret a prompt returning as proof that the command succeeded.
 :::
 
 ```state

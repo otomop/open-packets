@@ -5,7 +5,7 @@ title: "Ansible & Terraform"
 subtitle: "Build an inventory, run verified commands, and understand what a plan and its results mean."
 part: automation
 domain: aiops
-minutes: { lesson: 70, lab: 100 }
+minutes: { lesson: 70, lab: 40 }
 summary: "Recognize configuration management capabilities, use Ansible to collect IOS command output, and follow a local Terraform plan/apply cycle. Learn the setup, authentication, state, and verification checks that make the results useful."
 objectives:
   v1: ["6.6"]
@@ -53,11 +53,9 @@ sources:
   - { title: "HashiCorp: Apply command", url: "https://developer.hashicorp.com/terraform/cli/commands/apply" }
 ---
 
-An automation task still needs a precise networking purpose. “Collect the software version and interface state from the branch routers” is specific enough to implement and check. “Make the network correct” leaves the target, intended result, and acceptable changes undefined. Ansible and Terraform help carry out repeatable work; the engineer remains responsible for choosing and verifying that work.
+Ten branch routers need the same NTP server this week, and next month they will need the same syslog host. You could log in to each one, or you could write the task down once and let a tool run it against a list of devices and report what came back. That is configuration management, and Ansible and Terraform are the two tools the CCNA names.
 
-Use [chapter 41's](#/chapter/rest-apis-json) distinction between structured text and its meaning: YAML organizes the inventory and tasks, while returned data still needs type, position and outcome checks. Reuse SSH identity and login checks from [chapter 08](#/chapter/ios-essentials) before letting a tool collect the same operational commands.
-
-The current v1.1 objective emphasizes recognizing Ansible and Terraform capabilities. The announced v2.0 objective requires using configuration management mechanisms such as Ansible to execute commands. This chapter therefore develops a complete Ansible collection task and uses a small, local Terraform exercise to explain its different approach. Cloud provisioning, elaborate roles, and configuration pipelines are optional further study.
+This chapter builds on desired state and drift from [chapter 40](#/chapter/network-management-and-sdn), the YAML and JSON reading from [chapter 41](#/chapter/rest-apis-json) and the SSH access you configured in [chapter 08](#/chapter/ios-essentials). By the end you will be able to say what each tool does and how they differ, read an inventory and a playbook, run `show` commands on a router with Ansible and interpret the recap, and follow Terraform's init, plan and apply cycle. The v1.1 exam asks you to recognize these capabilities; v2.0 expects you to use Ansible to execute commands.
 
 ## Why configuration management is useful
 
@@ -78,6 +76,8 @@ Consider ten routers that should use one approved NTP server. A technician could
 
 ## Comparing Ansible and Terraform
 
+The two tools start from different jobs. **Ansible** configures things that already exist: it runs a list of tasks, in order, on the devices in its inventory. **Terraform** provisions things: you declare the resources that should exist and it works out what to create, change or destroy.
+
 | Aspect | Ansible | Terraform |
 |---|---|---|
 | Main unit you read | Playbook with plays and tasks | Configuration with resources and arguments |
@@ -86,13 +86,13 @@ Consider ten routers that should use one approved NTP server. A technician could
 | IOS example | Collect operational CLI output over SSH | Manage supported objects through an appropriate provider |
 | Persistent management state | No Terraform-style ownership state file required for ordinary CLI tasks | State tracks managed object associations and attributes |
 
-Ansible is commonly described as **agentless** and **push based**: you initiate a run from a control node, which contacts its targets. That description concerns this execution model. An organization can schedule runs through a separate automation platform; the basic command-line tool does not continuously enforce configuration after its process exits.
+Ansible is **agentless** and **push based**. Agentless means nothing is installed on the managed device: Ansible logs in over SSH as an administrator would. Push means the control node starts the work when you run a playbook. The device does not check in by itself, and nothing is enforced between runs unless a separate scheduler runs the playbook again.
 
 A playbook is an ordered procedure, but individual modules can express a desired state. “Ensure this description exists” differs from “send this arbitrary command every time.” Whether repetition is safe depends on the module, its arguments, the platform, and the commands. A read-only collection task and a configuration task should not be treated as interchangeable.
 
 Terraform is **declarative**: the files describe desired objects and their relationships. A provider translates resource operations into the target system's supported interface. Provider coverage matters; installing Terraform does not give every IOS command a corresponding resource. Terraform and Ansible can be used together, provided their ownership is clear. Having both tools continually enforce different values for the same setting causes repeated reversals.
 
-Puppet and Chef are other configuration management products, but memorizing their default polling intervals or ports is not required by the stated objectives for these two tracks. Focus on the two named mechanisms and on recognizing what a concrete task actually does.
+Puppet and Chef are older configuration management tools. Unlike Ansible, each installs an agent on the managed device, and the agent pulls its configuration from a server. The current blueprints name only Ansible and Terraform.
 
 ## The control node and inventory
 
@@ -210,7 +210,7 @@ An EXEC command can alter a device without entering configuration mode. `reload`
 
 ## Terraform configuration, providers, and state
 
-Terraform files use **HCL**, HashiCorp Configuration Language, whose blocks identify objects and whose arguments assign values. A **resource address**, such as `terraform_data.lab_intent`, combines the resource type and the local name used in your configuration. A provider implements resource operations. A **backend** determines where state is stored; a local exercise normally uses `terraform.tfstate` in its working directory.
+Terraform's core workflow is three commands: `terraform init` prepares the directory and downloads providers, `terraform plan` shows what would change, and `terraform apply` makes the change. The files are written in **HCL**, HashiCorp Configuration Language, in which blocks name objects and arguments assign values. A **provider** is the plugin that lets Terraform manage one platform through its API. A **resource address**, such as `terraform_data.lab_intent`, combines the resource type and the local name used in your configuration. A **backend** determines where state is stored; a local exercise uses `terraform.tfstate` in its working directory.
 
 State links the configuration to managed objects and records relevant attributes. It can contain sensitive values, as can saved plan files. Restrict their access. Teams commonly use an appropriately configured remote backend, with locking where supported, rather than exchanging copies of local state. Deleting state is not a rollback: existing infrastructure can remain while Terraform loses its association with it.
 
@@ -270,6 +270,10 @@ For Terraform, distinguish configuration, state, and actual platform evidence. A
 
 ## Exam focus
 
-Be able to identify an inventory, play, task, module, collection, and registered result. Given a command list, select the correct zero-based output index. Use a syntax check, inspect the target set, and execute a limited read-only play with the required connection settings.
-
-Recognize agentless operation, configuration drift, idempotence, and the roles of Terraform providers, plans, and state. Explain the limits of a recap, a dry run, a saved plan, and an apparent success. The practical standard is to know what was requested, where it ran, what evidence came back, and which further checks establish the intended network behavior.
+- Ansible: agentless, push model, SSH to network devices, playbooks in YAML. The inventory lists the targets and modules do the work.
+- Terraform: declarative, written in HCL. Providers talk to platforms, state records what Terraform manages, and the workflow is `init`, `plan`, `apply`.
+- Ansible configures existing devices task by task; Terraform provisions infrastructure and tracks it.
+- Idempotence: when nothing needs changing, Ansible reports `changed=0` and Terraform reports no changes.
+- A play recap counts `ok`, `changed`, `unreachable` and `failed` per host.
+- `ios_command` returns one output per command, in order and indexed from zero: `result.stdout[1]` is the second command.
+- `--syntax-check` checks the playbook, `--list-hosts` shows the targets and `--limit` narrows them.

@@ -31,8 +31,8 @@
     "answer": [
       1
     ],
-    "explanation": "The log proves BPDU-guard reception on the same interface that becomes err-disabled. Resetting the interface while the BPDU source remains attached simply exposes it to another violation. Disabled automatic recovery explains why it stays down afterward, not why it repeatedly fails.",
-    "fix": "Remove the unexpected switch and reconnect the authorized end device before recovery.\n```ios ASW3\nASW3# configure terminal\nASW3(config)# interface fastethernet0/12\nASW3(config-if)# shutdown\nASW3(config-if)# no shutdown\nASW3(config-if)# end\nASW3# show interfaces status\nASW3# show logging\n```\nRetest host connectivity and confirm no new bpduguard event. If more ports are required, design an approved interswitch connection with its intended VLAN and STP policy instead of leaving a transit bridge on a protected host edge."
+    "explanation": "The log shows BPDU guard err-disabled the port, and the attached desktop switch keeps sending BPDUs. Each reset fails again because the source is still there. Disabled recovery only explains why the port stays down.",
+    "fix": "Remove the unexpected switch and reconnect the authorized end device before recovery.\n\n```ios ASW3\nASW3# configure terminal\nASW3(config)# interface fastethernet0/12\nASW3(config-if)# shutdown\nASW3(config-if)# no shutdown\nASW3(config-if)# end\nASW3# show interfaces status\nASW3# show logging\n```\n\nRetest the host and confirm no new bpduguard event. If more ports are needed, build an approved interswitch link with its own VLAN and STP policy instead of a bridge on a host port."
   },
   {
     "id": "stp-protection-t02",
@@ -66,8 +66,8 @@
     "answer": [
       2
     ],
-    "explanation": "The displayed root inconsistency and interface root-guard configuration identify the mechanism. LAB1's priority zero is lower than CORE's stated 24576, so the boundary blocks VLAN 10 rather than accept its claim. The differing VLAN 20 result is consistent with separate Rapid PVST+ instances.",
-    "fix": "Restore the intended downstream priority on LAB1; preserve the boundary protection.\n```ios LAB1\nLAB1# configure terminal\nLAB1(config)# spanning-tree vlan 10 priority 32768\nLAB1(config)# end\nLAB1# show spanning-tree vlan 10\n```\nThen inspect `show spanning-tree inconsistentports` on DSW1 and verify VLAN 10 traffic. Recovery is automatic after superior information ceases and STP permits forwarding; no exact twenty-second guarantee or manual bounce is required."
+    "explanation": "The port shows root inconsistency and has root guard. LAB1's priority of zero is better than CORE's 24576, so root guard blocks VLAN 10. VLAN 20 differs because each VLAN has its own Rapid PVST+ instance.",
+    "fix": "Restore a normal priority on LAB1 and keep the boundary protection.\n\n```ios LAB1\nLAB1# configure terminal\nLAB1(config)# spanning-tree vlan 10 priority 32768\nLAB1(config)# end\nLAB1# show spanning-tree vlan 10\n```\n\nCheck show spanning-tree inconsistentports on DSW1 and verify VLAN 10 traffic. The port recovers on its own once superior BPDUs stop, so no shutdown and no shutdown is needed."
   },
   {
     "id": "stp-protection-t03",
@@ -101,7 +101,7 @@
     "answer": [
       3
     ],
-    "explanation": "The peer explicitly suppresses BPDUs on the relevant interface. SW3's loop-guard configuration and loop-inconsistent condition fit loss of previously received information. The state alone would not prove a physical fault, and this exhibit supplies a configuration cause to correct first.",
-    "fix": "Remove the unintended filter at the source, then observe recovery without disabling loop guard.\n```ios SW1\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# no spanning-tree bpdufilter\nSW1(config-if)# end\n```\nOn SW3, check `show spanning-tree inconsistentports` and `show spanning-tree interface gigabitethernet0/1 detail`. Expected BPDUs should resume, inconsistency should clear, and user traffic should recover. Save only the corrected policy."
+    "explanation": "The peer suppresses BPDUs with an interface filter, so SW3 stopped receiving expected BPDUs and loop guard blocked the instance. The exhibit shows a configuration cause, so fix that before suspecting a physical fault.",
+    "fix": "Remove the filter on the peer and keep loop guard on.\n\n```ios SW1\nSW1# configure terminal\nSW1(config)# interface gigabitethernet0/1\nSW1(config-if)# no spanning-tree bpdufilter\nSW1(config-if)# end\n```\n\nOn SW3, check show spanning-tree inconsistentports and show spanning-tree interface gigabitethernet0/1 detail. BPDUs resume, the inconsistency clears and traffic recovers. Save only the corrected policy."
   }
 ]

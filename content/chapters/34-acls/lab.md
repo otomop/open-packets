@@ -8,7 +8,7 @@ Practice revised September 2026. If you completed an earlier version, repeat the
 
 Use a new Packet Tracer file and devices with default configurations. You will establish connectivity before filtering, compare standard and extended lists, insert an exception, restrict management, and diagnose a missing return rule. Work through R1's local CLI tab so a management restriction cannot disconnect your configuration session.
 
-All output below is representative teaching evidence, not a capture from an executed simulator. Exact port aliases, counters and failure messages vary. If output filters such as `| section` are unavailable, read the full running configuration. Sequence editing and resequencing vary by image; a complete replacement-list fallback is provided. The finished lab demonstrates a limited policy, not a stateful firewall.
+The expected results were written from the design, not captured from a run, so counters and failure messages may differ in your version. Where a step inserts or deletes a numbered entry, a replacement-list alternative is given in case your image does not support sequence editing.
 
 ## Topology
 
@@ -29,7 +29,7 @@ Use copper straight-through for all six links. The switches' default VLAN 1 acce
 
 ## Step 1: Address the devices and establish a working baseline
 
-Before configuring, sketch the request and reply across R1: record each ingress/egress interface, original source/destination IP, and the server/client port roles for HTTP. This is supplied addressing setup; the assessed work starts with predicting and enforcing the policies.
+Before configuring, sketch an HTTP request from PC-A to WEB and its reply as they cross R1: for each, note the interface it enters, the interface it leaves, the source and destination addresses, and which end uses port 80. You will refer to this sketch in every later step.
 
 Set every PC/server address under Desktop → IP Configuration → Static. On WEB, choose Services → HTTP and explicitly turn HTTP On. FILES is an addressable test host; no file-transfer or SSH server is required.
 
@@ -97,7 +97,7 @@ The new requirement allows both clients to use HTTP on WEB, denies their other t
 | PC-B ICMP echo → FILES | Explain why the WEB exception does not apply |
 | WEB TCP source 80 → PC-A destination 51000 | State whether this G0/0 inbound attachment is traversed |
 
-Build CLIENTS-IN completely, attach it inbound on the client interface, then remove the old standard attachment. Until removal, the old source-only rule is temporarily more restrictive; there is no interval with neither policy attached. The following is a guided reference, not evidence that you independently wrote the policy.
+Build CLIENTS-IN completely, attach it inbound on the client interface, then remove the old standard attachment. Doing it in that order means there is never a moment with no filter applied. Compare your draft with the reference below.
 
 :::solution Compare the ordered policy
 
@@ -227,7 +227,7 @@ R1# show running-config
 R1# show ip ssh
 ```
 
-The 0–4 range is the baseline used here. If the running configuration also has `line vty 5 15`, enter that range and apply the same three line commands; every available VTY must have the restriction. Without the output filter, inspect the full configuration directly.
+The 0–4 range is the baseline used here. If the running configuration also has `line vty 5 15`, enter that range and apply the same three line commands; every available VTY must have the restriction. If your version rejects `show line`, the running configuration shows the same VTY ranges.
 
 From PC-A, run `ssh -l labadmin 10.100.10.1`, enter `LabAdmin34!`, then `exit`. Repeat from PC-B. Also repeat PC-B's ping to FILES to distinguish management control from transit filtering.
 

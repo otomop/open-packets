@@ -28,8 +28,8 @@
     "answer": [
       0
     ],
-    "explanation": "10.10.5.20 does not match the only permit and reaches deny any for VTY access. A VTY access-class does not apply to ordinary transit frames or prove that other management protocols are also blocked. The supplied source and ACL establish the SSH mismatch without attributing unrelated counters.",
-    "fix": "```ios\nSW3# configure terminal\nSW3(config)# ip access-list standard MGMT-IN\nSW3(config-std-nacl)# 15 permit host 10.10.5.20\nSW3(config-std-nacl)# end\nSW3# show access-lists MGMT-IN\n```\nRetest a new SSH session from the controller's actual source and then its documented synchronization workflow.\nRepeat a user-service test through SW3 as well. A controller synchronization result and preserved client forwarding are separate acceptance observations."
+    "explanation": "The controller's source, 10.10.5.20, does not match the only VTY permit and hits `deny any`. A VTY access-class applies to SSH sessions to the switch, not to transit traffic.",
+    "fix": "Add the controller to the VTY permit list:\n\n```ios\nSW3# configure terminal\nSW3(config)# ip access-list standard MGMT-IN\nSW3(config-std-nacl)# 15 permit host 10.10.5.20\nSW3(config-std-nacl)# end\nSW3# show access-lists MGMT-IN\n```\n\nStart a new SSH session from the controller's source, then run its synchronization workflow. Also repeat a user-service test through SW3, because controller synchronization and preserved client forwarding are separate acceptance checks."
   },
   {
     "id": "network-management-and-sdn-t02",
@@ -54,7 +54,7 @@
     "answer": [
       2
     ],
-    "explanation": "The required outer IP packet is 1500+14+8+8+20=1550 bytes. Explicit fragmentation-needed evidence and the replacement interface's effective MTU establish the size mismatch. This is stronger than inferring MTU solely from a stalled file copy.",
-    "fix": "Use the replacement platform's documented MTU procedure to meet the approved end-to-end design, checking whether a reload or interface action is required. Do not blindly apply a system-wide command to an unspecified model. Recheck the effective MTU, repeat the 1550-byte DF test, and test the actual application and return direction."
+    "explanation": "The required outer IP packet is 1500+14+8+8+20=1550 bytes. The fragmentation-needed message and the replacement interface's effective MTU show it cannot carry that size.",
+    "fix": "Use the replacement platform's documented MTU procedure to meet the approved end-to-end design, and check whether it needs a reload or interface reset. Do not apply a system-wide command to an unknown model. Recheck the effective MTU, repeat the 1550-byte DF test, then test the application and the return direction."
   }
 ]

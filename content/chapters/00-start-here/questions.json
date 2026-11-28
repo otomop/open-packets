@@ -19,11 +19,11 @@
     "answer": [
       0
     ],
-    "explanation": "The result establishes the tested ICMP exchange between the two local addresses at that time. Other destinations, applications and saved configuration require their own checks.",
+    "explanation": "A successful ping proves only that ICMP echo replies came back from that address during the test. It says nothing about the Internet, other applications or saved configuration.",
     "whyWrong": {
       "1": "No Internet destination or router path was tested.",
-      "2": "A ping tests ICMP, not every service on the destination.",
-      "3": "PC addressing is endpoint configuration; a ping does not verify any device’s saved configuration."
+      "2": "Ping tests ICMP only, not every service on the destination.",
+      "3": "A ping does not read any device’s saved configuration."
     }
   },
   {
@@ -46,11 +46,11 @@
     "answer": [
       2
     ],
-    "explanation": "The `<cr>` marker represents a carriage return. It indicates that the command can be completed by pressing Enter; other listed choices may be optional continuations.",
+    "explanation": "`<cr>` stands for carriage return: the command is complete as typed and Enter runs it. Other listed items are optional extensions.",
     "whyWrong": {
-      "0": "Context help lists valid choices; it has not executed the command.",
-      "1": "The completion marker means a required argument is not missing at this point.",
-      "3": "This is command help, not the --More-- output pager."
+      "0": "Context help only lists valid choices; it does not run the command.",
+      "1": "`<cr>` means no further argument is required at this point.",
+      "3": "The --More-- pager is separate from context help."
     }
   },
   {
@@ -69,11 +69,11 @@
     "answer": [
       1
     ],
-    "explanation": "The copy command names the source first and destination second. Copy running configuration to startup configuration, accept the intended destination, and verify the saved setting.",
+    "explanation": "The copy command takes the source first and the destination second. `copy running-config startup-config` saves the active configuration.",
     "whyWrong": {
-      "0": "The source and destination are reversed; this does not save the active configuration.",
-      "2": "This displays the saved configuration rather than updating it.",
-      "3": "This displays the active configuration rather than saving it."
+      "0": "The source and destination are reversed, so this does not save the active configuration.",
+      "2": "This displays the saved configuration; it does not update it.",
+      "3": "This displays the active configuration; it does not save it."
     }
   },
   {
@@ -94,11 +94,11 @@
       1,
       3
     ],
-    "explanation": "The active configuration and the saved startup configuration serve different purposes. Leaving configuration mode or displaying a configuration does not copy it. The Packet Tracer project is another separate item.",
+    "explanation": "Running configuration is the active set of settings in RAM; startup configuration is the saved copy the device loads at boot. Leaving configuration mode or displaying a file copies nothing.",
     "whyWrong": {
-      "0": "Running configuration represents the active configuration, not just the unsaved difference.",
-      "2": "end changes command mode; saving requires a separate action.",
-      "4": "A show command displays the saved settings without applying them."
+      "0": "Running configuration holds all active settings, not just the unsaved difference.",
+      "2": "`end` only changes command mode; saving needs a copy command.",
+      "4": "A show command only displays the saved settings; it does not apply them."
     }
   },
   {
@@ -121,11 +121,11 @@
     "answer": [
       2
     ],
-    "explanation": "PC-B repeats PC-A’s address instead of using its own assigned value. These separate hosts need distinct addresses on this LAN. Correct PC-B to the supplied value before interpreting a communication test.",
+    "explanation": "Each host on a LAN needs its own address, and PC-B repeats PC-A’s. Change PC-B to the assigned 192.168.10.20.",
     "whyWrong": {
-      "0": "Matching masks do not make a duplicate host address correct.",
-      "1": "A gateway setting would not remove the duplicate address, and this local test needs no gateway.",
-      "3": "A workspace name does not change the address configured on the endpoint."
+      "0": "Matching masks do not make a duplicate host address valid.",
+      "1": "A gateway setting does not remove the duplicate, and a same-LAN test needs no gateway.",
+      "3": "A workspace label does not change the address configured on the host."
     }
   },
   {
@@ -148,11 +148,11 @@
     "answer": [
       2
     ],
-    "explanation": "The > prompt indicates user EXEC. Enter enable to reach privileged EXEC, then run show running-config. Check the prompt before treating a parser error as a spelling problem.",
+    "explanation": "The > prompt is user EXEC, which cannot run `show running-config`. Enter `enable` to reach privileged EXEC first.",
     "whyWrong": {
-      "0": "Global configuration changes settings; this display is a privileged EXEC command on the lab switch.",
-      "1": "The whole running configuration is not selected through an interface context.",
-      "3": "The hostname is a setting inside the configuration, not an argument to this show command."
+      "0": "Global configuration is for changing settings; show running-config is a privileged EXEC command.",
+      "1": "The whole running configuration is not displayed from an interface context.",
+      "3": "A hostname is a setting inside the configuration, not an argument to this command."
     }
   },
   {
@@ -175,11 +175,103 @@
     "answer": [
       3
     ],
-    "explanation": "Inspect startup configuration to verify the saved device setting. The prompt verifies the active name, while the file and workspace names describe the simulator project.",
+    "explanation": "`show startup-config` displays the saved file, so it is the check that hostname S1 is saved. Running configuration, the prompt and workspace labels show only the active or simulator name.",
     "whyWrong": {
-      "0": "The workspace label is separate from the IOS configuration.",
-      "1": "Running configuration shows the active name, which may still be unsaved.",
-      "2": "Reopening the tab shows the currently active name, not whether it was saved."
+      "0": "The workspace label belongs to the simulator, not the IOS configuration.",
+      "1": "Running configuration shows the active name, which may be unsaved.",
+      "2": "The prompt shows the active name, not whether it was saved."
+    }
+  },
+  {
+    "id": "start-here-q27",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "On which date does CCNA 200-301 v2.0 begin, according to this chapter?",
+    "options": [
+      "2 February 2027",
+      "3 February 2027",
+      "19 September 2026",
+      "1 January 2027"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The chapter states that v2.0 begins on 3 February 2027, the day after v1.1’s last testing day.",
+    "whyWrong": {
+      "0": "2 February 2027 is the last testing day for v1.1.",
+      "2": "19 September 2026 is the date the exam information was checked.",
+      "3": "1 January 2027 is not a date Cisco gives for either version."
+    }
+  },
+  {
+    "id": "start-here-q28",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Where does a Cisco device keep its running configuration?",
+    "options": [
+      "NVRAM",
+      "RAM",
+      "The Packet Tracer .pkt file",
+      "Flash only"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The running configuration is the active copy and lives in RAM, so a restart loses it unless you saved it.",
+    "whyWrong": {
+      "0": "NVRAM holds the startup configuration, the saved copy.",
+      "2": "The .pkt file stores your project, not the device’s running configuration.",
+      "3": "Flash holds software images, not the active configuration."
+    }
+  },
+  {
+    "id": "start-here-q29",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which command or shortcut returns you from any configuration mode directly to privileged EXEC?",
+    "options": [
+      "exit from interface mode",
+      "end, or Ctrl+Z",
+      "disable",
+      "configure terminal"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "`end`, or the Ctrl+Z shortcut, returns from any configuration mode to privileged EXEC.",
+    "whyWrong": {
+      "0": "`exit` moves back only one configuration level.",
+      "2": "`disable` leaves privileged EXEC for user EXEC and is not used from configuration mode.",
+      "3": "`configure terminal` enters global configuration mode."
+    }
+  },
+  {
+    "id": "start-here-q30",
+    "type": "single",
+    "objectives": [],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which global configuration command stops a lab switch from hanging after you mistype a command at an EXEC prompt?",
+    "options": [
+      "no ip domain-lookup",
+      "terminal length 0",
+      "no shutdown",
+      "copy running-config startup-config"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "IOS treats a mistyped word as a hostname and tries a DNS lookup, which hangs the prompt. `no ip domain-lookup` turns that lookup off.",
+    "whyWrong": {
+      "1": "`terminal length 0` turns off the --More-- pager, not the lookup.",
+      "2": "`no shutdown` enables an interface.",
+      "3": "Saving the configuration does not change how mistyped words are handled."
     }
   }
 ]

@@ -8,7 +8,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A conventional DNS A record contains which kind of data?",
+    "prompt": "What does a DNS A record contain?",
     "options": [
       "An IPv4 address associated with the owner name.",
       "An IPv6 address associated with the owner name.",
@@ -18,11 +18,11 @@
     "answer": [
       0
     ],
-    "explanation": "A records hold IPv4 addresses. The other descriptions belong to AAAA, NS and MX, respectively.",
+    "explanation": "An A record maps a name to an IPv4 address. AAAA holds IPv6, NS names an authoritative server, and MX holds a preference and mail host.",
     "whyWrong": {
       "1": "AAAA holds an IPv6 address.",
       "2": "NS identifies an authoritative name server.",
-      "3": "MX combines preference and exchanger hostname."
+      "3": "MX holds a preference and a mail exchanger hostname."
     }
   },
   {
@@ -44,11 +44,11 @@
     "answer": [
       2
     ],
-    "explanation": "NS identifies an authoritative server for a zone. A client's resolver address selects the DNS service it asks; that service can perform recursive work and need not be authoritative for every queried zone.",
+    "explanation": "An NS record names a zone's authoritative server. The client's resolver setting names the server it sends its queries to.",
     "whyWrong": {
-      "0": "MX identifies a mail exchanger; neither role description here specifies a web server.",
-      "1": "This reverses the roles of authoritative-server records and client resolver selection.",
-      "3": "A/AAAA hold application addresses, and a client resolver setting is not a CNAME alias."
+      "0": "MX names the mail exchanger.",
+      "1": "This reverses the two roles.",
+      "3": "A and AAAA hold addresses, and a resolver setting is not an alias."
     }
   },
   {
@@ -60,7 +60,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements describe ordinary CNAME records correctly? Select two.",
+    "prompt": "Which TWO statements about CNAME records are correct?",
     "options": [
       "The record points its owner name to another name.",
       "The CNAME data must contain a dotted-decimal IPv4 address.",
@@ -71,10 +71,10 @@
       0,
       2
     ],
-    "explanation": "CNAME defines an alias, with a domain name as its data. Ordinary CNAME data cannot coexist with other ordinary records at the same owner. A web client still needs the alias chain to yield a usable requested address record.",
+    "explanation": "A CNAME points one name to another name, and that name cannot also hold an A record. The target must still resolve to an address.",
     "whyWrong": {
-      "1": "An A record carries an IPv4 address; CNAME carries a target name.",
-      "3": "An alias identifies another name, not the final network address; the target chain must still resolve."
+      "1": "CNAME data is a name, not an IPv4 address.",
+      "3": "The target must still resolve to an address."
     }
   },
   {
@@ -86,7 +86,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A domain has reachable mail exchangers with MX preferences 10 and 20. All other conditions are equal. Which is preferred?",
+    "prompt": "A domain has mail exchangers with MX preferences 10 and 20. Which is tried first?",
     "options": [
       "Preference 20, treating the larger value as higher priority.",
       "Preference 10, applying the lower-value preference rule.",
@@ -96,11 +96,11 @@
     "answer": [
       1
     ],
-    "explanation": "MX preference orders mail-exchanger preference with lower values preferred. The sender may try another exchanger when the preferred service is unavailable; address reachability and service health still matter.",
+    "explanation": "MX uses the lowest preference value first, so 10 is tried before 20.",
     "whyWrong": {
-      "0": "Lower numeric MX preferences are preferred.",
-      "2": "Reply display order does not override the preference field.",
-      "3": "Different preference values express a real ordering."
+      "0": "Lower values are preferred.",
+      "2": "Preference decides, not reply order.",
+      "3": "The values set a real order."
     }
   },
   {
@@ -112,7 +112,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which two statements about conventional DNS transport are correct? Select two.",
+    "prompt": "Which TWO statements about DNS transport are correct?",
     "options": [
       "UDP 53 support proves that every DNS transaction can complete.",
       "A truncated UDP response can cause the client or resolver to retry over TCP.",
@@ -123,10 +123,10 @@
       1,
       3
     ],
-    "explanation": "DNS uses both UDP and TCP port 53. Truncation can require TCP retry, full zone transfers use TCP, and TCP is also a valid transport for ordinary queries. The older unextended 512-byte UDP limit is not a universal current response ceiling because EDNS can advertise larger sizes.",
+    "explanation": "DNS uses UDP and TCP port 53. A truncated UDP reply makes the client retry over TCP, and zone transfers use TCP.",
     "whyWrong": {
-      "0": "UDP success does not prove that a required TCP exchange can pass.",
-      "2": "RFC 7766 supports TCP for ordinary DNS operation, not only transfers."
+      "0": "UDP working does not show that TCP can pass.",
+      "2": "TCP can carry ordinary queries too."
     }
   },
   {
@@ -138,7 +138,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A recursive resolver must resolve www.example.com. It has no relevant answer or delegation cache, is not forwarding to another resolver, and has root-server starting information. In the simplified lookup, which service does it contact first?",
+    "prompt": "A recursive resolver with an empty cache and no forwarder looks up www.example.com. Which server does it ask first?",
     "options": [
       "The example.com authority, whose address the resolver has not learned",
       "The .com server selected from the client's DHCP lease",
@@ -148,11 +148,11 @@
     "answer": [
       2
     ],
-    "explanation": "Under the stated starting conditions, the resolver begins at the root and follows referrals toward .com and example.com authority. Useful caches or a configured forwarding resolver could change the observed sequence, which is why those conditions are explicit.",
+    "explanation": "The resolver starts at a root server, which refers it to .com, and then to the example.com authority.",
     "whyWrong": {
-      "0": "With the stated empty cache and starting information, that authority has not yet been located.",
-      "1": "DHCP supplies a resolver setting, not the full DNS delegation hierarchy.",
-      "3": "The recursive service performs this lookup for the stub; the stub is not a delegation directory."
+      "0": "The resolver has not found that authority yet.",
+      "1": "DHCP supplies a resolver address, not delegations.",
+      "3": "The stub resolver passes the query on and holds no delegations."
     }
   },
   {
@@ -164,7 +164,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "A query returns Non-authoritative answer and the correct requested address. What does that label normally mean?",
+    "prompt": "A query returns Non-authoritative answer and the correct address. What does that label mean?",
     "options": [
       "The response could not complete resolution of the requested name.",
       "The response contains only a referral and no usable address.",
@@ -174,11 +174,11 @@
     "answer": [
       3
     ],
-    "explanation": "The authoritative-answer status describes the server’s authority for the returned DNS data. A recursive resolver can provide a useful answer without being authoritative for that zone. Still verify the record against the intended design.",
+    "explanation": "The answer came from a server that is not authoritative for the zone, such as a recursive resolver's cache. It is still a valid answer.",
     "whyWrong": {
-      "0": "Resolution failure is not the meaning of a non-authoritative successful answer.",
-      "1": "The prompt states that a correct requested address was returned; this label does not mean referral-only.",
-      "2": "The label does not state that the record lifetime has expired."
+      "0": "The query completed.",
+      "1": "An address was returned, so it is not only a referral.",
+      "2": "The label says nothing about expiry."
     }
   },
   {
@@ -194,7 +194,7 @@
       "title": "Representative dig excerpt",
       "text": ";; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 1042"
     },
-    "prompt": "What is the most defensible interpretation of this reply without additional evidence?",
+    "prompt": "What does this reply show?",
     "options": [
       "DNS reports that the queried name does not exist.",
       "DNS reports that it could not complete this lookup.",
@@ -204,11 +204,11 @@
     "answer": [
       1
     ],
-    "explanation": "SERVFAIL is a DNS failure response. Delegation problems, unavailable upstream service, validation failures, and other conditions can produce it. It is not synonymous with NXDOMAIN, a timeout, or one known cable fault.",
+    "explanation": "SERVFAIL means the DNS server could not complete the lookup. It is not NXDOMAIN or a timeout.",
     "whyWrong": {
-      "0": "That is NXDOMAIN, not SERVFAIL.",
-      "2": "A completed NODATA result is distinct from SERVFAIL.",
-      "3": "A displayed failure response is different from no usable response."
+      "0": "That is NXDOMAIN.",
+      "2": "That is NODATA.",
+      "3": "A timeout means no reply at all."
     }
   },
   {
@@ -220,7 +220,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "Which IOS global command tells the router to query the DNS resolver at 10.1.1.53 for its own name lookups?",
+    "prompt": "Which IOS global command sets the DNS server a router uses for its own lookups, 10.1.1.53?",
     "options": [
       "ip name-server 10.1.1.53",
       "dns-server 10.1.1.53",
@@ -230,11 +230,11 @@
     "answer": [
       0
     ],
-    "explanation": "ip name-server configures a resolver used by the router’s DNS client. Enable the client lookup function and verify reachability and actual responses as well.",
+    "explanation": "ip name-server sets the resolver for the router's DNS client.",
     "whyWrong": {
-      "1": "dns-server is a DHCP-pool option command in this context, supplying resolver settings to DHCP clients.",
-      "2": "ip host adds a static local name-to-address mapping, not the DNS resolver service setting.",
-      "3": "A helper relays selected broadcasts on a receiving interface; it is not the router’s DNS client setting."
+      "1": "dns-server is a DHCP pool command.",
+      "2": "ip host adds a static name entry.",
+      "3": "ip helper-address relays broadcasts."
     }
   },
   {
@@ -246,7 +246,7 @@
     ],
     "difficulty": 1,
     "exhibit": null,
-    "prompt": "What does no ip domain-lookup change on the documented IOS router?",
+    "prompt": "What does no ip domain-lookup do on an IOS router?",
     "options": [
       "It prevents clients from using the router to forward DNS traffic.",
       "It removes the router's configured DNS resolver addresses.",
@@ -256,11 +256,11 @@
     "answer": [
       3
     ],
-    "explanation": "Router-originated resolution and IP forwarding are separate functions. The command disables the DNS client lookup behavior; it does not create a user traffic filter or edit a remote service.",
+    "explanation": "It turns off the router's own DNS lookups. Forwarding, the name-server list and static host entries are unaffected.",
     "whyWrong": {
-      "0": "Client lookup enablement is not an interface traffic filter.",
-      "1": "Resolver configuration can remain present while lookup is disabled.",
-      "2": "Static mappings are separate configuration."
+      "0": "It is not a traffic filter.",
+      "1": "The resolver addresses stay configured.",
+      "2": "Static host entries stay."
     }
   },
   {
@@ -276,7 +276,7 @@
       "title": "Representative query result",
       "text": "Query: app.lab.example A\nResolver: 10.1.1.53\nResult: NXDOMAIN\nAnswer section: no CNAME records"
     },
-    "prompt": "The lab HTTP service works at its IPv4 address. What does this DNS result establish for the attempted name lookup?",
+    "prompt": "The lab HTTP service works by IP address. What does this DNS result show?",
     "options": [
       "No DNS response reached the client.",
       "The client necessarily contacted the authoritative server directly during this attempt.",
@@ -286,11 +286,11 @@
     "answer": [
       3
     ],
-    "explanation": "This response has no CNAME chain, so NXDOMAIN reports app.lab.example itself absent. It can come from a recursive resolver's cache. Compare the exact name and intended data; the controlled HTTP-by-address success identifies resolution as the demonstrated failing stage.",
+    "explanation": "NXDOMAIN means DNS says the name does not exist. Check the exact name and its records.",
     "whyWrong": {
-      "0": "NXDOMAIN is an explicit DNS reply, unlike a timeout.",
-      "1": "A recursive resolver can return a cached NXDOMAIN without contacting authority during this attempt.",
-      "2": "HTTP by address already works in this controlled lab; NXDOMAIN is not a TCP-port diagnosis."
+      "0": "NXDOMAIN is a reply, not a timeout.",
+      "1": "A recursive resolver can answer NXDOMAIN from its cache.",
+      "2": "HTTP by address already works."
     }
   },
   {
@@ -306,7 +306,7 @@
       "title": "Representative mail lookup evidence",
       "text": "lab.example.      MX 10 mail.lab.example.\nmail.lab.example. A query: NXDOMAIN\nwww.lab.example.  A 10.1.1.80"
     },
-    "prompt": "The intended mail server is running at 10.1.1.25, and direct service testing to that address succeeds. Which record repair addresses the demonstrated failure?",
+    "prompt": "The mail server at 10.1.1.25 works by address, but the MX target name does not resolve. What is the repair?",
     "options": [
       "Add a PTR for the web server at 10.1.1.80 only.",
       "Create the intended address record for mail.lab.example, then verify the MX target chain.",
@@ -316,11 +316,11 @@
     "answer": [
       1
     ],
-    "explanation": "The domain has an MX record, but the exchanger hostname returns NXDOMAIN. Create the intended A record mail.lab.example → 10.1.1.25 (and correct AAAA if IPv6 is intended), then retest the MX lookup and target resolution. An MX value is a hostname, not an IP address.",
+    "explanation": "An MX record names a host, and that host needs its own A record. Add mail.lab.example A 10.1.1.25.",
     "whyWrong": {
-      "0": "A web server’s reverse record does not resolve the missing mail exchanger name.",
-      "2": "The working web service uses separate DNS data; changing it would introduce another fault.",
-      "3": "MX record data must name the exchanger, whose address records supply its IP addresses."
+      "0": "A web PTR does not help the mail host name.",
+      "2": "The web record is correct and used.",
+      "3": "An MX value is a hostname, not an IP address."
     }
   },
   {
@@ -336,7 +336,7 @@
       "title": "Representative authoritative data and completed query",
       "text": "app.lab.example. A 10.1.1.80\nQuery: app.lab.example. AAAA\nStatus: NOERROR\nAnswer: no AAAA data\nAuthority: zone SOA; this is a completed NODATA answer, not a referral."
     },
-    "prompt": "An IPv6-only test application requests an AAAA record. No DNS64 synthesis or IPv4 fallback is provided. What is missing from the completed DNS result?",
+    "prompt": "An IPv6-only application asks for an AAAA record. What is missing?",
     "options": [
       "A valid A record to replace the existing IPv4 answer.",
       "A new alias that still targets only the existing A record.",
@@ -346,11 +346,11 @@
     "answer": [
       2
     ],
-    "explanation": "The name has IPv4 A data but no requested IPv6 address data. A completed NODATA result for AAAA does not supply an IPv6 destination. Verify the intended IPv6 service and add or correct its AAAA record if appropriate.",
+    "explanation": "The name has an A record but no AAAA record. Add an AAAA record for the IPv6 service.",
     "whyWrong": {
-      "0": "The shown IPv4 record already exists; it does not supply an IPv6 address.",
-      "1": "An alias chain ending only in A data does not supply the requested AAAA.",
-      "3": "PTR reverse data does not substitute for the forward IPv6 record."
+      "0": "The A record already exists.",
+      "1": "An alias to the A record still gives no IPv6 address.",
+      "3": "A PTR does not replace a forward record."
     }
   },
   {
@@ -362,7 +362,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "Which IPv4 reverse-lookup name is used to request the PTR for 10.1.1.80?",
+    "prompt": "Which name is used to find the PTR record for 10.1.1.80?",
     "options": [
       "80.1.1.10.in-addr.arpa",
       "80.1.1.10.ip6.arpa",
@@ -372,11 +372,11 @@
     "answer": [
       0
     ],
-    "explanation": "Reverse the four IPv4 octets and append in-addr.arpa: 10.1.1.80 becomes 80.1.1.10.in-addr.arpa. A diagnostic tool can construct this from the address.",
+    "explanation": "Reverse the octets and add in-addr.arpa: 80.1.1.10.in-addr.arpa.",
     "whyWrong": {
-      "1": "ip6.arpa is the IPv6 reverse namespace.",
-      "2": "The octets must be reversed for this IPv4 reverse namespace.",
-      "3": "AAAA is an IPv6 address record type, not the IPv4 reverse namespace."
+      "1": "ip6.arpa is for IPv6.",
+      "2": "The octets must be reversed.",
+      "3": "AAAA is an IPv6 record type."
     }
   },
   {
@@ -392,7 +392,7 @@
       "title": "Representative R1 configuration and host entry",
       "text": "no ip domain-lookup\nip name-server 10.1.1.53\nip host localweb 10.1.1.80\n\nHost table: localweb (perm, OK) 10.1.1.80"
     },
-    "prompt": "The router has no cached or static entry for fresh.lab.example. The remote resolver is reachable and holds its correct record. Why can ping localweb succeed while resolving fresh.lab.example fails?",
+    "prompt": "A router can ping localweb but cannot resolve fresh.lab.example, and its resolver holds the record. Why?",
     "options": [
       "The permanent entry prevents lookup of every other hostname.",
       "The resolver address applies only to short names, not full names.",
@@ -402,11 +402,11 @@
     "answer": [
       2
     ],
-    "explanation": "The static host-table entry supplies localweb without a new remote DNS query. The literal no ip domain-lookup disables the router’s DNS client function for the uncached name. Verify settings and the actual name table separately.",
+    "explanation": "localweb comes from a static host entry, so it needs no DNS. no ip domain-lookup disables the lookup for other names.",
     "whyWrong": {
-      "0": "A static entry for one name does not suppress all other lookups.",
-      "1": "ip name-server supports full-name queries too when lookup is enabled.",
-      "3": "The suffix is not an alias rule redirecting unrelated names."
+      "0": "A static entry does not block other lookups.",
+      "1": "ip name-server works for any name when lookup is on.",
+      "3": "A suffix does not redirect unrelated names."
     }
   },
   {
@@ -418,7 +418,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A resolver cached an A record with TTL 86,400 seconds exactly one hour ago. It has not refreshed that entry and uses the normal TTL countdown. The authority changes the address now. For how much longer can this existing cached copy remain valid?",
+    "prompt": "A resolver cached an A record with TTL 86,400 seconds one hour ago. The authority changes the address now. How long can the cached copy stay valid?",
     "options": [
       "82,800 seconds, because one hour has already elapsed.",
       "86,400 additional seconds, because an authority edit resets remote caches.",
@@ -428,11 +428,11 @@
     "answer": [
       0
     ],
-    "explanation": "The remaining TTL is 86,400 − 3,600 = 82,800 seconds, or 23 hours. The authoritative edit does not push an invalidation into every remote resolver. The stated ordinary cache model excludes refresh and other cache policies.",
+    "explanation": "The TTL counts down, leaving 86,400 minus 3,600, or 82,800 seconds. A change at the authority does not clear other caches.",
     "whyWrong": {
-      "1": "A record edit does not restart this resolver’s existing countdown.",
-      "2": "There is no universal one-hour maximum in the given model.",
-      "3": "Ordinary DNS caching permits a previously received answer until its applicable lifetime expires."
+      "1": "An edit does not restart the cache countdown.",
+      "2": "There is no one-hour cache limit.",
+      "3": "Caches keep an answer until its TTL expires."
     }
   },
   {
@@ -444,7 +444,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "The approved inventory places app.lab.example at 10.1.1.80. Both tools test that exact IPv4 hostname. An explicit query to the intended resolver returns .80, but the application uses .81. Inspection finds a local hosts-file entry mapping this name to .81. What should be corrected?",
+    "prompt": "The approved address for app.lab.example is .80 and the resolver returns .80, but the application uses .81. A hosts-file entry maps the name to .81. What do you fix?",
     "options": [
       "Change the authoritative record to match the local override.",
       "Correct the conflicting hosts entry and retest the application.",
@@ -454,41 +454,11 @@
     "answer": [
       1
     ],
-    "explanation": "The evidence identifies a local override that can supply a different answer from the explicitly queried DNS service. Correct that entry and any applicable application/client cache, then verify which address the application uses.",
+    "explanation": "A local hosts entry overrides DNS. Correct the hosts entry and retest.",
     "whyWrong": {
-      "0": "The authority already matches the approved .80 address.",
-      "2": "A retained hosts entry can still override the desired application result.",
-      "3": "A second resolver does not remove a local override."
-    }
-  },
-  {
-    "id": "dns-q16",
-    "type": "single",
-    "objectives": [
-      "v1:4.3",
-      "v2:4.4"
-    ],
-    "difficulty": 2,
-    "exhibit": {
-      "kind": "cli",
-      "title": "Representative delegation evidence",
-      "text": "Parent delegation: branch.lab.example. NS oldns.lab.example.\noldns.lab.example address: 10.1.1.53 (no longer serves the child zone)\nIntended authority: ns2.lab.example at 10.1.1.54\nDirect query to 10.1.1.54: correct app.branch.lab.example A answer"
-    },
-    "prompt": "Direct queries to the intended ns2.lab.example service succeed. Queries following the parent delegation fail. Which DNS data should be corrected first?",
-    "options": [
-      "Replace the working child application A record.",
-      "Flush the client cache while keeping the parent delegation unchanged.",
-      "Change only the old server's reverse PTR name.",
-      "Correct the parent delegation and its required address dependencies."
-    ],
-    "answer": [
-      3
-    ],
-    "explanation": "The parent still delegates the child zone to the retired name server, so resolvers following that path reach the wrong authority. Correct the delegation to the intended server and verify its address dependencies, including required glue, then retest through a recursive resolver. Relevant cached delegation data may also need time to expire.",
-    "whyWrong": {
-      "0": "The direct query confirms the intended application address data.",
-      "1": "An unchanged parent can send the resolver back to the same retired authority.",
-      "2": "A reverse name does not make the old server authoritative for the child."
+      "0": "The authoritative record is already correct.",
+      "2": "The hosts entry still overrides DNS.",
+      "3": "A second resolver does not remove the override."
     }
   },
   {
@@ -499,7 +469,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "The approved forward name is app.lab.example at 10.1.1.80. Forward A lookup works, but the reverse query returns no PTR data. What data must be added to support that requested reverse lookup?",
+    "prompt": "Forward lookup for app.lab.example (10.1.1.80) works, but the reverse lookup returns nothing. What record is needed?",
     "options": [
       "80.1.1.10.in-addr.arpa PTR app.lab.example",
       "app.lab.example AAAA 10.1.1.80",
@@ -509,40 +479,11 @@
     "answer": [
       0
     ],
-    "explanation": "The IPv4 reverse owner reverses the octets and uses in-addr.arpa. Its PTR data is the approved hostname; forward and reverse data are separately administered.",
+    "explanation": "Reverse lookups use a PTR record at the reversed-octet name in in-addr.arpa.",
     "whyWrong": {
-      "1": "AAAA requires IPv6 address data and is a forward record.",
-      "2": "This would change the forward name instead of supplying the requested reverse PTR.",
-      "3": "The owner has unreversed octets and A data cannot be a hostname."
-    }
-  },
-  {
-    "id": "dns-q24",
-    "type": "single",
-    "objectives": [
-      "v2:4.4"
-    ],
-    "difficulty": 2,
-    "exhibit": {
-      "kind": "cli",
-      "title": "Representative teaching evidence",
-      "text": "app.lab.example CNAME web.lab.example\nweb.lab.example CNAME app.lab.example\nRequested type: A"
-    },
-    "prompt": "An address lookup follows these supplied records. Which defect prevents this alias chain from reaching an address?",
-    "options": [
-      "A CNAME target is allowed to have only AAAA, never A.",
-      "The aliases need matching reverse PTR records before resolution.",
-      "The first alias must be renamed to match the second alias.",
-      "The two aliases form a loop with no terminating address."
-    ],
-    "answer": [
-      3
-    ],
-    "explanation": "Following app to web leads back to app. Repair the intended target so following aliases reaches usable data for the requested type; reverse records do not resolve this loop.",
-    "whyWrong": {
-      "0": "A CNAME chain can end in an A answer for an IPv4 lookup.",
-      "1": "Forward alias resolution does not require those PTR records.",
-      "2": "Renaming to match does not provide the missing terminal address."
+      "1": "AAAA is a forward IPv6 record.",
+      "2": "A CNAME would alias the forward name.",
+      "3": "The owner name is not reversed, and A data cannot be a hostname."
     }
   },
   {
@@ -554,7 +495,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An explicit A query returns the approved server address. A controlled HTTP request to that address fails too. What is the next justified focus?",
+    "prompt": "An A query returns the right address, but HTTP to that address also fails. What do you check next?",
     "options": [
       "Delete the correct A record so the client retries resolution.",
       "Change the requested type from A to PTR.",
@@ -564,11 +505,11 @@
     "answer": [
       2
     ],
-    "explanation": "The tested A lookup supplies the intended address. The controlled service failure by address points beyond that successful resolution step; inspect the service and its path rather than changing correct DNS data.",
+    "explanation": "DNS did its job. Check the web service and the network path.",
     "whyWrong": {
-      "0": "Deleting correct data adds a name-resolution failure.",
-      "1": "A reverse name does not repair an HTTP connection.",
-      "3": "Browser failure alone does not justify replacing a resolver that returned the intended result."
+      "0": "The record is correct.",
+      "1": "PTR does not affect HTTP.",
+      "3": "The resolver returned the right answer."
     }
   },
   {
@@ -580,7 +521,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A DNS UDP reply sets TC=1. The resolver retries the same query over TCP, but its SYN attempts receive no replies. Which additional path needs investigation?",
+    "prompt": "A DNS reply has TC=1 and the TCP retry gets no answer to its SYN. Which path do you check?",
     "options": [
       "UDP destination port 67 to the DHCP server.",
       "TCP destination port 53 to the selected DNS service.",
@@ -590,11 +531,11 @@
     "answer": [
       1
     ],
-    "explanation": "The observed retry needs TCP connectivity to DNS port 53. Its failure does not uniquely prove a firewall cause; examine service state and the TCP path using the actual attempt.",
+    "explanation": "A truncated reply makes the resolver retry over TCP port 53, so check TCP 53 to the DNS server.",
     "whyWrong": {
-      "0": "DHCP is not carrying this DNS retry.",
-      "2": "Application HTTP is a later exchange, not the failed DNS TCP handshake.",
-      "3": "The observed retry uses TCP to the DNS service, not a new UDP listener on the client."
+      "0": "UDP 67 is DHCP.",
+      "2": "Port 80 is HTTP, a later step.",
+      "3": "The retry uses TCP to the server, not a client UDP port."
     }
   },
   {
@@ -610,7 +551,7 @@
       "title": "Representative teaching evidence",
       "text": "Approved move: app.lab.example from .80 to .81\nDirect authoritative A query: 10.1.1.81\nAffected recursive resolver: 10.1.1.80, remaining TTL 120 seconds\nClient uses that resolver; no matching hosts override\nBoth old and new HTTP services currently respond"
     },
-    "prompt": "What is the most justified next action for this controlled change?",
+    "prompt": "The authority has the new record but the resolver still returns the old address. What do you do?",
     "options": [
       "Replace the authority's new record with the old address.",
       "Treat the resolver as unreachable because the answers differ.",
@@ -620,11 +561,11 @@
     "answer": [
       3
     ],
-    "explanation": "The authoritative service already has the approved value, while the recursive response shows a still-valid earlier cache entry. Inspect that remaining lifetime and retest after expiry or a narrowly authorized cache operation; a record edit does not push immediate invalidation to remote caches.",
+    "explanation": "The resolver is still serving a cached copy. Check its remaining TTL or clear that cache.",
     "whyWrong": {
-      "0": "That would undo the approved service change.",
-      "1": "The recursive service is replying; different data does not mean it is unreachable.",
-      "2": "No relevant hosts override exists in the supplied evidence."
+      "0": "The new record is the approved one.",
+      "1": "A resolver that replies is reachable.",
+      "2": "No hosts-file override exists here."
     }
   },
   {
@@ -639,7 +580,7 @@
       "title": "Representative teaching evidence",
       "text": "Approved files service: 10.1.1.81; both servers work by their own intended names.\nfiles.lab.example CNAME old.lab.example\nold.lab.example A 10.1.1.80 (still required by legacy users)\nnew.lab.example A 10.1.1.81\nFresh explicit query for files.lab.example returns the old alias chain."
     },
-    "prompt": "Which DNS repair preserves both the new service and the still-required old service?",
+    "prompt": "Which repair keeps both the new and old services working?",
     "options": [
       "Change old.lab.example's A record to the new service address.",
       "Point files.lab.example's CNAME at new.lab.example.",
@@ -649,11 +590,11 @@
     "answer": [
       1
     ],
-    "explanation": "The approved alias should point to the new canonical name. Correcting that one target preserves old.lab.example for its remaining users and avoids conflicting ordinary A and CNAME data at the alias owner.",
+    "explanation": "The alias files.lab.example should point to new.lab.example. Leave old.lab.example alone, and do not add an A beside the CNAME.",
     "whyWrong": {
-      "0": "Other users still require the old service at its current name and address.",
-      "2": "The new canonical record already matches the approved new service.",
-      "3": "Ordinary A and CNAME data cannot coexist at the same owner."
+      "0": "Other users still need the old service.",
+      "2": "The new A record is correct.",
+      "3": "A CNAME cannot coexist with an A record."
     }
   },
   {
@@ -669,7 +610,7 @@
       "title": "Representative teaching evidence",
       "text": "Approved app address: 10.1.1.80\nPC-B configured resolver: DNS1 10.1.1.53\nPC-B application uses 10.1.1.81; no local hosts entry is present\nExplicit nslookup app.lab.example 10.1.1.54 returns 10.1.1.80\nDNS2 is 10.1.1.54; no capture of the application's lookup was collected"
     },
-    "prompt": "Which explanation fits the difference, and what should be checked before editing records?",
+    "prompt": "DNS2 returns .80, but PC-B's application uses .81. What fits, and what do you check first?",
     "options": [
       "The successful DNS2 query proves PC-B also used DNS2; clear only its cache.",
       "DNS2 must be changed to .81 so its answer matches the failing application.",
@@ -679,43 +620,115 @@
     "answer": [
       2
     ],
-    "explanation": "The explicit DNS2 query does not test the resolver PC-B normally uses. Correlate actual client configuration and query source with the approved design; DNS1 may hold stale or different-view data, which requires evidence before a zone change.",
+    "explanation": "The test queried DNS2, not the resolver PC-B uses. Check which resolver PC-B actually uses.",
     "whyWrong": {
-      "0": "The explicit query chose DNS2; PC-B's configured resolver is DNS1 and the application path is not captured.",
-      "1": "DNS2 already returns the approved .80 address; matching an unverified application value would not be justified.",
-      "3": "Different addresses can arise from data or cache differences; no timeout is shown."
+      "0": "The test does not show PC-B used DNS2.",
+      "1": "DNS2 already has the approved address.",
+      "3": "No timeout is shown."
     }
   },
   {
-    "id": "dns-q30",
-    "type": "multi",
+    "id": "dns-q31",
+    "type": "single",
     "objectives": [
       "v1:4.3",
       "v2:4.4"
     ],
-    "difficulty": 3,
-    "exhibit": {
-      "kind": "cli",
-      "title": "Representative teaching evidence",
-      "text": "Public explicit query: app.example A 203.0.113.80 (approved public address)\nOne internal application uses 10.1.1.81 and fails\nThe internal resolver's answer and the application's local cache/hosts inputs have not yet been inspected\nNo capture establishes the application's current lookup source"
-    },
-    "prompt": "Which two checks distinguish the remaining plausible causes without changing already verified public data? Select two.",
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What does a DNS record's TTL measure?",
     "options": [
-      "Query the affected client's actual resolver for the exact name and type.",
-      "Compare any matching local override or application cache with the approved name.",
-      "Replace the public A record with the address used by the failing client.",
-      "Change DHCP to advertise the public resolver before checking internal DNS.",
-      "Assume the public result proves all internal clients see the same answer."
+      "Router hops",
+      "Cache lifetime in seconds",
+      "Zone size in records",
+      "Query timeout in milliseconds"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "An external resolver result does not establish an internal resolver view or the application's local inputs. Compare the affected path and any matching override/cache before deciding which component needs a repair.",
+    "explanation": "A TTL is how long, in seconds, a resolver may cache the answer.",
     "whyWrong": {
-      "2": "The public data matches the approved public service; this would spread an unverified result.",
-      "3": "A public resolver may not supply intended internal-view data; inspect the affected path before changing that service setting.",
-      "4": "Resolvers, views and application caches can yield different observations."
+      "0": "TTL in DNS is not a hop limit.",
+      "2": "TTL does not count records.",
+      "3": "TTL is a cache lifetime, not a query timeout."
+    }
+  },
+  {
+    "id": "dns-q32",
+    "type": "single",
+    "objectives": [
+      "v1:4.3",
+      "v2:4.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which DNS record type maps a name to an IPv6 address?",
+    "options": [
+      "A record (IPv4)",
+      "AAAA record",
+      "PTR record (reverse)",
+      "NS record (zone)"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "AAAA records hold IPv6 addresses.",
+    "whyWrong": {
+      "0": "A holds an IPv4 address.",
+      "2": "PTR maps an address back to a name.",
+      "3": "NS names an authoritative server."
+    }
+  },
+  {
+    "id": "dns-q33",
+    "type": "single",
+    "objectives": [
+      "v1:4.3",
+      "v2:4.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which DHCP option normally gives a host its DNS resolver address?",
+    "options": [
+      "Option 3",
+      "Option 6",
+      "Option 15",
+      "Option 51"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DHCP option 6 supplies the DNS server addresses.",
+    "whyWrong": {
+      "0": "Option 3 is the default gateway.",
+      "2": "Option 15 is the domain name.",
+      "3": "Option 51 is the lease time."
+    }
+  },
+  {
+    "id": "dns-q34",
+    "type": "single",
+    "objectives": [
+      "v1:4.3",
+      "v2:4.4"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which IOS command displays the router's hostname-to-address table and cache?",
+    "options": [
+      "show hosts",
+      "show ip dns",
+      "show name-server",
+      "show ip interface"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "show hosts displays the router's DNS settings and its static and cached name entries.",
+    "whyWrong": {
+      "1": "show ip dns is not an IOS command.",
+      "2": "show name-server is not an IOS command.",
+      "3": "show ip interface shows interface IP settings."
     }
   }
 ]

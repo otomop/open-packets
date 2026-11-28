@@ -6,7 +6,7 @@
       "v1:6.3.a"
     ],
     "difficulty": 1,
-    "prompt": "Which functions learned this route and forward a transit packet using it?",
+    "prompt": "Which functions learn a route and forward a transit packet using it?",
     "options": [
       "The management plane learns the route; OSPF forwards each packet.",
       "The data plane computes OSPF routes; SSH forwards each packet.",
@@ -16,11 +16,11 @@
     "answer": [
       2
     ],
-    "explanation": "OSPF exchanges routing information and computes reachability. The forwarding function uses installed entries; whether that function runs in hardware or software depends on the platform.",
+    "explanation": "OSPF is control plane: it exchanges routing information and computes routes. The data plane forwards packets using the installed entries.",
     "whyWrong": {
-      "0": "OSPF learns the route through the control plane; the data plane forwards packets. These roles are not management-plane route learning or per-packet OSPF forwarding.",
-      "1": "OSPF is a control-plane protocol, while SSH provides management access.",
-      "3": "Forwarding uses installed information rather than a new OSPF calculation for every packet."
+      "0": "Route learning is control plane, and OSPF does not forward packets.",
+      "1": "OSPF is control plane, and SSH is management access.",
+      "3": "Forwarding uses installed entries, not a new OSPF calculation per packet."
     },
     "exhibit": {
       "kind": "cli",
@@ -45,11 +45,11 @@
     "answer": [
       0
     ],
-    "explanation": "The SNMP exchange lets a management system inspect device state. A function is classified by its purpose, not merely by whether a CPU is involved.",
+    "explanation": "Answering an SNMP request for counters is management plane because it lets a system monitor the device. A function is classified by its purpose.",
     "whyWrong": {
-      "1": "Frame forwarding is a data-plane function.",
-      "2": "Applying an ACL to transit traffic is a data-plane function.",
-      "3": "STP role calculation is a control-plane function."
+      "1": "Frame forwarding is data plane.",
+      "2": "Applying an ACL to transit traffic is data plane.",
+      "3": "STP role calculation is control plane."
     }
   },
   {
@@ -71,11 +71,11 @@
       3,
       4
     ],
-    "explanation": "The forwarding path processes transit frames and packets using existing forwarding and policy information. Tag insertion and ACL matching are per-traffic operations.",
+    "explanation": "The data plane processes transit traffic. Adding a VLAN tag and applying an ACL both act on each forwarded frame or packet.",
     "whyWrong": {
-      "0": "OSPF exchanges establish control information.",
-      "1": "An API statistics query performs monitoring.",
-      "2": "SSH administration terminates a management session."
+      "0": "OSPF exchanges are control plane.",
+      "1": "Retrieving statistics is management plane.",
+      "2": "An SSH login is management plane."
     }
   },
   {
@@ -96,11 +96,11 @@
     "answer": [
       3
     ],
-    "explanation": "A controller can centralize policy or coordination without eliminating every device protocol. Automation is possible with or without a controller.",
+    "explanation": "Automation works with or without a controller. A controller adds network-wide coordination but does not remove every device protocol.",
     "whyWrong": {
-      "0": "Scripts can automate traditional devices through their management interfaces.",
-      "1": "Distributed routing protocols maintain topology/reachability state on devices.",
-      "2": "Implementation hardware does not define the management architecture."
+      "0": "Scripts can automate traditional devices too.",
+      "1": "Traditional devices keep topology state through their routing protocols.",
+      "2": "The management architecture does not depend on whether forwarding uses CPUs or ASICs."
     }
   },
   {
@@ -120,11 +120,11 @@
     "answer": [
       1
     ],
-    "explanation": "VXLAN carries the inner traffic across the underlay. The example distinguishes the data-plane encapsulation from endpoint-location control and management protocols.",
+    "explanation": "VXLAN encapsulates user traffic and carries it across the underlay. LISP and NETCONF are control and management protocols.",
     "whyWrong": {
-      "0": "NETCONF is a configuration/management protocol.",
-      "2": "LISP provides endpoint/location control information in this design.",
-      "3": "SNMP supplies management observations."
+      "0": "NETCONF is a configuration protocol.",
+      "2": "LISP provides endpoint location information.",
+      "3": "SNMP is a management protocol."
     }
   },
   {
@@ -134,7 +134,7 @@
       "v2:5.3"
     ],
     "difficulty": 1,
-    "prompt": "The vendor hosts the management service in its cloud. Devices use that service for configuration, while the described user traffic is locally forwarded. Which label directly describes the hosting arrangement?",
+    "prompt": "The vendor hosts the management service in its cloud, and devices use it for configuration. Which label describes this hosting?",
     "options": [
       "An on-premises management service",
       "Cloud-based management",
@@ -144,11 +144,11 @@
     "answer": [
       1
     ],
-    "explanation": "Cloud-based identifies the management service's hosting arrangement. The service can also be controller-based or used by automation; the approaches overlap.",
+    "explanation": "A management service hosted in the vendor's cloud is cloud-based management. The approaches can overlap, so it can also be controller-based.",
     "whyWrong": {
-      "0": "The service location is explicitly off premises in the vendor cloud.",
-      "2": "No versioned infrastructure definitions or reviewed code workflow are specified.",
-      "3": "The service is hosted centrally in the vendor cloud, not only on each device."
+      "0": "The service is hosted off premises.",
+      "2": "No versioned definitions or reviewed code workflow are described.",
+      "3": "The service runs centrally in the cloud, not on each device."
     }
   },
   {
@@ -169,11 +169,11 @@
     "answer": [
       3
     ],
-    "explanation": "IaC applies software-style practices to infrastructure definitions and changes. A plan and post-change tests are still needed; a repository does not guarantee safe behavior.",
+    "explanation": "Infrastructure as code manages infrastructure through versioned definitions that are reviewed and applied by a tool.",
     "whyWrong": {
-      "0": "Discovery does not automatically approve whatever configuration it finds.",
-      "1": "Manual repetition alone does not establish a versioned code workflow.",
-      "2": "A backup records observed state but does not by itself define desired state."
+      "0": "Discovered settings are not automatically approved intent.",
+      "1": "Manual pasting is not a versioned code workflow.",
+      "2": "A backup records state but does not define desired state."
     }
   },
   {
@@ -193,11 +193,11 @@
     "answer": [
       0
     ],
-    "explanation": "Direction is relative to the controller's role in the architecture. HTTPS can also appear in a device-facing interface; protocol name alone is insufficient.",
+    "explanation": "Northbound links applications to the controller and southbound links the controller to devices. The direction depends on the controller's role, not on the protocol name.",
     "whyWrong": {
-      "1": "Physical location and transport do not define northbound/southbound.",
-      "2": "The application-facing and infrastructure-facing roles are reversed.",
-      "3": "Data format does not determine interface direction."
+      "1": "Physical links do not define northbound or southbound.",
+      "2": "This swaps the two directions.",
+      "3": "Data format does not set interface direction."
     }
   },
   {
@@ -207,7 +207,7 @@
       "v1:6.3.b"
     ],
     "difficulty": 2,
-    "prompt": "What does this application response establish?",
+    "prompt": "What does this application response show?",
     "options": [
       "The current endpoint data path is healthy because reachability says Reachable.",
       "The controller forwarded a user packet to determine the software version.",
@@ -217,11 +217,11 @@
     "answer": [
       2
     ],
-    "explanation": "The application received structured inventory data from the controller. The collection timestamp limits conclusions about current device state.",
+    "explanation": "The application received stored inventory data from the controller's API in JSON. The timestamp shows when it was collected, not the current device state.",
     "whyWrong": {
-      "0": "The supplied timestamp makes freshness relevant, and management status is not an application test.",
-      "1": "An inventory representation does not imply user packets traverse the controller.",
-      "3": "The participants and endpoint are an application and controller; no direct device NETCONF exchange is shown."
+      "0": "Reachable is a collected status with a timestamp, not a live data-path test.",
+      "1": "Inventory data does not involve user packets passing through the controller.",
+      "3": "The exchange is application to controller, not a direct NETCONF query to the switch."
     },
     "exhibit": {
       "kind": "cli",
@@ -236,7 +236,7 @@
       "v1:6.3"
     ],
     "difficulty": 2,
-    "prompt": "All overlays between A and B fail, while paths to C still work. Which is the best first shared-dependency check?",
+    "prompt": "All overlays between A and B fail, while paths to C work. What is the best first shared-dependency check?",
     "options": [
       "Compare each endpoint's guest address before checking their common transport",
       "Compare controller inventory timestamps before testing the failed forwarding path",
@@ -246,11 +246,11 @@
     "answer": [
       3
     ],
-    "explanation": "A shared underlay path is a reasonable first investigation because multiple overlays depend on it. The symptom does not prove the underlay is the cause; tests must establish which dependency failed.",
+    "explanation": "Several overlays share the A to B underlay, so test underlay reachability and usable MTU first.",
     "whyWrong": {
-      "0": "Guest addressing can matter, but this broad pair-specific pattern makes their common transport an efficient first shared check.",
-      "1": "Inventory freshness is a management concern and does not establish this forwarding path's operation.",
-      "2": "Individual overlay mappings may need investigation later; first examine the shared transport dependency, without assuming it is proven faulty."
+      "0": "Guest addressing is per endpoint, not shared by every failed overlay.",
+      "1": "Inventory timestamps are management data and do not test forwarding.",
+      "2": "VNI assignments are per overlay and come after the shared transport."
     },
     "exhibit": {
       "kind": "cli",
@@ -266,7 +266,7 @@
       "v2:5.3"
     ],
     "difficulty": 2,
-    "prompt": "Approved intent requires exactly NTP servers 10.200.0.10 and .11. What is the smallest configuration correction?",
+    "prompt": "Approved intent requires exactly NTP servers 10.200.0.10 and 10.200.0.11. What is the smallest correction?",
     "options": [
       "Keep both servers and add 10.200.0.11 as a third.",
       "Remove both current servers, then add 10.200.0.11.",
@@ -276,11 +276,11 @@
     "answer": [
       2
     ],
-    "explanation": "Preserve the matching .10 entry, replace the unintended .19 with .11 and compare again. Separately verify NTP operation; configuration agreement alone does not prove synchronization.",
+    "explanation": "Keep the correct .10 entry, replace the unintended .19 with .11, then compare again. Configuration agreement alone does not prove synchronization.",
     "whyWrong": {
-      "0": "The intended set is exact, so leaving .19 preserves drift.",
-      "1": "The correct .10 server need not be removed.",
-      "3": "Observed state does not automatically override approved intent."
+      "0": "The set must be exact, and .19 would remain.",
+      "1": "The correct .10 server does not need removing.",
+      "3": "Observed device state does not override approved intent."
     },
     "exhibit": {
       "kind": "cli",
@@ -296,7 +296,7 @@
       "v2:5.3"
     ],
     "difficulty": 2,
-    "prompt": "A cloud-hosted controller is updated by a script using versioned, reviewed desired-state files. Which conclusion follows?",
+    "prompt": "A cloud-hosted controller is updated by a script that uses versioned, reviewed desired-state files. What follows?",
     "options": [
       "Automation removes the need to verify operational results.",
       "Cloud, controller, automation and IaC approaches can overlap.",
@@ -306,11 +306,11 @@
     "answer": [
       1
     ],
-    "explanation": "These labels describe different dimensions of the workflow. Hosting, coordination, execution and change discipline can all apply to the same system.",
+    "explanation": "Cloud, controller, automation and IaC describe different dimensions, so one system can use all four.",
     "whyWrong": {
-      "0": "Operational verification remains necessary after automation.",
-      "2": "IaC can use cloud APIs and controllers.",
-      "3": "Controller describes coordination, not a required physical location."
+      "0": "Automated changes still need operational verification.",
+      "2": "Cloud management can use IaC workflows.",
+      "3": "A controller can run anywhere, including the cloud."
     }
   },
   {
@@ -321,7 +321,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An administrator on PC-A opens SSH to R2 through R1. At R1 the packets are ordinary transit traffic; R2 terminates the session. Which classification fits those roles?",
+    "prompt": "An administrator on PC-A opens SSH to R2 through R1. R1 forwards it as transit traffic, and R2 terminates the session. How are R1 and R2 classified?",
     "options": [
       "R1 data; R2 management",
       "R1 control; R2 data",
@@ -331,11 +331,11 @@
     "answer": [
       0
     ],
-    "explanation": "A packet's role depends on the function at the specified device: forwarding at R1, administration at R2.",
+    "explanation": "R1 forwards the packets, which is data plane. R2 terminates an administrative session, which is management plane.",
     "whyWrong": {
-      "1": "Transit forwarding is not a control calculation, while the addressed SSH session terminates at R2.",
-      "2": "R1 does not terminate this management session, and R2 is not exchanging a routing protocol.",
-      "3": "R1 transports the session rather than serving as its administration endpoint."
+      "1": "R1 forwards rather than calculates routes, and R2 terminates a management session.",
+      "2": "R1 does not terminate the session, and R2 is not running a routing exchange.",
+      "3": "R1 only transports the session."
     }
   },
   {
@@ -347,7 +347,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "A controller is unavailable. The documented design keeps installed forwarding on switches, but new policy deployments require that controller. Existing client tests still pass. Which conclusion fits?",
+    "prompt": "A controller is down. Installed forwarding on the switches continues, but new policy deployments need the controller. Existing client tests pass. What follows?",
     "options": [
       "The tested existing forwarding works; new controller policy deployment is unavailable",
       "Every new network change is now safe to make without the controller",
@@ -357,11 +357,11 @@
     "answer": [
       0
     ],
-    "explanation": "The supplied dependency permits a narrow conclusion about observed forwarding and blocks the controller-dependent operation. It does not prove all future activity.",
+    "explanation": "Existing forwarding still works, but deploying new policy is unavailable until the controller returns.",
     "whyWrong": {
-      "1": "The new deployment explicitly depends on the unavailable service.",
-      "2": "A working data path is not a controller availability test.",
-      "3": "The scenario does not establish every other dependency."
+      "1": "New changes depend on the failed controller.",
+      "2": "A working data path does not show the controller recovered.",
+      "3": "The scenario does not show other dependencies are independent."
     }
   },
   {
@@ -373,7 +373,7 @@
     ],
     "difficulty": 2,
     "exhibit": null,
-    "prompt": "An unwanted network change was already deployed. A reviewer reverts its infrastructure definition in Git. What is still required to restore the network?",
+    "prompt": "A reviewer reverts an unwanted deployed change in Git. What else is required to restore the network?",
     "options": [
       "Delete the last device backup so it cannot reintroduce the change",
       "Wait for the repository timestamp to change every device automatically",
@@ -383,11 +383,11 @@
     "answer": [
       2
     ],
-    "explanation": "Version control changes the recorded definition. A supported deployment/reconciliation step must update the actual infrastructure, followed by operational checks.",
+    "explanation": "Reverting the file changes only the desired state. Apply the recovery plan to the devices, then verify configuration and service.",
     "whyWrong": {
-      "0": "Removing evidence does not apply a recovery.",
-      "1": "Repository changes do not by themselves establish a deployment mechanism or result.",
-      "3": "Desired state matching an older file is not evidence that deployed state or service recovered."
+      "0": "Deleting a backup restores nothing.",
+      "1": "A repository change does not deploy itself.",
+      "3": "A file matching an older version does not prove the network recovered."
     }
   },
   {
@@ -413,11 +413,111 @@
     "answer": [
       3
     ],
-    "explanation": "The configuration goal is satisfied but the operational requirement is not. Keep the task open and test reachability, source usability and current status; the job result does not establish synchronization.",
+    "explanation": "The configuration goal is met but the operational goal is not. Keep the change open and investigate time service operation; a job result does not prove synchronization.",
     "whyWrong": {
-      "0": "The stated acceptance condition also requires actual synchronization.",
-      "1": "Observed failure does not authorize replacing approved intent.",
-      "2": "A blanket rollback is not justified solely by a result requiring a more specific operational investigation."
+      "0": "Acceptance also requires actual synchronization.",
+      "1": "A failure does not justify rewriting approved intent.",
+      "2": "A blanket rollback is unjustified when the configuration is correct."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q21",
+    "type": "single",
+    "objectives": [
+      "v1:6.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which UDP port does VXLAN use?",
+    "options": [
+      "UDP 4789",
+      "UDP 4500",
+      "UDP 5246",
+      "UDP 1812"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "VXLAN uses UDP port 4789.",
+    "whyWrong": {
+      "1": "UDP 4500 is IPsec NAT-T.",
+      "2": "UDP 5246 is CAPWAP control.",
+      "3": "UDP 1812 is RADIUS authentication."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q22",
+    "type": "single",
+    "objectives": [
+      "v1:6.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "How many bytes of overhead does VXLAN add to each encapsulated frame?",
+    "options": [
+      "20",
+      "38",
+      "50",
+      "100"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "VXLAN adds 50 bytes: 14 Ethernet, 20 IP, 8 UDP and 8 VXLAN header.",
+    "whyWrong": {
+      "0": "20 bytes is only the outer IP header.",
+      "1": "VXLAN adds more than 38 bytes.",
+      "3": "VXLAN adds fewer than 100 bytes."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q23",
+    "type": "single",
+    "objectives": [
+      "v1:6.3"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "What is a fabric in a controller-based network?",
+    "options": [
+      "Only the physical underlay links",
+      "Only the virtual overlay network",
+      "The underlay and overlay together",
+      "The controller's northbound API"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "The underlay carries the tunnels, the overlay is the virtual network, and the fabric is both together.",
+    "whyWrong": {
+      "0": "The underlay alone is only the transport.",
+      "1": "The overlay alone is only the virtual network.",
+      "3": "The northbound API is the controller's interface to applications."
+    }
+  },
+  {
+    "id": "network-management-and-sdn-q24",
+    "type": "single",
+    "objectives": [
+      "v1:6.3.b"
+    ],
+    "difficulty": 1,
+    "exhibit": null,
+    "prompt": "Which interface type do REST APIs normally provide on an SDN controller?",
+    "options": [
+      "Northbound",
+      "Southbound",
+      "Eastbound",
+      "Underlay"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Northbound is the controller-to-application interface, normally REST. Southbound protocols include NETCONF, RESTCONF and OpenFlow.",
+    "whyWrong": {
+      "1": "Southbound connects the controller to devices.",
+      "2": "Eastbound is not one of the exam's interface directions.",
+      "3": "The underlay is the transport network, not an interface."
     }
   }
 ]
